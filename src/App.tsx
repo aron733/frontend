@@ -1,19 +1,28 @@
 import { useState, useEffect } from 'react';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
+import { ecouterNotifications, afficherMessagesManques } from './notifications';
 
 function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifie si un user est déjà connecté
     const userData = localStorage.getItem('user');
     const token = localStorage.getItem('access_token');
     
     if (userData && token) {
       setUser(JSON.parse(userData));
     }
+    
+    // Écoute les notifications
+    ecouterNotifications();
+    
+    // Affiche les messages manqués
+    setTimeout(() => {
+      afficherMessagesManques();
+    }, 1000);
+    
     setLoading(false);
   }, []);
 

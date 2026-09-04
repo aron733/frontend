@@ -113,3 +113,17 @@ body {
     max-height: 150px;
   }
 }
+
+/* Fix photo profil */
+.avatar-photo,
+.avatar-conv {
+  background: #667eea;
+  object-fit: cover;
+  object-position: center;
+}
+
+img.avatar-photo,
+img.avatar-conv {
+  display: block;
+  background: #667eea;
+}
