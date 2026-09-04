@@ -199,8 +199,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
         {pageActive === 'texto' && <Texto />}
         {pageActive === 'chat' && <Vokyvo />}
-        {pageActive === 'visio' {pageActive === 'visio' && <Visio />}{pageActive === 'visio' && <Visio />} <Visio />}
-        {pageActive === 'news' {pageActive === 'visio' && <Visio />}{pageActive === 'visio' && <Visio />} <News />}
+        {pageActive === 'visio' && <Visio />}
+        {pageActive === 'news' && <News />}
       </main>
     </div>
   );
