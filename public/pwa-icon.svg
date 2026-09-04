@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#0a0a0f"/>
+  <circle cx="256" cy="200" r="80" fill="#667eea"/>
+  <rect x="176" y="260" width="160" height="120" rx="40" fill="#667eea"/>
+  <text x="256" y="430" text-anchor="middle" fill="white" font-size="60" font-weight="bold" font-family="Arial">VOKYVO</text>
+</svg>
