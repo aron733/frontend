@@ -307,24 +307,56 @@ function Texto() {
           {messages.length === 0 && <p style={styles.aucunMsg}>Commence la conversation...</p>}
           {messages.map((msg) => {
             const estMoi = msg.expediteur === userId;
+            const heure = msg.date_envoi ? new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
             return (
               <div key={msg.id} style={{ ...styles.msgRow, justifyContent: estMoi ? 'flex-end' : 'flex-start' }}>
-                {!estMoi && (photoAutre ? <img src={photoAutre} className="avatar-conv" style={{ width: '30px', height: '30px', marginRight: '8px' }} alt="" /> : null)}
-                <div style={{ maxWidth: '75%' }}>
-                  {msg.texte && <div style={{ ...styles.msgBubble, background: estMoi ? '#667eea' : '#2a2a3e' }}>{msg.texte}</div>}
-                  {msg.apercu && msg.apercu !== 'video' && <img src={msg.apercu} className="image-message" alt="aperçu" />}
+                {!estMoi && (photoAutre ? <img src={photoAutre} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', marginRight: '8px' }} alt="" /> : null)}
+                <div style={{ maxWidth: '78%' }}>
+                  {msg.texte && (
+                    <div style={{
+                      ...styles.msgBubble,
+                      background: estMoi ? '#005c4b' : '#1f2c33',
+                      color: estMoi ? '#e9edef' : '#e9edef',
+                      borderBottomRightRadius: estMoi ? '4px' : '15px',
+                      borderBottomLeftRadius: estMoi ? '15px' : '4px',
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      gap: '8px',
+                    }}>
+                      <span>{msg.texte}</span>
+                      <span style={{ fontSize: '10px', color: estMoi ? '#8696a0' : '#8696a0', whiteSpace: 'nowrap', marginLeft: '5px' }}>
+                        {heure}
+                        {estMoi && (
+                          <span style={{ marginLeft: '3px', color: '#53bdeb' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: 'inline' }}>
+                              <path d="M18 7l-10 10-5-5" />
+                              <path d="M22 7l-10 10-5-5" transform="translate(2)" />
+                            </svg>
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  )}
+                  {msg.apercu && msg.apercu !== 'video' && (
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <img src={msg.apercu} className="image-message" alt="aperçu" />
+                      <span style={{ position: 'absolute', bottom: '5px', right: '5px', fontSize: '10px', color: 'white', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', borderRadius: '8px' }}>{heure}</span>
+                    </div>
+                  )}
                   {msg.apercu === 'video' && <video src={msg.fichier_url} controls className="image-message" />}
                   {msg.fichier_url && !msg.apercu && (
-                    <a href={msg.fichier_url} download style={styles.fichierLink}><IconeFichier /> {msg.nom_fichier || 'Fichier'}</a>
+                    <a href={msg.fichier_url} download style={{ ...styles.fichierLink, background: estMoi ? '#005c4b' : '#1f2c33', color: '#e9edef' }}>
+                      <IconeFichier /> {msg.nom_fichier || 'Fichier'}
+                    </a>
                   )}
                   {(msg.audio_url || msg.audio_local) && (
-                    <div style={{ ...styles.audioBubble, background: estMoi ? '#667eea' : '#2a2a3e' }}>
+                    <div style={{ ...styles.audioBubble, background: estMoi ? '#005c4b' : '#1f2c33' }}>
                       <audio controls src={msg.audio_local || msg.audio_url} style={{ width: '150px', height: '30px' }} />
                       {msg.duree && <span style={styles.audioDuree}>{msg.duree}s</span>}
                     </div>
                   )}
                 </div>
-                {estMoi && userPhoto && <img src={userPhoto} className="avatar-conv" style={{ width: '30px', height: '30px', marginLeft: '8px' }} alt="" />}
+                {estMoi && userPhoto && <img src={userPhoto} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', marginLeft: '8px' }} alt="" />}
               </div>
             );
           })}
@@ -421,10 +453,10 @@ const styles = {
   convHeader: { display: 'flex', alignItems: 'center', gap: '12px', padding: '15px', background: 'rgba(0,0,0,0.5)', borderBottom: '1px solid rgba(255,255,255,0.1)' },
   retourBtn: { background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' },
   appelBtn: { width: '40px', height: '40px', borderRadius: '50%', border: 'none', background: '#28a745', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  messagesArea: { flex: 1, padding: '20px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '10px' },
+  messagesArea: { flex: 1, padding: '15px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '8px', background: '#0b141a' },
   aucunMsg: { color: '#aaa', textAlign: 'center' as const, marginTop: '50px' },
   msgRow: { display: 'flex', alignItems: 'flex-end' },
-  msgBubble: { maxWidth: '100%', padding: '10px 15px', borderRadius: '15px', fontSize: '14px', color: 'white' },
+  msgBubble: { maxWidth: '100%', padding: '8px 12px', borderRadius: '15px', fontSize: '14px', color: 'white', lineHeight: 1.4, boxShadow: '0 1px 0 rgba(0,0,0,0.13)' },
   audioBubble: { display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', borderRadius: '15px' },
   audioDuree: { color: 'white', fontSize: '11px' },
   fichierLink: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: '#2a2a3e', color: '#667eea', borderRadius: '10px', textDecoration: 'none', fontSize: '14px' },
