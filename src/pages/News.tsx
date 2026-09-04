@@ -24,7 +24,7 @@ function News() {
 
   const chargerNews = async () => {
     try {
-      const response = await axios.get(`${NEWS_URL}/news/`);
+      await axios.get(`${NEWS_URL}/news/`);
       // Parse le HTML pour extraire les sections (simplifié)
       // On va appeler une API dédiée à la place
       const apiResponse = await axios.get(`${NEWS_URL}/news/api/sections/`);
