@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-import { API_URL } from '../config';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 function Landing({ onLogin }: { onLogin: (data: any) => void }) {
-  const [mode, setMode] = useState<'inscription' | 'connexion' | 'otp'>('connexion');
+  const [mode, setMode] = useState<'inscription' | 'connexion'>('connexion');
   const [form, setForm] = useState({
     username: '',
     email: '',
@@ -14,59 +14,27 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     age: '',
     sexe: 'M',
     numero: '',
-    pays: '',
-    code_otp: ''
+    pays: ''
   });
   const [erreur, setErreur] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [codeDev, setCodeDev] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const envoyerOTP = async () => {
-    if (!form.email) {
-      setErreur('Email requis');
-      return;
-    }
+  const handleInscription = async () => {
     setLoading(true);
     setErreur('');
+    setMessage('');
     try {
-      const response = await axios.post(`${API_URL}/envoyer-otp/`, { email: form.email });
-      setMessage('Code OTP envoyé à ton email !');
-      if (response.data.code_dev) {
-        setCodeDev(response.data.code_dev);
-      }
-      setMode('otp');
-    } catch (err: any) {
-      setErreur(err.response?.data?.erreur || 'Erreur envoi OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verifierOTP = async () => {
-    if (!form.code_otp) {
-      setErreur('Entre le code reçu');
-      return;
-    }
-    setLoading(true);
-    setErreur('');
-    try {
-      await axios.post(`${API_URL}/verifier-otp/`, {
-        email: form.email,
-        code: form.code_otp
-      });
-      
-      // OTP valide, on crée le compte
       await axios.post(`${API_URL}/inscription/`, form);
       setMessage('Compte créé ! Connecte-toi maintenant.');
       setMode('connexion');
       setForm({ ...form, password: '' });
     } catch (err: any) {
-      setErreur(err.response?.data?.erreur || 'Code invalide');
+      setErreur(err.response?.data?.erreur || 'Erreur inscription');
     } finally {
       setLoading(false);
     }
@@ -95,21 +63,10 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     e.preventDefault();
     if (mode === 'connexion') {
       await handleConnexion();
-    } else if (mode === 'inscription') {
-      await envoyerOTP();
-    } else if (mode === 'otp') {
-      await verifierOTP();
+    } else {
+      await handleInscription();
     }
   };
-
-  // Icônes SVG
-  const IconeEmail = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-      <polyline points="22,6 12,13 2,6" />
-    </svg>
-  );
-
 
   return (
     <div style={styles.container}>
@@ -133,53 +90,25 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         </div>
 
         <form onSubmit={handleSubmit} style={styles.form}>
-          {mode === 'inscription' && (
+          {mode === 'inscription' ? (
             <>
-              <input type="text" name="prenom" placeholder="Prénom" onChange={handleChange} style={styles.input} />
               <input type="text" name="nom" placeholder="Nom" onChange={handleChange} style={styles.input} />
-              <input type="email" name="email" placeholder="Email" onChange={handleChange} required style={styles.input} />
-              <input type="text" name="username" placeholder="Pseudo" onChange={handleChange} required style={styles.input} />
-              <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required style={styles.input} />
+              <input type="text" name="prenom" placeholder="Prénom" onChange={handleChange} style={styles.input} />
               <input type="number" name="age" placeholder="Âge" onChange={handleChange} style={styles.input} />
               <select name="sexe" onChange={handleChange} style={styles.input}>
                 <option value="M">Masculin</option>
                 <option value="F">Féminin</option>
                 <option value="A">Autre</option>
               </select>
-              <input type="text" name="numero" placeholder="Téléphone" onChange={handleChange} style={styles.input} />
-              <input type="text" name="pays" placeholder="Pays" onChange={handleChange} style={styles.input} />
+              <input type="text" name="numero" placeholder="Numéro" onChange={handleChange} style={styles.input} />
+              <input type="email" name="email" placeholder="Email" onChange={handleChange} required style={styles.input} />
+              <input type="text" name="username" placeholder="Pseudo" onChange={handleChange} required style={styles.input} />
+              <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required style={styles.input} />
               <button type="submit" disabled={loading} style={styles.submitButton}>
-                {loading ? '...' : 'Recevoir le code OTP'}
+                {loading ? '...' : "S'inscrire"}
               </button>
             </>
-          )}
-
-          {mode === 'otp' && (
-            <>
-              <div style={styles.otpInfo}>
-                <IconeEmail />
-                <p style={styles.otpText}>Code envoyé à {form.email}</p>
-              </div>
-              <input
-                type="text"
-                name="code_otp"
-                placeholder="Entrez le code à 6 chiffres"
-                value={form.code_otp}
-                onChange={handleChange}
-                maxLength={6}
-                required
-                style={{ ...styles.input, textAlign: 'center', fontSize: '24px', letterSpacing: '8px' }}
-              />
-              {codeDev && (
-                <p style={styles.codeDev}>Code dev : {codeDev}</p>
-              )}
-              <button type="submit" disabled={loading} style={styles.submitButton}>
-                {loading ? '...' : 'Vérifier le code'}
-              </button>
-            </>
-          )}
-
-          {mode === 'connexion' && (
+          ) : (
             <>
               <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required style={styles.input} />
               <input type="password" name="password" placeholder="Mot de passe" value={form.password} onChange={handleChange} required style={styles.input} />
@@ -216,90 +145,15 @@ const styles = {
     boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
     border: '1px solid rgba(255,255,255,0.1)',
   },
-  logo: {
-    textAlign: 'center' as const,
-    color: 'white',
-    fontSize: '36px',
-    marginBottom: '5px',
-    fontWeight: 'bold',
-    letterSpacing: '3px',
-  },
-  subtitle: {
-    textAlign: 'center' as const,
-    color: '#aaa',
-    marginBottom: '30px',
-  },
-  switchContainer: {
-    display: 'flex',
-    gap: '10px',
-    marginBottom: '30px',
-    background: 'rgba(0,0,0,0.3)',
-    borderRadius: '15px',
-    padding: '5px',
-  },
-  switchButton: {
-    flex: 1,
-    padding: '12px',
-    borderRadius: '12px',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '15px',
-    fontWeight: 'bold',
-    transition: 'all 0.3s',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '12px',
-  },
-  input: {
-    padding: '13px 15px',
-    borderRadius: '12px',
-    border: '1px solid rgba(255,255,255,0.2)',
-    background: 'rgba(255,255,255,0.1)',
-    color: 'white',
-    fontSize: '15px',
-    outline: 'none',
-    boxSizing: 'border-box' as const,
-  },
-  submitButton: {
-    padding: '15px',
-    borderRadius: '12px',
-    border: 'none',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    color: 'white',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    marginTop: '10px',
-  },
-  success: {
-    color: '#28a745',
-    textAlign: 'center' as const,
-    marginTop: '15px',
-  },
-  error: {
-    color: '#dc3545',
-    textAlign: 'center' as const,
-    marginTop: '15px',
-  },
-  otpInfo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    color: '#aaa',
-    justifyContent: 'center',
-  },
-  otpText: {
-    margin: 0,
-    fontSize: '14px',
-  },
-  codeDev: {
-    color: '#ffc107',
-    textAlign: 'center' as const,
-    fontSize: '13px',
-    margin: 0,
-  },
+  logo: { textAlign: 'center' as const, color: 'white', fontSize: '36px', marginBottom: '5px', fontWeight: 'bold', letterSpacing: '3px' },
+  subtitle: { textAlign: 'center' as const, color: '#aaa', marginBottom: '30px' },
+  switchContainer: { display: 'flex', gap: '10px', marginBottom: '30px', background: 'rgba(0,0,0,0.3)', borderRadius: '15px', padding: '5px' },
+  switchButton: { flex: 1, padding: '12px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 'bold', transition: 'all 0.3s' },
+  form: { display: 'flex', flexDirection: 'column' as const, gap: '12px' },
+  input: { padding: '13px 15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const },
+  submitButton: { padding: '15px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' },
+  success: { color: '#28a745', textAlign: 'center' as const, marginTop: '15px' },
+  error: { color: '#dc3545', textAlign: 'center' as const, marginTop: '15px' },
 };
 
 export default Landing;
