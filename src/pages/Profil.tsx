@@ -147,6 +147,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <button onClick={deconnexion} style={{ ...styles.menuItem, color: '#dc3545' }}>
             <IconeDeconnexion /> Déconnexion
           </button>
+        </div>
       )}
 
       <main style={styles.main}>
