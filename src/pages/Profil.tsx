@@ -137,7 +137,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </button>
           <button onClick={() => { setPageActive('visio'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeVideo /> Appel vidéo
-          <button onClick={() => { setPageActive('news'); setMenuOuvert(false); }} style={styles.menuItem}>
+          <button onClick={() => { setPageActive('news'); setMenuOuvert(false); alert('News cliqué'); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v16H4z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg> News
           </button>
           <button onClick={async () => { await demanderPermissionNotifications(); envoyerNotificationTest(); }} style={styles.menuItem}>
