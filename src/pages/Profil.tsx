@@ -3,13 +3,14 @@ import axios from 'axios';
 import Vokyvo from './Vokyvo';
 import Visio from './Visio';
 import Texto from './Texto';
+import News from './News';
 import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 
 import { API_URL, MEDIA_URL } from '../config';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'texto'>('profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'texto' | 'news'>('profil');
   const [userData, setUserData] = useState(user);
   const [photoUrl, setPhotoUrl] = useState<string | null>(user.photo_profil || null);
   const [uploading, setUploading] = useState(false);
@@ -198,7 +199,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
         {pageActive === 'texto' && <Texto />}
         {pageActive === 'chat' && <Vokyvo />}
-        {pageActive === 'visio' && <Visio />}
+        {pageActive === 'visio' {pageActive === 'visio' && <Visio />}{pageActive === 'visio' && <Visio />} <Visio />}
+        {pageActive === 'news' {pageActive === 'visio' && <Visio />}{pageActive === 'visio' && <Visio />} <News />}
       </main>
     </div>
   );
