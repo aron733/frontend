@@ -366,7 +366,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                   {msg.texte && (
                     <div style={{
                       ...styles.msgBubble,
-                      background: estMoi ? '#2563eb' : '#16a34a',
+                      background: estMoi ? '#3b82f6' : '#22c55e',
                       color: estMoi ? '#e9edef' : '#e9edef',
                       borderBottomRightRadius: estMoi ? '6px' : '18px',
                       borderBottomLeftRadius: estMoi ? '18px' : '6px',
@@ -395,14 +395,14 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     </div>
                   )}
                   {msg.apercu && msg.apercu !== 'video' && (
-                    <div style={{ position: 'relative', display: 'inline-block' }}>
-                      <img src={msg.apercu} className="image-message" alt="aperçu" />
-                      <span style={{ position: 'absolute', bottom: '5px', right: '5px', fontSize: '10px', color: 'white', background: 'rgba(0,0,0,0.5)', padding: '2px 5px', borderRadius: '8px' }}>{heure}</span>
+                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }} onClick={() => window.open(msg.apercu, '_blank')}>
+                      <img src={msg.apercu} style={{ maxWidth: '250px', maxHeight: '250px', width: '100%', height: 'auto', borderRadius: '15px', objectFit: 'cover', display: 'block', boxShadow: '0 3px 10px rgba(0,0,0,0.3)' }} alt="aperçu" />
+                      <span style={{ position: 'absolute', bottom: '8px', right: '8px', fontSize: '10px', color: 'white', background: 'rgba(0,0,0,0.6)', padding: '3px 8px', borderRadius: '10px' }}>{heure}</span>
                     </div>
                   )}
-                  {msg.apercu === 'video' && <video src={msg.fichier_url} controls className="image-message" />}
+                  {msg.apercu === 'video' && <video src={msg.fichier_url} controls style={{ maxWidth: '250px', maxHeight: '250px', borderRadius: '15px', boxShadow: '0 3px 10px rgba(0,0,0,0.3)' }} />}
                   {msg.fichier_url && !msg.apercu && (
-                    <a href={msg.fichier_url} download style={{ ...styles.fichierLink, background: estMoi ? '#2563eb' : '#16a34a', color: '#e9edef' }}>
+                    <a href={msg.fichier_url} download style={{ ...styles.fichierLink, background: estMoi ? '#3b82f6' : '#22c55e', color: '#e9edef' }}>
                       <IconeFichier /> {msg.nom_fichier || 'Fichier'}
                     </a>
                   )}
@@ -510,10 +510,10 @@ const styles = {
   convHeader: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 15px', background: 'linear-gradient(180deg, #1a2a33 0%, #111b21 100%)', borderBottom: '1px solid #2a3942', flexShrink: 0, minHeight: '65px', position: 'sticky' as const, top: 0, zIndex: 20, boxShadow: '0 2px 10px rgba(0,0,0,0.3)' },
   retourBtn: { background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' },
   appelBtn: { width: '42px', height: '42px', borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(40,167,69,0.4)', flexShrink: 0 },
-  messagesArea: { flex: 1, padding: '15px 12px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '6px', background: '#0b141a', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' as any, scrollbarWidth: 'thin' as any },
+  messagesArea: { flex: 1, padding: '15px 8px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '8px', background: 'linear-gradient(180deg, #0a1218 0%, #0b141a 100%)', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' as any, scrollbarWidth: 'thin' as any },
   aucunMsg: { color: '#aaa', textAlign: 'center' as const, marginTop: '50px' },
-  msgRow: { display: 'flex', alignItems: 'flex-end', width: '100%', flexShrink: 0 },
-  msgBubble: { maxWidth: '75%', padding: '10px 14px', borderRadius: '18px', fontSize: '16px', color: 'white', lineHeight: 1.4, boxShadow: '0 2px 4px rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)' },
+  msgRow: { display: 'flex', alignItems: 'flex-end', width: '100%', flexShrink: 0, padding: '0 5px' },
+  msgBubble: { maxWidth: '85%', padding: '10px 14px', borderRadius: '18px', fontSize: '16px', color: 'white', lineHeight: 1.4, boxShadow: '0 2px 4px rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)' },
   audioBubble: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '18px' },
   audioDuree: { color: 'white', fontSize: '11px' },
   fichierLink: { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#1e293b', color: '#93c5fd', borderRadius: '12px', textDecoration: 'none', fontSize: '15px' },
@@ -521,7 +521,7 @@ const styles = {
   fichierBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   microBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stopBtn: { height: '40px', padding: '0 12px', borderRadius: '20px', border: 'none', background: '#dc3545', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold', fontSize: '13px', flexShrink: 0 },
-  saisieInput: { flex: 1, padding: '10px 15px', borderRadius: '25px', border: '1px solid #3a4a55', background: '#1e2a30', color: 'white', fontSize: '15px', outline: 'none', minWidth: 0, transition: 'all 0.3s' },
+  saisieInput: { flex: 1, padding: '12px 18px', borderRadius: '25px', border: '1px solid #3a4a55', background: '#1e2a30', color: 'white', fontSize: '15px', outline: 'none', minWidth: 0, transition: 'all 0.3s', '::placeholder': { color: '#667' } } as any,
   envoyerBtn: { width: '42px', height: '42px', minWidth: '42px', borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 3px 10px rgba(102,126,234,0.4)' },
   raccrocher: { position: 'absolute' as const, bottom: '100px', right: '20px', width: '50px', height: '50px', borderRadius: '50%', border: 'none', background: '#dc3545', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 },
 };
