@@ -46,6 +46,7 @@ interface Message {
   apercu?: string;
   lu?: boolean;
   fichier_type?: string;
+  est_video?: boolean;
 }
 
 function Texto() {
@@ -151,9 +152,9 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       });
       const msgs = response.data.messages.map((m: any) => ({
         ...m,
-        apercu: m.fichier_url && m.fichier_url.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? m.fichier_url :
-                m.fichier_url && (m.fichier_url.match(/\.(mp4|webm|mov|avi)$/i) || m.fichier_url.includes('/video/upload/')) ? 'video' : undefined,
-        fichier_url: m.fichier_url && (m.fichier_url.startsWith('http') || m.fichier_url.startsWith('blob')) ? m.fichier_url : undefined,
+        apercu: m.fichier_url && m.fichier_url.startsWith('http') && m.fichier_url.includes('/image/upload/') ? m.fichier_url : undefined,
+        est_video: m.fichier_url && m.fichier_url.startsWith('http') && m.fichier_url.includes('/video/upload/') ? true : false,
+        fichier_url: m.fichier_url && m.fichier_url.startsWith('http') ? m.fichier_url : undefined,
         audio_url: m.audio_url && m.audio_url.startsWith('http') ? m.audio_url : undefined,
       }));
       setMessages(msgs);
@@ -399,7 +400,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     </div>
                   )}
                   {msg.apercu && msg.apercu !== 'video' && msg.apercu !== 'video_local' && msg.fichier_type !== 'video' && (
-                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%' }} onClick={() => window.open(msg.apercu, '_blank')}>
+                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%', marginLeft: estMoi ? 'auto' : '0', marginRight: estMoi ? '0' : 'auto' }} onClick={() => window.open(msg.apercu, '_blank')}>
                       <img 
                         src={msg.apercu} 
                         style={{ 
