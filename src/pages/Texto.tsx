@@ -5,9 +5,7 @@ import {
   VideoConference,
   ControlBar,
   RoomAudioRenderer,
-  useTracks,
 } from '@livekit/components-react';
-import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
 import { API_URL } from '../config';
@@ -72,8 +70,6 @@ function Texto() {
   const [menuFichier, setMenuFichier] = useState(false);
   const [audioEnCours, setAudioEnCours] = useState<number | null>(null);
   const [appelId, setAppelId] = useState<number | null>(null);
-  const [microOn, setMicroOn] = useState(true);
-  const [cameraOn, setCameraOn] = useState(true);
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
