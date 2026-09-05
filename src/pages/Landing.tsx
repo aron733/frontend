@@ -19,6 +19,8 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [erreur, setErreur] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
+  const [showPolitique, setShowPolitique] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -57,6 +59,11 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const accepterCookies = () => {
+    localStorage.setItem('cookies_acceptes', 'true');
+    setCookiesAcceptes(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,13 +131,53 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       </div>
 
       {/* Bandeau cookies RGPD */}
-      <div style={styles.cookieBanner}>
-        <p style={styles.cookieText}>
-          VOKYVO LABS utilise des cookies essentiels pour améliorer ton expérience.
-          <a href="#" style={styles.cookieLink}>Politique de confidentialité</a>
-        </p>
-        <button style={styles.cookieBtn}>Accepter</button>
-      </div>
+      {!cookiesAcceptes && (
+        <div style={styles.cookieBanner}>
+          <p style={styles.cookieText}>
+            VOKYVO LABS utilise des cookies essentiels.
+            <a href="#" onClick={(e) => { e.preventDefault(); setShowPolitique(true); }} style={styles.cookieLink}>Politique de confidentialité</a>
+          </p>
+          <button onClick={accepterCookies} style={styles.cookieBtn}>Accepter</button>
+        </div>
+      )}
+
+      {/* Modal politique de confidentialité */}
+      {showPolitique && (
+        <div style={styles.overlay} onClick={() => setShowPolitique(false)}>
+          <div style={styles.politiquePanel} onClick={(e) => e.stopPropagation()}>
+            <h2 style={styles.politiqueTitle}>Politique de confidentialité</h2>
+            <div style={styles.politiqueContent}>
+              <h3>1. Collecte des données</h3>
+              <p>VOKYVO LABS collecte les données suivantes lors de l'inscription : nom, prénom, email, âge, sexe, numéro de téléphone, pays. Ces informations sont nécessaires pour créer votre compte et fournir nos services.</p>
+              
+              <h3>2. Utilisation des données</h3>
+              <p>Vos données sont utilisées pour : la création de votre profil, la mise en relation avec d'autres utilisateurs, l'envoi de notifications, l'amélioration de nos services. Nous ne vendons JAMAIS vos données personnelles à des tiers.</p>
+              
+              <h3>3. Cookies</h3>
+              <p>Nous utilisons des cookies essentiels au fonctionnement du service : cookies de session pour vous garder connecté, cookies de préférences pour vos paramètres. Aucun cookie publicitaire n'est utilisé.</p>
+              
+              <h3>4. Stockage des données</h3>
+              <p>Vos données sont stockées de manière sécurisée sur des serveurs en Europe et aux États-Unis via nos partenaires certifiés (Render, Cloudinary). Les mots de passe sont chiffrés avec des algorithmes robustes.</p>
+              
+              <h3>5. Vos droits (RGPD)</h3>
+              <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants : droit d'accès, de rectification, de suppression, de portabilité, d'opposition. Pour exercer ces droits, contactez-nous à aronvokouma01@gmail.com.</p>
+              
+              <h3>6. Sécurité</h3>
+              <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées : chiffrement des données, accès restreint, surveillance continue, sauvegardes régulières.</p>
+              
+              <h3>7. Conservation</h3>
+              <p>Vos données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte à tout moment. Les données sont supprimées sous 30 jours après la demande.</p>
+              
+              <h3>8. Contact</h3>
+              <p>Pour toute question concernant vos données : aronvokouma01@gmail.com</p>
+              
+              <h3>9. Modifications</h3>
+              <p>Cette politique peut être mise à jour. Les modifications seront publiées sur cette page. Dernière mise à jour : 5 septembre 2026.</p>
+            </div>
+            <button onClick={() => setShowPolitique(false)} style={styles.cookieBtn}>Fermer</button>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer style={styles.footer}>
@@ -217,9 +264,9 @@ const styles = {
     gap: '5px',
     flexShrink: 0,
   },
-  footerText: { color: '#555', fontSize: '12px', margin: 0 },
+  footerText: { color: '#555', fontSize: '10px', margin: 0 },
   footerLinks: { display: 'flex', justifyContent: 'center', gap: '20px' },
-  footerLink: { color: '#667eea', fontSize: '12px', textDecoration: 'none' },
+  footerLink: { color: '#667eea', fontSize: '10px', textDecoration: 'none' },
   uptime: {
     color: '#28a745',
     fontSize: '11px',
@@ -229,6 +276,31 @@ const styles = {
     gap: '5px',
     justifyContent: 'center',
   },
+  overlay: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.8)',
+    zIndex: 2000,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '10px',
+  },
+  politiquePanel: {
+    background: '#1a1a2e',
+    border: '1px solid #2a2a3e',
+    borderRadius: '15px',
+    maxWidth: '500px',
+    width: '100%',
+    maxHeight: '80vh',
+    overflowY: 'auto' as const,
+    padding: '15px',
+  },
+  politiqueTitle: { color: '#667eea', fontSize: '18px', marginBottom: '10px', textAlign: 'center' as const },
+  politiqueContent: { color: '#aaa', fontSize: '12px', lineHeight: 1.6 },
   error: { color: '#dc3545', textAlign: 'center' as const, marginTop: '15px' },
 };
 
