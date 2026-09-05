@@ -402,15 +402,17 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       <img 
                         src={msg.apercu} 
                         style={{ 
-                          maxWidth: '100%', 
-                          maxHeight: '300px', 
+                          maxWidth: '85%', 
+                          maxHeight: '350px', 
                           width: 'auto', 
                           height: 'auto', 
                           borderRadius: '15px', 
                           objectFit: 'contain', 
+                          objectPosition: 'center',
                           display: 'block', 
                           boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
-                          border: '1px solid rgba(255,255,255,0.1)'
+                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: '#1a2a33'
                         }} 
                         alt="aperçu" 
                       />
@@ -437,9 +439,46 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     </a>
                   )}
                   {(msg.audio_url || msg.audio_local) && (
-                    <div style={{ ...styles.audioBubble, background: estMoi ? '#005c4b' : '#1f2c33' }}>
-                      <audio controls src={msg.audio_local || msg.audio_url} style={{ width: '150px', height: '30px' }} />
-                      {msg.duree && <span style={styles.audioDuree}>{msg.duree}s</span>}
+                    <div style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '10px', 
+                      background: estMoi ? '#3b82f6' : '#22c55e', 
+                      borderRadius: '18px', 
+                      padding: '8px 12px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      maxWidth: '250px'
+                    }}>
+                      <span style={{ fontSize: '20px', flexShrink: 0 }}>
+                        {estMoi ? (
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                          </svg>
+                        ) : (
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                          </svg>
+                        )}
+                      </span>
+                      <audio 
+                        controls 
+                        src={msg.audio_local || msg.audio_url} 
+                        style={{ 
+                          width: '160px', 
+                          height: '35px',
+                          borderRadius: '10px'
+                        }} 
+                      />
+                      {msg.duree && (
+                        <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold', flexShrink: 0 }}>
+                          {msg.duree}s
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
