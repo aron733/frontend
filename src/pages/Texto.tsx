@@ -412,7 +412,9 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                           display: 'block', 
                           boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
                           border: '1px solid rgba(255,255,255,0.1)',
-                          background: '#1a2a33'
+                          background: '#1a2a33',
+                          marginLeft: estMoi ? 'auto' : '0',
+                          marginRight: estMoi ? '0' : 'auto'
                         }} 
                         alt="aperçu" 
                       />
@@ -442,43 +444,30 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     <div style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
-                      gap: '10px', 
+                      gap: '8px', 
                       background: estMoi ? '#3b82f6' : '#22c55e', 
-                      borderRadius: '18px', 
-                      padding: '8px 12px',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-                      border: '1px solid rgba(255,255,255,0.15)',
-                      maxWidth: '250px'
+                      borderRadius: '20px', 
+                      padding: '6px 10px',
+                      maxWidth: '230px',
+                      marginLeft: estMoi ? 'auto' : '0',
+                      marginRight: estMoi ? '0' : 'auto'
                     }}>
-                      <span style={{ fontSize: '20px', flexShrink: 0 }}>
-                        {estMoi ? (
-                          <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                            <line x1="12" y1="19" x2="12" y2="23"/>
-                          </svg>
-                        ) : (
-                          <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                            <line x1="12" y1="19" x2="12" y2="23"/>
-                          </svg>
-                        )}
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style={{ flexShrink: 0 }}>
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                      <div style={{ flex: 1, height: '20px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                        {[4, 7, 10, 6, 9, 5, 8, 11, 7, 9, 6, 10, 8, 5, 7, 9, 6, 8, 10, 7, 5, 8, 6, 9].map((h, i) => (
+                          <div key={i} style={{ width: '3px', height: `${h}px`, background: 'rgba(255,255,255,0.8)', borderRadius: '2px' }} />
+                        ))}
+                      </div>
+                      <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold', flexShrink: 0 }}>
+                        {msg.duree || 0}s
                       </span>
                       <audio 
                         controls 
                         src={msg.audio_local || msg.audio_url} 
-                        style={{ 
-                          width: '160px', 
-                          height: '35px',
-                          borderRadius: '10px'
-                        }} 
+                        style={{ display: 'none' }} 
                       />
-                      {msg.duree && (
-                        <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold', flexShrink: 0 }}>
-                          {msg.duree}s
-                        </span>
-                      )}
                     </div>
                   )}
                 </div>
