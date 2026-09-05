@@ -224,9 +224,10 @@ const styles = {
   container: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: '100%',
     maxWidth: '500px',
+    padding: '10px 10px 15px 10px',
   },
   chatCard: {
     background: 'rgba(255,255,255,0.05)',
