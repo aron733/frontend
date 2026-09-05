@@ -38,7 +38,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
 
   const changerIndicatif = (code: string, pays: string) => {
     setIndicatif(code);
-    setPaysAuto(pays);
+    
     setForm({ ...form, pays });
   };
 
