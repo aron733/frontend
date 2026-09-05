@@ -451,11 +451,79 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         
         {menuSignalement && (
           <div style={styles.menuSignalement}>
-            <p style={{ color: '#aaa', fontSize: '13px', margin: '0 0 10px', fontWeight: 'bold' }}>Signaler {conversationActive.autre_user.prenom} {conversationActive.autre_user.nom}</p>
-            <button onClick={() => { setMotifSignalement('harcelement'); signalerUser(); }} style={styles.menuSignalementItem}>Harcèlement</button>
-            <button onClick={() => { setMotifSignalement('spam'); signalerUser(); }} style={styles.menuSignalementItem}>Spam</button>
-            <button onClick={() => { setMotifSignalement('contenu_inapproprie'); signalerUser(); }} style={styles.menuSignalementItem}>Contenu inapproprié</button>
-            <button onClick={() => { setMotifSignalement('autre'); signalerUser(); }} style={styles.menuSignalementItem}>Autre</button>
+            <p style={{ color: '#aaa', fontSize: '13px', margin: '0 0 10px', fontWeight: 'bold' }}>
+              Signaler {conversationActive.autre_user.prenom || conversationActive.autre_user.username}
+            </p>
+            <p style={{ color: '#666', fontSize: '11px', margin: '0 0 10px' }}>
+              Choisis un motif et un message
+            </p>
+            
+            <select 
+              value={motifSignalement} 
+              onChange={(e) => setMotifSignalement(e.target.value)}
+              style={{
+                padding: '8px',
+                borderRadius: '8px',
+                border: '1px solid #2a3942',
+                background: '#1a2a33',
+                color: '#d0d0d0',
+                fontSize: '13px',
+                marginBottom: '10px',
+                width: '100%'
+              }}
+            >
+              <option value="">Choisir un motif...</option>
+              <option value="harcelement">Harcèlement</option>
+              <option value="spam">Spam</option>
+              <option value="contenu_inapproprie">Contenu inapproprié</option>
+              <option value="usurpation">Usurpation d'identité</option>
+              <option value="autre">Autre</option>
+            </select>
+            
+            {/* Derniers messages pour choisir */}
+            <p style={{ color: '#666', fontSize: '11px', margin: '0 0 5px' }}>Derniers messages :</p>
+            <div style={{ maxHeight: '120px', overflowY: 'auto', marginBottom: '10px' }}>
+              {messages.filter(m => m.texte && m.expediteur === conversationActive.autre_user.id).slice(-5).map((m, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setMotifSignalement(motifSignalement || 'autre');
+                    signalerUser();
+                  }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid #2a3942',
+                    borderRadius: '8px',
+                    color: '#d0d0d0',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    marginBottom: '5px'
+                  }}
+                >
+                  {m.texte?.substring(0, 50)}
+                </button>
+              ))}
+            </div>
+            
+            <button 
+              onClick={signalerUser} 
+              style={{
+                padding: '10px',
+                borderRadius: '8px',
+                border: 'none',
+                background: '#dc3545',
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              Envoyer le signalement
+            </button>
           </div>
         )}
 
