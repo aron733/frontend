@@ -61,7 +61,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       
       // Met à jour le user dans le localStorage
       const userLocal = JSON.parse(localStorage.getItem('user') || '{}');
-      userLocal.photo_profil = MEDIA_URL + serveurUrl;
+      userLocal.photo_profil = serveurUrl;
       localStorage.setItem('user', JSON.stringify(userLocal));
       setUserData(userLocal);
       
