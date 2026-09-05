@@ -439,7 +439,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       }} 
                     />
                   )}
-                  {msg.fichier_url && !msg.apercu && (
+                  {msg.fichier_url && !msg.apercu && !msg.est_video && (
                     <a href={msg.fichier_url} download style={{ ...styles.fichierLink, background: estMoi ? '#3b82f6' : '#22c55e', color: '#e9edef' }}>
                       <IconeFichier /> {msg.nom_fichier || 'Fichier'}
                     </a>
