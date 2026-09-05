@@ -67,6 +67,8 @@ function Texto() {
   const [enregistrement, setEnregistrement] = useState(false);
   const [statutAutreUser, setStatutAutreUser] = useState<'en_ligne' | 'hors_ligne'>('hors_ligne');
   const [menuFichier, setMenuFichier] = useState(false);
+  const [menuSignalement, setMenuSignalement] = useState(false);
+  const [motifSignalement, setMotifSignalement] = useState('');
   const [audioEnCours, setAudioEnCours] = useState<number | null>(null);
   const [appelId, setAppelId] = useState<number | null>(null);
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
@@ -333,6 +335,26 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
     }
   };
 
+  const signalerUser = async () => {
+    if (!conversationActive) return;
+    
+    try {
+      await axios.post(
+        `${API_URL}/signaler/`,
+        {
+          user_id: conversationActive.autre_user.id,
+          motif: motifSignalement || 'non_specifie'
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('Signalement envoyé');
+      setMenuSignalement(false);
+      setMotifSignalement('');
+    } catch (err: any) {
+      alert(err.response?.data?.erreur || 'Erreur signalement');
+    }
+  };
+
   const terminerAppel = async (statut = 'termine') => {
     if (appelId) {
       try {
@@ -418,7 +440,24 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
             <p style={{ ...styles.convStatus, color: statutAutreUser === 'en_ligne' ? '#28a745' : '#666' }}>{statutAutreUser === 'en_ligne' ? 'En ligne' : tempsTexte || 'Hors ligne'}</p>
           </div>
           <button onClick={lancerAppel} style={styles.appelBtn}><IconeVideo /></button>
+          <button onClick={() => setMenuSignalement(!menuSignalement)} style={styles.signalementBtn}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffc107" strokeWidth="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
         </div>
+        
+        {menuSignalement && (
+          <div style={styles.menuSignalement}>
+            <p style={{ color: '#aaa', fontSize: '13px', margin: '0 0 10px', fontWeight: 'bold' }}>Signaler {conversationActive.autre_user.prenom} {conversationActive.autre_user.nom}</p>
+            <button onClick={() => { setMotifSignalement('harcelement'); signalerUser(); }} style={styles.menuSignalementItem}>Harcèlement</button>
+            <button onClick={() => { setMotifSignalement('spam'); signalerUser(); }} style={styles.menuSignalementItem}>Spam</button>
+            <button onClick={() => { setMotifSignalement('contenu_inapproprie'); signalerUser(); }} style={styles.menuSignalementItem}>Contenu inapproprié</button>
+            <button onClick={() => { setMotifSignalement('autre'); signalerUser(); }} style={styles.menuSignalementItem}>Autre</button>
+          </div>
+        )}
 
         <div style={styles.messagesArea}>
           {messages.length === 0 && <p style={styles.aucunMsg}>Commence la conversation...</p>}
@@ -734,6 +773,43 @@ const styles = {
   convContainer: { width: '100%', display: 'flex', flexDirection: 'column' as const, background: 'transparent',  },
   convHeader: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 15px', background: 'linear-gradient(180deg, #1a2a33 0%, #111b21 100%)', borderBottom: '1px solid #2a3942', flexShrink: 0, minHeight: '65px', position: 'sticky' as const, top: '55px', zIndex: 50, boxShadow: '0 2px 10px rgba(0,0,0,0.3)' },
   retourBtn: { background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' },
+  signalementBtn: {
+    width: '38px',
+    height: '38px',
+    borderRadius: '50%',
+    border: '1px solid rgba(255,193,7,0.3)',
+    background: 'rgba(255,193,7,0.1)',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  menuSignalement: {
+    position: 'absolute' as const,
+    top: '60px',
+    right: '10px',
+    background: '#1a2a33',
+    border: '1px solid #2a3942',
+    borderRadius: '12px',
+    padding: '12px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '5px',
+    zIndex: 100,
+    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+    minWidth: '180px',
+  },
+  menuSignalementItem: {
+    padding: '10px',
+    background: 'transparent',
+    border: 'none',
+    color: '#d0d0d0',
+    fontSize: '13px',
+    cursor: 'pointer',
+    textAlign: 'left' as const,
+    borderRadius: '8px',
+  },
   appelBtn: { width: '42px', height: '42px', borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(40,167,69,0.4)', flexShrink: 0 },
   messagesArea: { flex: 1, padding: '15px 8px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '8px', background: 'linear-gradient(180deg, #0a1218 0%, #0b141a 100%)', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' as any, scrollbarWidth: 'thin' as any, minHeight: '300px', maxHeight: 'calc(100vh - 200px)' },
   aucunMsg: { color: '#aaa', textAlign: 'center' as const, marginTop: '50px' },
