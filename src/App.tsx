@@ -8,6 +8,37 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Gère le callback Google OAuth
+    const params = new URLSearchParams(window.location.search);
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+    const userId = params.get('user_id');
+    const email = params.get('email');
+    const prenom = params.get('prenom');
+    const nom = params.get('nom');
+    const photo = params.get('photo');
+    
+    if (accessToken && userId) {
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken || '');
+      localStorage.setItem('user', JSON.stringify({
+        user_id: userId,
+        email: email,
+        prenom: prenom,
+        nom: nom,
+        photo_profil: photo,
+      }));
+      
+      // Nettoie l'URL
+      window.history.replaceState({}, document.title, '/');
+      
+      // Redémarre avec le user
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      setUser(userData);
+    }
+  }, []);
+
+  useEffect(() => {
     // Écoute les notifications d'appel entrant
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', (event) => {
