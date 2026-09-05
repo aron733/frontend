@@ -405,38 +405,40 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
               const secondes = duree % 60;
               const dureeTexte = duree > 0 ? `${minutes}:${secondes.toString().padStart(2, '0')}` : '';
               
-              let icone = '';
-              let texte = '';
+              const estManque = statut === 'manque';
+              const estRefuse = statut === 'refuse';
+              const couleur = estManque ? '#dc3545' : estRefuse ? '#dc3545' : '#28a745';
+              const texte = msg.est_sortant 
+                ? (estManque ? 'Appel vidéo manqué' : estRefuse ? 'Appel refusé' : `Appel sortant · ${dureeTexte}`)
+                : (estManque ? 'Appel vidéo manqué' : estRefuse ? 'Appel refusé' : `Appel entrant · ${dureeTexte}`);
               
-              if (statut === 'manque') {
-                icone = '📞';
-                texte = msg.est_sortant ? 'Appel vidéo manqué' : 'Appel vidéo manqué';
-              } else if (statut === 'termine') {
-                icone = '📹';
-                texte = msg.est_sortant ? `Appel vidéo sortant · ${dureeTexte}` : `Appel vidéo entrant · ${dureeTexte}`;
-              } else if (statut === 'refuse') {
-                icone = '📵';
-                texte = msg.est_sortant ? 'Appel refusé' : 'Appel refusé';
-              } else {
-                icone = '📞';
-                texte = 'Appel en cours...';
-              }
+              const IconeAppel = () => (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={couleur} strokeWidth="2" style={{ flexShrink: 0 }}>
+                  {msg.est_sortant ? (
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  ) : (
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" transform="rotate(180 12 12)" />
+                  )}
+                </svg>
+              );
               
               return (
-                <div key={msg.id} style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>
+                <div key={msg.id} style={{ display: 'flex', justifyContent: msg.est_sortant ? 'flex-end' : 'flex-start', padding: '5px 10px' }}>
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
-                    background: 'rgba(255,255,255,0.08)',
-                    borderRadius: '20px',
-                    padding: '6px 15px',
-                    maxWidth: '80%'
+                    gap: '10px',
+                    background: estManque || estRefuse ? 'rgba(220,53,69,0.15)' : 'rgba(40,167,69,0.15)',
+                    border: `1px solid ${couleur}`,
+                    borderRadius: '25px',
+                    padding: '10px 18px',
+                    maxWidth: '85%',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
                   }}>
-                    <span style={{ fontSize: '16px' }}>{icone}</span>
-                    <span style={{ color: '#aaa', fontSize: '13px' }}>{texte}</span>
+                    <IconeAppel />
+                    <span style={{ color: '#fff', fontSize: '15px', fontWeight: 600 }}>{texte}</span>
                     {msg.date_envoi && (
-                      <span style={{ color: '#666', fontSize: '10px' }}>
+                      <span style={{ color: '#999', fontSize: '11px', marginLeft: 'auto' }}>
                         {new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     )}
