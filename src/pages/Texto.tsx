@@ -368,7 +368,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
 
   if (appelVideo && livekitToken && livekitUrl) {
     return (
-      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={true} audio={true} onDisconnected={() => terminerAppel('termine')} data-lk-theme="dark" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', zIndex: 9999, background: '#000', margin: 0, padding: 0 }}>
+      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={cameraOn} audio={microOn} onDisconnected={() => terminerAppel('termine')} data-lk-theme="dark" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', zIndex: 9999, background: '#000', margin: 0, padding: 0 }}>
         <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000' }}>
           {/* Vidéo plein écran */}
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', overflow: 'hidden' }}>
@@ -381,8 +381,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
           <div style={{ 
             display: 'flex', 
             justifyContent: 'center', 
-            gap: '20px', 
-            padding: '20px', 
+            gap: '30px', 
+            padding: '25px', 
             background: 'rgba(0,0,0,0.85)',
             position: 'absolute',
             bottom: 0,
@@ -391,8 +391,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
             zIndex: 10
           }}>
             <button onClick={() => setMicroOn(!microOn)} style={{
-              width: '55px',
-              height: '55px',
+              width: '60px',
+              height: '60px',
               borderRadius: '50%',
               border: 'none',
               background: microOn ? 'rgba(255,255,255,0.15)' : '#dc3545',
@@ -416,8 +416,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
               )}
             </button>
             <button onClick={() => setCameraOn(!cameraOn)} style={{
-              width: '55px',
-              height: '55px',
+              width: '60px',
+              height: '60px',
               borderRadius: '50%',
               border: 'none',
               background: cameraOn ? 'rgba(255,255,255,0.15)' : '#dc3545',
