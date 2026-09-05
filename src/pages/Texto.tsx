@@ -45,6 +45,7 @@ interface Message {
   date_envoi: string;
   apercu?: string;
   lu?: boolean;
+  fichier_type?: string;
 }
 
 function Texto() {
@@ -150,7 +151,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       const msgs = response.data.messages.map((m: any) => ({
         ...m,
         apercu: m.fichier_url && m.fichier_url.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? m.fichier_url :
-                m.fichier_url && m.fichier_url.match(/\.(mp4|webm|mov|avi)$/i) ? 'video' : undefined,
+                m.fichier_url && (m.fichier_url.match(/\.(mp4|webm|mov|avi)$/i) || m.fichier_url.includes('/video/upload/')) ? 'video' : undefined,
         fichier_url: m.fichier_url ? m.fichier_url : undefined,
         audio_url: m.audio_url ? MEDIA_URL + m.audio_url : undefined,
       }));
@@ -205,7 +206,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       fichier_url: apercuLocal,
       nom_fichier: fichier.name,
       date_envoi: new Date().toISOString(),
-      apercu: estImage ? apercuLocal : estVideo ? 'video' : undefined,
+      apercu: estImage ? apercuLocal : estVideo ? 'video_local' : undefined,
+      fichier_type: estImage ? 'image' : estVideo ? 'video' : 'fichier',
     };
     setMessages([...messages, messageTemp]);
     
@@ -415,7 +417,20 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       <span style={{ position: 'absolute', bottom: '8px', right: '8px', fontSize: '10px', color: 'white', background: 'rgba(0,0,0,0.7)', padding: '3px 8px', borderRadius: '10px' }}>{heure}</span>
                     </div>
                   )}
-                  {msg.apercu === 'video' && <video src={msg.fichier_url} controls style={{ maxWidth: '250px', maxHeight: '250px', borderRadius: '15px', boxShadow: '0 3px 10px rgba(0,0,0,0.3)' }} />}
+                  {(msg.apercu === 'video' || msg.apercu === 'video_local' || msg.fichier_type === 'video') && (
+                    <video 
+                      src={msg.fichier_url} 
+                      controls 
+                      style={{ 
+                        maxWidth: '100%', 
+                        maxHeight: '300px', 
+                        width: 'auto', 
+                        borderRadius: '15px', 
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
+                        border: '1px solid rgba(255,255,255,0.1)'
+                      }} 
+                    />
+                  )}
                   {msg.fichier_url && !msg.apercu && (
                     <a href={msg.fichier_url} download style={{ ...styles.fichierLink, background: estMoi ? '#3b82f6' : '#22c55e', color: '#e9edef' }}>
                       <IconeFichier /> {msg.nom_fichier || 'Fichier'}
