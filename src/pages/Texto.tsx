@@ -113,7 +113,7 @@ function Texto() {
         apercu: m.fichier_url && m.fichier_url.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? MEDIA_URL + m.fichier_url :
                 m.fichier_url && m.fichier_url.match(/\.(mp4|webm|mov|avi)$/i) ? 'video' : undefined,
         fichier_url: m.fichier_url ? MEDIA_URL + m.fichier_url : undefined,
-        audio_url: m.audio_url ? 'http://127.0.0.1:8000' + m.audio_url : undefined,
+        audio_url: m.audio_url ? MEDIA_URL + m.audio_url : undefined,
       }));
       setMessages(msgs);
     } catch (err) {
@@ -310,7 +310,7 @@ function Texto() {
             const heure = msg.date_envoi ? new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
             return (
               <div key={msg.id} style={{ ...styles.msgRow, justifyContent: estMoi ? 'flex-end' : 'flex-start' }}>
-                {!estMoi && (photoAutre ? <img src={photoAutre} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', marginRight: '8px' }} alt="" /> : null)}
+                {!estMoi && (photoAutre ? <img src={photoAutre} className="avatar-mini" style={{ marginRight: '8px' }} alt="" /> : null)}
                 <div style={{ maxWidth: '78%' }}>
                   {msg.texte && (
                     <div style={{
@@ -356,7 +356,7 @@ function Texto() {
                     </div>
                   )}
                 </div>
-                {estMoi && userPhoto && <img src={userPhoto} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', marginLeft: '8px' }} alt="" />}
+                {estMoi && userPhoto && <img src={userPhoto} className="avatar-mini" style={{ marginLeft: '8px' }} alt="" />}
               </div>
             );
           })}
@@ -449,23 +449,23 @@ const styles = {
   convDernier: { color: '#aaa', margin: '5px 0 0', fontSize: '13px', whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' },
   convStatus: { color: '#28a745', margin: 0, fontSize: '12px' },
   aucunResultat: { color: '#aaa', textAlign: 'center' as const, marginTop: '30px' },
-  convContainer: { maxWidth: '500px', width: '100%', height: '70vh', display: 'flex', flexDirection: 'column' as const, background: 'rgba(255,255,255,0.05)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' },
-  convHeader: { display: 'flex', alignItems: 'center', gap: '12px', padding: '15px', background: 'rgba(0,0,0,0.5)', borderBottom: '1px solid rgba(255,255,255,0.1)' },
+  convContainer: { maxWidth: '500px', width: '100%', height: 'calc(100vh - 120px)', minHeight: '400px', display: 'flex', flexDirection: 'column' as const, background: 'rgba(255,255,255,0.05)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' },
+  convHeader: { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#111b21', borderBottom: '1px solid #222d34', flexShrink: 0 },
   retourBtn: { background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' },
   appelBtn: { width: '40px', height: '40px', borderRadius: '50%', border: 'none', background: '#28a745', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  messagesArea: { flex: 1, padding: '15px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '8px', background: '#0b141a' },
+  messagesArea: { flex: 1, padding: '15px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '8px', background: '#0b141a', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' },
   aucunMsg: { color: '#aaa', textAlign: 'center' as const, marginTop: '50px' },
   msgRow: { display: 'flex', alignItems: 'flex-end' },
   msgBubble: { maxWidth: '100%', padding: '8px 12px', borderRadius: '15px', fontSize: '14px', color: 'white', lineHeight: 1.4, boxShadow: '0 1px 0 rgba(0,0,0,0.13)' },
   audioBubble: { display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', borderRadius: '15px' },
   audioDuree: { color: 'white', fontSize: '11px' },
   fichierLink: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: '#2a2a3e', color: '#667eea', borderRadius: '10px', textDecoration: 'none', fontSize: '14px' },
-  saisieArea: { display: 'flex', alignItems: 'center', gap: '10px', padding: '15px', background: 'rgba(0,0,0,0.5)', borderTop: '1px solid rgba(255,255,255,0.1)' },
-  fichierBtn: { width: '40px', height: '40px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  microBtn: { width: '40px', height: '40px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  saisieArea: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: '#111b21', borderTop: '1px solid #222d34', flexShrink: 0, position: 'sticky', bottom: 0, zIndex: 10 },
+  fichierBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  microBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stopBtn: { height: '40px', padding: '0 12px', borderRadius: '20px', border: 'none', background: '#dc3545', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold', fontSize: '13px', flexShrink: 0 },
-  saisieInput: { flex: 1, padding: '12px 15px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '14px', outline: 'none' },
-  envoyerBtn: { width: '40px', height: '40px', borderRadius: '50%', border: 'none', background: '#667eea', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  saisieInput: { flex: 1, padding: '10px 15px', borderRadius: '20px', border: 'none', background: '#2a3942', color: 'white', fontSize: '14px', outline: 'none', minWidth: 0 },
+  envoyerBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: '#667eea', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   raccrocher: { position: 'absolute' as const, bottom: '100px', right: '20px', width: '50px', height: '50px', borderRadius: '50%', border: 'none', background: '#dc3545', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 },
 };
 

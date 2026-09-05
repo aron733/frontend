@@ -127,3 +127,43 @@ img.avatar-conv {
   display: block;
   background: #667eea;
 }
+
+/* Avatars uniformes */
+.avatar-mini {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  background: #667eea;
+  display: block;
+}
+
+.avatar-conv {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  flex-shrink: 0;
+  background: #667eea;
+  display: block;
+}
+
+/* Fix photos */
+img.avatar-mini,
+img.avatar-conv {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Scrollbar whatsapp-like */
+.messagesArea::-webkit-scrollbar {
+  width: 5px;
+}
+
+.messagesArea::-webkit-scrollbar-thumb {
+  background: #2a3942;
+  border-radius: 10px;
+}
