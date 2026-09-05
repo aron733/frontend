@@ -11,15 +11,17 @@ import '@livekit/components-styles';
 import { API_URL } from '../config';
 
 function Visio() {
-  const [roomName, setRoomName] = useState('ma-salle');
+  const [code, setCode] = useState('');
   const [token, setToken] = useState('');
   const [url, setUrl] = useState('');
   const [erreur, setErreur] = useState('');
   const [connecte, setConnecte] = useState(false);
   const [username, setUsername] = useState('');
+  const [participants, setParticipants] = useState(1);
+  const [codeCree, setCodeCree] = useState('');
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
 
-  const rejoindreRoom = async () => {
+  const creerRoom = async () => {
     setErreur('');
     const accessToken = localStorage.getItem('access_token');
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -30,20 +32,61 @@ function Visio() {
     }
 
     setUserPhoto(userData.photo_profil || null);
+    setUsername(userData.prenom || userData.username || 'User');
 
     try {
       const response = await axios.post(
-        `${API_URL}/livekit/token/`,
-        { room_name: roomName },
+        `${API_URL}/visio/creer-room/`,
+        {},
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      
+      setCodeCree(response.data.code);
+      setCode(response.data.code);
+      setParticipants(response.data.participants);
+    } catch (err: any) {
+      setErreur(err.response?.data?.erreur || 'Erreur création room');
+    }
+  };
+
+  const rejoindreRoom = async () => {
+    setErreur('');
+    const accessToken = localStorage.getItem('access_token');
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    if (!accessToken) {
+      setErreur('Tu dois être connecté');
+      return;
+    }
+    
+    if (!code.trim()) {
+      setErreur('Entre un code');
+      return;
+    }
+
+    setUserPhoto(userData.photo_profil || null);
+    setUsername(userData.prenom || userData.username || 'User');
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/visio/rejoindre/`,
+        { code: code.trim() },
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
       
       setToken(response.data.token);
       setUrl(response.data.url);
-      setUsername(response.data.username);
+      setParticipants(response.data.participants);
       setConnecte(true);
     } catch (err: any) {
-      setErreur(err.response?.data?.erreur || 'Erreur LiveKit');
+      setErreur(err.response?.data?.erreur || 'Erreur');
+    }
+  };
+
+  const copierCode = () => {
+    if (codeCree) {
+      navigator.clipboard.writeText(codeCree);
+      alert('Code copié !');
     }
   };
 
@@ -102,21 +145,65 @@ function Visio() {
   return (
     <div style={styles.landingContainer}>
       <div style={styles.landingCard}>
-        <div style={styles.landingIcon}>🎥</div>
-        <h1 style={styles.landingTitle}>Visioconférence</h1>
-        <p style={styles.landingSubtitle}>Rejoins une room et discute en vidéo</p>
+        <div style={styles.landingIcon}>
+          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2">
+            <polygon points="23 7 16 12 23 17 23 7"/>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+          </svg>
+        </div>
+        <h1 style={styles.landingTitle}>Visio</h1>
+        <p style={styles.landingSubtitle}>Crée ou rejoins une visio avec un code</p>
         
-        <input
-          type="text"
-          placeholder="Nom de la room"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          style={styles.landingInput}
-        />
+        {codeCree && (
+          <div style={styles.codeDisplay}>
+            <p style={styles.codeLabel}>CODE DE LA VISIO :</p>
+            <p style={styles.codeValue}>{codeCree}</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button onClick={copierCode} style={styles.copierBtn}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copier
+              </button>
+              <button onClick={rejoindreRoom} style={styles.rejoindreBtn}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                  <polygon points="23 7 16 12 23 17 23 7"/>
+                  <rect x="1" y="5" width="15" height="14" rx="2"/>
+                </svg>
+                Rejoindre
+              </button>
+            </div>
+            <p style={{ color: '#666', fontSize: '12px', marginTop: '10px' }}>
+              Valable 15 min · {participants}/5 participants
+            </p>
+          </div>
+        )}
         
-        <button onClick={rejoindreRoom} style={styles.landingButton}>
-          🚀 Rejoindre la room
-        </button>
+        {!codeCree && (
+          <>
+            <button onClick={creerRoom} style={styles.landingButton}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" style={{ display: 'inline', verticalAlign: 'middle', marginRight: '8px' }}>
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Créer une visio
+            </button>
+            
+            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+              <input
+                type="text"
+                placeholder="Entrer un code"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                style={{ ...styles.landingInput, flex: 1, marginBottom: 0 }}
+              />
+              <button onClick={rejoindreRoom} style={styles.rejoindreBtn}>
+                Rejoindre
+              </button>
+            </div>
+          </>
+        )}
 
         {erreur && <p style={styles.landingError}>{erreur}</p>}
       </div>
@@ -261,6 +348,42 @@ const styles = {
     color: 'white',
     fontSize: '18px',
     fontWeight: 'bold',
+    cursor: 'pointer',
+  },
+  codeDisplay: {
+    background: 'rgba(102,126,234,0.15)',
+    border: '1px solid #667eea',
+    borderRadius: '15px',
+    padding: '20px',
+    marginBottom: '20px',
+    textAlign: 'center' as const,
+  },
+  codeLabel: { color: '#aaa', fontSize: '11px', textTransform: 'uppercase' as const, margin: 0 },
+  codeValue: { color: '#667eea', fontSize: '24px', fontWeight: 900 as const, letterSpacing: '2px', margin: '10px 0' },
+  copierBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '10px 20px',
+    borderRadius: '10px',
+    border: 'none',
+    background: '#667eea',
+    color: 'white',
+    fontSize: '13px',
+    fontWeight: 'bold' as const,
+    cursor: 'pointer',
+  },
+  rejoindreBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    padding: '10px 20px',
+    borderRadius: '10px',
+    border: 'none',
+    background: '#28a745',
+    color: 'white',
+    fontSize: '13px',
+    fontWeight: 'bold' as const,
     cursor: 'pointer',
   },
   landingError: {
