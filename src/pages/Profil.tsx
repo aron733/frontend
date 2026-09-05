@@ -12,7 +12,14 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'texto' | 'news'>('profil');
   const [userData, setUserData] = useState(user);
-  const [photoUrl, setPhotoUrl] = useState<string | null>(user.photo_profil || null);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      const userData = JSON.parse(stored);
+      return userData.photo_profil || null;
+    }
+    return user.photo_profil || null;
+  });
   const [uploading, setUploading] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const token = localStorage.getItem('access_token');
@@ -50,6 +57,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       // Met à jour l'URL avec la vraie URL du serveur
       const serveurUrl = response.data.photo_url;
       setPhotoUrl(serveurUrl);
+      console.log('Photo sauvegardée:', serveurUrl);
       
       // Met à jour le user dans le localStorage
       const userLocal = JSON.parse(localStorage.getItem('user') || '{}');
