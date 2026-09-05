@@ -428,7 +428,7 @@ function Texto() {
 }
 
 const styles = {
-  container: { padding: '0', maxWidth: '100%', width: '100%', minHeight: '100dvh', display: 'flex', flexDirection: 'column' as const, background: '#0b141a',  },
+  container: { padding: '0', maxWidth: '100%', width: '100%', display: 'flex', flexDirection: 'column' as const, background: 'transparent',  },
   headerListe: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 15px', background: '#111b21', flexShrink: 0, borderBottom: '1px solid #222d34', height: '55px',  },
   titre: { color: 'white', fontSize: '24px', margin: 0 },
   nouveauBtn: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', borderRadius: '10px', border: 'none', background: '#667eea', color: 'white', fontWeight: 'bold', cursor: 'pointer' },
@@ -449,7 +449,7 @@ const styles = {
   convDernier: { color: '#aaa', margin: '5px 0 0', fontSize: '13px', whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' },
   convStatus: { color: '#28a745', margin: 0, fontSize: '12px' },
   aucunResultat: { color: '#aaa', textAlign: 'center' as const, marginTop: '30px' },
-  convContainer: { width: '100%', minHeight: '100dvh', display: 'flex', flexDirection: 'column' as const, background: '#0b141a',  },
+  convContainer: { width: '100%', display: 'flex', flexDirection: 'column' as const, background: 'transparent',  },
   convHeader: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 15px', background: '#111b21', borderBottom: '1px solid #222d34', flexShrink: 0, minHeight: '60px' },
   retourBtn: { background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' },
   appelBtn: { width: '40px', height: '40px', borderRadius: '50%', border: 'none', background: '#28a745', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
