@@ -18,8 +18,34 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [erreur, setErreur] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [indicatif, setIndicatif] = useState('+226');
+  const [paysAuto, setPaysAuto] = useState('Burkina Faso');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
   const [showPolitique, setShowPolitique] = useState(false);
+
+  const indicatifs = [
+    { code: '+226', pays: 'Burkina Faso', drapeau: '🇧🇫' },
+    { code: '+223', pays: 'Mali', drapeau: '🇲🇱' },
+    { code: '+227', pays: 'Niger', drapeau: '🇳🇪' },
+    { code: '+225', pays: "Côte d'Ivoire", drapeau: '🇨🇮' },
+    { code: '+221', pays: 'Sénégal', drapeau: '🇸🇳' },
+    { code: '+229', pays: 'Bénin', drapeau: '🇧🇯' },
+    { code: '+228', pays: 'Togo', drapeau: '🇹🇬' },
+    { code: '+33', pays: 'France', drapeau: '🇫🇷' },
+    { code: '+1', pays: 'USA/Canada', drapeau: '🇺🇸' },
+    { code: '+44', pays: 'Royaume-Uni', drapeau: '🇬🇧' },
+  ];
+
+  const changerIndicatif = (code: string, pays: string) => {
+    setIndicatif(code);
+    setPaysAuto(pays);
+    setForm({ ...form, pays });
+  };
+
+  const formaterNumero = (valeur: string) => {
+    const chiffres = valeur.replace(/\D/g, '').slice(0, 8);
+    return chiffres.replace(/(\d{2})(?=\d)/g, '$1 ');
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -125,7 +151,30 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
                 <option value="F">Féminin</option>
                 <option value="A">Autre</option>
               </select>
-              <input type="text" name="numero" placeholder="Numéro" onChange={handleChange} required style={styles.input} />
+              <div style={{ display: 'flex', gap: '8px' }}>
+              <select 
+                value={indicatif} 
+                onChange={(e) => {
+                  const paysTrouve = indicatifs.find(i => i.code === e.target.value);
+                  changerIndicatif(e.target.value, paysTrouve?.pays || '');
+                }}
+                style={{ ...styles.input, width: '110px', flexShrink: 0 }}
+              >
+                {indicatifs.map((ind) => (
+                  <option key={ind.code} value={ind.code}>{ind.drapeau} {ind.code}</option>
+                ))}
+              </select>
+              <input 
+                type="text" 
+                name="numero" 
+                placeholder="XX XX XX XX" 
+                value={form.numero}
+                onChange={(e) => setForm({ ...form, numero: formaterNumero(e.target.value) })}
+                required 
+                style={styles.input}
+                maxLength={11}
+              />
+            </div>
               <input type="email" name="email" placeholder="Email" onChange={handleChange} required style={styles.input} />
 
               <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required style={styles.input} />
