@@ -372,20 +372,21 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       borderBottomLeftRadius: estMoi ? '18px' : '6px',
                       display: 'flex',
                       alignItems: 'flex-end',
-                      gap: '8px',
+                      justifyContent: 'space-between',
+                      gap: '6px',
                     }}>
                       <span>{msg.texte}</span>
-                      <span style={{ fontSize: '11px', color: estMoi ? '#dbeafe' : '#dcfce7', whiteSpace: 'nowrap', marginLeft: '5px' }}>
-                        {heure}
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: estMoi ? '#bfdbfe' : '#bbf7d0', whiteSpace: 'nowrap', marginLeft: '8px', flexShrink: 0 }}>
+                        <span>{heure}</span>
                         {estMoi && (
-                          <span style={{ marginLeft: '3px', color: msg.lu ? '#53bdeb' : '#8696a0' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', color: msg.lu ? '#60a5fa' : '#9ca3af' }}>
                             {msg.lu ? (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'inline' }}>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'block' }}>
                                 <path d="M1 13l4 4L15 7" />
                                 <path d="M9 13l4 4L23 7" />
                               </svg>
                             ) : (
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'inline' }}>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'block' }}>
                                 <path d="M1 13l4 4L15 7" />
                               </svg>
                             )}
@@ -395,9 +396,23 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     </div>
                   )}
                   {msg.apercu && msg.apercu !== 'video' && (
-                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }} onClick={() => window.open(msg.apercu, '_blank')}>
-                      <img src={msg.apercu} style={{ maxWidth: '250px', maxHeight: '250px', width: '100%', height: 'auto', borderRadius: '15px', objectFit: 'cover', display: 'block', boxShadow: '0 3px 10px rgba(0,0,0,0.3)' }} alt="aperçu" />
-                      <span style={{ position: 'absolute', bottom: '8px', right: '8px', fontSize: '10px', color: 'white', background: 'rgba(0,0,0,0.6)', padding: '3px 8px', borderRadius: '10px' }}>{heure}</span>
+                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%' }} onClick={() => window.open(msg.apercu, '_blank')}>
+                      <img 
+                        src={msg.apercu} 
+                        style={{ 
+                          maxWidth: '100%', 
+                          maxHeight: '300px', 
+                          width: 'auto', 
+                          height: 'auto', 
+                          borderRadius: '15px', 
+                          objectFit: 'contain', 
+                          display: 'block', 
+                          boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
+                          border: '1px solid rgba(255,255,255,0.1)'
+                        }} 
+                        alt="aperçu" 
+                      />
+                      <span style={{ position: 'absolute', bottom: '8px', right: '8px', fontSize: '10px', color: 'white', background: 'rgba(0,0,0,0.7)', padding: '3px 8px', borderRadius: '10px' }}>{heure}</span>
                     </div>
                   )}
                   {msg.apercu === 'video' && <video src={msg.fichier_url} controls style={{ maxWidth: '250px', maxHeight: '250px', borderRadius: '15px', boxShadow: '0 3px 10px rgba(0,0,0,0.3)' }} />}
