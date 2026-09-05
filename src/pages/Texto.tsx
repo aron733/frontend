@@ -367,12 +367,51 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
 
   if (appelVideo && livekitToken && livekitUrl) {
     return (
-      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={true} audio={true} onDisconnected={() => terminerAppel('termine')} data-lk-theme="dark">
-        <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
-          <VideoConference />
+      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={true} audio={true} onDisconnected={() => terminerAppel('termine')} data-lk-theme="dark" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', zIndex: 9999, background: '#000', margin: 0, padding: 0 }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000' }}>
+          {/* Vidéo plein écran */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', overflow: 'hidden' }}>
+            <VideoConference />
+          </div>
+          
           <RoomAudioRenderer />
-          <ControlBar />
-          <button onClick={() => terminerAppel('termine')} style={styles.raccrocher}><IconeRaccrocher /></button>
+          
+          {/* Boutons de contrôle en bas */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            gap: '25px', 
+            padding: '20px', 
+            background: 'rgba(0,0,0,0.7)',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10
+          }}>
+            <ControlBar controls={{ microphone: true, camera: true, screenShare: false, chat: false, leave: false }} />
+          </div>
+          
+          {/* Bouton raccrocher */}
+          <button onClick={() => terminerAppel('termine')} style={{
+            position: 'absolute',
+            bottom: '90px',
+            right: '20px',
+            width: '55px',
+            height: '55px',
+            borderRadius: '50%',
+            border: 'none',
+            background: '#dc3545',
+            color: 'white',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 5px 20px rgba(220,53,69,0.5)',
+            zIndex: 20
+          }}>
+            <IconeRaccrocher />
+          </button>
         </div>
       </LiveKitRoom>
     );
