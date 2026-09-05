@@ -204,7 +204,6 @@ const styles = {
     flexDirection: 'column' as const,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100vh',
     minHeight: '100dvh',
     background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
     padding: '15px',
