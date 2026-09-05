@@ -107,6 +107,18 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
     setConversationActive(conv);
     setVue('conversation');
     verifierStatut(conv.autre_user.id);
+    
+    // Marque les messages comme lus
+    try {
+      await axios.post(
+        `${API_URL}/conversations/${conv.id}/marquer-lus/`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.log('Erreur marquage lu');
+    }
+    
     try {
       const response = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -341,11 +353,17 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       <span style={{ fontSize: '11px', color: estMoi ? '#dbeafe' : '#dcfce7', whiteSpace: 'nowrap', marginLeft: '5px' }}>
                         {heure}
                         {estMoi && (
-                          <span style={{ marginLeft: '3px', color: '#93c5fd' }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: 'inline' }}>
-                              <path d="M18 7l-10 10-5-5" />
-                              <path d="M22 7l-10 10-5-5" transform="translate(2)" />
-                            </svg>
+                          <span style={{ marginLeft: '3px', color: msg.lu ? '#53bdeb' : '#8696a0' }}>
+                            {msg.lu ? (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'inline' }}>
+                                <path d="M1 13l4 4L15 7" />
+                                <path d="M9 13l4 4L23 7" />
+                              </svg>
+                            ) : (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'inline' }}>
+                                <path d="M1 13l4 4L15 7" />
+                              </svg>
+                            )}
                           </span>
                         )}
                       </span>
