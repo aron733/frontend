@@ -19,7 +19,6 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [indicatif, setIndicatif] = useState('+226');
-  const [, setPaysAuto] = useState('Burkina Faso');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
   const [showPolitique, setShowPolitique] = useState(false);
 
