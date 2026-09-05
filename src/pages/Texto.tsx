@@ -397,7 +397,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       </span>
                     </div>
                   )}
-                  {msg.apercu && msg.apercu !== 'video' && (
+                  {msg.apercu && msg.apercu !== 'video' && msg.apercu !== 'video_local' && msg.fichier_type !== 'video' && (
                     <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%' }} onClick={() => window.open(msg.apercu, '_blank')}>
                       <img 
                         src={msg.apercu} 
@@ -540,7 +540,7 @@ const styles = {
   convHeader: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 15px', background: 'linear-gradient(180deg, #1a2a33 0%, #111b21 100%)', borderBottom: '1px solid #2a3942', flexShrink: 0, minHeight: '65px', position: 'sticky' as const, top: '0', zIndex: 30, boxShadow: '0 2px 10px rgba(0,0,0,0.3)' },
   retourBtn: { background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' },
   appelBtn: { width: '42px', height: '42px', borderRadius: '50%', border: 'none', background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(40,167,69,0.4)', flexShrink: 0 },
-  messagesArea: { flex: 1, padding: '15px 8px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '8px', background: 'linear-gradient(180deg, #0a1218 0%, #0b141a 100%)', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' as any, scrollbarWidth: 'thin' as any },
+  messagesArea: { flex: 1, padding: '15px 8px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '8px', background: 'linear-gradient(180deg, #0a1218 0%, #0b141a 100%)', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' as any, scrollbarWidth: 'thin' as any, minHeight: 0 },
   aucunMsg: { color: '#aaa', textAlign: 'center' as const, marginTop: '50px' },
   msgRow: { display: 'flex', alignItems: 'flex-end', width: '100%', flexShrink: 0, padding: '0 5px' },
   msgBubble: { maxWidth: '85%', padding: '10px 14px', borderRadius: '18px', fontSize: '16px', color: 'white', lineHeight: 1.4, boxShadow: '0 2px 4px rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)' },
