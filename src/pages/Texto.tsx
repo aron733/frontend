@@ -381,26 +381,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
             <ControlBar />
           </div>
           
-          {/* Bouton raccrocher */}
-          <button onClick={() => terminerAppel('termine')} style={{
-            position: 'absolute',
-            bottom: '100px',
-            right: '20px',
-            width: '55px',
-            height: '55px',
-            borderRadius: '50%',
-            border: 'none',
-            background: '#dc3545',
-            color: 'white',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 5px 20px rgba(220,53,69,0.5)',
-            zIndex: 20
-          }}>
-            <IconeRaccrocher />
-          </button>
+
         </div>
       </LiveKitRoom>
     );
