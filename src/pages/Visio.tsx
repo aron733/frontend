@@ -110,7 +110,7 @@ function Visio() {
           <div style={styles.roomHeader}>
             <div style={styles.roomInfo}>
               <span style={styles.roomDot}>🔴</span>
-              <span style={styles.roomName}>{roomName}</span>
+              <span style={styles.roomName}>{code}</span>
               <span style={styles.roomBadge}>LIVE</span>
             </div>
             <div style={styles.participantInfo}>
