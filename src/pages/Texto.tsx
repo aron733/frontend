@@ -66,7 +66,8 @@ function Texto() {
   const timerRef = useRef<any>(null);
 
   const token = localStorage.getItem('access_token');
-  const userId = parseInt(localStorage.getItem('user_id') || '0');
+  const userDataLocal = JSON.parse(localStorage.getItem('user') || '{}');
+const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
   const userPhoto = JSON.parse(localStorage.getItem('user') || '{}').photo_profil || null;
 
   useEffect(() => {
