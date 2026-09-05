@@ -227,7 +227,7 @@ const styles = {
     alignItems: 'flex-start',
     width: '100%',
     maxWidth: '500px',
-    padding: '10px 10px 45px 10px',
+    padding: '10px 10px 60px 10px',
   },
   chatCard: {
     background: 'rgba(255,255,255,0.05)',
