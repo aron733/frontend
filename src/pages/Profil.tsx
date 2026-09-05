@@ -21,6 +21,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     return user.photo_profil || null;
   });
   const [uploading, setUploading] = useState(false);
+  const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
+  const [compteRebours, setCompteRebours] = useState(3);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const token = localStorage.getItem('access_token');
 
@@ -29,6 +31,27 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
     onLogout();
+  };
+
+  const confirmerDeconnexion = () => {
+    setConfirmDeconnexion(true);
+    setCompteRebours(3);
+    
+    const interval = setInterval(() => {
+      setCompteRebours((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          deconnexion();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const annulerDeconnexion = () => {
+    setConfirmDeconnexion(false);
+    setCompteRebours(3);
   };
 
   const uploadPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,7 +175,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <button onClick={async () => { await demanderPermissionNotifications(); envoyerNotificationTest(); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg> Notifications
           </button>
-          <button onClick={deconnexion} style={{ ...styles.menuItem, color: '#dc3545' }}>
+          <button onClick={confirmerDeconnexion} style={{ ...styles.menuItem, color: '#dc3545' }}>
             <IconeDeconnexion /> Déconnexion
           </button>
         </div>
@@ -210,6 +233,24 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         {pageActive === 'visio' && <Visio />}
         {pageActive === 'news' && <News />}
       </main>
+
+      {/* Modal de confirmation déconnexion */}
+      {confirmDeconnexion && (
+        <div style={styles.overlayConfirmation} onClick={annulerDeconnexion}>
+          <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
+            <p style={styles.modalTexte}>Se déconnecter ?</p>
+            <p style={styles.modalCompteRebours}>Déconnexion dans {compteRebours}s</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <button onClick={annulerDeconnexion} style={styles.modalBtnAnnuler}>
+                Annuler
+              </button>
+              <button onClick={deconnexion} style={styles.modalBtnConfirmer}>
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -229,6 +270,50 @@ const styles = {
   cameraBtn: { position: 'absolute' as const, bottom: '0', right: '0', width: '35px', height: '35px', borderRadius: '50%', border: '2px solid white', background: '#667eea', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   nom: { color: 'white', fontSize: '26px', margin: '0 0 5px' },
   pseudo: { color: '#aaa', margin: '0 0 30px' },
+  overlayConfirmation: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.7)',
+    zIndex: 2000,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px',
+  },
+  modalConfirmation: {
+    background: '#1a1a2e',
+    border: '1px solid #2a2a3e',
+    borderRadius: '20px',
+    padding: '25px',
+    maxWidth: '300px',
+    width: '100%',
+    textAlign: 'center' as const,
+    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+  },
+  modalTexte: { color: 'white', fontSize: '18px', fontWeight: 'bold' as const, margin: '0 0 10px' },
+  modalCompteRebours: { color: '#666', fontSize: '13px', margin: '0 0 20px' },
+  modalBtnAnnuler: {
+    padding: '10px 20px',
+    borderRadius: '10px',
+    border: '1px solid #2a2a3e',
+    background: 'transparent',
+    color: '#aaa',
+    fontSize: '14px',
+    cursor: 'pointer',
+  },
+  modalBtnConfirmer: {
+    padding: '10px 20px',
+    borderRadius: '10px',
+    border: 'none',
+    background: '#dc3545',
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 'bold' as const,
+    cursor: 'pointer',
+  },
   infoGrid: { display: 'flex', flexDirection: 'column' as const, gap: '12px' },
   infoItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' },
   infoLabel: { color: '#aaa', fontSize: '14px' },
