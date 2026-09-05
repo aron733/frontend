@@ -6,7 +6,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [mode, setMode] = useState<'inscription' | 'connexion'>('connexion');
   const [form, setForm] = useState({
-    username: '',
     email: '',
     password: '',
     prenom: '',
@@ -128,7 +127,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               </select>
               <input type="text" name="numero" placeholder="Numéro" onChange={handleChange} style={styles.input} />
               <input type="email" name="email" placeholder="Email" onChange={handleChange} required style={styles.input} />
-              <input type="text" name="username" placeholder="Pseudo" onChange={handleChange} required style={styles.input} />
+
               <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required style={styles.input} />
               <button type="submit" disabled={loading} style={styles.submitButton}>
                 {loading ? '...' : "S'inscrire"}
