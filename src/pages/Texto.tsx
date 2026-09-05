@@ -456,9 +456,21 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       marginLeft: estMoi ? 'auto' : '0',
                       marginRight: estMoi ? '0' : 'auto'
                     }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style={{ flexShrink: 0 }}>
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
+                      <button onClick={(e) => {
+                        e.stopPropagation();
+                        const audio = e.currentTarget.parentElement?.querySelector('audio');
+                        if (audio) {
+                          if (audio.paused) {
+                            audio.play();
+                          } else {
+                            audio.pause();
+                          }
+                        }
+                      }} style={{ background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, padding: 0 }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </button>
                       <div style={{ flex: 1, height: '20px', display: 'flex', alignItems: 'center', gap: '2px' }}>
                         {[4, 7, 10, 6, 9, 5, 8, 11, 7, 9, 6, 10, 8, 5, 7, 9, 6, 8, 10, 7, 5, 8, 6, 9].map((h, i) => (
                           <div key={i} style={{ width: '3px', height: `${h}px`, background: 'rgba(255,255,255,0.8)', borderRadius: '2px' }} />
@@ -469,19 +481,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       </span>
                       <audio 
                         src={msg.audio_local || msg.audio_url} 
-                        style={{ display: 'none' }} 
-                        onPlay={(e) => {
-                          const container = e.currentTarget.parentElement;
-                          if (container) {
-                            container.style.opacity = '0.8';
-                          }
-                        }}
-                        onPause={(e) => {
-                          const container = e.currentTarget.parentElement;
-                          if (container) {
-                            container.style.opacity = '1';
-                          }
-                        }}
+                        style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }} 
+                        controls
                       />
                     </div>
                   )}
