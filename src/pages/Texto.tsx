@@ -65,6 +65,7 @@ function Texto() {
   const [statutAutreUser, setStatutAutreUser] = useState<'en_ligne' | 'hors_ligne'>('hors_ligne');
   const [menuFichier, setMenuFichier] = useState(false);
   const [audioEnCours, setAudioEnCours] = useState<number | null>(null);
+  const [appelId, setAppelId] = useState<number | null>(null);
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -312,6 +313,14 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
     if (!conversationActive) return;
     const roomName = `p2p-${Math.min(conversationActive.autre_user.id, userId)}-${Math.max(conversationActive.autre_user.id, userId)}`;
     try {
+      // Crée l'appel dans la base
+      const appelRes = await axios.post(
+        `${API_URL}/appels/creer/`,
+        { user2_id: conversationActive.autre_user.id, room_name: roomName },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAppelId(appelRes.data.appel_id);
+      
       const res = await axios.post(`${API_URL}/livekit/token/`, { room_name: roomName }, { headers: { Authorization: `Bearer ${token}` } });
       setLivekitToken(res.data.token);
       setLivekitUrl(res.data.url);
@@ -319,6 +328,24 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
     } catch (err) {
       alert('Erreur appel');
     }
+  };
+
+  const terminerAppel = async (statut = 'termine') => {
+    if (appelId) {
+      try {
+        await axios.post(
+          `${API_URL}/appels/terminer/`,
+          { appel_id: appelId, statut },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.log('Erreur terminaison appel');
+      }
+    }
+    setAppelVideo(false);
+    setLivekitToken('');
+    setLivekitUrl('');
+    setAppelId(null);
   };
 
   const Ic = ({ children, size = 20 }: any) => (
@@ -336,12 +363,12 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
 
   if (appelVideo && livekitToken && livekitUrl) {
     return (
-      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={true} audio={true} onDisconnected={() => setAppelVideo(false)} data-lk-theme="dark">
+      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={true} audio={true} onDisconnected={() => terminerAppel('termine')} data-lk-theme="dark">
         <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
           <VideoConference />
           <RoomAudioRenderer />
           <ControlBar />
-          <button onClick={() => setAppelVideo(false)} style={styles.raccrocher}><IconeRaccrocher /></button>
+          <button onClick={() => terminerAppel('termine')} style={styles.raccrocher}><IconeRaccrocher /></button>
         </div>
       </LiveKitRoom>
     );
