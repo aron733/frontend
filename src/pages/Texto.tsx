@@ -376,10 +376,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
           
           <RoomAudioRenderer />
           
-          {/* Contrôles LiveKit par défaut */}
-          <div style={{ position: 'absolute', bottom: '15px', left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
-            <ControlBar />
-          </div>
+
           
 
         </div>
