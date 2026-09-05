@@ -453,7 +453,7 @@ const styles = {
   convHeader: { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#111b21', borderBottom: '1px solid #222d34', flexShrink: 0 },
   retourBtn: { background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' },
   appelBtn: { width: '40px', height: '40px', borderRadius: '50%', border: 'none', background: '#28a745', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  messagesArea: { flex: 1, padding: '10px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '6px', background: '#0b141a', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' },
+  messagesArea: { flex: 1, padding: '10px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '6px', background: '#0b141a', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' as any },
   aucunMsg: { color: '#aaa', textAlign: 'center' as const, marginTop: '50px' },
   msgRow: { display: 'flex', alignItems: 'flex-end' },
   msgBubble: { maxWidth: '85%', padding: '8px 12px', borderRadius: '15px', fontSize: '14px', color: 'white', lineHeight: 1.4, boxShadow: '0 1px 0 rgba(0,0,0,0.13)' },
