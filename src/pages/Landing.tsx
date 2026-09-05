@@ -122,6 +122,31 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         {message && <p style={styles.success}>{message}</p>}
         {erreur && <p style={styles.error}>{erreur}</p>}
       </div>
+
+      {/* Bandeau cookies RGPD */}
+      <div style={styles.cookieBanner}>
+        <p style={styles.cookieText}>
+          VOKYVO LABS utilise des cookies essentiels pour améliorer ton expérience.
+          <a href="#" style={styles.cookieLink}>Politique de confidentialité</a>
+        </p>
+        <button style={styles.cookieBtn}>Accepter</button>
+      </div>
+
+      {/* Footer */}
+      <footer style={styles.footer}>
+        <p style={styles.footerText}>© 2026 VOKYVO LABS - Tous droits réservés</p>
+        <div style={styles.footerLinks}>
+          <a href="#" style={styles.footerLink}>Confidentialité</a>
+          <a href="#" style={styles.footerLink}>Conditions</a>
+          <a href="#" style={styles.footerLink}>RGPD</a>
+        </div>
+        <a href="https://stats.uptimerobot.com/0DXeqdPiLO" target="_blank" style={styles.uptime}>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="#28a745">
+            <circle cx="12" cy="12" r="10"/>
+          </svg>
+          Status
+        </a>
+      </footer>
     </div>
   );
 }
@@ -153,6 +178,54 @@ const styles = {
   input: { padding: '13px 15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const },
   submitButton: { padding: '15px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' },
   success: { color: '#28a745', textAlign: 'center' as const, marginTop: '15px' },
+  cookieBanner: {
+    position: 'fixed' as const,
+    bottom: '70px',
+    left: '10px',
+    right: '10px',
+    background: '#1a1a2e',
+    border: '1px solid #2a2a3e',
+    borderRadius: '15px',
+    padding: '15px',
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center',
+    zIndex: 1000,
+    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+  },
+  cookieText: { color: '#aaa', fontSize: '12px', margin: 0, flex: 1 },
+  cookieLink: { color: '#667eea', textDecoration: 'none' },
+  cookieBtn: {
+    padding: '8px 15px',
+    borderRadius: '10px',
+    border: 'none',
+    background: '#667eea',
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: '12px',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap' as const,
+  },
+  footer: {
+    padding: '20px',
+    textAlign: 'center' as const,
+    borderTop: '1px solid #1a1a2a',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '10px',
+  },
+  footerText: { color: '#555', fontSize: '12px', margin: 0 },
+  footerLinks: { display: 'flex', justifyContent: 'center', gap: '20px' },
+  footerLink: { color: '#667eea', fontSize: '12px', textDecoration: 'none' },
+  uptime: {
+    color: '#28a745',
+    fontSize: '11px',
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
+    justifyContent: 'center',
+  },
   error: { color: '#dc3545', textAlign: 'center' as const, marginTop: '15px' },
 };
 
