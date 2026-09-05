@@ -6,7 +6,7 @@ import Texto from './Texto';
 import News from './News';
 import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 
-import { API_URL, MEDIA_URL } from '../config';
+import { API_URL } from '../config';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
