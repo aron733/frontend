@@ -425,7 +425,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       <span style={{ position: 'absolute', bottom: '8px', right: '8px', fontSize: '10px', color: 'white', background: 'rgba(0,0,0,0.7)', padding: '3px 8px', borderRadius: '10px' }}>{heure}</span>
                     </div>
                   )}
-                  {(msg.apercu === 'video' || msg.apercu === 'video_local' || msg.fichier_type === 'video') && (
+                  {msg.est_video && (
                     <video 
                       src={msg.fichier_url} 
                       controls 
@@ -468,9 +468,20 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                         {msg.duree || 0}s
                       </span>
                       <audio 
-                        controls 
                         src={msg.audio_local || msg.audio_url} 
                         style={{ display: 'none' }} 
+                        onPlay={(e) => {
+                          const container = e.currentTarget.parentElement;
+                          if (container) {
+                            container.style.opacity = '0.8';
+                          }
+                        }}
+                        onPause={(e) => {
+                          const container = e.currentTarget.parentElement;
+                          if (container) {
+                            container.style.opacity = '1';
+                          }
+                        }}
                       />
                     </div>
                   )}
