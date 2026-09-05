@@ -61,6 +61,7 @@ function Texto() {
   const [livekitUrl, setLivekitUrl] = useState('');
   const [enregistrement, setEnregistrement] = useState(false);
   const [statutAutreUser, setStatutAutreUser] = useState<'en_ligne' | 'hors_ligne'>('hors_ligne');
+  const [menuFichier, setMenuFichier] = useState(false);
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -479,8 +480,29 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         </div>
 
         <div style={styles.saisieArea}>
-          <input type="file" ref={fileInputRef} onChange={envoyerFichier} style={{ display: 'none' }} />
-          <button onClick={() => fileInputRef.current?.click()} style={styles.fichierBtn}><IconeFichier /></button>
+          <input type="file" ref={fileInputRef} onChange={envoyerFichier} accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt,.zip" style={{ display: 'none' }} />
+          <button onClick={() => setMenuFichier(!menuFichier)} style={styles.fichierBtn}><IconeFichier /></button>
+          
+          {menuFichier && (
+            <div style={styles.menuFichier}>
+              <button onClick={() => { fileInputRef.current?.click(); setMenuFichier(false); }} style={styles.menuFichierItem}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Photo
+              </button>
+              <button onClick={() => { fileInputRef.current?.click(); setMenuFichier(false); }} style={styles.menuFichierItem}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+                Vidéo
+              </button>
+              <button onClick={() => { fileInputRef.current?.click(); setMenuFichier(false); }} style={styles.menuFichierItem}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                Musique
+              </button>
+              <button onClick={() => { fileInputRef.current?.click(); setMenuFichier(false); }} style={styles.menuFichierItem}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                Document
+              </button>
+            </div>
+          )}
           {enregistrement ? (
             <button onClick={arreterEnregistrement} style={styles.stopBtn}>
               <IconeStop /> {dureeEnregistrement}s
@@ -576,6 +598,34 @@ const styles = {
   audioDuree: { color: 'white', fontSize: '11px' },
   fichierLink: { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#1e293b', color: '#93c5fd', borderRadius: '12px', textDecoration: 'none', fontSize: '15px' },
   saisieArea: { display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 10px', background: '#111b21', borderTop: '1px solid #222d34', flexShrink: 0, height: '55px',  },
+  menuFichier: {
+    position: 'absolute' as const,
+    bottom: '65px',
+    left: '10px',
+    background: '#1a2a33',
+    border: '1px solid #2a3942',
+    borderRadius: '15px',
+    padding: '8px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '2px',
+    zIndex: 100,
+    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+    minWidth: '150px',
+  },
+  menuFichierItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '10px 12px',
+    background: 'transparent',
+    border: 'none',
+    color: '#d0d0d0',
+    fontSize: '13px',
+    cursor: 'pointer',
+    borderRadius: '10px',
+    textAlign: 'left' as const,
+  },
   fichierBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   microBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   stopBtn: { height: '40px', padding: '0 12px', borderRadius: '20px', border: 'none', background: '#dc3545', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold', fontSize: '13px', flexShrink: 0 },
