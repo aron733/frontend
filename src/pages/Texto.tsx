@@ -428,8 +428,8 @@ function Texto() {
 }
 
 const styles = {
-  container: { padding: '0', maxWidth: '100%', width: '100%', height: '100dvh', display: 'flex', flexDirection: 'column' as const, background: '#0b141a' },
-  headerListe: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', background: '#111b21', flexShrink: 0, borderBottom: '1px solid #222d34' },
+  container: { padding: '0', maxWidth: '100%', width: '100%', height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, background: '#0b141a' },
+  headerListe: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: '#111b21', flexShrink: 0, borderBottom: '1px solid #222d34', minHeight: '60px' },
   titre: { color: 'white', fontSize: '24px', margin: 0 },
   nouveauBtn: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', borderRadius: '10px', border: 'none', background: '#667eea', color: 'white', fontWeight: 'bold', cursor: 'pointer' },
   searchBar: { display: 'flex', alignItems: 'center', gap: '10px', background: '#111b21', borderRadius: '25px', padding: '10px 15px', margin: '10px', border: '1px solid #222d34', color: '#aaa' },

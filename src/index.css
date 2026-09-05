@@ -12,19 +12,38 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 html, body, #root {
-  min-height: 100vh;
-  background: #0a0a0f;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  background: #0a0a0f;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Avatar photo profil */
@@ -37,98 +56,17 @@ body {
   display: block !important;
 }
 
-/* Avatar dans les conversations */
 .avatar-conv {
-  width: 45px !important;
-  height: 45px !important;
+  width: 42px !important;
+  height: 42px !important;
   border-radius: 50% !important;
   object-fit: cover !important;
   object-position: center !important;
   flex-shrink: 0 !important;
   display: block !important;
-}
-
-/* Image dans les messages */
-.image-message {
-  max-width: 200px;
-  max-height: 200px;
-  border-radius: 10px;
-  object-fit: cover;
-  display: block;
-}
-
-/* Style LiveKit */
-.lk-button {
-  background: rgba(255,255,255,0.1) !important;
-  border: 1px solid rgba(255,255,255,0.2) !important;
-  border-radius: 12px !important;
-  transition: all 0.3s !important;
-}
-
-.lk-button:hover {
-  background: rgba(255,255,255,0.2) !important;
-}
-
-.lk-participant-tile {
-  border-radius: 15px !important;
-  overflow: hidden !important;
-}
-
-.lk-video-container {
-  border-radius: 15px !important;
-}
-
-.lk-grid-layout {
-  gap: 10px !important;
-}
-
-/* Scrollbar stylée */
-::-webkit-scrollbar {
-  width: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #667eea;
-  border-radius: 10px;
-}
-
-/* Responsive mobile */
-@media (max-width: 600px) {
-  .avatar-photo {
-    width: 80px !important;
-    height: 80px !important;
-  }
-  
-  .avatar-conv {
-    width: 35px !important;
-    height: 35px !important;
-  }
-  
-  .image-message {
-    max-width: 150px;
-    max-height: 150px;
-  }
-}
-
-/* Fix photo profil */
-.avatar-photo,
-.avatar-conv {
-  background: #667eea;
-  object-fit: cover;
-  object-position: center;
-}
-
-img.avatar-photo,
-img.avatar-conv {
-  display: block;
   background: #667eea;
 }
 
-/* Avatars uniformes */
 .avatar-mini {
   width: 28px;
   height: 28px;
@@ -140,30 +78,38 @@ img.avatar-conv {
   display: block;
 }
 
-.avatar-conv {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+.image-message {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 10px;
   object-fit: cover;
-  object-position: center;
-  flex-shrink: 0;
-  background: #667eea;
   display: block;
 }
 
-/* Fix photos */
-img.avatar-mini,
-img.avatar-conv {
-  object-fit: cover;
-  object-position: center;
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
 }
 
-/* Scrollbar whatsapp-like */
-.messagesArea::-webkit-scrollbar {
-  width: 5px;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.messagesArea::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: #2a3942;
   border-radius: 10px;
+}
+
+/* LiveKit */
+.lk-button {
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  border-radius: 12px !important;
+}
+
+@media (max-width: 600px) {
+  .avatar-photo { width: 70px !important; height: 70px !important; }
+  .avatar-conv { width: 35px !important; height: 35px !important; }
+  .avatar-mini { width: 24px !important; height: 24px !important; }
+  .image-message { max-width: 150px; max-height: 150px; }
 }
