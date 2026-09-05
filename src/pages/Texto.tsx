@@ -126,9 +126,9 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       });
       const msgs = response.data.messages.map((m: any) => ({
         ...m,
-        apercu: m.fichier_url && m.fichier_url.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? MEDIA_URL + m.fichier_url :
+        apercu: m.fichier_url && m.fichier_url.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? m.fichier_url :
                 m.fichier_url && m.fichier_url.match(/\.(mp4|webm|mov|avi)$/i) ? 'video' : undefined,
-        fichier_url: m.fichier_url ? MEDIA_URL + m.fichier_url : undefined,
+        fichier_url: m.fichier_url ? m.fichier_url : undefined,
         audio_url: m.audio_url ? MEDIA_URL + m.audio_url : undefined,
       }));
       setMessages(msgs);
