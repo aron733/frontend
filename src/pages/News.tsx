@@ -38,6 +38,7 @@ function News() {
   const [sectionActive, setSectionActive] = useState('flash');
   const [loading, setLoading] = useState(false);
   const [recherche, setRecherche] = useState('');
+  const [menuCategories, setMenuCategories] = useState(false);
 
   const chargerSection = async (sectionId: string) => {
     setLoading(true);
@@ -81,22 +82,38 @@ function News() {
         />
       </div>
 
-      {/* Catégories scrollables */}
+      {/* Header avec catégorie active et hamburger */}
       <div style={styles.nav}>
-        {SECTIONS.map((section) => (
-          <button
-            key={section.id}
-            onClick={() => setSectionActive(section.id)}
-            style={{
-              ...styles.navBtn,
-              background: sectionActive === section.id ? '#667eea' : 'transparent',
-              color: sectionActive === section.id ? 'white' : '#999',
-            }}
-          >
-            {section.nom}
-          </button>
-        ))}
+        <span style={styles.sectionActive}>
+          {SECTIONS.find(s => s.id === sectionActive)?.nom.toUpperCase()}
+        </span>
+        <button onClick={() => setMenuCategories(!menuCategories)} style={styles.hamburgerBtn}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
       </div>
+
+      {/* Menu hamburger des catégories */}
+      {menuCategories && (
+        <div style={styles.categoriesMenu}>
+          {SECTIONS.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => { setSectionActive(section.id); setMenuCategories(false); }}
+              style={{
+                ...styles.categorieBtn,
+                background: sectionActive === section.id ? '#667eea' : 'transparent',
+                color: sectionActive === section.id ? 'white' : '#aaa',
+              }}
+            >
+              {section.nom}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Articles */}
       <div style={styles.content}>
@@ -176,6 +193,52 @@ const styles = {
     borderBottom: '1px solid #1a1a2a',
     scrollbarWidth: 'none' as const,
     flexShrink: 0,
+  },
+  sectionActive: {
+    color: 'white',
+    fontSize: '15px',
+    fontWeight: 700 as const,
+    letterSpacing: '1px',
+  },
+  hamburgerBtn: {
+    background: 'rgba(255,255,255,0.1)',
+    border: '1px solid rgba(255,255,255,0.2)',
+    color: 'white',
+    width: '35px',
+    height: '35px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 'auto',
+  },
+  categoriesMenu: {
+    position: 'absolute' as const,
+    top: '105px',
+    left: '15px',
+    right: '15px',
+    background: '#111120',
+    border: '1px solid #2a2a3e',
+    borderRadius: '15px',
+    padding: '10px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+    gap: '5px',
+    zIndex: 100,
+    maxHeight: '60vh',
+    overflowY: 'auto' as const,
+    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+  },
+  categorieBtn: {
+    padding: '10px',
+    borderRadius: '10px',
+    border: '1px solid #2a2a3e',
+    cursor: 'pointer',
+    fontSize: '12px',
+    fontWeight: 600 as const,
+    whiteSpace: 'nowrap' as const,
+    textAlign: 'center' as const,
   },
   navBtn: {
     padding: '8px 16px',
