@@ -44,6 +44,7 @@ interface Message {
   duree?: number;
   date_envoi: string;
   apercu?: string;
+  lu?: boolean;
 }
 
 function Texto() {
