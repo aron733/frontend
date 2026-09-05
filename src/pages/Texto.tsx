@@ -317,7 +317,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
   }
 
   if (vue === 'conversation' && conversationActive) {
-    const photoAutre = conversationActive.autre_user.photo ? MEDIA_URL + conversationActive.autre_user.photo : null;
+    const photoAutre = conversationActive.autre_user.photo ? conversationActive.autre_user.photo : null;
     return (
       <div style={styles.convContainer}>
         <div style={styles.convHeader}>
@@ -443,7 +443,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         <div style={styles.conversationsListe}>
           {conversations.length === 0 && <p style={styles.aucunResultat}>Aucune conversation. Clique sur "Nouveau" pour commencer.</p>}
           {conversations.map((conv) => {
-            const photo = conv.autre_user.photo ? MEDIA_URL + conv.autre_user.photo : null;
+            const photo = conv.autre_user.photo ? conv.autre_user.photo : null;
             return (
               <button key={conv.id} onClick={() => ouvrirConversation(conv)} style={styles.convItem}>
                 {photo ? <img src={photo} className="avatar-conv" alt="" /> : <div style={styles.convAvatar}>{conv.autre_user.prenom?.charAt(0) || '?'}</div>}
