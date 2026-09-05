@@ -2,9 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import {
   LiveKitRoom,
-  VideoConference,
+  GridLayout,
+  ParticipantTile,
   RoomAudioRenderer,
+  useTracks,
 } from '@livekit/components-react';
+import { Track } from 'livekit-client';
 import '@livekit/components-styles';
 
 import { API_URL } from '../config';
@@ -372,7 +375,9 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000' }}>
           {/* Vidéo plein écran */}
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', overflow: 'hidden' }}>
-            <VideoConference />
+            <GridLayout tracks={[{ source: Track.Source.Camera, participant: undefined }]}>
+              <ParticipantTile />
+            </GridLayout>
           </div>
           
           <RoomAudioRenderer />
