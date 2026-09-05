@@ -367,7 +367,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
 
   if (appelVideo && livekitToken && livekitUrl) {
     return (
-      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={cameraOn} audio={microOn} onDisconnected={() => terminerAppel('termine')} data-lk-theme="dark" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', zIndex: 9999, background: '#000', margin: 0, padding: 0 }}>
+      <LiveKitRoom token={livekitToken} serverUrl={livekitUrl} video={true} audio={true} onDisconnected={() => terminerAppel('termine')} data-lk-theme="dark" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', zIndex: 9999, background: '#000', margin: 0, padding: 0 }}>
         <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000' }}>
           {/* Vidéo plein écran */}
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', overflow: 'hidden' }}>
