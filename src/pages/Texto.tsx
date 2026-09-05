@@ -60,6 +60,7 @@ function Texto() {
   const [livekitUrl, setLivekitUrl] = useState('');
   const [enregistrement, setEnregistrement] = useState(false);
   const [statutAutreUser, setStatutAutreUser] = useState<'en_ligne' | 'hors_ligne'>('hors_ligne');
+  const [tempsTexte, setTempsTexte] = useState<string | null>(null);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -272,6 +273,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         headers: { Authorization: `Bearer ${token}` }
       });
       setStatutAutreUser(response.data.en_ligne ? 'en_ligne' : 'hors_ligne');
+      setTempsTexte(response.data.temps_texte || null);
     } catch (err) {
       setStatutAutreUser('hors_ligne');
     }
@@ -325,7 +327,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
           {photoAutre ? <img src={photoAutre} className="avatar-conv" alt="avatar" /> : <div style={styles.convAvatar}>{conversationActive.autre_user.prenom?.charAt(0) || '?'}</div>}
           <div style={styles.convInfo}>
             <p style={styles.convNom}>{conversationActive.autre_user.prenom} {conversationActive.autre_user.nom}</p>
-            <p style={{ ...styles.convStatus, color: statutAutreUser === 'en_ligne' ? '#28a745' : '#666' }}>{statutAutreUser === 'en_ligne' ? 'En ligne' : 'Hors ligne'}</p>
+            <p style={{ ...styles.convStatus, color: statutAutreUser === 'en_ligne' ? '#28a745' : '#666' }}>{statutAutreUser === 'en_ligne' ? 'En ligne' : tempsTexte || 'Hors ligne'}</p>
           </div>
           <button onClick={lancerAppel} style={styles.appelBtn}><IconeVideo /></button>
         </div>
