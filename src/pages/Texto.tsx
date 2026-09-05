@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import {
   LiveKitRoom,
-  GridLayout,
-  ParticipantTile,
+  VideoConference,
+  ControlBar,
   RoomAudioRenderer,
   useTracks,
 } from '@livekit/components-react';
@@ -375,82 +375,20 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000' }}>
           {/* Vidéo plein écran */}
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000', overflow: 'hidden' }}>
-            <GridLayout tracks={[{ source: Track.Source.Camera, participant: undefined }]}>
-              <ParticipantTile />
-            </GridLayout>
+            <VideoConference />
           </div>
           
           <RoomAudioRenderer />
           
-          {/* Boutons de contrôle en bas */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: '30px', 
-            padding: '25px', 
-            background: 'rgba(0,0,0,0.85)',
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 10
-          }}>
-            <button onClick={() => setMicroOn(!microOn)} style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              border: 'none',
-              background: microOn ? 'rgba(255,255,255,0.15)' : '#dc3545',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s'
-            }}>
-              {microOn ? (
-                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                  <line x1="12" y1="19" x2="12" y2="23"/>
-                </svg>
-              ) : (
-                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                  <line x1="1" y1="1" x2="23" y2="23"/>
-                </svg>
-              )}
-            </button>
-            <button onClick={() => setCameraOn(!cameraOn)} style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              border: 'none',
-              background: cameraOn ? 'rgba(255,255,255,0.15)' : '#dc3545',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s'
-            }}>
-              {cameraOn ? (
-                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <polygon points="23 7 16 12 23 17 23 7"/>
-                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                </svg>
-              ) : (
-                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <polygon points="23 7 16 12 23 17 23 7"/>
-                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                  <line x1="1" y1="1" x2="23" y2="23"/>
-                </svg>
-              )}
-            </button>
+          {/* Contrôles LiveKit par défaut */}
+          <div style={{ position: 'absolute', bottom: '15px', left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
+            <ControlBar />
           </div>
           
           {/* Bouton raccrocher */}
           <button onClick={() => terminerAppel('termine')} style={{
             position: 'absolute',
-            bottom: '90px',
+            bottom: '100px',
             right: '20px',
             width: '55px',
             height: '55px',
