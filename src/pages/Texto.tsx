@@ -4,7 +4,6 @@ import {
   LiveKitRoom,
   VideoConference,
   RoomAudioRenderer,
-  ControlBar,
 } from '@livekit/components-react';
 import '@livekit/components-styles';
 
