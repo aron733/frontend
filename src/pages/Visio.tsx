@@ -4,7 +4,6 @@ import {
   LiveKitRoom,
   VideoConference,
   RoomAudioRenderer,
-  ControlBar,
 } from '@livekit/components-react';
 import '@livekit/components-styles';
 
@@ -131,7 +130,7 @@ function Visio() {
           <RoomAudioRenderer />
 
           <div style={styles.controlBar}>
-            <ControlBar />
+            
           </div>
 
           <button onClick={quitterRoom} style={styles.quitButton}>
