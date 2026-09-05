@@ -152,8 +152,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         ...m,
         apercu: m.fichier_url && m.fichier_url.match(/\.(jpg|jpeg|png|gif|webp|bmp)$/i) ? m.fichier_url :
                 m.fichier_url && (m.fichier_url.match(/\.(mp4|webm|mov|avi)$/i) || m.fichier_url.includes('/video/upload/')) ? 'video' : undefined,
-        fichier_url: m.fichier_url ? m.fichier_url : undefined,
-        audio_url: m.audio_url ? MEDIA_URL + m.audio_url : undefined,
+        fichier_url: m.fichier_url && (m.fichier_url.startsWith('http') || m.fichier_url.startsWith('blob')) ? m.fichier_url : undefined,
+        audio_url: m.audio_url && m.audio_url.startsWith('http') ? m.audio_url : undefined,
       }));
       setMessages(msgs);
     } catch (err) {
