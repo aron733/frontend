@@ -377,7 +377,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
           {/* Bouton raccrocher */}
           <button onClick={() => terminerAppel('termine')} style={{
             position: 'absolute',
-            bottom: '25px',
+            bottom: '80px',
             right: '25px',
             width: '65px',
             height: '65px',
