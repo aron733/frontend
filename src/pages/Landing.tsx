@@ -117,15 +117,15 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         <form onSubmit={handleSubmit} style={styles.form}>
           {mode === 'inscription' ? (
             <>
-              <input type="text" name="nom" placeholder="Nom" onChange={handleChange} style={styles.input} />
-              <input type="text" name="prenom" placeholder="Prénom" onChange={handleChange} style={styles.input} />
-              <input type="number" name="age" placeholder="Âge" onChange={handleChange} style={styles.input} />
-              <select name="sexe" onChange={handleChange} style={styles.input}>
+              <input type="text" name="nom" placeholder="Nom" onChange={handleChange} required style={styles.input} />
+              <input type="text" name="prenom" placeholder="Prénom" onChange={handleChange} required style={styles.input} />
+              <input type="number" name="age" placeholder="Âge" onChange={handleChange} required style={styles.input} />
+              <select name="sexe" onChange={handleChange} required style={styles.input}>
                 <option value="M">Masculin</option>
                 <option value="F">Féminin</option>
                 <option value="A">Autre</option>
               </select>
-              <input type="text" name="numero" placeholder="Numéro" onChange={handleChange} style={styles.input} />
+              <input type="text" name="numero" placeholder="Numéro" onChange={handleChange} required style={styles.input} />
               <input type="email" name="email" placeholder="Email" onChange={handleChange} required style={styles.input} />
 
               <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required style={styles.input} />
