@@ -8,7 +8,7 @@ import {
 } from '@livekit/components-react';
 import '@livekit/components-styles';
 
-import { API_URL, MEDIA_URL } from '../config';
+import { API_URL } from '../config';
 
 interface UserRecherche {
   id: number;
