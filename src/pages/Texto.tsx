@@ -64,6 +64,7 @@ function Texto() {
   const [enregistrement, setEnregistrement] = useState(false);
   const [statutAutreUser, setStatutAutreUser] = useState<'en_ligne' | 'hors_ligne'>('hors_ligne');
   const [menuFichier, setMenuFichier] = useState(false);
+  const [audioEnCours, setAudioEnCours] = useState<number | null>(null);
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -458,22 +459,40 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     }}>
                       <button onClick={(e) => {
                         e.stopPropagation();
-                        const audio = e.currentTarget.parentElement?.querySelector('audio');
+                        const audio = e.currentTarget.parentElement?.querySelector('audio') as HTMLAudioElement;
                         if (audio) {
                           if (audio.paused) {
                             audio.play();
+                            setAudioEnCours(msg.id);
                           } else {
                             audio.pause();
+                            setAudioEnCours(null);
                           }
                         }
                       }} style={{ background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, padding: 0 }}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
+                        {audioEnCours === msg.id ? (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                            <rect x="6" y="6" width="12" height="12" rx="2"/>
+                          </svg>
+                        ) : (
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        )}
                       </button>
                       <div style={{ flex: 1, height: '20px', display: 'flex', alignItems: 'center', gap: '2px' }}>
                         {[4, 7, 10, 6, 9, 5, 8, 11, 7, 9, 6, 10, 8, 5, 7, 9, 6, 8, 10, 7, 5, 8, 6, 9].map((h, i) => (
-                          <div key={i} style={{ width: '3px', height: `${h}px`, background: 'rgba(255,255,255,0.8)', borderRadius: '2px' }} />
+                          <div 
+                            key={i} 
+                            style={{ 
+                              width: '3px', 
+                              height: `${h}px`, 
+                              background: audioEnCours === msg.id ? '#fff' : 'rgba(255,255,255,0.6)', 
+                              borderRadius: '2px',
+                              animation: audioEnCours === msg.id ? `wave 0.5s ease-in-out ${i * 0.04}s infinite` : 'none',
+                              transition: 'all 0.3s'
+                            }} 
+                          />
                         ))}
                       </div>
                       <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold', flexShrink: 0 }}>
@@ -482,7 +501,9 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       <audio 
                         src={msg.audio_local || msg.audio_url} 
                         style={{ position: 'absolute', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }} 
-                        controls
+                        onPlay={() => setAudioEnCours(msg.id)}
+                        onPause={() => setAudioEnCours(null)}
+                        onEnded={() => setAudioEnCours(null)}
                       />
                     </div>
                   )}
