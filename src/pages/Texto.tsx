@@ -75,6 +75,28 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
 
   useEffect(() => {
     chargerConversations();
+    
+    // Marque le user en ligne
+    axios.post(`${API_URL}/presence/en-ligne/`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).catch(() => {});
+    
+    // Marque hors ligne quand on quitte la page
+    const handleBeforeUnload = () => {
+      navigator.sendBeacon(
+        `${API_URL}/presence/hors-ligne/`,
+        JSON.stringify({ token })
+      );
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      axios.post(`${API_URL}/presence/hors-ligne/`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).catch(() => {});
+    };
   }, []);
 
   useEffect(() => {
