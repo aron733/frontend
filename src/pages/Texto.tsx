@@ -315,19 +315,19 @@ function Texto() {
                   {msg.texte && (
                     <div style={{
                       ...styles.msgBubble,
-                      background: estMoi ? '#005c4b' : '#1f2c33',
+                      background: estMoi ? '#2563eb' : '#16a34a',
                       color: estMoi ? '#e9edef' : '#e9edef',
-                      borderBottomRightRadius: estMoi ? '4px' : '15px',
-                      borderBottomLeftRadius: estMoi ? '15px' : '4px',
+                      borderBottomRightRadius: estMoi ? '6px' : '18px',
+                      borderBottomLeftRadius: estMoi ? '18px' : '6px',
                       display: 'flex',
                       alignItems: 'flex-end',
                       gap: '8px',
                     }}>
                       <span>{msg.texte}</span>
-                      <span style={{ fontSize: '10px', color: estMoi ? '#8696a0' : '#8696a0', whiteSpace: 'nowrap', marginLeft: '5px' }}>
+                      <span style={{ fontSize: '11px', color: estMoi ? '#dbeafe' : '#dcfce7', whiteSpace: 'nowrap', marginLeft: '5px' }}>
                         {heure}
                         {estMoi && (
-                          <span style={{ marginLeft: '3px', color: '#53bdeb' }}>
+                          <span style={{ marginLeft: '3px', color: '#93c5fd' }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: 'inline' }}>
                               <path d="M18 7l-10 10-5-5" />
                               <path d="M22 7l-10 10-5-5" transform="translate(2)" />
@@ -345,7 +345,7 @@ function Texto() {
                   )}
                   {msg.apercu === 'video' && <video src={msg.fichier_url} controls className="image-message" />}
                   {msg.fichier_url && !msg.apercu && (
-                    <a href={msg.fichier_url} download style={{ ...styles.fichierLink, background: estMoi ? '#005c4b' : '#1f2c33', color: '#e9edef' }}>
+                    <a href={msg.fichier_url} download style={{ ...styles.fichierLink, background: estMoi ? '#2563eb' : '#16a34a', color: '#e9edef' }}>
                       <IconeFichier /> {msg.nom_fichier || 'Fichier'}
                     </a>
                   )}
@@ -456,10 +456,10 @@ const styles = {
   messagesArea: { flex: 1, padding: '10px 12px', overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' as const, gap: '4px', background: '#0b141a', WebkitOverflowScrolling: 'touch' as any, overscrollBehavior: 'contain', scrollBehavior: 'smooth' as any },
   aucunMsg: { color: '#aaa', textAlign: 'center' as const, marginTop: '50px' },
   msgRow: { display: 'flex', alignItems: 'flex-end', width: '100%', flexShrink: 0 },
-  msgBubble: { maxWidth: '75%', padding: '8px 12px', borderRadius: '15px', fontSize: '14px', color: 'white', lineHeight: 1.4, boxShadow: '0 1px 0 rgba(0,0,0,0.13)' },
-  audioBubble: { display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', borderRadius: '15px' },
+  msgBubble: { maxWidth: '75%', padding: '10px 14px', borderRadius: '18px', fontSize: '16px', color: 'white', lineHeight: 1.4, boxShadow: '0 1px 0 rgba(0,0,0,0.13)' },
+  audioBubble: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 14px', borderRadius: '18px' },
   audioDuree: { color: 'white', fontSize: '11px' },
-  fichierLink: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: '#2a2a3e', color: '#667eea', borderRadius: '10px', textDecoration: 'none', fontSize: '14px' },
+  fichierLink: { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#1e293b', color: '#93c5fd', borderRadius: '12px', textDecoration: 'none', fontSize: '15px' },
   saisieArea: { display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 10px', background: '#111b21', borderTop: '1px solid #222d34', flexShrink: 0, height: '55px',  },
   fichierBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   microBtn: { width: '38px', height: '38px', minWidth: '38px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
