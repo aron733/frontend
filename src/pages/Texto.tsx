@@ -48,6 +48,10 @@ interface Message {
   fichier_type?: string;
   est_video?: boolean;
   est_audio?: boolean;
+  type?: string;
+  statut_appel?: string;
+  duree_appel?: number;
+  est_sortant?: boolean;
 }
 
 function Texto() {
@@ -392,6 +396,54 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
           {messages.length === 0 && <p style={styles.aucunMsg}>Commence la conversation...</p>}
           {messages.map((msg) => {
             const estMoi = msg.expediteur === userId;
+            
+            // Affiche les appels comme messages système
+            if (msg.type === 'appel') {
+              const statut = msg.statut_appel;
+              const duree = msg.duree_appel || msg.duree || 0;
+              const minutes = Math.floor(duree / 60);
+              const secondes = duree % 60;
+              const dureeTexte = duree > 0 ? `${minutes}:${secondes.toString().padStart(2, '0')}` : '';
+              
+              let icone = '';
+              let texte = '';
+              
+              if (statut === 'manque') {
+                icone = '📞';
+                texte = msg.est_sortant ? 'Appel vidéo manqué' : 'Appel vidéo manqué';
+              } else if (statut === 'termine') {
+                icone = '📹';
+                texte = msg.est_sortant ? `Appel vidéo sortant · ${dureeTexte}` : `Appel vidéo entrant · ${dureeTexte}`;
+              } else if (statut === 'refuse') {
+                icone = '📵';
+                texte = msg.est_sortant ? 'Appel refusé' : 'Appel refusé';
+              } else {
+                icone = '📞';
+                texte = 'Appel en cours...';
+              }
+              
+              return (
+                <div key={msg.id} style={{ display: 'flex', justifyContent: 'center', padding: '8px 0' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: 'rgba(255,255,255,0.08)',
+                    borderRadius: '20px',
+                    padding: '6px 15px',
+                    maxWidth: '80%'
+                  }}>
+                    <span style={{ fontSize: '16px' }}>{icone}</span>
+                    <span style={{ color: '#aaa', fontSize: '13px' }}>{texte}</span>
+                    {msg.date_envoi && (
+                      <span style={{ color: '#666', fontSize: '10px' }}>
+                        {new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            }
             const heure = msg.date_envoi ? new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
             return (
               <div key={msg.id} style={{ ...styles.msgRow, justifyContent: estMoi ? 'flex-end' : 'flex-start' }}>
