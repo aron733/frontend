@@ -8,6 +8,65 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Écoute les notifications d'appel entrant
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'NOTIFICATION') {
+          const body = event.data.body || '';
+          if (body.includes('Appel entrant')) {
+            // Affiche un popup d'appel entrant
+            const popup = document.createElement('div');
+            popup.style.cssText = `
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: rgba(0,0,0,0.9);
+              z-index: 99999;
+              display: flex;
+              flexDirection: column;
+              alignItems: center;
+              justifyContent: center;
+              gap: 20px;
+              padding: 20px;
+            `;
+            popup.innerHTML = `
+              <div style="width: 80px; height: 80px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; animation: pulse 1.5s infinite;">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="white">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                </svg>
+              </div>
+              <p style="color: white; font-size: 22px; font-weight: bold; margin: 0;">${event.data.title}</p>
+              <p style="color: #aaa; font-size: 16px; margin: 0;">Appel vidéo entrant...</p>
+              <div style="display: flex; gap: 20px; margin-top: 20px;">
+                <button onclick="this.parentElement.parentElement.remove()" style="width: 60px; height: 60px; border-radius: 50%; border: none; background: #dc3545; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(220,53,69,0.5);">
+                  <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    <line x1="4" y1="4" x2="20" y2="20"/>
+                  </svg>
+                </button>
+                <button onclick="this.parentElement.parentElement.remove(); window.location.href='/texto';" style="width: 60px; height: 60px; border-radius: 50%; border: none; background: #28a745; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(40,167,69,0.5);">
+                  <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                    <polygon points="23 7 16 12 23 17 23 7"/>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                  </svg>
+                </button>
+              </div>
+              <style>
+                @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+              </style>
+            `;
+            document.body.appendChild(popup);
+          }
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     // Écoute les notifications d'appel
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', (event) => {
