@@ -76,6 +76,9 @@ function Texto() {
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
   const [messageSelectionne, setMessageSelectionne] = useState<number | null>(null);
   const [photoAgrandie, setPhotoAgrandie] = useState<string | null>(null);
+  const [messageReponse, setMessageReponse] = useState<Message | null>(null);
+  const [conversationsEpingles, setConversationsEpingles] = useState<number[]>([]);
+  const [menuConversation, setMenuConversation] = useState<number | null>(null);
   const [messagesSupprimes, setMessagesSupprimes] = useState<number[]>([]);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -191,6 +194,15 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
     }
   };
 
+  const epinglerConversation = (convId: number) => {
+    if (conversationsEpingles.includes(convId)) {
+      setConversationsEpingles(conversationsEpingles.filter(id => id !== convId));
+    } else {
+      setConversationsEpingles([...conversationsEpingles, convId]);
+    }
+    setMenuConversation(null);
+  };
+
   const supprimerMessage = async (msgId: number) => {
     // Si l'ID est un timestamp (local), on supprime juste localement
     if (msgId > 1000000000000) {
@@ -221,7 +233,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
     if (!nouveauMessage.trim() || !conversationActive) return;
     const texte = nouveauMessage;
     setNouveauMessage('');
-    const messageTemp: Message = { id: Date.now(), expediteur: userId, texte, date_envoi: new Date().toISOString() };
+    setMessageReponse(null);
+    const messageTemp: Message = { id: Date.now(), expediteur: userId, texte, date_envoi: new Date().toISOString(), messageRepondu: messageReponse?.texte || null };
     setMessages([...messages, messageTemp]);
     try {
       await axios.post(
@@ -635,7 +648,14 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                       justifyContent: 'space-between',
                       gap: '6px',
                     }}>
-                      <span>{msg.texte}</span>
+                      <span>
+                        {msg.messageRepondu && (
+                          <span style={{ display: 'block', background: 'rgba(0,0,0,0.4)', padding: '8px 12px', borderRadius: '10px', marginBottom: '8px', fontSize: '12px', color: '#fff', borderLeft: '3px solid #fff', fontWeight: 500 }}>
+                            {msg.messageRepondu.substring(0, 60)}
+                          </span>
+                        )}
+                        {msg.texte}
+                      </span>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: estMoi ? '#bfdbfe' : '#bbf7d0', whiteSpace: 'nowrap', marginLeft: '8px', flexShrink: 0 }}>
                         <span>{heure}</span>
                         {estMoi && (
@@ -657,7 +677,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     </div>
                   )}
                   {msg.apercu && msg.apercu !== 'video' && msg.apercu !== 'video_local' && msg.fichier_type !== 'video' && (
-                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%', marginLeft: estMoi ? 'auto' : '0', marginRight: estMoi ? '0' : 'auto' }} onClick={() => window.open(msg.apercu, '_blank')}>
+                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%', marginLeft: estMoi ? 'auto' : '0', marginRight: estMoi ? '0' : 'auto' }} onClick={() => setPhotoAgrandie(msg.apercu || null)}>
                       <img 
                         src={msg.apercu} 
                         style={{ 
@@ -767,16 +787,41 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
             );
           })}
           {messageSelectionne && (
-  <div style={{ position: 'fixed', bottom: '80px', left: '50%', transform: 'translateX(-50%)', background: '#1a2a33', border: '1px solid #2a3942', borderRadius: '15px', padding: '8px', display: 'flex', gap: '5px', zIndex: 200, boxShadow: '0 10px 30px rgba(0,0,0,0.6)' }}>
-    <button onClick={() => supprimerMessage(messageSelectionne)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: 'transparent', border: 'none', color: '#dc3545', fontSize: '13px', cursor: 'pointer', borderRadius: '10px' }}>
+  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setMessageSelectionne(null)}>
+  <div style={{ background: '#1a2a33', border: '1px solid #2a3942', borderRadius: '20px', padding: '15px', display: 'flex', flexDirection: 'column', gap: '5px', minWidth: '220px' }} onClick={(e) => e.stopPropagation()}>
+    <button onClick={() => { const msg = messages.find(m => m.id === messageSelectionne); if (msg) { console.log('Reponse :', msg.texte); setMessageReponse(msg); setMessageSelectionne(null); alert('Reponse : ' + (msg.texte || 'Photo')); } }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '15px 20px', background: 'transparent', border: 'none', color: '#667eea', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', borderRadius: '12px', textAlign: 'left' }}>
+      Répondre
+    </button>
+    <button onClick={() => supprimerMessage(messageSelectionne)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '15px 20px', background: 'transparent', border: 'none', color: '#dc3545', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', borderRadius: '12px', textAlign: 'left' }}>
+    </button>
+    <button onClick={() => { const msg = messages.find(m => m.id === messageSelectionne); if (msg) { console.log('Reponse :', msg.texte); setMessageReponse(msg); setMessageSelectionne(null); alert('Reponse : ' + (msg.texte || 'Photo')); } }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '15px 20px', background: 'transparent', border: 'none', color: '#dc3545', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', borderRadius: '12px', textAlign: 'left' }}>
       Supprimer
     </button>
-    <button onClick={() => setMessageSelectionne(null)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: 'transparent', border: 'none', color: '#aaa', fontSize: '13px', cursor: 'pointer', borderRadius: '10px' }}>
+    <button onClick={() => setMessageSelectionne(null)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '15px 20px', background: 'transparent', border: 'none', color: '#aaa', fontSize: '15px', cursor: 'pointer', borderRadius: '12px', textAlign: 'left' }}>
       Annuler
     </button>
   </div>
 )}
 <div ref={messagesEndRef} />
+        </div>
+
+        <div style={styles.saisieArea}>
+          {messageReponse && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', background: 'rgba(102,126,234,0.15)', borderLeft: '3px solid #667eea', borderRadius: '10px', flex: 1, minWidth: 0 }}>
+            <div style={{ flex: 1 }}>
+              <p style={{ color: '#667eea', fontSize: '11px', fontWeight: 'bold', margin: 0 }}>Répondre à</p>
+              <p style={{ color: '#aaa', fontSize: '13px', margin: '3px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {messageReponse.texte || 'Photo'}
+              </p>
+            </div>
+            <button onClick={() => setMessageReponse(null)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: '5px', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+          )}
         </div>
 
         <div style={styles.saisieArea}>
@@ -846,10 +891,16 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       ) : (
         <div style={styles.conversationsListe}>
           {conversations.length === 0 && <p style={styles.aucunResultat}>Aucune conversation. Clique sur "Nouveau" pour commencer.</p>}
-          {conversations.map((conv) => {
+          {[...conversations].sort((a, b) => {
+            const aE = conversationsEpingles.includes(a.id);
+            const bE = conversationsEpingles.includes(b.id);
+            if (aE && !bE) return -1;
+            if (!aE && bE) return 1;
+            return 0;
+          }).map((conv) => {
             const photo = conv.autre_user.photo ? conv.autre_user.photo : null;
             return (
-              <button key={conv.id} onClick={() => ouvrirConversation(conv)} style={styles.convItem}>
+              <button key={conv.id} onClick={() => ouvrirConversation(conv)} onContextMenu={(e) => { e.preventDefault(); setMenuConversation(conv.id); }} style={styles.convItem}>
                 {photo ? <img src={photo} className="avatar-conv" alt="" /> : <div style={styles.convAvatar}>{conv.autre_user.prenom?.charAt(0) || '?'}</div>}
                 <div style={styles.convInfo}>
                   <p style={styles.convNom}>{conv.autre_user.prenom} {conv.autre_user.nom}</p>
