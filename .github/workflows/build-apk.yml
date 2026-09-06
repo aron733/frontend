@@ -1,4 +1,4 @@
-name: Build APK Release
+name: Build APK Debug
 
 on:
   push:
@@ -48,17 +48,14 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       
-      - name: Build Release APK
+      - name: Build Debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease
-          # Lister tous les APK générés
-          echo "=== APKs trouvés ==="
-          find . -name "*.apk" -type f
+          ./gradlew assembleDebug
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: vokyvo-release
-          path: android/**/*.apk
+          name: vokyvo-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
