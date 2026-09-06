@@ -74,6 +74,9 @@ function Texto() {
   const [audioEnCours, setAudioEnCours] = useState<number | null>(null);
   const [appelId, setAppelId] = useState<number | null>(null);
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
+  const [messageSelectionne, setMessageSelectionne] = useState<number | null>(null);
+  const [photoAgrandie, setPhotoAgrandie] = useState<string | null>(null);
+  const [messagesSupprimes, setMessagesSupprimes] = useState<number[]>([]);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -185,6 +188,32 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       chargerConversations();
     } catch (err) {
       alert('Erreur création conversation');
+    }
+  };
+
+  const supprimerMessage = async (msgId: number) => {
+    // Si l'ID est un timestamp (local), on supprime juste localement
+    if (msgId > 1000000000000) {
+      setMessages(messages.map(m => m.id === msgId ? { ...m, est_supprime: true } : m));
+      setMessagesSupprimes([...messagesSupprimes, msgId]);
+      setMessageSelectionne(null);
+      return;
+    }
+    try {
+      const tokenFrais = localStorage.getItem('access_token');
+      await axios.post(
+        `${API_URL}/messages/${msgId}/supprimer/`,
+        {},
+        { headers: { Authorization: `Bearer ${tokenFrais}` } }
+      );
+      setMessages(messages.map(m => m.id === msgId ? { ...m, est_supprime: true } : m));
+      setMessagesSupprimes([...messagesSupprimes, msgId]);
+      setMessageSelectionne(null);
+    } catch (err) {
+      // Fallback local
+      setMessages(messages.map(m => m.id === msgId ? { ...m, est_supprime: true } : m));
+      setMessagesSupprimes([...messagesSupprimes, msgId]);
+      setMessageSelectionne(null);
     }
   };
 
@@ -533,6 +562,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
           {messages.length === 0 && <p style={styles.aucunMsg}>Commence la conversation...</p>}
           {messages.map((msg) => {
             const estMoi = msg.expediteur === userId;
+            const estSupprime = msg.est_supprime === true;
             
             // Affiche les appels comme messages système
             if (msg.type === 'appel') {
@@ -585,9 +615,14 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
             }
             const heure = msg.date_envoi ? new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
             return (
-              <div key={msg.id} style={{ ...styles.msgRow, justifyContent: estMoi ? 'flex-end' : 'flex-start' }}>
+              <div key={msg.id} style={{ ...styles.msgRow, justifyContent: estMoi ? 'flex-end' : 'flex-start' }} onContextMenu={(e) => { e.preventDefault(); setMessageSelectionne(msg.id); }}>
                 {!estMoi && (photoAutre ? <img src={photoAutre} className="avatar-mini" style={{ marginRight: '8px' }} alt="" /> : null)}
                 <div style={{ maxWidth: '78%' }}>
+                  {estSupprime ? (
+                    <div style={{ ...styles.msgBubble, background: 'rgba(255,255,255,0.03)', border: '1px dashed #555', color: '#999', fontStyle: 'italic', fontSize: '14px', padding: '10px 15px' }}>
+                      Message supprimé
+                    </div>
+                  ) : null}
                   {msg.texte && (
                     <div style={{
                       ...styles.msgBubble,
@@ -731,7 +766,17 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
               </div>
             );
           })}
-          <div ref={messagesEndRef} />
+          {messageSelectionne && (
+  <div style={{ position: 'fixed', bottom: '80px', left: '50%', transform: 'translateX(-50%)', background: '#1a2a33', border: '1px solid #2a3942', borderRadius: '15px', padding: '8px', display: 'flex', gap: '5px', zIndex: 200, boxShadow: '0 10px 30px rgba(0,0,0,0.6)' }}>
+    <button onClick={() => supprimerMessage(messageSelectionne)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: 'transparent', border: 'none', color: '#dc3545', fontSize: '13px', cursor: 'pointer', borderRadius: '10px' }}>
+      Supprimer
+    </button>
+    <button onClick={() => setMessageSelectionne(null)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: 'transparent', border: 'none', color: '#aaa', fontSize: '13px', cursor: 'pointer', borderRadius: '10px' }}>
+      Annuler
+    </button>
+  </div>
+)}
+<div ref={messagesEndRef} />
         </div>
 
         <div style={styles.saisieArea}>
