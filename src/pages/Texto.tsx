@@ -48,6 +48,8 @@ interface Message {
   date_lu?: string;
   fichier_type?: string;
   est_video?: boolean;
+  est_supprime?: boolean;
+  messageRepondu?: string | null;
   est_audio?: boolean;
   type?: string;
   statut_appel?: string;
@@ -75,10 +77,7 @@ function Texto() {
   const [appelId, setAppelId] = useState<number | null>(null);
   const [tempsTexte, setTempsTexte] = useState<string | null>(null);
   const [messageSelectionne, setMessageSelectionne] = useState<number | null>(null);
-  const [photoAgrandie, setPhotoAgrandie] = useState<string | null>(null);
   const [messageReponse, setMessageReponse] = useState<Message | null>(null);
-  const [conversationsEpingles, setConversationsEpingles] = useState<number[]>([]);
-  const [menuConversation, setMenuConversation] = useState<number | null>(null);
   const [messagesSupprimes, setMessagesSupprimes] = useState<number[]>([]);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -192,15 +191,6 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
     } catch (err) {
       alert('Erreur création conversation');
     }
-  };
-
-  const epinglerConversation = (convId: number) => {
-    if (conversationsEpingles.includes(convId)) {
-      setConversationsEpingles(conversationsEpingles.filter(id => id !== convId));
-    } else {
-      setConversationsEpingles([...conversationsEpingles, convId]);
-    }
-    setMenuConversation(null);
   };
 
   const supprimerMessage = async (msgId: number) => {
@@ -677,7 +667,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                     </div>
                   )}
                   {msg.apercu && msg.apercu !== 'video' && msg.apercu !== 'video_local' && msg.fichier_type !== 'video' && (
-                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%', marginLeft: estMoi ? 'auto' : '0', marginRight: estMoi ? '0' : 'auto' }} onClick={() => setPhotoAgrandie(msg.apercu || null)}>
+                    <div style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', maxWidth: '85%', marginLeft: estMoi ? 'auto' : '0', marginRight: estMoi ? '0' : 'auto' }} onClick={() => window.open(msg.apercu, '_blank')}>
                       <img 
                         src={msg.apercu} 
                         style={{ 
@@ -801,6 +791,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       Annuler
     </button>
   </div>
+</div>
 )}
 <div ref={messagesEndRef} />
         </div>
@@ -891,16 +882,10 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       ) : (
         <div style={styles.conversationsListe}>
           {conversations.length === 0 && <p style={styles.aucunResultat}>Aucune conversation. Clique sur "Nouveau" pour commencer.</p>}
-          {[...conversations].sort((a, b) => {
-            const aE = conversationsEpingles.includes(a.id);
-            const bE = conversationsEpingles.includes(b.id);
-            if (aE && !bE) return -1;
-            if (!aE && bE) return 1;
-            return 0;
-          }).map((conv) => {
+          {conversations.map((conv) => {
             const photo = conv.autre_user.photo ? conv.autre_user.photo : null;
             return (
-              <button key={conv.id} onClick={() => ouvrirConversation(conv)} onContextMenu={(e) => { e.preventDefault(); setMenuConversation(conv.id); }} style={styles.convItem}>
+              <button key={conv.id} onClick={() => ouvrirConversation(conv)} style={styles.convItem}>
                 {photo ? <img src={photo} className="avatar-conv" alt="" /> : <div style={styles.convAvatar}>{conv.autre_user.prenom?.charAt(0) || '?'}</div>}
                 <div style={styles.convInfo}>
                   <p style={styles.convNom}>{conv.autre_user.prenom} {conv.autre_user.nom}</p>
