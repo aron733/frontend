@@ -22,6 +22,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   });
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
+  const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const token = localStorage.getItem('access_token');
 
@@ -41,6 +42,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   };
 
   const confirmerEtQuitter = () => {
+    setDeconnexionEnCours(true);
     // Délai de 3 secondes avant de quitter
     setTimeout(() => {
       deconnexion();
@@ -237,7 +239,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               <button onClick={annulerDeconnexion} style={styles.modalBtnAnnuler}>
                 Annuler
               </button>
-              <button onClick={confirmerEtQuitter} style={styles.modalBtnConfirmer}>
+              <button onClick={confirmerEtQuitter} disabled={deconnexionEnCours} style={{ ...styles.modalBtnConfirmer, opacity: deconnexionEnCours ? 0.6 : 1, cursor: deconnexionEnCours ? 'not-allowed' : 'pointer' }}>
                 Confirmer
               </button>
             </div>
@@ -279,9 +281,9 @@ const styles = {
   modalConfirmation: {
     background: '#1a1a2e',
     border: '1px solid #2a2a3e',
-    borderRadius: '20px',
-    padding: '25px',
-    maxWidth: '300px',
+    borderRadius: '25px',
+    padding: '35px',
+    maxWidth: '350px',
     width: '100%',
     textAlign: 'center' as const,
     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
