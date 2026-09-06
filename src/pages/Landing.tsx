@@ -60,7 +60,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       setMode('connexion');
       setForm({ ...form, password: '' });
     } catch (err: any) {
-      setErreur(err.response?.data?.erreur || 'Erreur inscription');
+      setErreur(err.response?.data?.raison || err.response?.data?.erreur || 'Erreur inscription');
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       localStorage.setItem('user', JSON.stringify(response.data));
       onLogin(response.data);
     } catch (err: any) {
-      setErreur(err.response?.data?.erreur || err.response?.data?.raison || 'Erreur');
+      setErreur(err.response?.data?.raison || err.response?.data?.erreur || 'Erreur de connexion');
     } finally {
       setLoading(false);
     }
@@ -388,7 +388,7 @@ const styles = {
   },
   politiqueTitle: { color: '#667eea', fontSize: '18px', marginBottom: '10px', textAlign: 'center' as const },
   politiqueContent: { color: '#aaa', fontSize: '12px', lineHeight: 1.6 },
-  error: { color: '#dc3545', textAlign: 'center' as const, marginTop: '15px' },
+  error: { color: '#dc3545', textAlign: 'center' as const, marginTop: '15px', fontSize: '14px', fontWeight: 600 as const, background: 'rgba(220,53,69,0.15)', padding: '12px', borderRadius: '10px', border: '1px solid #dc3545' },
 };
 
 export default Landing;
