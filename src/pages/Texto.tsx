@@ -45,6 +45,7 @@ interface Message {
   date_envoi: string;
   apercu?: string;
   lu?: boolean;
+  date_lu?: string;
   fichier_type?: string;
   est_video?: boolean;
   est_audio?: boolean;
@@ -604,7 +605,8 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                         <span>{heure}</span>
                         {estMoi && (
                           <span style={{ display: 'inline-flex', alignItems: 'center', color: msg.lu ? '#60a5fa' : '#9ca3af' }}>
-                            {msg.lu ? (
+                            {msg.lu && msg.date_lu ? `Vu à ${new Date(msg.date_lu).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}` : ''}
+                        {msg.lu ? (
                               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ display: 'block' }}>
                                 <path d="M1 13l4 4L15 7" />
                                 <path d="M9 13l4 4L23 7" />
