@@ -30,6 +30,7 @@ interface Conversation {
   };
   dernier_message: string;
   date_modification: string;
+  nb_non_lus?: number;
 }
 
 interface Message {
@@ -199,7 +200,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
-      alert('Erreur envoi message');
+      alert('Erreur envoi message : ' + (err.response?.data?.erreur || err.message));
     }
   };
 
@@ -807,6 +808,9 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
                   <p style={styles.convNom}>{conv.autre_user.prenom} {conv.autre_user.nom}</p>
                   <p style={styles.convDernier}>{conv.dernier_message || 'Nouvelle conversation'}</p>
                 </div>
+                {conv.nb_non_lus && conv.nb_non_lus > 0 && (
+                  <span style={styles.badgeNonLu}>{conv.nb_non_lus}</span>
+                )}
               </button>
             );
           })}
@@ -835,6 +839,7 @@ const styles = {
   convAvatar: { width: '45px', height: '45px', borderRadius: '50%', background: '#667eea', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 'bold', flexShrink: 0 },
   convInfo: { flex: 1, minWidth: 0 },
   convNom: { color: 'white', margin: 0, fontSize: '16px', fontWeight: 'bold' },
+  badgeNonLu: { background: '#22c55e', color: 'white', fontSize: '12px', fontWeight: 'bold', minWidth: '24px', height: '24px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 6px', flexShrink: 0 },
   convDernier: { color: '#aaa', margin: '5px 0 0', fontSize: '13px', whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' },
   convStatus: { color: '#28a745', margin: 0, fontSize: '12px' },
   aucunResultat: { color: '#aaa', textAlign: 'center' as const, marginTop: '30px' },

@@ -13,7 +13,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     age: '',
     sexe: 'M',
     numero: '',
-    pays: ''
+    pays: 'Burkina Faso'
   });
   const [erreur, setErreur] = useState('');
   const [message, setMessage] = useState('');
@@ -38,7 +38,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const changerIndicatif = (code: string, pays: string) => {
     setIndicatif(code);
     
-    setForm({ ...form, pays });
+    setForm(prev => ({ ...prev, pays }));
   };
 
   const formaterNumero = (valeur: string) => {
