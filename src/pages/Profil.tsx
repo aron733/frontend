@@ -22,7 +22,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   });
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
-  const [compteRebours, setCompteRebours] = useState(3);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const token = localStorage.getItem('access_token');
 
@@ -35,23 +34,17 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
   const confirmerDeconnexion = () => {
     setConfirmDeconnexion(true);
-    setCompteRebours(3);
-    
-    const interval = setInterval(() => {
-      setCompteRebours((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          deconnexion();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
   const annulerDeconnexion = () => {
     setConfirmDeconnexion(false);
-    setCompteRebours(3);
+  };
+
+  const confirmerEtQuitter = () => {
+    // Délai de 3 secondes avant de quitter
+    setTimeout(() => {
+      deconnexion();
+    }, 3000);
   };
 
   const uploadPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,12 +232,12 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         <div style={styles.overlayConfirmation} onClick={annulerDeconnexion}>
           <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
             <p style={styles.modalTexte}>Se déconnecter ?</p>
-            <p style={styles.modalCompteRebours}>Déconnexion dans {compteRebours}s</p>
+            
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               <button onClick={annulerDeconnexion} style={styles.modalBtnAnnuler}>
                 Annuler
               </button>
-              <button onClick={deconnexion} style={styles.modalBtnConfirmer}>
+              <button onClick={confirmerEtQuitter} style={styles.modalBtnConfirmer}>
                 Confirmer
               </button>
             </div>
