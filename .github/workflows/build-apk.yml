@@ -52,29 +52,6 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/vokyvo-release.keystore
       
-      - name: Configure Release Signing
-        run: |
-          cd android
-          cat > app/signing.gradle << 'EOF'
-          android {
-              signingConfigs {
-                  release {
-                      storeFile file('app/vokyvo-release.keystore')
-                      storePassword System.getenv('STORE_PASS')
-                      keyAlias System.getenv('KEY_ALIAS')
-                      keyPassword System.getenv('KEY_PASS')
-                  }
-              }
-              buildTypes {
-                  release {
-                      signingConfig signingConfigs.release
-                  }
-              }
-          }
-          EOF
-          # Inclure signing.gradle dans build.gradle
-          echo "apply from: 'signing.gradle'" >> app/build.gradle
-      
       - name: Build Release APK
         run: |
           cd android
