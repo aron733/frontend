@@ -783,8 +783,6 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
       Répondre
     </button>
     <button onClick={() => supprimerMessage(messageSelectionne)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '15px 20px', background: 'transparent', border: 'none', color: '#dc3545', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', borderRadius: '12px', textAlign: 'left' }}>
-    </button>
-    <button onClick={() => { const msg = messages.find(m => m.id === messageSelectionne); if (msg) { console.log('Reponse :', msg.texte); setMessageReponse(msg); setMessageSelectionne(null); alert('Reponse : ' + (msg.texte || 'Photo')); } }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '15px 20px', background: 'transparent', border: 'none', color: '#dc3545', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer', borderRadius: '12px', textAlign: 'left' }}>
       Supprimer
     </button>
     <button onClick={() => setMessageSelectionne(null)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '15px 20px', background: 'transparent', border: 'none', color: '#aaa', fontSize: '15px', cursor: 'pointer', borderRadius: '12px', textAlign: 'left' }}>
