@@ -200,7 +200,7 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
-      alert('Erreur envoi message : ' + (err.response?.data?.erreur || err.message));
+      alert('Erreur envoi message : ' + ((err as any).response?.data?.erreur || (err as any).message));
     }
   };
 
