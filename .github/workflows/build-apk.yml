@@ -52,27 +52,41 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/vokyvo-release.keystore
       
+      - name: Configure Release Signing
+        run: |
+          cd android
+          cat > app/signing.gradle << 'EOF'
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file('app/vokyvo-release.keystore')
+                      storePassword System.getenv('STORE_PASS')
+                      keyAlias System.getenv('KEY_ALIAS')
+                      keyPassword System.getenv('KEY_PASS')
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          EOF
+          # Inclure signing.gradle dans build.gradle
+          echo "apply from: 'signing.gradle'" >> app/build.gradle
+      
       - name: Build Release APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease
-      
-      - name: Sign Release APK
-        run: |
-          cd android/app/build/outputs/apk/release/
-          # Trouver zipalign et apksigner
-          ZIPALIGN=$(find /usr/local/lib/android/sdk -name zipalign | head -1)
-          APKSIGNER=$(find /usr/local/lib/android/sdk -name apksigner | head -1)
-          echo "zipalign: $ZIPALIGN"
-          echo "apksigner: $APKSIGNER"
-          # Signer
-          $ZIPALIGN -f 4 app-release-unsigned.apk app-release-aligned.apk
-          $APKSIGNER sign --ks ../../../app/vokyvo-release.keystore --ks-pass pass:${{ secrets.STORE_PASS }} --ks-key-alias ${{ secrets.KEY_ALIAS }} --key-pass pass:${{ secrets.KEY_PASS }} --out vokyvo-release.apk app-release-aligned.apk
-          $APKSIGNER verify vokyvo-release.apk
+        env:
+          STORE_PASS: ${{ secrets.STORE_PASS }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KEY_PASS }}
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: vokyvo-release
-          path: android/app/build/outputs/apk/release/vokyvo-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
