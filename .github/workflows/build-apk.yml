@@ -61,9 +61,15 @@ jobs:
       - name: Sign Release APK
         run: |
           cd android/app/build/outputs/apk/release/
-          zipalign -f 4 app-release-unsigned.apk app-release-aligned.apk
-          apksigner sign --ks ../../../app/vokyvo-release.keystore --ks-pass pass:${{ secrets.STORE_PASS }} --ks-key-alias ${{ secrets.KEY_ALIAS }} --key-pass pass:${{ secrets.KEY_PASS }} --out vokyvo-release.apk app-release-aligned.apk
-          apksigner verify vokyvo-release.apk
+          # Trouver zipalign et apksigner
+          ZIPALIGN=$(find /usr/local/lib/android/sdk -name zipalign | head -1)
+          APKSIGNER=$(find /usr/local/lib/android/sdk -name apksigner | head -1)
+          echo "zipalign: $ZIPALIGN"
+          echo "apksigner: $APKSIGNER"
+          # Signer
+          $ZIPALIGN -f 4 app-release-unsigned.apk app-release-aligned.apk
+          $APKSIGNER sign --ks ../../../app/vokyvo-release.keystore --ks-pass pass:${{ secrets.STORE_PASS }} --ks-key-alias ${{ secrets.KEY_ALIAS }} --key-pass pass:${{ secrets.KEY_PASS }} --out vokyvo-release.apk app-release-aligned.apk
+          $APKSIGNER verify vokyvo-release.apk
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
