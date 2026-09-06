@@ -54,17 +54,6 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
       
-      - name: Sign APK
-        run: |
-          cd android/app/build/outputs/apk/debug/
-          # Générer une clé debug si elle n'existe pas
-          keytool -genkeypair -v -keystore debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US" 2>/dev/null || true
-          # Signer avec zipalign puis apksigner
-          zipalign -f 4 app-debug.apk app-debug-aligned.apk
-          apksigner sign --ks debug.keystore --ks-pass pass:android --ks-key-alias androiddebugkey --key-pass pass:android --out app-debug.apk app-debug-aligned.apk
-          # Vérifier la signature
-          apksigner verify app-debug.apk
-      
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
