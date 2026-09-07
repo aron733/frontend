@@ -20,7 +20,7 @@ function Chat() {
     // Charger la liste des utilisateurs
     const chargerUsers = async () => {
       try {
-        const response = await axios.get(`${API_URL}/rechercher-users/?q=`, {
+        const response = await axios.get(`${API_URL}/rechercher-users/?q=%20`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(response.data.users || []);
