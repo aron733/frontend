@@ -154,7 +154,6 @@ function Chat() {
     <div style={styles.container}>
       <div style={styles.header}>
         <button onClick={() => {
-          const userData = JSON.parse(localStorage.getItem('user') || '{}');
           window.location.reload();
         }} style={styles.backButton}>
           ←
