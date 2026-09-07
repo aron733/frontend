@@ -120,6 +120,32 @@ const userId = parseInt(userDataLocal.user_id || userDataLocal.id || '0');
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+  // Rafraichit les messages automatiquement toutes les 0,5 secondes
+  useEffect(() => {
+    if (!conversationActive || vue !== 'conversation') return;
+
+    const interval = setInterval(async () => {
+      try {
+        const response = await axios.get(`${API_URL}/conversations/${conversationActive.id}/messages/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const msgs = response.data.messages.map((m: any) => ({
+          ...m,
+          apercu: m.fichier_url && m.fichier_url.startsWith('http') && m.fichier_url.includes('/image/upload/') ? m.fichier_url : undefined,
+          est_video: m.fichier_url && m.fichier_url.startsWith('http') && (m.fichier_url.includes('/video/upload/') || m.nom_fichier?.match(/\.(mp4|webm|mov|avi)$/i)) ? true : false,
+          fichier_url: m.fichier_url && m.fichier_url.startsWith('http') ? m.fichier_url : undefined,
+          audio_url: m.audio_url && m.audio_url.startsWith('http') ? m.audio_url : undefined,
+          est_audio: m.audio_url && m.audio_url.startsWith('http') ? true : false,
+        }));
+        setMessages(msgs);
+      } catch (err) {
+        // silencieux
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [conversationActive, vue, token]);
+
 
   const chargerConversations = async () => {
     try {
