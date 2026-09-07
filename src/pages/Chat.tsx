@@ -139,6 +139,11 @@ function Chat() {
                   background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? '#2a2a3e' : 'transparent',
                 }}
               >
+                {user.photo ? (
+                  <img src={user.photo} style={styles.userPhoto} alt="" />
+                ) : (
+                  <span style={styles.userAvatar}>👤</span>
+                )}
                 <span style={isOnline ? styles.userOnline : styles.userOffline}>●</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
               </button>
@@ -151,6 +156,11 @@ function Chat() {
           {selectedUser ? (
             <>
               <div style={styles.chatHeader}>
+                {selectedUser.photo ? (
+                  <img src={selectedUser.photo} style={styles.chatPhoto} alt="" />
+                ) : (
+                  <span style={styles.chatAvatar}>👤</span>
+                )}
                 <h3 style={styles.chatTitle}>
                   {selectedUser.first_name || selectedUser.prenom || ''} {selectedUser.last_name || selectedUser.nom || ''}
                 </h3>
@@ -233,6 +243,10 @@ const styles = {
     gap: '8px',
   },
   userOnline: { color: '#28a745', fontSize: '10px' },
+  userPhoto: { width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' as const },
+  userAvatar: { fontSize: '20px', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  chatPhoto: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' as const },
+  chatAvatar: { fontSize: '25px', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   userOffline: { color: '#666', fontSize: '10px' },
   chatArea: { flex: 1, display: 'flex', flexDirection: 'column' as const },
   chatHeader: {
@@ -268,10 +282,14 @@ const styles = {
   messageText: { color: 'white', fontSize: '14px' },
   empty: { color: '#666', textAlign: 'center' as const, marginTop: '50px' },
   inputArea: {
+    position: 'sticky' as const,
+    bottom: 0,
     display: 'flex',
     gap: '10px',
     padding: '15px',
     borderTop: '1px solid #1a1a2a',
+    background: '#111120',
+    zIndex: 10,
   },
   input: {
     flex: 1,
