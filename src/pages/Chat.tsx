@@ -32,7 +32,7 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    const ws = new WebSocket(WS_URL);
+    const ws = new WebSocket(`${WS_URL}?token=${token}`);
 
     ws.onopen = () => {
       console.log('✅ WebSocket connecté');
@@ -60,9 +60,39 @@ function Chat() {
     return () => ws.close();
   }, []);
 
-  const selectUser = (user: any) => {
+  const selectUser = async (user: any) => {
     setSelectedUser(user);
     setMessages([]);
+    
+    // Charge l'historique depuis le backend principal
+    try {
+      const userId = user.id || user.user_id;
+      const convResponse = await axios.get(`${API_URL}/conversations/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const conversations = convResponse.data.conversations || [];
+      const conv = conversations.find((c: any) => 
+        c.autre_user.id === userId
+      );
+      
+      if (conv) {
+        const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        const msgs = (msgResponse.data.messages || []).map((m: any) => ({
+          type: 'message',
+          message: m.contenu || m.message || m.texte || '',
+          from_user_id: m.expediteur || m.expediteur_id || 0,
+          from_username: m.expediteur_username || '',
+        }));
+        
+        setMessages(msgs);
+      }
+    } catch (err) {
+      console.error('Erreur chargement historique:', err);
+    }
   };
 
   const envoyerMessage = () => {
