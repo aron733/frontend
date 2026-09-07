@@ -20,10 +20,35 @@ function Chat() {
     // Charger la liste des utilisateurs
     const chargerUsers = async () => {
       try {
-        const response = await axios.get(`${API_URL}/rechercher-users/?q=%20`, {
+        // Récupère les conversations pour avoir les photos
+        const convResponse = await axios.get(`${API_URL}/conversations/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setUsers(response.data.users || []);
+        
+        const convUsers = (convResponse.data.conversations || []).map((c: any) => ({
+          id: c.autre_user.id,
+          username: c.autre_user.username || '',
+          first_name: c.autre_user.prenom || '',
+          last_name: c.autre_user.nom || '',
+          photo: c.autre_user.photo || null,
+        }));
+        
+        // Récupère aussi tous les users
+        const usersResponse = await axios.get(`${API_URL}/rechercher-users/?q=%20`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        const allUsers = (usersResponse.data.users || []).map((u: any) => ({
+          ...u,
+          photo: (convUsers.find((cu: any) => cu.id === u.id) || {}).photo || null,
+        }));
+        
+        // Fusionne : users des conversations en premier, puis le reste
+        const mergedUsers = [...convUsers, ...allUsers.filter((u: any) => 
+          !convUsers.find((cu: any) => cu.id === u.id)
+        )];
+        
+        setUsers(mergedUsers);
       } catch (err) {
         console.error('Erreur chargement users');
       }
