@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import axios from 'axios';
 import Vokyvo from './Vokyvo';
 import Visio from './Visio';
+import Chat from './Chat';
 import News from './News';
 import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 
@@ -9,7 +10,7 @@ import { API_URL } from '../config';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news'>('profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages'>('profil');
   const [userData, setUserData] = useState(user);
   const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
     const stored = localStorage.getItem('user');
@@ -150,6 +151,9 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <button onClick={() => { setPageActive('chat'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeChat /> Chat VOKYVO
           </button>
+          <button onClick={() => { setPageActive('messages'); setMenuOuvert(false); }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v12H5.17L4 17.17V4z" /><line x1="8" y1="8" x2="16" y2="8" /><line x1="8" y1="12" x2="12" y2="12" /></svg> Messages
+          </button>
           <button onClick={() => { setPageActive('visio'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeVideo /> Appel vidéo
           </button>
@@ -215,6 +219,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         
         {pageActive === 'chat' && <Vokyvo />}
         {pageActive === 'visio' && <Visio />}
+        {pageActive === 'messages' && <Chat />}
         {pageActive === 'news' && <News />}
       </main>
 
