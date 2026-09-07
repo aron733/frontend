@@ -110,7 +110,7 @@ function Chat() {
                 }}
               >
                 <span style={isOnline ? styles.userOnline : styles.userOffline}>●</span>
-                {user.prenom} {user.nom} {user.username && `(@${user.username})`}
+                {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
               </button>
             );
           })}
@@ -122,7 +122,7 @@ function Chat() {
             <>
               <div style={styles.chatHeader}>
                 <h3 style={styles.chatTitle}>
-                  {selectedUser.prenom} {selectedUser.nom}
+                  {selectedUser.first_name || selectedUser.prenom || ''} {selectedUser.last_name || selectedUser.nom || ''}
                 </h3>
                 <span style={presence[selectedUser.id || selectedUser.user_id] === 'online' ? styles.userOnline : styles.userOffline}>
                   {presence[selectedUser.id || selectedUser.user_id] === 'online' ? 'En ligne' : 'Hors ligne'}
