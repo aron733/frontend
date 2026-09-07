@@ -153,6 +153,9 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
+        <button onClick={() => window.history.back()} style={styles.backButton}>
+          ←
+        </button>
         <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
           ☰
         </button>
@@ -267,6 +270,14 @@ const styles = {
     borderBottom: '1px solid #1a1a2a',
   },
   title: { color: 'white', margin: 0, fontSize: '18px', flex: 1 },
+  backButton: {
+    background: 'transparent',
+    border: 'none',
+    color: 'white',
+    fontSize: '24px',
+    cursor: 'pointer',
+    padding: '5px 10px',
+  },
   hamburger: {
     background: 'transparent',
     border: 'none',
