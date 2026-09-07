@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import axios from 'axios';
 import Vokyvo from './Vokyvo';
 import Visio from './Visio';
-import Texto from './Texto';
 import News from './News';
 import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 
@@ -10,7 +9,7 @@ import { API_URL } from '../config';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'texto' | 'news'>('profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news'>('profil');
   const [userData, setUserData] = useState(user);
   const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
     const stored = localStorage.getItem('user');
@@ -114,13 +113,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     </svg>
   );
 
-  const IconeTexto = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 4h16v12H5.17L4 17.17V4z" />
-      <line x1="8" y1="8" x2="16" y2="8" />
-      <line x1="8" y1="12" x2="12" y2="12" />
-    </svg>
-  );
 
   const IconeDeconnexion = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -154,9 +146,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         <div style={styles.menu}>
           <button onClick={() => { setPageActive('profil'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeProfil /> Profil
-          </button>
-          <button onClick={() => { setPageActive('texto'); setMenuOuvert(false); }} style={styles.menuItem}>
-            <IconeTexto /> Messages
           </button>
           <button onClick={() => { setPageActive('chat'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeChat /> Chat VOKYVO
@@ -223,7 +212,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </div>
         )}
 
-        {pageActive === 'texto' && <Texto />}
+        
         {pageActive === 'chat' && <Vokyvo />}
         {pageActive === 'visio' && <Visio />}
         {pageActive === 'news' && <News />}

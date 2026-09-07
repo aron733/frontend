@@ -79,7 +79,7 @@ function App() {
                     <line x1="4" y1="4" x2="20" y2="20"/>
                   </svg>
                 </button>
-                <button onclick="this.parentElement.parentElement.remove(); window.location.href='/texto';" style="width: 60px; height: 60px; border-radius: 50%; border: none; background: #28a745; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(40,167,69,0.5);">
+                <button onclick="this.parentElement.parentElement.remove(); alert('Appel video accepte !');" style="width: 60px; height: 60px; border-radius: 50%; border: none; background: #28a745; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(40,167,69,0.5);">
                   <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
                     <polygon points="23 7 16 12 23 17 23 7"/>
                     <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
