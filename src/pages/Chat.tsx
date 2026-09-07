@@ -246,11 +246,17 @@ function Chat() {
 
 const styles = {
   container: {
-    position: 'relative' as const,
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     display: 'flex',
     flexDirection: 'column' as const,
-    height: '100%',
+    height: '100vh',
+    width: '100vw',
     background: '#0a0a0f',
+    zIndex: 1000,
   },
   header: {
     display: 'flex',
@@ -315,7 +321,7 @@ const styles = {
   chatPhoto: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' as const },
   chatAvatar: { fontSize: '25px', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   userOffline: { color: '#666', fontSize: '10px' },
-  chatArea: { flex: 1, display: 'flex', flexDirection: 'column' as const },
+  chatArea: { flex: 1, display: 'flex', flexDirection: 'column' as const, width: '100%' },
   chatHeader: {
     padding: '15px 20px',
     borderBottom: '1px solid #1a1a2a',
