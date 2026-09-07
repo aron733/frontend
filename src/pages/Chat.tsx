@@ -153,7 +153,10 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button onClick={() => window.history.back()} style={styles.backButton}>
+        <button onClick={() => {
+          const userData = JSON.parse(localStorage.getItem('user') || '{}');
+          window.location.reload();
+        }} style={styles.backButton}>
           ←
         </button>
         <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
@@ -271,12 +274,17 @@ const styles = {
   },
   title: { color: 'white', margin: 0, fontSize: '18px', flex: 1 },
   backButton: {
-    background: 'transparent',
-    border: 'none',
+    background: 'rgba(255,255,255,0.1)',
+    border: '1px solid rgba(255,255,255,0.2)',
     color: 'white',
-    fontSize: '24px',
+    fontSize: '20px',
     cursor: 'pointer',
-    padding: '5px 10px',
+    padding: '8px 12px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
   },
   hamburger: {
     background: 'transparent',
