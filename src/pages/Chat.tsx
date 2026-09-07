@@ -10,6 +10,7 @@ function Chat() {
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [connecte, setConnecte] = useState(false);
   const [presence, setPresence] = useState<Record<number, string>>({});
+  const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
