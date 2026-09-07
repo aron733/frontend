@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Fichiers sensibles - ne jamais push
+ajouter_refresh.py
+keystore_base64.txt
+vokyvo-release.keystore
+*.keystore
+*_base64.txt
