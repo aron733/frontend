@@ -153,15 +153,27 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button onClick={() => {
-          window.location.reload();
-        }} style={styles.backButton}>
-          ←
+        <button onClick={() => window.location.reload()} style={styles.backButton}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
         </button>
         <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
-          ☰
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
         </button>
-        <h2 style={styles.title}>💬 Messages</h2>
+        <h2 style={styles.title}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" style={{ verticalAlign: 'middle', marginRight: '8px' }}>
+            <path d="M4 4h16v12H5.17L4 17.17V4z" />
+            <line x1="8" y1="8" x2="16" y2="8" />
+            <line x1="8" y1="12" x2="12" y2="12" />
+          </svg>
+          Messages
+        </h2>
         <span style={connecte ? styles.online : styles.offline}>
           {connecte ? '● Connecté' : '○ Déconnecté'}
         </span>
@@ -265,33 +277,44 @@ const styles = {
   },
   header: {
     display: 'flex',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '15px 20px',
-    background: '#111120',
-    borderBottom: '1px solid #1a1a2a',
+    gap: '12px',
+    padding: '12px 15px',
+    background: 'rgba(17,17,32,0.95)',
+    borderBottom: '1px solid rgba(255,255,255,0.08)',
+    backdropFilter: 'blur(10px)',
+    position: 'sticky' as const,
+    top: 0,
+    zIndex: 200,
   },
-  title: { color: 'white', margin: 0, fontSize: '18px', flex: 1 },
+  title: { color: 'white', margin: 0, fontSize: '17px', flex: 1, fontWeight: 600, letterSpacing: '0.5px', display: 'flex', alignItems: 'center' },
   backButton: {
-    background: 'rgba(255,255,255,0.1)',
-    border: '1px solid rgba(255,255,255,0.2)',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
     color: 'white',
-    fontSize: '20px',
     cursor: 'pointer',
-    padding: '8px 12px',
+    padding: '8px',
     borderRadius: '10px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
   },
   hamburger: {
-    background: 'transparent',
-    border: 'none',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
     color: 'white',
-    fontSize: '22px',
     cursor: 'pointer',
-    padding: '5px 10px',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
   },
   searchInput: {
     width: '100%',
