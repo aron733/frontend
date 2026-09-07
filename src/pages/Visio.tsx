@@ -2,7 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import {
   LiveKitRoom,
-  VideoConference,
+  GridLayout,
+  ParticipantTile,
   RoomAudioRenderer,
 } from '@livekit/components-react';
 import '@livekit/components-styles';
@@ -124,7 +125,9 @@ function Visio() {
           </div>
 
           <div style={styles.videoGrid}>
-            <VideoConference />
+            <GridLayout>
+              <ParticipantTile />
+            </GridLayout>
           </div>
 
           <RoomAudioRenderer />
