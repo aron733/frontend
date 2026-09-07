@@ -190,7 +190,7 @@ function Chat() {
                 <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>●</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
               </button>
-          )))
+          ))}
         </div>
         )}
 
