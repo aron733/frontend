@@ -173,7 +173,7 @@ function Chat() {
             placeholder="Rechercher..."
             style={styles.searchInput}
           />
-          {usersFiltres.map((user) => {
+          {usersFiltres.map((user) => (
           {users.map((user) => {
             const isOnline = presence[user.id || user.user_id] === 'online';
             return (
@@ -194,7 +194,7 @@ function Chat() {
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
               </button>
             );
-          })}
+          ))}
         </div>
         )}
 
