@@ -124,25 +124,59 @@ function Chat() {
     }
   };
 
-  const envoyerMessage = () => {
-    if (!nouveauMessage.trim() || !wsRef.current || !selectedUser) return;
+  const envoyerMessage = async () => {
+    if (!nouveauMessage.trim() || !selectedUser) return;
 
     const destUserId = selectedUser.id || selectedUser.user_id;
     
-    wsRef.current.send(JSON.stringify({
-      action: 'message',
-      dest_user_id: destUserId,
-      message: nouveauMessage,
-    }));
-
-    setMessages((prev) => [...prev, {
-      type: 'message',
-      message: nouveauMessage,
-      from_user_id: myId,
-      from_username: 'Moi',
-    }]);
-
-    setNouveauMessage('');
+    // Envoie via l'API REST du backend principal (sauvegarde en PostgreSQL)
+    try {
+      const convResponse = await axios.get(`${API_URL}/conversations/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const conversations = convResponse.data.conversations || [];
+      let conv = conversations.find((c: any) => c.autre_user.id === destUserId);
+      
+      if (!conv) {
+        // Créer la conversation
+        const createRes = await axios.post(`${API_URL}/conversations/creer/`, {
+          autre_user_id: destUserId,
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        conv = createRes.data.conversation || createRes.data;
+      }
+      
+      if (conv) {
+        await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, {
+          texte: nouveauMessage,
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+      
+      // Ajoute au state local
+      setMessages((prev) => [...prev, {
+        type: 'message',
+        message: nouveauMessage,
+        from_user_id: myId,
+        from_username: 'Moi',
+      }]);
+      
+      // Notification via WebSocket
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({
+          action: 'message',
+          dest_user_id: destUserId,
+          message: nouveauMessage,
+        }));
+      }
+      
+      setNouveauMessage('');
+    } catch (err) {
+      console.error('Erreur envoi message:', err);
+    }
   };
 
   const usersFiltres = allUsers.filter((user) => {
