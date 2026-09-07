@@ -11,6 +11,9 @@ function Chat() {
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [connecte, setConnecte] = useState(false);
   const [presence, setPresence] = useState<Record<number, string>>({});
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [menuOuvert, setMenuOuvert] = useState(false);
+  const [rechercheUser, setRechercheUser] = useState('');
   const wsRef = useRef<WebSocket | null>(null);
   const token = localStorage.getItem('access_token') || '';
   const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -49,6 +52,7 @@ function Chat() {
         )];
         
         setUsers(mergedUsers);
+        setAllUsers(mergedUsers);
       } catch (err) {
         console.error('Erreur chargement users');
       }
@@ -141,9 +145,17 @@ function Chat() {
     setNouveauMessage('');
   };
 
+  const usersFiltres = allUsers.filter((user) => {
+    const nomComplet = `${user.first_name || ''} ${user.last_name || ''} ${user.username || ''}`.toLowerCase();
+    return nomComplet.includes(rechercheUser.toLowerCase());
+  });
+
   return (
     <div style={styles.container}>
       <div style={styles.header}>
+        <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
+          ☰
+        </button>
         <h2 style={styles.title}>💬 Messages</h2>
         <span style={connecte ? styles.online : styles.offline}>
           {connecte ? '● Connecté' : '○ Déconnecté'}
@@ -151,8 +163,17 @@ function Chat() {
       </div>
 
       <div style={styles.body}>
-        {/* Liste des utilisateurs */}
+        {/* Menu hamburger avec liste des utilisateurs */}
+        {menuOuvert && (
         <div style={styles.userList}>
+          <input
+            type="text"
+            value={rechercheUser}
+            onChange={(e) => setRechercheUser(e.target.value)}
+            placeholder="Rechercher..."
+            style={styles.searchInput}
+          />
+          {usersFiltres.map((user) => {
           {users.map((user) => {
             const isOnline = presence[user.id || user.user_id] === 'online';
             return (
@@ -175,6 +196,7 @@ function Chat() {
             );
           })}
         </div>
+        )}
 
         {/* Zone de chat */}
         <div style={styles.chatArea}>
@@ -228,6 +250,7 @@ function Chat() {
 
 const styles = {
   container: {
+    position: 'relative' as const,
     display: 'flex',
     flexDirection: 'column' as const,
     height: '100%',
@@ -241,13 +264,36 @@ const styles = {
     background: '#111120',
     borderBottom: '1px solid #1a1a2a',
   },
-  title: { color: 'white', margin: 0, fontSize: '18px' },
+  title: { color: 'white', margin: 0, fontSize: '18px', flex: 1 },
+  hamburger: {
+    background: 'transparent',
+    border: 'none',
+    color: 'white',
+    fontSize: '22px',
+    cursor: 'pointer',
+    padding: '5px 10px',
+  },
+  searchInput: {
+    width: '100%',
+    padding: '10px 15px',
+    borderRadius: '20px',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: 'white',
+    fontSize: '14px',
+    outline: 'none',
+    marginBottom: '10px',
+  },
   online: { color: '#28a745', fontSize: '12px' },
   offline: { color: '#dc3545', fontSize: '12px' },
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
   userList: {
-    width: '40%',
-    minWidth: '150px',
+    position: 'absolute' as const,
+    top: '60px',
+    left: 0,
+    width: '80%',
+    maxWidth: '300px',
+    zIndex: 50,
     borderRight: '1px solid #1a1a2a',
     overflowY: 'auto' as const,
     padding: '10px',
