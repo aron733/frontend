@@ -5,7 +5,6 @@ import { API_URL } from '../config';
 const WS_URL = 'wss://daphne-5mxe.onrender.com/ws/chat/';
 
 function Chat() {
-  const [users, setUsers] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [nouveauMessage, setNouveauMessage] = useState('');
