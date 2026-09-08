@@ -520,8 +520,6 @@ function Chat() {
       <div style={styles.body}>
         {/* Menu hamburger avec liste des utilisateurs */}
         {menuOuvert && (
-        <>
-        <div style={styles.overlayPlein} onClick={() => setMenuOuvert(false)} />
         <div style={{
           ...styles.userList,
           animation: 'slideIn 0.3s ease-out',
@@ -628,7 +626,6 @@ function Chat() {
               </button>
           ))}
         </div>
-        </>
         )}
 
         {/* Zone de chat - GROUPE */}
@@ -869,7 +866,6 @@ function Chat() {
               <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
             </div>
           </div>
-        </>
         )}
 
         {/* Zone de chat - PRIVÉ */}
@@ -1349,12 +1345,8 @@ const styles = {
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
   overlayPlein: {
     position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100vw',
-    height: '100vh',
+    top: 0, left: 0, right: 0, bottom: 0,
+    width: '100vw', height: '100vh',
     background: '#0a0a0f',
     zIndex: 40,
   },
