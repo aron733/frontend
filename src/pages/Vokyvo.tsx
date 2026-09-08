@@ -321,9 +321,8 @@ const styles = {
     flexShrink: 0,
   },
   messagesArea: {
-    paddingBottom: '80px',
     flex: 1,
-    padding: '20px',
+    padding: '20px 20px 80px 20px',
     overflowY: 'auto' as const,
     display: 'flex',
     flexDirection: 'column' as const,
