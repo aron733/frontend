@@ -201,6 +201,8 @@ function Chat() {
         conv = { id: createRes.data.conversation_id };
       }
       
+      let sendResponse: any = null;
+
       if (conv) {
         const formData = new FormData();
         if (nouveauMessage.trim()) {
@@ -210,13 +212,13 @@ function Chat() {
           formData.append('fichier', fichierSelectionne);
         }
         
-        const sendResponse = await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
+        sendResponse = await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
       }
       
       // Ajoute au state local
-      const cloudinaryURL = sendResponse.data?.fichier_url || null;
+      const cloudinaryURL = sendResponse?.data?.fichier_url || null;
       setMessages((prev) => [...prev, {
         type: 'message',
         message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
