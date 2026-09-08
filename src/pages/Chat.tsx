@@ -262,12 +262,31 @@ function Chat() {
       setNouveauMessage('');
       setFichierSelectionne(null);
       
-      // Envoie via WebSocket au groupe (instantané)
+      // Sauvegarde en DB via l'API REST
+      try {
+        const formData = new FormData();
+        if (nouveauMessage.trim()) {
+          formData.append('texte', nouveauMessage);
+        }
+        if (fichierSelectionne) {
+          formData.append('fichier', fichierSelectionne);
+        }
+        formData.append('groupe_id', groupeActif.id);
+        
+        await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+      } catch (err) {
+        console.error('Erreur sauvegarde message groupe');
+      }
+
+      // Notification via WebSocket au groupe (instantané)
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({
           action: 'groupe',
           groupe_id: groupeActif.id,
           message: nouveauMessage,
+          fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
         }));
       }
       return;
@@ -509,7 +528,29 @@ function Chat() {
             style={styles.searchInput}
           />
           {groupes.map((groupe) => (
-            <div key={groupe.id} style={styles.groupeItem} onClick={() => { setGroupeActif(groupe); setSelectedUser(null); setMessages([]); setMenuOuvert(false); }}>
+            <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
+      setGroupeActif(groupe);
+      setSelectedUser(null);
+      setMessages([]);
+      setMenuOuvert(false);
+      
+      // Charge l'historique du groupe depuis l'API
+      try {
+        const response = await axios.get(`${API_URL}/groupes/${groupe.id}/messages/`, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        const msgs = (response.data.messages || []).map((m: any) => ({
+          type: 'message',
+          message: m.texte || '',
+          from_user_id: m.expediteur_id,
+          from_username: m.expediteur_username,
+          fichier_url: m.fichier_url,
+        }));
+        setMessages(msgs);
+      } catch (err) {
+        console.error('Erreur chargement messages groupe');
+      }
+    }}>
               <span style={styles.groupeIcon}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -612,7 +653,7 @@ function Chat() {
               <div style={styles.gestionPanel}>
                 <p style={styles.membresTitle}>Gestion du groupe</p>
                 <div style={styles.membreItem}>
-                  <span style={styles.membreNom}>Moi ({groupeActif.createur})</span>
+                  <span style={styles.membreNom}>{(() => { const u = JSON.parse(localStorage.getItem('user') || '{}'); return (u.prenom || u.first_name || '') + ' ' + (u.nom || u.last_name || ''); })()}</span>
                   <span style={styles.badgeAdmin}>ADMIN</span>
                 </div>
                 <p style={styles.sectionSousTitre}>Participants ({groupeActif.participants?.length || 0})</p>
@@ -622,6 +663,7 @@ function Chat() {
                   return (
                     <div key={membre.id} style={styles.membreItem}>
                       <span style={styles.membreNom}>{membre.first_name || ''} {membre.last_name || membre.username}</span>
+                      {membre.username !== groupeActif.createur && <span style={styles.badgeMembre}>MEMBRE</span>}
                       {estAdmin ? <span style={styles.badgeAdmin}>ADMIN</span> : estModo ? <span style={styles.badgeModo}>MODO</span> : <span style={styles.badgeMembre}>MEMBRE</span>}
                     </div>
                   );
