@@ -107,7 +107,14 @@ function Chat() {
       const data = JSON.parse(event.data);
       
       if (data.type === 'message') {
-        setMessages((prev) => [...prev, data]);
+        const msgRecu = {
+          type: 'message',
+          message: data.message || '',
+          from_user_id: data.from_user_id,
+          from_username: data.from_username,
+          fichier_url: data.fichier_url || null,
+        };
+        setMessages((prev) => [...prev, msgRecu]);
       }
       
       if (data.type === 'presence') {
