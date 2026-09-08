@@ -22,7 +22,6 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
   const [showPolitique, setShowPolitique] = useState(false);
   const [showConditions, setShowConditions] = useState(false);
-  const [cookiesAcceptes, setCookiesAcceptes] = useState(false);
   const [approuveLecture, setApprouveLecture] = useState(false);
 
   const indicatifs = [
