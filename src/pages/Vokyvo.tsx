@@ -20,7 +20,7 @@ function Vokyvo() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [chatsIA, setChatsIA] = useState<any[]>([]);
-  const [chatIdActif, setChatIdActif] = useState<number | null>(null);
+  const [_chatIdActif, setChatIdActif] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userData = JSON.parse(localStorage.getItem('user') || '{}');
