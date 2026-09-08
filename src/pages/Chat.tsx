@@ -520,6 +520,7 @@ function Chat() {
       <div style={styles.body}>
         {/* Menu hamburger avec liste des utilisateurs */}
         {menuOuvert && (
+        <>
         <div style={styles.overlayPlein} onClick={() => setMenuOuvert(false)} />
         <div style={{
           ...styles.userList,
@@ -627,6 +628,7 @@ function Chat() {
               </button>
           ))}
         </div>
+        </>
         )}
 
         {/* Zone de chat - GROUPE */}
@@ -867,6 +869,7 @@ function Chat() {
               <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
             </div>
           </div>
+        </>
         )}
 
         {/* Zone de chat - PRIVÉ */}
