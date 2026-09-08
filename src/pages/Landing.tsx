@@ -309,11 +309,11 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
 
       {/* Footer */}
       <footer style={styles.footer}>
-        <p style={styles.footerText}>© 2026 VOKYVO LABS - Tous droits réservés</p>
+        <p style={styles.footerText}>© 2026 VOKYVO - Tous droits réservés</p>
         <div style={styles.footerLinks}>
-          <a href="#" style={styles.footerLink}>Confidentialité</a>
-          <a href="#" style={styles.footerLink}>Conditions</a>
-          <a href="#" style={styles.footerLink}>RGPD</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); setShowPolitique(true); }} style={styles.footerLink}>Confidentialité</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); setShowConditions(true); }} style={styles.footerLink}>Conditions</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); setShowPolitique(true); }} style={styles.footerLink}>RGPD</a>
         </div>
         <a href="https://stats.uptimerobot.com/0DXeqdPiLO" target="_blank" style={styles.uptime}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="#28a745">
