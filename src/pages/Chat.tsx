@@ -118,6 +118,11 @@ function Chat() {
       );
       
       if (conv) {
+        // Marque les messages comme lus
+        await axios.post(`${API_URL}/conversations/${conv.id}/marquer-lus/`, {}, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        }).catch(() => {});
+        
         const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
@@ -282,6 +287,9 @@ function Chat() {
                     style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
+                {msg.from_user_id === getMyId() && (
+                  <span style={styles.tick}>{msg.lu ? '✓✓' : '✓'}</span>
+                )}
                   </div>
                 ))}
               </div>
@@ -440,6 +448,7 @@ const styles = {
     maxWidth: '70%',
   },
   messageText: { color: 'white', fontSize: '14px' },
+  tick: { color: '#4fc3f7', fontSize: '10px', marginLeft: '5px' },
   empty: { color: '#666', textAlign: 'center' as const, marginTop: '50px' },
   inputArea: {
     position: 'fixed' as const,
