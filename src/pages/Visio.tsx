@@ -149,6 +149,12 @@ function Visio() {
 
   return (
     <div style={styles.landingContainer}>
+      <button onClick={() => window.location.reload()} style={styles.backButton}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+      </button>
       <div style={styles.landingCard}>
         <div style={styles.landingIcon}>
           <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2">
@@ -313,13 +319,38 @@ const styles = {
     cursor: 'pointer',
     zIndex: 100,
   },
+  backButton: {
+    position: 'absolute' as const,
+    top: '20px',
+    left: '20px',
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
+    zIndex: 10,
+  },
   landingContainer: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100vh',
+    height: '100vh',
+    width: '100vw',
     background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
     padding: '20px',
+    zIndex: 1000,
   },
   landingCard: {
     background: 'rgba(255,255,255,0.05)',
