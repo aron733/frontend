@@ -16,9 +16,11 @@ function Chat() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
   const wsRef = useRef<WebSocket | null>(null);
-  const token = localStorage.getItem('access_token') || '';
-  const userData = JSON.parse(localStorage.getItem('user') || '{}');
-  const myId = parseInt(userData.user_id || '0');
+  const getToken = () => localStorage.getItem('access_token') || '';
+  const getMyId = () => {
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    return parseInt(userData.user_id || userData.id || '0');
+  };
 
   useEffect(() => {
     // Charger la liste des utilisateurs
@@ -26,7 +28,7 @@ function Chat() {
       try {
         // Récupère les conversations pour avoir les photos
         const convResponse = await axios.get(`${API_URL}/conversations/`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${getToken()}` }
         });
         
         const convUsers = (convResponse.data.conversations || []).map((c: any) => ({
@@ -39,7 +41,7 @@ function Chat() {
         
         // Récupère aussi tous les users
         const usersResponse = await axios.get(`${API_URL}/rechercher-users/?q=%20`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${getToken()}` }
         });
         
         const allUsers = (usersResponse.data.users || []).map((u: any) => ({
@@ -62,7 +64,7 @@ function Chat() {
   }, []);
 
   useEffect(() => {
-    const ws = new WebSocket(`${WS_URL}?token=${token}`);
+    const ws = new WebSocket(`${WS_URL}?token=${getToken()}`);
 
     ws.onopen = () => {
       console.log('✅ WebSocket connecté');
@@ -102,7 +104,7 @@ function Chat() {
     try {
       const userId = user.id || user.user_id;
       const convResponse = await axios.get(`${API_URL}/conversations/`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${getToken()}` }
       });
       
       const conversations = convResponse.data.conversations || [];
@@ -112,7 +114,7 @@ function Chat() {
       
       if (conv) {
         const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${getToken()}` }
         });
         
         const msgs = (msgResponse.data.messages || []).map((m: any) => ({
@@ -137,7 +139,7 @@ function Chat() {
     // Envoie via l'API REST du backend principal (sauvegarde en PostgreSQL)
     try {
       const convResponse = await axios.get(`${API_URL}/conversations/`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${getToken()}` }
       });
       
       const conversations = convResponse.data.conversations || [];
@@ -148,7 +150,7 @@ function Chat() {
         const createRes = await axios.post(`${API_URL}/conversations/creer/`, {
           autre_user_id: destUserId,
         }, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${getToken()}` }
         });
         conv = createRes.data.conversation || createRes.data;
       }
@@ -157,7 +159,7 @@ function Chat() {
         await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, {
           texte: nouveauMessage,
         }, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${getToken()}` }
         });
       }
       
@@ -165,7 +167,7 @@ function Chat() {
       setMessages((prev) => [...prev, {
         type: 'message',
         message: nouveauMessage,
-        from_user_id: myId,
+        from_user_id: getMyId(),
         from_username: 'Moi',
       }]);
       
@@ -272,7 +274,7 @@ function Chat() {
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    style={msg.from_user_id === myId ? styles.messageMoi : styles.messageAutre}
+                    style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
                   </div>
