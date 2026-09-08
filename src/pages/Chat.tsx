@@ -20,6 +20,9 @@ function Chat() {
   const [groupes, setGroupes] = useState<any[]>([]);
   const [groupeActif, setGroupeActif] = useState<any>(null);
   const [showCreerGroupe, setShowCreerGroupe] = useState(false);
+  const [showMembres, setShowMembres] = useState(false);
+  const [rechercheMembre, setRechercheMembre] = useState('');
+  const [resultatsRecherche, setResultatsRecherche] = useState<any[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -401,7 +404,75 @@ function Chat() {
                   <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
                 </div>
               </div>
+              <button onClick={() => setShowMembres(!showMembres)} style={styles.membresBtn}>
+                Membres
+              </button>
             </div>
+
+            {showMembres && (
+              <div style={styles.membresPanel}>
+                <p style={styles.membresTitle}>Membres du groupe</p>
+                
+                {/* Recherche pour ajouter */}
+                {groupeActif.est_admin !== false && (
+                  <div style={{ display: 'flex', gap: '5px', marginBottom: '10px' }}>
+                    <input
+                      type="text"
+                      value={rechercheMembre}
+                      onChange={(e) => setRechercheMembre(e.target.value)}
+                      placeholder="Ajouter un membre..."
+                      style={styles.membreSearchInput}
+                    />
+                    <button onClick={async () => {
+                      try {
+                        const response = await axios.get(`${API_URL}/rechercher-users/?q=${encodeURIComponent(rechercheMembre)}`, {
+                          headers: { Authorization: `Bearer ${getToken()}` }
+                        });
+                        setResultatsRecherche(response.data.users || []);
+                      } catch (err) {}
+                    }} style={styles.membreSearchBtn}>🔍</button>
+                  </div>
+                )}
+                
+                {/* Résultats de recherche */}
+                {resultatsRecherche.length > 0 && (
+                  <div style={styles.membreResultats}>
+                    {resultatsRecherche.map((user) => (
+                      <div key={user.id} style={styles.membreResultatItem} onClick={async () => {
+                        try {
+                          await axios.post(`${API_URL}/groupes/ajouter-membre/`, {
+                            groupe_id: groupeActif.id,
+                            user_id: user.id,
+                          }, { headers: { Authorization: `Bearer ${getToken()}` } });
+                          setResultatsRecherche([]);
+                          setRechercheMembre('');
+                          window.location.reload();
+                        } catch (err) {}
+                      }}>
+                        <span>+ {user.first_name || ''} {user.last_name || ''}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Liste des membres */}
+                {(groupeActif.participants || []).map((membre: any) => {
+                  const estAdmin = groupeActif.createur === membre.username;
+                  const estModo = groupeActif.moderateurs?.some((m: any) => m.id === membre.id);
+                  return (
+                    <div key={membre.id} style={styles.membreItem}>
+                      <span style={styles.membreNom}>
+                        {membre.first_name || ''} {membre.last_name || membre.username}
+                      </span>
+                      {estAdmin && <span style={styles.badgeAdmin}>ADMIN</span>}
+                      {estModo && <span style={styles.badgeModo}>MODO</span>}
+                    </div>
+                  );
+                })}
+                
+                <button onClick={() => setShowMembres(false)} style={styles.fermerMembres}>Fermer</button>
+              </div>
+            )}
 
             <div style={styles.messagesArea}>
               {messages.map((msg, index) => (
@@ -611,7 +682,93 @@ const styles = {
     marginBottom: '5px',
   },
   groupeIcon: { fontSize: '24px' },
-  groupeHeaderInfo: { display: 'flex', alignItems: 'center', gap: '10px' },
+  groupeHeaderInfo: { display: 'flex', alignItems: 'center', gap: '10px', flex: 1 },
+  membresBtn: {
+    background: 'rgba(102,126,234,0.15)',
+    border: '1px solid #667eea',
+    color: '#667eea',
+    padding: '8px 12px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    fontWeight: 600,
+  },
+  membresPanel: {
+    background: '#111120',
+    borderBottom: '1px solid #2a2a3e',
+    padding: '15px',
+    maxHeight: '300px',
+    overflowY: 'auto' as const,
+  },
+  membresTitle: { color: '#667eea', fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' },
+  membreSearchInput: {
+    flex: 1,
+    padding: '8px 12px',
+    borderRadius: '8px',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: 'white',
+    fontSize: '12px',
+  },
+  membreSearchBtn: {
+    padding: '0 12px',
+    borderRadius: '8px',
+    border: 'none',
+    background: '#667eea',
+    color: 'white',
+    cursor: 'pointer',
+  },
+  membreResultats: {
+    background: '#1a1a2e',
+    borderRadius: '8px',
+    marginBottom: '10px',
+    maxHeight: '120px',
+    overflowY: 'auto' as const,
+  },
+  membreResultatItem: {
+    padding: '8px 12px',
+    borderBottom: '1px solid #2a2a3e',
+    cursor: 'pointer',
+    color: '#aaa',
+    fontSize: '12px',
+  },
+  membreItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 0',
+    borderBottom: '1px solid #1a1a2a',
+  },
+  membreNom: { color: 'white', fontSize: '13px', flex: 1 },
+  badgeAdmin: {
+    background: '#667eea',
+    color: 'white',
+    padding: '3px 8px',
+    borderRadius: '4px',
+    fontSize: '9px',
+    fontWeight: 'bold',
+    letterSpacing: '1px',
+  },
+  badgeModo: {
+    background: '#f0ad4e',
+    color: 'white',
+    padding: '3px 8px',
+    borderRadius: '4px',
+    fontSize: '9px',
+    fontWeight: 'bold',
+    letterSpacing: '1px',
+  },
+  fermerMembres: {
+    width: '100%',
+    padding: '10px',
+    borderRadius: '8px',
+    border: 'none',
+    background: '#2a2a3e',
+    color: 'white',
+    cursor: 'pointer',
+    marginTop: '10px',
+    fontSize: '12px',
+  },
   messageUsername: { color: '#aaa', fontSize: '11px', marginBottom: '3px', display: 'block' },
   groupeNom: { color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 },
   groupeInfo: { color: '#888', fontSize: '11px', margin: 0 },
