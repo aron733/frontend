@@ -134,7 +134,7 @@ function Chat() {
       
       if (data.type === 'message') {
         // Ignore son propre message (déjà ajouté au state)
-        if (data.from_user_id === getMyId()) return;
+        if (String(data.from_user_id) === String(getMyId())) return;
         
         const msgRecu = {
           type: 'message',
