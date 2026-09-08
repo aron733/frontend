@@ -133,9 +133,6 @@ function Chat() {
       const data = JSON.parse(event.data);
       
       if (data.type === 'message') {
-        // IGNORE son propre message (déjà ajouté au state)
-        if (data.from_user_id === getMyId()) return;
-        
         const msgRecu = {
           type: 'message',
           message: data.message || '',
@@ -609,7 +606,6 @@ function Chat() {
               ))}
             </>
           )}
-          <div style={styles.contactsScroll}>
           <p style={styles.contactsTitle}>Contacts</p>
           {usersFiltres.map((user) => (
               <button
@@ -742,12 +738,7 @@ function Chat() {
                         });
                         setResultatsRecherche(response.data.users || []);
                       } catch (err) {}
-                    }} style={styles.membreSearchBtn}>
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-</button>
+                    }} style={styles.membreSearchBtn}>🔍</button>
                   </div>
                 )}
                 
@@ -850,22 +841,13 @@ function Chat() {
 
             {fichierSelectionne && (
               <div style={styles.fichierApercu}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-  </svg>
-  {fichierSelectionne.name}
-</span>
+                <span>📎 {fichierSelectionne.name}</span>
                 <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
               </div>
             )}
 
             <div style={styles.inputArea}>
-              <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-  </svg>
-</button>
+              <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>📎</button>
               <input
                 ref={fichierInputRef}
                 type="file"
@@ -957,12 +939,7 @@ function Chat() {
 
               {fichierSelectionne && (
                 <div style={styles.fichierApercu}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-  </svg>
-  {fichierSelectionne.name}
-</span>
+                  <span>📎 {fichierSelectionne.name}</span>
                   <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
                 </div>
               )}
@@ -1344,12 +1321,6 @@ const styles = {
   messageUsername: { color: '#aaa', fontSize: '11px', marginBottom: '3px', display: 'block' },
   groupeNom: { color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 },
   groupeInfo: { color: '#888', fontSize: '11px', margin: 0 },
-  contactsScroll: {
-    flex: 1,
-    overflowY: 'auto' as const,
-    minHeight: 0,
-    marginTop: '5px',
-  },
   contactsTitle: {
     color: '#667eea',
     fontSize: '12px',
@@ -1374,15 +1345,15 @@ const styles = {
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
   userList: {
     position: 'fixed' as const,
-    top: 0,
+    top: '60px',
     left: 0,
-    width: '100vw',
-    maxWidth: '100%',
-    height: '100vh',
-    zIndex: 100,
-    background: '#0a0a0f',
+    width: '80%',
+    maxWidth: '300px',
+    zIndex: 50,
     boxShadow: '20px 0 60px rgba(0,0,0,0.5)',
-    padding: '20px',
+    borderRight: '1px solid #1a1a2a',
+    overflowY: 'auto' as const,
+    padding: '10px',
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '5px',
