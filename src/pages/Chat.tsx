@@ -256,7 +256,10 @@ function Chat() {
         type: 'message',
         message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
         from_user_id: getMyId(),
-        from_username: 'Moi',
+        from_username: (() => {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          return (u.prenom || u.first_name || u.username || 'Moi');
+        })(),
         fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
       }]);
       setNouveauMessage('');
@@ -271,13 +274,14 @@ function Chat() {
         if (fichierSelectionne) {
           formData.append('fichier', fichierSelectionne);
         }
-        formData.append('groupe_id', groupeActif.id);
+        formData.append('groupe_id', String(groupeActif.id));
         
-        await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
-          headers: { Authorization: `Bearer ${getToken()}` }
+        const saveResponse = await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
+          headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
         });
+        console.log('Message groupe sauvegardé:', saveResponse.data);
       } catch (err) {
-        console.error('Erreur sauvegarde message groupe');
+        console.error('Erreur sauvegarde message groupe:', err);
       }
 
       // Notification via WebSocket au groupe (instantané)
@@ -316,7 +320,10 @@ function Chat() {
         type: 'message',
         message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
         from_user_id: getMyId(),
-        from_username: 'Moi',
+        from_username: (() => {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          return (u.prenom || u.first_name || u.username || 'Moi');
+        })(),
         fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
       }]);
       setNouveauMessage('');
@@ -344,7 +351,10 @@ function Chat() {
         type: 'message',
         message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
         from_user_id: getMyId(),
-        from_username: 'Moi',
+        from_username: (() => {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          return (u.prenom || u.first_name || u.username || 'Moi');
+        })(),
         fichier_url: cloudinaryURL,
       }]);
       
