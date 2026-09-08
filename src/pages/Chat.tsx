@@ -185,7 +185,7 @@ function Chat() {
   };
 
   const envoyerMessage = async () => {
-    if (!nouveauMessage.trim() || !selectedUser) return;
+    if ((!nouveauMessage.trim() && !fichierSelectionne) || !selectedUser) return;
 
     const destUserId = selectedUser.id || selectedUser.user_id;
     
