@@ -335,12 +335,6 @@ function Chat() {
                 {msg.audio_url && (
                   <audio src={msg.audio_url} style={styles.messageAudio} controls />
                 )}
-                {msg.fichier_url && (
-                  <img src={msg.fichier_url} style={styles.messageImage} alt="fichier" />
-                )}
-                {msg.audio_url && (
-                  <audio src={msg.audio_url} style={styles.messageAudio} controls />
-                )}
                 {msg.from_user_id === getMyId() && (
                   <span style={styles.tick}>{msg.lu ? '✓✓' : '✓'}</span>
                 )}
