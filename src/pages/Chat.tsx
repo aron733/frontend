@@ -16,9 +16,9 @@ function Chat() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
-  const [groupes, setGroupes] = useState<any[]>([]);
+  const [groupes, _setGroupes] = useState<any[]>([]);
   const [groupeActif, setGroupeActif] = useState<any>(null);
-  const [showCreerGroupe, setShowCreerGroupe] = useState(false);
+  const [_showCreerGroupe, setShowCreerGroupe] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -98,7 +98,7 @@ function Chat() {
         const response = await axios.get(`${API_URL}/groupes/`, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
-        setGroupes(response.data.groupes || []);
+        _setGroupes(response.data.groupes || []);
       } catch (err) {
         console.error('Erreur chargement groupes');
       }
