@@ -213,15 +213,18 @@ function Chat() {
     
     // Envoi vers un groupe
     if (groupeActif && !selectedUser) {
-      const formData = new FormData();
-      if (nouveauMessage.trim()) {
-        formData.append('texte', nouveauMessage);
-      }
-      if (fichierSelectionne) {
-        formData.append('fichier', fichierSelectionne);
-      }
+      // Ajoute IMMÉDIATEMENT au state
+      setMessages((prev) => [...prev, {
+        type: 'message',
+        message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
+        from_user_id: getMyId(),
+        from_username: 'Moi',
+        fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
+      }]);
+      setNouveauMessage('');
+      setFichierSelectionne(null);
       
-      // Envoie via WebSocket au groupe
+      // Envoie via WebSocket au groupe (instantané)
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({
           action: 'groupe',
@@ -229,15 +232,6 @@ function Chat() {
           message: nouveauMessage,
         }));
       }
-      
-      setMessages((prev) => [...prev, {
-        type: 'message',
-        message: nouveauMessage,
-        from_user_id: getMyId(),
-        from_username: 'Moi',
-      }]);
-      setNouveauMessage('');
-      setFichierSelectionne(null);
       return;
     }
     
