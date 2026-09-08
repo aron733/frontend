@@ -133,6 +133,9 @@ function Chat() {
       const data = JSON.parse(event.data);
       
       if (data.type === 'message') {
+        // Ignore son propre message (déjà ajouté au state)
+        if (data.from_user_id === getMyId()) return;
+        
         const msgRecu = {
           type: 'message',
           message: data.message || '',
@@ -738,7 +741,12 @@ function Chat() {
                         });
                         setResultatsRecherche(response.data.users || []);
                       } catch (err) {}
-                    }} style={styles.membreSearchBtn}>🔍</button>
+                    }} style={styles.membreSearchBtn}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
                   </div>
                 )}
                 
@@ -1346,6 +1354,7 @@ const styles = {
   userList: {
     position: 'fixed' as const,
     top: '60px',
+    background: '#111120',
     left: 0,
     width: '80%',
     maxWidth: '300px',
