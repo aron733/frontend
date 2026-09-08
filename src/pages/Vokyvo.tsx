@@ -31,26 +31,7 @@ function Vokyvo() {
   };
 
   useEffect(() => {
-    const chargerMessagesChat = async (chatId: number) => {
-    try {
-      const token = localStorage.getItem('access_token');
-      const response = await axios.get(`${API_URL}/vokyvo/chats/${chatId}/messages/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const msgs = (response.data.messages || []).map((m: any) => ({
-        role: m.role,
-        content: m.contenu,
-      }));
-      
-      setMessages(msgs);
-      setMenuOuvert(false);
-    } catch (err) {
-      console.error('Erreur chargement messages chat');
-    }
-  };
-
-  const chargerChats = async () => {
+    const chargerChats = async () => {
       try {
         const token = localStorage.getItem('access_token');
         const response = await axios.get(`${API_URL}/vokyvo/chats/`, {
@@ -160,6 +141,25 @@ function Vokyvo() {
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
+
+  const chargerMessagesChat = async (chatId: number) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await axios.get(`${API_URL}/vokyvo/chats/${chatId}/messages/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const msgs = (response.data.messages || []).map((m: any) => ({
+        role: m.role,
+        content: m.contenu,
+      }));
+
+      setMessages(msgs);
+      setMenuOuvert(false);
+    } catch (err) {
+      console.error('Erreur chargement messages chat');
+    }
+  };
 
   return (
     <div style={styles.container}>
