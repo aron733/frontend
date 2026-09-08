@@ -643,12 +643,10 @@ function Chat() {
                   <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
                 </div>
               </div>
-              <button onClick={() => setShowMembres(!showMembres)} style={styles.membresBtn}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              <button onClick={() => setShowMembres(!showMembres)} style={styles.chevronBtn}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                  style={{ transform: showMembres ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
+                  <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
               <button onClick={() => setShowGestion(!showGestion)} style={styles.gestionBtn}>
@@ -709,6 +707,12 @@ function Chat() {
 
             {showMembres && (
               <div style={styles.membresPanel}>
+                <button onClick={() => setShowMembres(false)} style={styles.panelCloseBtn}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
                 <p style={styles.membresTitle}>Membres du groupe</p>
                 
                 {/* Recherche pour ajouter */}
@@ -1135,6 +1139,19 @@ const styles = {
     cursor: 'pointer',
     padding: '2px',
   },
+  chevronBtn: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    width: '38px', height: '38px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    transition: 'all 0.2s',
+  },
   membresBtn: {
     background: 'rgba(102,126,234,0.15)',
     border: '1px solid #667eea',
@@ -1145,7 +1162,18 @@ const styles = {
     fontSize: '12px',
     fontWeight: 600,
   },
+  panelCloseBtn: {
+    position: 'absolute' as const,
+    top: '10px',
+    right: '10px',
+    background: 'none',
+    border: 'none',
+    color: '#aaa',
+    cursor: 'pointer',
+    padding: '5px',
+  },
   membresPanel: {
+    position: 'relative' as const,
     background: '#111120',
     borderBottom: '1px solid #2a2a3e',
     padding: '15px',
