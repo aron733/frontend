@@ -132,6 +132,7 @@ function Chat() {
           message: m.texte || m.contenu || m.message || '',
           from_user_id: m.expediteur || m.expediteur_id || 0,
           from_username: m.expediteur_username || '',
+          lu: m.lu || false,
         }));
         
         setMessages(msgs);
