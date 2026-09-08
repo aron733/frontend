@@ -108,6 +108,12 @@ function Visio() {
       >
         <div style={styles.roomContainer}>
           <div style={styles.roomHeader}>
+            <button onClick={quitterRoom} style={styles.backButton}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+            </button>
             <div style={styles.roomInfo}>
               <span style={styles.roomDot}>🔴</span>
               <span style={styles.roomName}>{code}</span>
@@ -218,6 +224,21 @@ const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     background: '#0a0a0f',
+  },
+  backButton: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
+    flexShrink: 0,
   },
   roomHeader: {
     display: 'flex',
