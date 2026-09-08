@@ -244,7 +244,8 @@ function Chat() {
   };
 
   const envoyerMessage = async () => {
-    if ((!nouveauMessage.trim() && !fichierSelectionne) || !selectedUser) return;
+    if (!nouveauMessage.trim() && !fichierSelectionne) return;
+    if (!groupeActif && !selectedUser) return;
 
     const destUserId = selectedUser?.id || selectedUser?.user_id;
     
