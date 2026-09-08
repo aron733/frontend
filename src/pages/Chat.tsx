@@ -133,9 +133,6 @@ function Chat() {
       const data = JSON.parse(event.data);
       
       if (data.type === 'message') {
-        // Ignore son propre message (déjà ajouté au state)
-        if (data.from_user_id === getMyId()) return;
-        
         const msgRecu = {
           type: 'message',
           message: data.message || '',
@@ -1346,13 +1343,6 @@ const styles = {
   online: { color: '#28a745', fontSize: '12px' },
   offline: { color: '#dc3545', fontSize: '12px' },
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
-  overlayPlein: {
-    position: 'fixed' as const,
-    top: 0, left: 0, right: 0, bottom: 0,
-    width: '100vw', height: '100vh',
-    background: '#0a0a0f',
-    zIndex: 40,
-  },
   userList: {
     position: 'fixed' as const,
     top: '60px',
