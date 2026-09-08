@@ -390,7 +390,61 @@ function Chat() {
         </div>
         )}
 
-        {/* Zone de chat */}
+        {/* Zone de chat - GROUPE */}
+        {groupeActif && !selectedUser && (
+          <div style={styles.chatArea}>
+            <div style={styles.chatHeader}>
+              <div style={styles.groupeHeaderInfo}>
+                <span style={styles.groupeIcon}>👥</span>
+                <div>
+                  <h3 style={styles.chatTitle}>{groupeActif.nom}</h3>
+                  <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={styles.messagesArea}>
+              {messages.map((msg, index) => (
+                <div key={index} style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}>
+                  <span style={styles.messageUsername}>{msg.from_username}</span>
+                  <span style={styles.messageText}>{msg.message}</span>
+                  {msg.fichier_url && (
+                    <img src={msg.fichier_url} style={styles.messageImage} alt="fichier" />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {fichierSelectionne && (
+              <div style={styles.fichierApercu}>
+                <span>📎 {fichierSelectionne.name}</span>
+                <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
+              </div>
+            )}
+
+            <div style={styles.inputArea}>
+              <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>📎</button>
+              <input
+                ref={fichierInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
+                style={{ display: 'none' }}
+                onChange={(e) => setFichierSelectionne(e.target.files?.[0] || null)}
+              />
+              <input
+                type="text"
+                value={nouveauMessage}
+                onChange={(e) => setNouveauMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && envoyerMessage()}
+                placeholder={`Message dans ${groupeActif.nom}...`}
+                style={styles.input}
+              />
+              <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
+            </div>
+          </div>
+        )}
+
+        {/* Zone de chat - PRIVÉ */}
         <div style={styles.chatArea}>
           {selectedUser ? (
             <>
@@ -556,7 +610,9 @@ const styles = {
     background: 'rgba(255,255,255,0.03)',
     marginBottom: '5px',
   },
-  groupeIcon: { fontSize: '20px' },
+  groupeIcon: { fontSize: '24px' },
+  groupeHeaderInfo: { display: 'flex', alignItems: 'center', gap: '10px' },
+  messageUsername: { color: '#aaa', fontSize: '11px', marginBottom: '3px', display: 'block' },
   groupeNom: { color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 },
   groupeInfo: { color: '#888', fontSize: '11px', margin: 0 },
   contactsTitle: {
