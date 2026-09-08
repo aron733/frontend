@@ -25,6 +25,7 @@ function Chat() {
   const [resultatsRecherche, setResultatsRecherche] = useState<any[]>([]);
   const [demandes, _setDemandes] = useState<any[]>([]);
   const [showDemandes, setShowDemandes] = useState(false);
+  const [groupesDecouverts, setGroupesDecouverts] = useState<any[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -363,6 +364,12 @@ function Chat() {
       }).then((response) => {
         setGroupes(response.data.groupes || []);
       }).catch(() => {});
+      
+      axios.get(`${API_URL}/groupes/decouvrir/`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      }).then((response) => {
+        setGroupesDecouverts(response.data.groupes || []);
+      }).catch(() => {});
     }} style={styles.hamburger}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
             <line x1="3" y1="6" x2="21" y2="6" />
@@ -412,6 +419,29 @@ function Chat() {
               </div>
             </div>
           ))}
+          {groupesDecouverts.length > 0 && (
+            <>
+              <p style={styles.contactsTitle}>Découvrir</p>
+              {groupesDecouverts.map((groupe) => (
+                <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
+                  try {
+                    await axios.post(`${API_URL}/groupes/demander-acces/`, {
+                      groupe_id: groupe.id,
+                    }, { headers: { Authorization: `Bearer ${getToken()}` } });
+                    alert('Demande envoyée !');
+                  } catch (err) {
+                    alert('Erreur lors de la demande');
+                  }
+                }}>
+                  <span style={styles.groupeIcon}>🔒</span>
+                  <div>
+                    <p style={styles.groupeNom}>{groupe.nom}</p>
+                    <p style={styles.groupeInfo}>{groupe.nb_participants} membres · Cliquez pour demander accès</p>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
           <p style={styles.contactsTitle}>Contacts</p>
           {usersFiltres.map((user) => (
               <button
