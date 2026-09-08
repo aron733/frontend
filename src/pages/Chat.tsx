@@ -320,6 +320,32 @@ function Chat() {
     }} />;
   }
 
+  const chargerDemandes = async () => {
+    if (!groupeActif) return;
+    try {
+      const response = await axios.get(`${API_URL}/groupes/${groupeActif.id}/demandes/`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      _setDemandes(response.data.demandes || []);
+      setShowDemandes(true);
+    } catch (err) {
+      _setDemandes([]);
+      setShowDemandes(true);
+    }
+  };
+
+  const validerDemande = async (demandeId: number, action: string) => {
+    try {
+      await axios.post(`${API_URL}/groupes/valider-demande/`, {
+        demande_id: demandeId,
+        action: action,
+      }, { headers: { Authorization: `Bearer ${getToken()}` } });
+      window.location.reload();
+    } catch (err) {
+      console.error('Erreur validation demande');
+    }
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.header}>
