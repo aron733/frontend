@@ -15,6 +15,7 @@ function Chat() {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
+  const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
   const tempsEcoule = (timestamp: string) => {
@@ -198,9 +199,15 @@ function Chat() {
       }
       
       if (conv) {
-        await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, {
-          texte: nouveauMessage,
-        }, {
+        const formData = new FormData();
+        if (nouveauMessage.trim()) {
+          formData.append('texte', nouveauMessage);
+        }
+        if (fichierSelectionne) {
+          formData.append('fichier', fichierSelectionne);
+        }
+        
+        await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
       }
@@ -223,6 +230,7 @@ function Chat() {
       }
       
       setNouveauMessage('');
+      setFichierSelectionne(null);
     } catch (err) {
       console.error('Erreur envoi message:', err);
     }
@@ -327,6 +335,15 @@ function Chat() {
               </div>
 
               <div style={styles.inputArea}>
+                <label style={styles.uploadBtn}>
+                  📎
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => setFichierSelectionne(e.target.files?.[0] || null)}
+                  />
+                </label>
                 <input
                   type="text"
                   value={nouveauMessage}
@@ -505,6 +522,20 @@ const styles = {
     color: 'white',
     fontSize: '14px',
     outline: 'none',
+  },
+  uploadBtn: {
+    width: '45px',
+    height: '45px',
+    borderRadius: '50%',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: '#aaa',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '20px',
+    flexShrink: 0,
   },
   sendButton: {
     width: '45px',
