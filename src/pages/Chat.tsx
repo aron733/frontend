@@ -44,10 +44,15 @@ function Chat() {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
         
-        const allUsers = (usersResponse.data.users || []).map((u: any) => ({
-          ...u,
-          photo: (convUsers.find((cu: any) => cu.id === u.id) || {}).photo || null,
-        }));
+        const allUsers = (usersResponse.data.users || []).map((u: any) => {
+          const convUser = convUsers.find((cu: any) => cu.id === u.id);
+          return {
+            ...u,
+            photo: (convUser && convUser.photo) || u.photo || null,
+            first_name: u.first_name || u.prenom || '',
+            last_name: u.last_name || u.nom || '',
+          };
+        });
         
         // Fusionne : users des conversations en premier, puis le reste
         const mergedUsers = [...convUsers, ...allUsers.filter((u: any) => 
@@ -119,7 +124,7 @@ function Chat() {
         
         const msgs = (msgResponse.data.messages || []).map((m: any) => ({
           type: 'message',
-          message: m.contenu || m.message || m.texte || '',
+          message: m.texte || m.contenu || m.message || '',
           from_user_id: m.expediteur || m.expediteur_id || 0,
           from_username: m.expediteur_username || '',
         }));
@@ -148,11 +153,11 @@ function Chat() {
       if (!conv) {
         // Créer la conversation
         const createRes = await axios.post(`${API_URL}/conversations/creer/`, {
-          autre_user_id: destUserId,
+          user2_id: destUserId,
         }, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
-        conv = createRes.data.conversation || createRes.data;
+        conv = { id: createRes.data.conversation_id };
       }
       
       if (conv) {
