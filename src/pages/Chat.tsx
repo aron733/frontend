@@ -260,6 +260,17 @@ function Chat() {
         conv = { id: createRes.data.conversation_id };
       }
       
+      // Ajoute IMMÉDIATEMENT au state pour éviter le lag
+      setMessages((prev) => [...prev, {
+        type: 'message',
+        message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
+        from_user_id: getMyId(),
+        from_username: 'Moi',
+        fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
+      }]);
+      setNouveauMessage('');
+      setFichierSelectionne(null);
+
       let sendResponse: any = null;
 
       if (conv) {
