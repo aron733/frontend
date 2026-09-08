@@ -23,7 +23,7 @@ function Chat() {
   const [showMembres, setShowMembres] = useState(false);
   const [rechercheMembre, setRechercheMembre] = useState('');
   const [resultatsRecherche, setResultatsRecherche] = useState<any[]>([]);
-  const [demandes, setDemandes] = useState<any[]>([]);
+  const [demandes, _setDemandes] = useState<any[]>([]);
   const [showDemandes, setShowDemandes] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);

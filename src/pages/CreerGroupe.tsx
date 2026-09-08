@@ -53,7 +53,7 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
 
     try {
       const participantsIds = membresSelectionnes.map((m) => m.id);
-      const response = await axios.post(`${API_URL}/groupes/creer/`, {
+      await axios.post(`${API_URL}/groupes/creer/`, {
         nom: nomGroupe,
         participants_ids: participantsIds,
       }, {
