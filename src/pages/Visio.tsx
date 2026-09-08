@@ -167,9 +167,13 @@ function Visio() {
         
         {codeCree && (
           <div style={styles.codeDisplay}>
-            <p style={styles.codeLabel}>CODE DE LA VISIO :</p>
+            <div style={styles.codeHeader}>
+              <span style={styles.liveDot}>🔴</span>
+              <span style={styles.codeLabel}>SALLE DE VISIO CRÉÉE</span>
+            </div>
             <p style={styles.codeValue}>{codeCree}</p>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <p style={styles.codeHint}>Partage ce code avec tes amis</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '15px' }}>
               <button onClick={copierCode} style={styles.copierBtn}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
                   <rect x="9" y="9" width="13" height="13" rx="2"/>
@@ -185,9 +189,10 @@ function Visio() {
                 Rejoindre
               </button>
             </div>
-            <p style={{ color: '#666', fontSize: '12px', marginTop: '10px' }}>
-              Valable 15 min · {participants}/5 participants
-            </p>
+            <div style={styles.participantsInfo}>
+              <span>🕒 Valable 15 min</span>
+              <span>👥 {participants}/5 participants</span>
+            </div>
           </div>
         )}
         
@@ -392,6 +397,30 @@ const styles = {
     padding: '20px',
     marginBottom: '20px',
     textAlign: 'center' as const,
+  },
+  codeHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    justifyContent: 'center',
+    marginBottom: '10px',
+  },
+  liveDot: {
+    fontSize: '12px',
+    animation: 'pulse 1.5s infinite',
+  },
+  codeHint: {
+    color: '#888',
+    fontSize: '13px',
+    margin: '5px 0',
+  },
+  participantsInfo: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '20px',
+    marginTop: '15px',
+    color: '#666',
+    fontSize: '12px',
   },
   codeLabel: { color: '#aaa', fontSize: '11px', textTransform: 'uppercase' as const, margin: 0 },
   codeValue: { color: '#667eea', fontSize: '24px', fontWeight: 900 as const, letterSpacing: '2px', margin: '10px 0' },
