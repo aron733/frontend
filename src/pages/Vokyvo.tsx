@@ -31,7 +31,26 @@ function Vokyvo() {
   };
 
   useEffect(() => {
-    const chargerChats = async () => {
+    const chargerMessagesChat = async (chatId: number) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await axios.get(`${API_URL}/vokyvo/chats/${chatId}/messages/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const msgs = (response.data.messages || []).map((m: any) => ({
+        role: m.role,
+        content: m.contenu,
+      }));
+      
+      setMessages(msgs);
+      setMenuOuvert(false);
+    } catch (err) {
+      console.error('Erreur chargement messages chat');
+    }
+  };
+
+  const chargerChats = async () => {
       try {
         const token = localStorage.getItem('access_token');
         const response = await axios.get(`${API_URL}/vokyvo/chats/`, {
@@ -182,7 +201,7 @@ function Vokyvo() {
               <p style={styles.historyEmpty}>Aucune conversation</p>
             ) : (
               chatsIA.map((chat) => (
-                <div key={chat.id} style={styles.historyItem}>
+                <div key={chat.id} style={styles.historyItem} onClick={() => chargerMessagesChat(chat.id)}>
                   <p style={styles.historyChatTitle}>{chat.titre}</p>
                   <p style={styles.historyPreview}>{chat.apercu}</p>
                 </div>
