@@ -104,7 +104,7 @@ function Visio() {
         audio={true}
         onDisconnected={quitterRoom}
         data-lk-theme="dark"
-        style={{ width: '100vw', height: '100vh', background: '#0a0a0f' }}
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', background: '#0a0a0f', zIndex: 2000, margin: 0, padding: 0 }}
       >
         <div style={styles.roomContainer}>
           <div style={styles.roomHeader}>
