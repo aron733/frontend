@@ -58,6 +58,13 @@ function Chat() {
         });
         
         const allUsers = (usersResponse.data.users || []).map((u: any) => {
+          // Stocke la présence depuis la DB
+          if (u.est_en_ligne !== undefined) {
+            setPresence((prev) => ({ ...prev, [u.id]: u.est_en_ligne ? 'online' : 'offline' }));
+            if (u.derniere_activite) {
+              setPresenceTime((prev) => ({ ...prev, [u.id]: u.derniere_activite }));
+            }
+          }
           const convUser = convUsers.find((cu: any) => cu.id === u.id);
           return {
             ...u,
