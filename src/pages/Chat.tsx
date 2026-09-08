@@ -623,6 +623,13 @@ function Chat() {
                   const estModo = groupeActif.moderateurs?.some((m: any) => m.id === membre.id);
                   return (
                     <div key={membre.id} style={styles.membreItem}>
+                      {membre.photo_profil ? (
+                        <img src={membre.photo_profil} style={styles.membrePhoto} alt="" />
+                      ) : (
+                        <span style={styles.membreAvatar}>
+                          {(membre.first_name || membre.username || '?')[0].toUpperCase()}
+                        </span>
+                      )}
                       <span style={styles.membreNom}>
                         {membre.first_name || ''} {membre.last_name || membre.username}
                       </span>
@@ -1032,6 +1039,16 @@ const styles = {
     borderBottom: '1px solid #1a1a2a',
   },
   membreNom: { color: 'white', fontSize: '13px', flex: 1 },
+  membrePhoto: { width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' as const },
+  membreAvatar: {
+    width: '35px', height: '35px',
+    borderRadius: '50%',
+    background: '#667eea',
+    color: 'white',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: '16px', fontWeight: 'bold',
+    flexShrink: 0,
+  },
   badgeAdmin: {
     background: '#667eea',
     color: 'white',
