@@ -20,6 +20,7 @@ function Vokyvo() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [chatsIA, setChatsIA] = useState<any[]>([]);
+  const [chatIdActif, setChatIdActif] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -142,6 +143,15 @@ function Vokyvo() {
     </svg>
   );
 
+  const nouvelleConversation = () => {
+    setChatIdActif(null);
+    setMessages([{
+      role: 'assistant',
+      content: 'Salut ! Je suis VOKYVO LABS, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.',
+    }]);
+    setMenuOuvert(false);
+  };
+
   const chargerMessagesChat = async (chatId: number) => {
     try {
       const token = localStorage.getItem('access_token');
@@ -155,6 +165,7 @@ function Vokyvo() {
       }));
 
       setMessages(msgs);
+      setChatIdActif(chatId);
       setMenuOuvert(false);
     } catch (err) {
       console.error('Erreur chargement messages chat');
@@ -196,6 +207,13 @@ function Vokyvo() {
         {/* Menu historique des conversations */}
         {menuOuvert && (
           <div style={styles.historyMenu}>
+            <button onClick={nouvelleConversation} style={styles.newChatButton}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Nouvelle conversation
+            </button>
             <p style={styles.historyTitle}>Historique</p>
             {chatsIA.length === 0 ? (
               <p style={styles.historyEmpty}>Aucune conversation</p>
@@ -337,6 +355,21 @@ const styles = {
     maxHeight: '60vh',
     overflowY: 'auto' as const,
     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+  },
+  newChatButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px 15px',
+    borderRadius: '10px',
+    border: '1px solid #667eea',
+    background: 'rgba(102,126,234,0.15)',
+    color: '#667eea',
+    fontSize: '14px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginBottom: '15px',
+    width: '100%',
   },
   historyTitle: {
     color: '#667eea',
