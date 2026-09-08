@@ -15,6 +15,7 @@ function Chat() {
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [menuPush, setMenuPush] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
   const [groupes, setGroupes] = useState<any[]>([]);
@@ -475,7 +476,11 @@ function Chat() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{
+      ...styles.container,
+      transform: menuPush ? 'translateX(280px)' : 'translateX(0)',
+      transition: 'transform 0.3s ease',
+    }}>
       <div style={styles.header}>
         <button onClick={() => window.location.reload()} style={styles.backButton}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -485,6 +490,7 @@ function Chat() {
         </button>
         <button onClick={() => {
       setMenuOuvert(!menuOuvert);
+      setMenuPush(!menuOuvert);
       // Recharge les groupes à l'ouverture du menu
       axios.get(`${API_URL}/groupes/`, {
         headers: { Authorization: `Bearer ${getToken()}` }
@@ -1345,12 +1351,19 @@ const styles = {
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
   userList: {
     position: 'fixed' as const,
-    top: '60px',
+    top: 0,
     left: 0,
+    bottom: 0,
     width: '80%',
     maxWidth: '300px',
     zIndex: 50,
+    background: '#111120',
+    borderRight: '1px solid #2a2a3e',
     boxShadow: '20px 0 60px rgba(0,0,0,0.5)',
+    padding: '15px',
+    paddingTop: '20px',
+    overflowY: 'auto' as const,
+    animation: 'slideIn 0.3s ease-out',
     borderRight: '1px solid #1a1a2a',
     overflowY: 'auto' as const,
     padding: '10px',
