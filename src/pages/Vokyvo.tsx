@@ -18,6 +18,8 @@ function Vokyvo() {
   const [erreur, setErreur] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [menuOuvert, setMenuOuvert] = useState(false);
+  const [chatsIA, setChatsIA] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -27,6 +29,21 @@ function Vokyvo() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    const chargerChats = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get(`${API_URL}/vokyvo/chats/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setChatsIA(response.data.chats || []);
+      } catch (err) {
+        console.error('Erreur chargement chats IA');
+      }
+    };
+    chargerChats();
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -130,6 +147,13 @@ function Vokyvo() {
       <div style={styles.chatCard}>
         {/* Header */}
         <div style={styles.header}>
+          <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
           <button onClick={() => window.location.reload()} style={styles.backButton}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12" />
@@ -149,6 +173,23 @@ function Vokyvo() {
           </div>
           <div style={styles.statusDot}></div>
         </div>
+
+        {/* Menu historique des conversations */}
+        {menuOuvert && (
+          <div style={styles.historyMenu}>
+            <p style={styles.historyTitle}>Historique</p>
+            {chatsIA.length === 0 ? (
+              <p style={styles.historyEmpty}>Aucune conversation</p>
+            ) : (
+              chatsIA.map((chat) => (
+                <div key={chat.id} style={styles.historyItem}>
+                  <p style={styles.historyChatTitle}>{chat.titre}</p>
+                  <p style={styles.historyPreview}>{chat.apercu}</p>
+                </div>
+              ))
+            )}
+          </div>
+        )}
 
         {/* Messages */}
         <div style={styles.messagesArea}>
@@ -248,6 +289,71 @@ const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     overflow: 'hidden',
+  },
+  hamburger: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
+    flexShrink: 0,
+  },
+  historyMenu: {
+    position: 'absolute' as const,
+    top: '60px',
+    left: '10px',
+    right: '10px',
+    background: '#111120',
+    border: '1px solid #2a2a3e',
+    borderRadius: '15px',
+    padding: '15px',
+    zIndex: 200,
+    maxHeight: '60vh',
+    overflowY: 'auto' as const,
+    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+  },
+  historyTitle: {
+    color: '#667eea',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    marginBottom: '10px',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '1px',
+  },
+  historyEmpty: {
+    color: '#666',
+    fontSize: '13px',
+    textAlign: 'center' as const,
+    padding: '20px',
+  },
+  historyItem: {
+    padding: '12px',
+    borderRadius: '10px',
+    background: 'rgba(255,255,255,0.03)',
+    marginBottom: '8px',
+    cursor: 'pointer',
+    border: '1px solid rgba(255,255,255,0.05)',
+  },
+  historyChatTitle: {
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 600,
+    margin: '0 0 5px 0',
+  },
+  historyPreview: {
+    color: '#888',
+    fontSize: '12px',
+    margin: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const,
   },
   backButton: {
     background: 'rgba(255,255,255,0.06)',
