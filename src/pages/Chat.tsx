@@ -103,7 +103,7 @@ function Chat() {
         }));
         setPresenceTime((prev) => ({
           ...prev,
-          [data.user_id]: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          [data.user_id]: data.timestamp || new Date().toISOString(),
         }));
       }
     };
