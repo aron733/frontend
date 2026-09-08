@@ -669,7 +669,7 @@ function Chat() {
               </div>
             </>
           ) : (
-            <p style={styles.empty}>Sélectionne un utilisateur pour commencer</p>
+
           )}
         </div>
       </div>
