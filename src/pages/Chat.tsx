@@ -48,7 +48,7 @@ function Chat() {
           const convUser = convUsers.find((cu: any) => cu.id === u.id);
           return {
             ...u,
-            photo: (convUser && convUser.photo) || u.photo || null,
+            photo_profil: (convUser && convUser.photo) || u.photo_profil || u.photo || null,
             first_name: u.first_name || u.prenom || '',
             last_name: u.last_name || u.nom || '',
           };
@@ -245,8 +245,8 @@ function Chat() {
                   background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? '#2a2a3e' : 'transparent',
                 }}
               >
-                {user.photo ? (
-                  <img src={user.photo} style={styles.userPhoto} alt="" />
+                {user.photo_profil || user.photo ? (
+                  <img src={user.photo_profil || user.photo} style={styles.userPhoto} alt="" />
                 ) : (
                   <span style={styles.userAvatar}>{((user.first_name || user.prenom || user.username || '?')[0] || '?').toUpperCase()}</span>
                 )}
@@ -262,8 +262,8 @@ function Chat() {
           {selectedUser ? (
             <>
               <div style={styles.chatHeader}>
-                {selectedUser.photo ? (
-                  <img src={selectedUser.photo} style={styles.chatPhoto} alt="" />
+                {selectedUser.photo_profil || selectedUser.photo ? (
+                  <img src={selectedUser.photo_profil || selectedUser.photo} style={styles.chatPhoto} alt="" />
                 ) : (
                   <span style={styles.chatAvatar}>👤</span>
                 )}
