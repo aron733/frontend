@@ -564,4 +564,7 @@ const styles = {
     color: '#dc3545',
     cursor: 'pointer',
     fontSize: '14px',
-  },
+  }},
+};
+
+export default Chat;
