@@ -133,6 +133,9 @@ function Chat() {
       const data = JSON.parse(event.data);
       
       if (data.type === 'message') {
+        // Ignore son propre message (déjà ajouté au state)
+        if (data.from_user_id === getMyId()) return;
+        
         const msgRecu = {
           type: 'message',
           message: data.message || '',
