@@ -24,7 +24,6 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [showConditions, setShowConditions] = useState(false);
   const [cookiesAcceptes, setCookiesAcceptes] = useState(false);
   const [approuveLecture, setApprouveLecture] = useState(false);
-  const [showContact, setShowContact] = useState(false);
 
   const indicatifs = [
     { code: '+226', pays: 'Burkina Faso', drapeau: '🇧🇫' },
