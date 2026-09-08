@@ -4,6 +4,8 @@ import {
   LiveKitRoom,
   VideoConference,
   RoomAudioRenderer,
+  GridLayout,
+  ParticipantTile,
 } from '@livekit/components-react';
 import '@livekit/components-styles';
 
@@ -130,7 +132,9 @@ function Visio() {
           </div>
 
           <div style={styles.videoGrid}>
-            <VideoConference />
+            <GridLayout tracks={[] as any}>
+              <ParticipantTile />
+            </GridLayout>
           </div>
 
           <RoomAudioRenderer />
