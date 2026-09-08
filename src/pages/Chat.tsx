@@ -165,8 +165,8 @@ function Chat() {
           from_user_id: m.expediteur || m.expediteur_id || 0,
           from_username: m.expediteur_username || '',
           lu: m.lu || false,
-          fichier_url: m.fichier_url || null,
-          audio_url: m.audio_url || null,
+          fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://django-43v1.onrender.com${m.fichier_url}`) : null,
+          audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://django-43v1.onrender.com${m.audio_url}`) : null,
         }));
         
         setMessages(msgs);
