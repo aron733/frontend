@@ -396,7 +396,7 @@ function Chat() {
             style={styles.searchInput}
           />
           {groupes.map((groupe) => (
-            <div key={groupe.id} style={styles.groupeItem} onClick={() => { setGroupeActif(groupe); setMenuOuvert(false); }}>
+            <div key={groupe.id} style={styles.groupeItem} onClick={() => { setGroupeActif(groupe); setSelectedUser(null); setMessages([]); setMenuOuvert(false); }}>
               <span style={styles.groupeIcon}>👥</span>
               <div>
                 <p style={styles.groupeNom}>{groupe.nom}</p>
@@ -408,7 +408,7 @@ function Chat() {
           {usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
-                onClick={() => { selectUser(user); setMenuOuvert(false); }}
+                onClick={() => { selectUser(user); setGroupeActif(null); setMessages([]); setMenuOuvert(false); }}
                 style={{
                   ...styles.userItem,
                   background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? '#2a2a3e' : 'transparent',
