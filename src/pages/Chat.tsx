@@ -17,7 +17,7 @@ function Chat() {
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
   const [_groupes, _setGroupes] = useState<any[]>([]);
-  const [__groupeActif, _setGroupeActif] = useState<any>(null);
+  const [_groupeActif, _setGroupeActif] = useState<any>(null);
   const [_showCreerGroupe, _setShowCreerGroupe] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
