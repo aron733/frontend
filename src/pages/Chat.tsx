@@ -514,8 +514,6 @@ const styles = {
   tick: { color: '#4fc3f7', fontSize: '10px', marginLeft: '5px' },
   messageImage: { maxWidth: '100%', maxHeight: '250px', borderRadius: '10px', marginTop: '5px' },
   messageAudio: { maxWidth: '100%', marginTop: '5px' },
-  messageImage: { maxWidth: '100%', maxHeight: '250px', borderRadius: '10px', marginTop: '5px' },
-  messageAudio: { maxWidth: '100%', marginTop: '5px' },
   empty: { color: '#666', textAlign: 'center' as const, marginTop: '50px' },
   inputArea: {
     position: 'fixed' as const,
