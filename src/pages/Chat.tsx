@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
+import CreerGroupe from './CreerGroupe';
 
 const WS_URL = 'wss://daphne-5mxe.onrender.com/ws/chat/';
 
@@ -301,6 +302,13 @@ function Chat() {
     const nomComplet = `${user.first_name || ''} ${user.last_name || ''} ${user.username || ''}`.toLowerCase();
     return nomComplet.includes(rechercheUser.toLowerCase());
   });
+
+  if (showCreerGroupe) {
+    return <CreerGroupe onFermer={() => setShowCreerGroupe(false)} onGroupeCree={() => {
+      setShowCreerGroupe(false);
+      window.location.reload();
+    }} />;
+  }
 
   return (
     <div style={styles.container}>
