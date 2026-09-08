@@ -210,19 +210,19 @@ function Chat() {
           formData.append('fichier', fichierSelectionne);
         }
         
-        await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
+        const sendResponse = await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
       }
       
       // Ajoute au state local
-      const fichierURL = fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null;
+      const cloudinaryURL = sendResponse.data?.fichier_url || null;
       setMessages((prev) => [...prev, {
         type: 'message',
         message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
         from_user_id: getMyId(),
         from_username: 'Moi',
-        fichier_url: fichierURL,
+        fichier_url: cloudinaryURL,
       }]);
       
       // Notification via WebSocket
