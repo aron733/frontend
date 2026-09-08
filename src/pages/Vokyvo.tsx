@@ -11,7 +11,7 @@ interface Message {
 
 function Vokyvo() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Salut ! Je suis VOKYVO LABS, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.' }
+    { role: 'assistant', content: 'Salut ! Je suis VOKYVO, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -147,7 +147,7 @@ function Vokyvo() {
     setChatIdActif(null);
     setMessages([{
       role: 'assistant',
-      content: 'Salut ! Je suis VOKYVO LABS, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.',
+      content: 'Salut ! Je suis VOKYVO, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.',
     }]);
     setMenuOuvert(false);
   };
@@ -199,7 +199,7 @@ function Vokyvo() {
           </div>
           <div style={styles.headerInfo}>
             <h1 style={styles.title}>VOKYVO</h1>
-            <p style={styles.subtitle}>Assistant IA • VOKYVO LABS</p>
+            <p style={styles.subtitle}>Assistant IA • VOKYVO</p>
           </div>
           <div style={styles.statusDot}></div>
         </div>
