@@ -16,9 +16,9 @@ function Chat() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
-  const [groupes, _setGroupes] = useState<any[]>([]);
-  const [groupeActif, setGroupeActif] = useState<any>(null);
-  const [_showCreerGroupe, setShowCreerGroupe] = useState(false);
+  const [_groupes, _setGroupes] = useState<any[]>([]);
+  const [_groupeActif, _setGroupeActif] = useState<any>(null);
+  const [_showCreerGroupe, _setShowCreerGroupe] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
