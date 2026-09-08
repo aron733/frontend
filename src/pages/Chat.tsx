@@ -20,7 +20,7 @@ function Chat() {
   const tempsEcoule = (timestamp: string) => {
     if (!timestamp) return 'Hors ligne';
     const diff = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000);
-    if (diff < 1) return 'Il y a moins d'une minute';
+    if (diff < 1) return "Il y a moins d'une minute";
     if (diff < 60) return `Il y a ${diff} min`;
     if (diff < 1440) {
       const heures = Math.floor(diff / 60);
