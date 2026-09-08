@@ -26,6 +26,9 @@ function Chat() {
   const [demandes, _setDemandes] = useState<any[]>([]);
   const [showDemandes, setShowDemandes] = useState(false);
   const [groupesDecouverts, setGroupesDecouverts] = useState<any[]>([]);
+  const [showGestion, setShowGestion] = useState(false);
+  const [renommer, setRenommer] = useState('');
+  const [showRenommer, setShowRenommer] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -335,6 +338,60 @@ function Chat() {
     }
   };
 
+  const renommerGroupe = async () => {
+    if (!groupeActif || !renommer.trim()) return;
+    try {
+      await axios.post(`${API_URL}/groupes/renommer/`, {
+        groupe_id: groupeActif.id,
+        nom: renommer,
+      }, { headers: { Authorization: `Bearer ${getToken()}` } });
+      setShowRenommer(false);
+      window.location.reload();
+    } catch (err) {
+      alert('Erreur renommage');
+    }
+  };
+
+  const bannirMembre = async (userId: number) => {
+    if (!groupeActif) return;
+    try {
+      await axios.post(`${API_URL}/groupes/bannir-membre/`, {
+        groupe_id: groupeActif.id,
+        user_id: userId,
+      }, { headers: { Authorization: `Bearer ${getToken()}` } });
+      window.location.reload();
+    } catch (err) {
+      alert('Erreur bannissement');
+    }
+  };
+
+  const nommerModerateur = async (userId: number) => {
+    if (!groupeActif) return;
+    try {
+      await axios.post(`${API_URL}/groupes/nommer-moderateur/`, {
+        groupe_id: groupeActif.id,
+        user_id: userId,
+      }, { headers: { Authorization: `Bearer ${getToken()}` } });
+      window.location.reload();
+    } catch (err) {
+      alert('Erreur nomination');
+    }
+  };
+
+  const supprimerGroupe = async () => {
+    if (!groupeActif) return;
+    if (!window.confirm('Supprimer ce groupe ?')) return;
+    try {
+      await axios.post(`${API_URL}/groupes/supprimer/`, {
+        groupe_id: groupeActif.id,
+      }, { headers: { Authorization: `Bearer ${getToken()}` } });
+      setGroupeActif(null);
+      window.location.reload();
+    } catch (err) {
+      alert('Erreur suppression');
+    }
+  };
+
   const validerDemande = async (demandeId: number, action: string) => {
     try {
       await axios.post(`${API_URL}/groupes/valider-demande/`, {
@@ -475,10 +532,44 @@ function Chat() {
                   <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
                 </div>
               </div>
-              <button onClick={() => setShowMembres(!showMembres)} style={styles.membresBtn}>
-                Membres
+              <button onClick={() => setShowGestion(!showGestion)} style={styles.gestionBtn}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
               </button>
             </div>
+
+            {showGestion && groupeActif && (
+              <div style={styles.gestionPanel}>
+                <button onClick={() => setShowRenommer(!showRenommer)} style={styles.gestionItem}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                  Renommer
+                </button>
+                {showRenommer && (
+                  <div style={{ display: 'flex', gap: '5px', marginBottom: '5px' }}>
+                    <input
+                      type="text"
+                      value={renommer}
+                      onChange={(e) => setRenommer(e.target.value)}
+                      placeholder="Nouveau nom"
+                      style={styles.gestionInput}
+                    />
+                    <button onClick={renommerGroupe} style={styles.gestionValider}>OK</button>
+                  </div>
+                )}
+                <button onClick={supprimerGroupe} style={styles.gestionItemDanger}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  Supprimer le groupe
+                </button>
+              </div>
+            )}
 
             {showMembres && (
               <div style={styles.membresPanel}>
@@ -537,6 +628,21 @@ function Chat() {
                       </span>
                       {estAdmin && <span style={styles.badgeAdmin}>ADMIN</span>}
                       {estModo && <span style={styles.badgeModo}>MODO</span>}
+                      {!estAdmin && (
+                        <button onClick={() => nommerModerateur(membre.id)} style={styles.modoBtn} title="Nommer modérateur">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f0ad4e" strokeWidth="2">
+                            <path d="M12 15l-3 3 1-4-3-3h4l1-3 1 3h4l-3 3 1 4-3-3z" />
+                          </svg>
+                        </button>
+                      )}
+                      {!estAdmin && (
+                        <button onClick={() => bannirMembre(membre.id)} style={styles.bannirBtn} title="Bannir">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                          </svg>
+                        </button>
+                      )}
                     </div>
                   );
                 })}
@@ -795,6 +901,80 @@ const styles = {
   },
   groupeIcon: { fontSize: '24px' },
   groupeHeaderInfo: { display: 'flex', alignItems: 'center', gap: '10px', flex: 1 },
+  gestionBtn: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    width: '38px', height: '38px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  gestionPanel: {
+    background: '#111120',
+    borderBottom: '1px solid #2a2a3e',
+    padding: '10px',
+  },
+  gestionItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    width: '100%',
+    padding: '10px',
+    background: 'rgba(102,126,234,0.1)',
+    border: 'none',
+    color: '#667eea',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '13px',
+    marginBottom: '5px',
+  },
+  gestionItemDanger: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    width: '100%',
+    padding: '10px',
+    background: 'rgba(220,53,69,0.1)',
+    border: 'none',
+    color: '#dc3545',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '13px',
+  },
+  gestionInput: {
+    flex: 1,
+    padding: '8px 12px',
+    borderRadius: '8px',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: 'white',
+    fontSize: '12px',
+  },
+  gestionValider: {
+    padding: '8px 15px',
+    borderRadius: '8px',
+    border: 'none',
+    background: '#667eea',
+    color: 'white',
+    cursor: 'pointer',
+    fontSize: '12px',
+  },
+  modoBtn: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '2px',
+  },
+  bannirBtn: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '2px',
+  },
   membresBtn: {
     background: 'rgba(102,126,234,0.15)',
     border: '1px solid #667eea',
