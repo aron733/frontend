@@ -609,6 +609,7 @@ function Chat() {
               ))}
             </>
           )}
+          <div style={styles.contactsScroll}>
           <p style={styles.contactsTitle}>Contacts</p>
           {usersFiltres.map((user) => (
               <button
@@ -1324,6 +1325,12 @@ const styles = {
   messageUsername: { color: '#aaa', fontSize: '11px', marginBottom: '3px', display: 'block' },
   groupeNom: { color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 },
   groupeInfo: { color: '#888', fontSize: '11px', margin: 0 },
+  contactsScroll: {
+    flex: 1,
+    overflowY: 'auto' as const,
+    minHeight: 0,
+    marginTop: '5px',
+  },
   contactsTitle: {
     color: '#667eea',
     fontSize: '12px',
@@ -1356,9 +1363,7 @@ const styles = {
     zIndex: 100,
     background: '#0a0a0f',
     boxShadow: '20px 0 60px rgba(0,0,0,0.5)',
-    overflowY: 'auto' as const,
     padding: '20px',
-    paddingTop: '30px',
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '5px',
