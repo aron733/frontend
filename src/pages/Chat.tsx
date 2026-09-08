@@ -165,6 +165,8 @@ function Chat() {
           from_user_id: m.expediteur || m.expediteur_id || 0,
           from_username: m.expediteur_username || '',
           lu: m.lu || false,
+          fichier_url: m.fichier_url || null,
+          audio_url: m.audio_url || null,
         }));
         
         setMessages(msgs);
@@ -327,6 +329,12 @@ function Chat() {
                     style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
+                {msg.fichier_url && (
+                  <img src={msg.fichier_url} style={styles.messageImage} alt="fichier" />
+                )}
+                {msg.audio_url && (
+                  <audio src={msg.audio_url} style={styles.messageAudio} controls />
+                )}
                 {msg.from_user_id === getMyId() && (
                   <span style={styles.tick}>{msg.lu ? '✓✓' : '✓'}</span>
                 )}
@@ -498,6 +506,8 @@ const styles = {
   },
   messageText: { color: 'white', fontSize: '14px' },
   tick: { color: '#4fc3f7', fontSize: '10px', marginLeft: '5px' },
+  messageImage: { maxWidth: '100%', maxHeight: '250px', borderRadius: '10px', marginTop: '5px' },
+  messageAudio: { maxWidth: '100%', marginTop: '5px' },
   empty: { color: '#666', textAlign: 'center' as const, marginTop: '50px' },
   inputArea: {
     position: 'fixed' as const,
