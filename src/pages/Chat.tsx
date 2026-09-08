@@ -216,11 +216,13 @@ function Chat() {
       }
       
       // Ajoute au state local
+      const fichierURL = fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null;
       setMessages((prev) => [...prev, {
         type: 'message',
-        message: nouveauMessage,
+        message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
         from_user_id: getMyId(),
         from_username: 'Moi',
+        fichier_url: fichierURL,
       }]);
       
       // Notification via WebSocket
