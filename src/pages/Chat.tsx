@@ -232,7 +232,8 @@ function Chat() {
         wsRef.current.send(JSON.stringify({
           action: 'message',
           dest_user_id: destUserId,
-          message: nouveauMessage,
+          message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
+          fichier_url: cloudinaryURL,
         }));
       }
       
