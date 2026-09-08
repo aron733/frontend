@@ -89,6 +89,11 @@ function Chat() {
   }, []);
 
   useEffect(() => {
+    // Marque en ligne au chargement
+    axios.post(`${API_URL}/presence/en-ligne/`, {}, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    }).catch(() => {});
+    
     const ws = new WebSocket(`${WS_URL}?token=${getToken()}`);
 
     ws.onopen = () => {
@@ -118,7 +123,13 @@ function Chat() {
     ws.onclose = () => setConnecte(false);
     wsRef.current = ws;
 
-    return () => ws.close();
+    return () => {
+      ws.close();
+      // Marque hors ligne
+      axios.post(`${API_URL}/presence/hors-ligne/`, {}, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      }).catch(() => {});
+    };
   }, []);
 
   const selectUser = async (user: any) => {
