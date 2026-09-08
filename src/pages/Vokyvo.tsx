@@ -130,6 +130,12 @@ function Vokyvo() {
       <div style={styles.chatCard}>
         {/* Header */}
         <div style={styles.header}>
+          <button onClick={() => window.location.reload()} style={styles.backButton}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+          </button>
           <div style={styles.avatarVokyvo}>
             <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2">
               <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
@@ -222,12 +228,19 @@ function Vokyvo() {
 
 const styles = {
   container: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '100vh',
+    width: '100vw',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'flex-start',
-    width: '100%',
-    maxWidth: '500px',
     padding: '10px 10px 60px 10px',
+    zIndex: 1000,
+    background: '#0a0a0f',
   },
   chatCard: {
     background: 'rgba(255,255,255,0.05)',
@@ -240,6 +253,21 @@ const styles = {
     boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
     border: '1px solid rgba(255,255,255,0.1)',
     overflow: 'hidden',
+  },
+  backButton: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
+    flexShrink: 0,
   },
   header: { borderRadius: '25px 25px 0 0',
     display: 'flex',
