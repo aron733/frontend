@@ -21,6 +21,7 @@ function Vokyvo() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [chatsIA, setChatsIA] = useState<any[]>([]);
   const [chatIdActif, setChatIdActif] = useState<number | null>(null);
+  const [chatIdActif, setChatIdActif] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -142,6 +143,15 @@ function Vokyvo() {
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
+
+  const nouvelleConversation = () => {
+    setChatIdActif(null);
+    setMessages([{
+      role: 'assistant',
+      content: 'Salut ! Je suis VOKYVO LABS, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.',
+    }]);
+    setMenuOuvert(false);
+  };
 
   const nouvelleConversation = () => {
     setChatIdActif(null);
@@ -355,6 +365,21 @@ const styles = {
     maxHeight: '60vh',
     overflowY: 'auto' as const,
     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+  },
+  newChatButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px 15px',
+    borderRadius: '10px',
+    border: '1px solid #667eea',
+    background: 'rgba(102,126,234,0.15)',
+    color: '#667eea',
+    fontSize: '14px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginBottom: '15px',
+    width: '100%',
   },
   newChatButton: {
     display: 'flex',
