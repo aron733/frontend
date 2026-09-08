@@ -23,6 +23,8 @@ function Chat() {
   const [showMembres, setShowMembres] = useState(false);
   const [rechercheMembre, setRechercheMembre] = useState('');
   const [resultatsRecherche, setResultatsRecherche] = useState<any[]>([]);
+  const [demandes, setDemandes] = useState<any[]>([]);
+  const [showDemandes, setShowDemandes] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -470,7 +472,30 @@ function Chat() {
                   );
                 })}
                 
+                <button onClick={chargerDemandes} style={styles.demandesBtn}>
+                  📩 Demandes d'accès
+                </button>
                 <button onClick={() => setShowMembres(false)} style={styles.fermerMembres}>Fermer</button>
+              </div>
+            )}
+
+            {showDemandes && (
+              <div style={styles.demandesPanel}>
+                <p style={styles.membresTitle}>Demandes d'accès</p>
+                {demandes.length === 0 ? (
+                  <p style={styles.demandesVides}>Aucune demande en attente</p>
+                ) : (
+                  demandes.map((demande) => (
+                    <div key={demande.id} style={styles.demandeItem}>
+                      <span style={styles.membreNom}>{demande.user}</span>
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        <button onClick={() => validerDemande(demande.id, 'accepter')} style={styles.accepterBtn}>✓</button>
+                        <button onClick={() => validerDemande(demande.id, 'refuser')} style={styles.refuserBtn}>✕</button>
+                      </div>
+                    </div>
+                  ))
+                )}
+                <button onClick={() => setShowDemandes(false)} style={styles.fermerMembres}>Fermer</button>
               </div>
             )}
 
@@ -533,7 +558,27 @@ function Chat() {
                 </span>
               </div>
 
-              <div style={styles.messagesArea}>
+              {showDemandes && (
+              <div style={styles.demandesPanel}>
+                <p style={styles.membresTitle}>Demandes d'accès</p>
+                {demandes.length === 0 ? (
+                  <p style={styles.demandesVides}>Aucune demande en attente</p>
+                ) : (
+                  demandes.map((demande) => (
+                    <div key={demande.id} style={styles.demandeItem}>
+                      <span style={styles.membreNom}>{demande.user}</span>
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        <button onClick={() => validerDemande(demande.id, 'accepter')} style={styles.accepterBtn}>✓</button>
+                        <button onClick={() => validerDemande(demande.id, 'refuser')} style={styles.refuserBtn}>✕</button>
+                      </div>
+                    </div>
+                  ))
+                )}
+                <button onClick={() => setShowDemandes(false)} style={styles.fermerMembres}>Fermer</button>
+              </div>
+            )}
+
+            <div style={styles.messagesArea}>
                 {messages.map((msg, index) => (
                   <div
                     key={index}
@@ -757,6 +802,51 @@ const styles = {
     fontSize: '9px',
     fontWeight: 'bold',
     letterSpacing: '1px',
+  },
+  demandesBtn: {
+    width: '100%',
+    padding: '10px',
+    borderRadius: '8px',
+    border: '1px solid #f0ad4e',
+    background: 'rgba(240,173,78,0.15)',
+    color: '#f0ad4e',
+    cursor: 'pointer',
+    marginTop: '10px',
+    fontSize: '12px',
+    fontWeight: 600,
+  },
+  demandesPanel: {
+    background: '#111120',
+    borderBottom: '1px solid #2a2a3e',
+    padding: '15px',
+    maxHeight: '250px',
+    overflowY: 'auto' as const,
+  },
+  demandesVides: { color: '#666', fontSize: '12px', textAlign: 'center' as const, padding: '15px' },
+  demandeItem: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '8px 0',
+    borderBottom: '1px solid #1a1a2a',
+  },
+  accepterBtn: {
+    width: '30px', height: '30px',
+    borderRadius: '50%',
+    border: 'none',
+    background: '#28a745',
+    color: 'white',
+    cursor: 'pointer',
+    fontSize: '14px',
+  },
+  refuserBtn: {
+    width: '30px', height: '30px',
+    borderRadius: '50%',
+    border: 'none',
+    background: '#dc3545',
+    color: 'white',
+    cursor: 'pointer',
+    fontSize: '14px',
   },
   fermerMembres: {
     width: '100%',
