@@ -520,7 +520,10 @@ function Chat() {
       <div style={styles.body}>
         {/* Menu hamburger avec liste des utilisateurs */}
         {menuOuvert && (
-        <div style={styles.userList}>
+        <div style={{
+          ...styles.userList,
+          animation: 'slideIn 0.3s ease-out',
+        }}>
           <button onClick={() => { setShowCreerGroupe(true); setMenuOuvert(false); }} style={styles.groupeBtn}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -970,6 +973,14 @@ function Chat() {
 }
 
 const styles = {
+  '@keyframes slideIn': {
+    from: { transform: 'translateX(-100%)', opacity: 0 },
+    to: { transform: 'translateX(0)', opacity: 1 },
+  },
+  '@keyframes slideOut': {
+    from: { transform: 'translateX(0)', opacity: 1 },
+    to: { transform: 'translateX(-100%)', opacity: 0 },
+  },
   container: {
     position: 'fixed' as const,
     top: 0,
@@ -1333,12 +1344,13 @@ const styles = {
   offline: { color: '#dc3545', fontSize: '12px' },
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
   userList: {
-    position: 'absolute' as const,
+    position: 'fixed' as const,
     top: '60px',
     left: 0,
     width: '80%',
     maxWidth: '300px',
     zIndex: 50,
+    boxShadow: '20px 0 60px rgba(0,0,0,0.5)',
     borderRight: '1px solid #1a1a2a',
     overflowY: 'auto' as const,
     padding: '10px',
