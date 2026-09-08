@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
@@ -21,6 +21,14 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
   const [showPolitique, setShowPolitique] = useState(false);
+  const [showConditions, setShowConditions] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('show_politique') === 'true') {
+      setShowPolitique(true);
+      localStorage.removeItem('show_politique');
+    }
+  }, []);
   const [showConditions, setShowConditions] = useState(false);
   const [approuveLecture, setApprouveLecture] = useState(false);
 
