@@ -238,7 +238,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'flex-start',
-    padding: '10px 10px 60px 10px',
+    padding: '10px 10px 0 10px',
     zIndex: 1000,
     background: '#0a0a0f',
   },
