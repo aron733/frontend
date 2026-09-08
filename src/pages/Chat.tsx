@@ -248,7 +248,7 @@ function Chat() {
                 {user.photo ? (
                   <img src={user.photo} style={styles.userPhoto} alt="" />
                 ) : (
-                  <span style={styles.userAvatar}>👤</span>
+                  <span style={styles.userAvatar}>{((user.first_name || user.prenom || user.username || '?')[0] || '?').toUpperCase()}</span>
                 )}
                 <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : presenceTime[user.id || user.user_id] ? `Vu à ${presenceTime[user.id || user.user_id]}` : 'Hors ligne'}</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
@@ -404,7 +404,7 @@ const styles = {
   },
   userOnline: { color: '#28a745', fontSize: '10px' },
   userPhoto: { width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' as const },
-  userAvatar: { fontSize: '20px', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  userAvatar: { fontSize: '16px', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#667eea', borderRadius: '50%', color: 'white', fontWeight: 'bold' },
   chatPhoto: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' as const },
   chatAvatar: { fontSize: '25px', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   userOffline: { color: '#666', fontSize: '10px' },
