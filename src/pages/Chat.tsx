@@ -239,7 +239,7 @@ function Chat() {
           {usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
-                onClick={() => selectUser(user)}
+                onClick={() => { selectUser(user); setMenuOuvert(false); }}
                 style={{
                   ...styles.userItem,
                   background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? '#2a2a3e' : 'transparent',
