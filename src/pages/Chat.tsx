@@ -16,9 +16,9 @@ function Chat() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
-  const [_groupes, _setGroupes] = useState<any[]>([]);
-  const [_groupeActif, _setGroupeActif] = useState<any>(null);
-  const [_showCreerGroupe, _setShowCreerGroupe] = useState(false);
+  const [groupes, setGroupes] = useState<any[]>([]);
+  const [groupeActif, setGroupeActif] = useState<any>(null);
+  const [showCreerGroupe, setShowCreerGroupe] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -98,7 +98,7 @@ function Chat() {
         const response = await axios.get(`${API_URL}/groupes/`, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
-        _setGroupes(response.data.groupes || []);
+        setGroupes(response.data.groupes || []);
       } catch (err) {
         console.error('Erreur chargement groupes');
       }
@@ -206,7 +206,7 @@ function Chat() {
     const destUserId = selectedUser?.id || selectedUser?.user_id;
     
     // Envoi vers un groupe
-    if (_groupeActif && !selectedUser) {
+    if (groupeActif && !selectedUser) {
       const formData = new FormData();
       if (nouveauMessage.trim()) {
         formData.append('texte', nouveauMessage);
@@ -219,7 +219,7 @@ function Chat() {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({
           action: 'groupe',
-          groupe_id: _groupeActif.id,
+          groupe_id: groupeActif.id,
           message: nouveauMessage,
         }));
       }
@@ -335,6 +335,15 @@ function Chat() {
         {/* Menu hamburger avec liste des utilisateurs */}
         {menuOuvert && (
         <div style={styles.userList}>
+          <button onClick={() => { setShowCreerGroupe(true); setMenuOuvert(false); }} style={styles.groupeBtn}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            Groupe
+          </button>
           <input
             type="text"
             value={rechercheUser}
@@ -342,6 +351,16 @@ function Chat() {
             placeholder="Rechercher..."
             style={styles.searchInput}
           />
+          {groupes.map((groupe) => (
+            <div key={groupe.id} style={styles.groupeItem} onClick={() => { setGroupeActif(groupe); setMenuOuvert(false); }}>
+              <span style={styles.groupeIcon}>👥</span>
+              <div>
+                <p style={styles.groupeNom}>{groupe.nom}</p>
+                <p style={styles.groupeInfo}>{groupe.participants.length} membres</p>
+              </div>
+            </div>
+          ))}
+          <p style={styles.contactsTitle}>Contacts</p>
           {usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
@@ -503,6 +522,42 @@ const styles = {
     transition: 'all 0.2s',
     width: '38px',
     height: '38px',
+  },
+  groupeBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px 15px',
+    borderRadius: '10px',
+    border: '1px solid #667eea',
+    background: 'rgba(102,126,234,0.15)',
+    color: '#667eea',
+    fontSize: '14px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginBottom: '10px',
+    width: '100%',
+  },
+  groupeItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '12px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    background: 'rgba(255,255,255,0.03)',
+    marginBottom: '5px',
+  },
+  groupeIcon: { fontSize: '20px' },
+  groupeNom: { color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 },
+  groupeInfo: { color: '#888', fontSize: '11px', margin: 0 },
+  contactsTitle: {
+    color: '#667eea',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '1px',
+    margin: '15px 0 5px 0',
   },
   searchInput: {
     width: '100%',
