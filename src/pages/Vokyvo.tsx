@@ -247,7 +247,7 @@ const styles = {
     backdropFilter: 'blur(20px)',
     borderRadius: '25px',
     width: '100%',
-    height: '75vh',
+    height: '100vh',
     display: 'flex',
     flexDirection: 'column' as const,
     boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
