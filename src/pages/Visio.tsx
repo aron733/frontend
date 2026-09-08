@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTracks } from '@livekit/components-react';
 import axios from 'axios';
 import {
   LiveKitRoom,
@@ -9,6 +10,19 @@ import {
 import '@livekit/components-styles';
 
 import { API_URL } from '../config';
+
+function GrilleParticipants() {
+  const tracks = useTracks([
+    { source: 'camera' as any, withPlaceholder: true },
+    { source: 'screen_share' as any, withPlaceholder: false },
+  ]);
+
+  return (
+    <GridLayout tracks={tracks as any}>
+      <ParticipantTile />
+    </GridLayout>
+  );
+}
 
 function Visio() {
   const [code, setCode] = useState('');
@@ -131,9 +145,7 @@ function Visio() {
           </div>
 
           <div style={styles.videoGrid}>
-            <GridLayout tracks={[] as any}>
-              <ParticipantTile />
-            </GridLayout>
+            <GrilleParticipants />
           </div>
 
           <RoomAudioRenderer />
