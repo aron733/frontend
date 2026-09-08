@@ -343,6 +343,12 @@ function Chat() {
                 ))}
               </div>
 
+              {fichierSelectionne && (
+                <div style={styles.fichierApercu}>
+                  <span>📎 {fichierSelectionne.name}</span>
+                  <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
+                </div>
+              )}
               <div style={styles.inputArea}>
                 <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>
                   📎
@@ -534,6 +540,24 @@ const styles = {
     color: 'white',
     fontSize: '14px',
     outline: 'none',
+  },
+  fichierApercu: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '8px 12px',
+    background: 'rgba(102,126,234,0.15)',
+    borderRadius: '10px',
+    color: 'white',
+    fontSize: '12px',
+    marginBottom: '5px',
+  },
+  fichierRetirer: {
+    background: 'none',
+    border: 'none',
+    color: '#dc3545',
+    cursor: 'pointer',
+    fontSize: '14px',
   },
   uploadBtn: {
     width: '45px',
