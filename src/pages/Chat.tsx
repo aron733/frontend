@@ -10,6 +10,7 @@ function Chat() {
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [connecte, setConnecte] = useState(false);
   const [presence, setPresence] = useState<Record<number, string>>({});
+  const [presenceTime, setPresenceTime] = useState<Record<number, string>>({});
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -79,6 +80,10 @@ function Chat() {
         setPresence((prev) => ({
           ...prev,
           [data.user_id]: data.status,
+        }));
+        setPresenceTime((prev) => ({
+          ...prev,
+          [data.user_id]: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
         }));
       }
     };
@@ -238,7 +243,7 @@ function Chat() {
                 ) : (
                   <span style={styles.userAvatar}>👤</span>
                 )}
-                <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>●</span>
+                <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : presenceTime[user.id || user.user_id] ? `Vu à ${presenceTime[user.id || user.user_id]}` : 'Hors ligne'}</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
               </button>
           ))}
