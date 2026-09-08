@@ -17,6 +17,19 @@ function Chat() {
   const [rechercheUser, setRechercheUser] = useState('');
   const wsRef = useRef<WebSocket | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
+  const tempsEcoule = (timestamp: string) => {
+    if (!timestamp) return 'Hors ligne';
+    const diff = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000);
+    if (diff < 1) return 'Il y a moins d'une minute';
+    if (diff < 60) return `Il y a ${diff} min`;
+    if (diff < 1440) {
+      const heures = Math.floor(diff / 60);
+      return `Il y a ${heures}h`;
+    }
+    const jours = Math.floor(diff / 1440);
+    return `Il y a ${jours}j`;
+  };
+
   const getMyId = () => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
     return parseInt(userData.user_id || userData.id || '0');
@@ -256,7 +269,7 @@ function Chat() {
                 ) : (
                   <span style={styles.userAvatar}>{((user.first_name || user.prenom || user.username || '?')[0] || '?').toUpperCase()}</span>
                 )}
-                <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : presenceTime[user.id || user.user_id] ? `Vu à ${presenceTime[user.id || user.user_id]}` : 'Hors ligne'}</span>
+                <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : tempsEcoule(presenceTime[user.id || user.user_id] || '')}</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
               </button>
           ))}
