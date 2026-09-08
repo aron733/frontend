@@ -17,7 +17,7 @@ function Chat() {
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
   const [_groupes, _setGroupes] = useState<any[]>([]);
-  const [_groupeActif, _setGroupeActif] = useState<any>(null);
+  const [__groupeActif, _setGroupeActif] = useState<any>(null);
   const [_showCreerGroupe, _setShowCreerGroupe] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
@@ -206,7 +206,7 @@ function Chat() {
     const destUserId = selectedUser?.id || selectedUser?.user_id;
     
     // Envoi vers un groupe
-    if (groupeActif && !selectedUser) {
+    if (_groupeActif && !selectedUser) {
       const formData = new FormData();
       if (nouveauMessage.trim()) {
         formData.append('texte', nouveauMessage);
@@ -219,7 +219,7 @@ function Chat() {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify({
           action: 'groupe',
-          groupe_id: groupeActif.id,
+          groupe_id: _groupeActif.id,
           message: nouveauMessage,
         }));
       }
