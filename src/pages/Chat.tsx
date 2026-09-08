@@ -361,12 +361,6 @@ function Chat() {
                   <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
                 </div>
               )}
-              {fichierSelectionne && (
-                <div style={styles.fichierApercu}>
-                  <span>📎 {fichierSelectionne.name}</span>
-                  <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
-                </div>
-              )}
               <div style={styles.inputArea}>
                 <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>
                   📎
