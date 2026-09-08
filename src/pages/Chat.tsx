@@ -668,9 +668,7 @@ function Chat() {
                 <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
               </div>
             </>
-          ) : (
-
-          )}
+          ) : null}
         </div>
       </div>
     </div>
