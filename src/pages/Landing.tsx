@@ -29,7 +29,6 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       localStorage.removeItem('show_politique');
     }
   }, []);
-  const [showConditions, setShowConditions] = useState(false);
   const [approuveLecture, setApprouveLecture] = useState(false);
 
   const indicatifs = [
