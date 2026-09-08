@@ -133,6 +133,9 @@ function Chat() {
       const data = JSON.parse(event.data);
       
       if (data.type === 'message') {
+        // IGNORE son propre message (déjà ajouté au state)
+        if (data.from_user_id === getMyId()) return;
+        
         const msgRecu = {
           type: 'message',
           message: data.message || '',
@@ -1345,15 +1348,17 @@ const styles = {
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
   userList: {
     position: 'fixed' as const,
-    top: '60px',
+    top: 0,
     left: 0,
-    width: '80%',
-    maxWidth: '300px',
-    zIndex: 50,
+    width: '100vw',
+    maxWidth: '100%',
+    height: '100vh',
+    zIndex: 100,
+    background: '#0a0a0f',
     boxShadow: '20px 0 60px rgba(0,0,0,0.5)',
-    borderRight: '1px solid #1a1a2a',
     overflowY: 'auto' as const,
-    padding: '10px',
+    padding: '20px',
+    paddingTop: '30px',
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '5px',
