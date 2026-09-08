@@ -142,6 +142,31 @@ function Chat() {
         };
         setMessages((prev) => [...prev, msgRecu]);
       }
+
+      if (data.type === 'membre_ajoute') {
+        console.log('Membre ajouté:', data.user_info);
+        // Recharge les membres du groupe sans recharger la page
+        if (groupeActif) {
+          axios.get(`${API_URL}/groupes/`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+          }).then((response) => {
+            const grp = (response.data.groupes || []).find((g: any) => g.id === groupeActif.id);
+            if (grp) setGroupeActif(grp);
+          }).catch(() => {});
+        }
+      }
+
+      if (data.type === 'membre_banni') {
+        console.log('Membre banni:', data.user_id);
+        if (groupeActif) {
+          axios.get(`${API_URL}/groupes/`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+          }).then((response) => {
+            const grp = (response.data.groupes || []).find((g: any) => g.id === groupeActif.id);
+            if (grp) setGroupeActif(grp);
+          }).catch(() => {});
+        }
+      }
       
       if (data.type === 'membre_ajoute') {
         console.log('Membre ajouté:', data.user_info);
