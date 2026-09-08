@@ -205,7 +205,24 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
             VOKYVO LABS utilise des cookies essentiels.
             <a href="#" onClick={(e) => { e.preventDefault(); setShowPolitique(true); }} style={styles.cookieLink}>Politique de confidentialité</a>
           </p>
-          <button onClick={accepterCookies} style={styles.cookieBtn}>Accepter</button>
+          <div style={{ marginTop: '10px' }}>
+            <label style={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={approuveLecture}
+                onChange={(e) => setApprouveLecture(e.target.checked)}
+                style={styles.checkbox}
+              />
+              J'ai lu et j'approuve la politique et les conditions
+            </label>
+            <button
+              onClick={accepterCookies}
+              style={approuveLecture ? styles.cookieBtn : styles.cookieBtnDisabled}
+              disabled={!approuveLecture}
+            >
+              Accepter
+            </button>
+          </div>
         </div>
       )}
 
@@ -426,6 +443,32 @@ const styles = {
     fontSize: '13px',
     fontWeight: 600,
     transition: 'opacity 0.2s',
+  },
+  checkboxLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    color: '#aaa',
+    fontSize: '11px',
+    marginBottom: '8px',
+    cursor: 'pointer',
+  },
+  checkbox: {
+    width: '16px',
+    height: '16px',
+    cursor: 'pointer',
+    accentColor: '#667eea',
+  },
+  cookieBtnDisabled: {
+    padding: '8px 15px',
+    borderRadius: '10px',
+    border: 'none',
+    background: '#333',
+    color: '#666',
+    fontWeight: 'bold',
+    fontSize: '12px',
+    cursor: 'not-allowed',
+    whiteSpace: 'nowrap' as const,
   },
   cookieBtn: {
     padding: '8px 15px',
