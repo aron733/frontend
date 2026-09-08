@@ -16,6 +16,9 @@ function Chat() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
+  const [groupes, setGroupes] = useState<any[]>([]);
+  const [groupeActif, setGroupeActif] = useState<any>(null);
+  const [showCreerGroupe, setShowCreerGroupe] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -88,6 +91,19 @@ function Chat() {
       }
     };
     chargerUsers();
+    
+    // Charge les groupes
+    const chargerGroupes = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/groupes/`, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        setGroupes(response.data.groupes || []);
+      } catch (err) {
+        console.error('Erreur chargement groupes');
+      }
+    };
+    chargerGroupes();
   }, []);
 
   useEffect(() => {
@@ -187,7 +203,37 @@ function Chat() {
   const envoyerMessage = async () => {
     if ((!nouveauMessage.trim() && !fichierSelectionne) || !selectedUser) return;
 
-    const destUserId = selectedUser.id || selectedUser.user_id;
+    const destUserId = selectedUser?.id || selectedUser?.user_id;
+    
+    // Envoi vers un groupe
+    if (groupeActif && !selectedUser) {
+      const formData = new FormData();
+      if (nouveauMessage.trim()) {
+        formData.append('texte', nouveauMessage);
+      }
+      if (fichierSelectionne) {
+        formData.append('fichier', fichierSelectionne);
+      }
+      
+      // Envoie via WebSocket au groupe
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({
+          action: 'groupe',
+          groupe_id: groupeActif.id,
+          message: nouveauMessage,
+        }));
+      }
+      
+      setMessages((prev) => [...prev, {
+        type: 'message',
+        message: nouveauMessage,
+        from_user_id: getMyId(),
+        from_username: 'Moi',
+      }]);
+      setNouveauMessage('');
+      setFichierSelectionne(null);
+      return;
+    }
     
     // Envoie via l'API REST du backend principal (sauvegarde en PostgreSQL)
     try {
