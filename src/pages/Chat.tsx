@@ -355,7 +355,15 @@ function Chat() {
             <polyline points="12 19 5 12 12 5" />
           </svg>
         </button>
-        <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
+        <button onClick={() => {
+      setMenuOuvert(!menuOuvert);
+      // Recharge les groupes à l'ouverture du menu
+      axios.get(`${API_URL}/groupes/`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      }).then((response) => {
+        setGroupes(response.data.groupes || []);
+      }).catch(() => {});
+    }} style={styles.hamburger}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
             <line x1="3" y1="6" x2="21" y2="6" />
             <line x1="3" y1="12" x2="21" y2="12" />
