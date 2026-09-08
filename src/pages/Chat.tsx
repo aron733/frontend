@@ -520,6 +520,7 @@ function Chat() {
       <div style={styles.body}>
         {/* Menu hamburger avec liste des utilisateurs */}
         {menuOuvert && (
+        <div style={styles.overlayPlein} onClick={() => setMenuOuvert(false)} />
         <div style={{
           ...styles.userList,
           animation: 'slideIn 0.3s ease-out',
@@ -1343,6 +1344,17 @@ const styles = {
   online: { color: '#28a745', fontSize: '12px' },
   offline: { color: '#dc3545', fontSize: '12px' },
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
+  overlayPlein: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100vw',
+    height: '100vh',
+    background: '#0a0a0f',
+    zIndex: 40,
+  },
   userList: {
     position: 'fixed' as const,
     top: '60px',
