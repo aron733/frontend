@@ -143,6 +143,14 @@ function Chat() {
         setMessages((prev) => [...prev, msgRecu]);
       }
       
+      if (data.type === 'membre_ajoute') {
+        console.log('Membre ajouté:', data.user_info);
+      }
+
+      if (data.type === 'membre_banni') {
+        console.log('Membre banni:', data.user_id);
+      }
+
       if (data.type === 'presence') {
         setPresence((prev) => ({
           ...prev,
@@ -359,7 +367,14 @@ function Chat() {
         groupe_id: groupeActif.id,
         user_id: userId,
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
-      window.location.reload();
+      
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({
+          action: 'membre_banni',
+          groupe_id: groupeActif.id,
+          user_id: userId,
+        }));
+      }
     } catch (err) {
       alert('Erreur bannissement');
     }
