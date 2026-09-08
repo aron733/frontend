@@ -318,19 +318,8 @@ function Chat() {
         conv = { id: createRes.data.conversation_id };
       }
       
-      // Ajoute IMMÉDIATEMENT au state pour éviter le lag
-      setMessages((prev) => [...prev, {
-        type: 'message',
-        message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
-        from_user_id: getMyId(),
-        from_username: (() => {
-          const u = JSON.parse(localStorage.getItem('user') || '{}');
-          return (u.prenom || u.first_name || u.username || 'Moi');
-        })(),
-        fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
-      }]);
-      setNouveauMessage('');
-      setFichierSelectionne(null);
+      // Ne PAS ajouter au state ici - l'API va renvoyer la réponse
+      // avec le message sauvegardé (ID unique de la DB)
 
       let sendResponse: any = null;
 
