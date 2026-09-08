@@ -374,7 +374,7 @@ const styles = {
   },
   landingButton: {
     width: '100%',
-    padding: '15px',
+    padding: '18px',
     borderRadius: '15px',
     border: 'none',
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -382,6 +382,8 @@ const styles = {
     fontSize: '18px',
     fontWeight: 'bold',
     cursor: 'pointer',
+    boxShadow: '0 10px 30px rgba(102,126,234,0.3)',
+    transition: 'all 0.3s',
   },
   codeDisplay: {
     background: 'rgba(102,126,234,0.15)',
