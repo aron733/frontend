@@ -72,6 +72,12 @@ function News() {
     <div style={styles.container}>
       {/* Header fixe */}
       <div style={styles.header}>
+        <button onClick={() => window.location.reload()} style={styles.backButton}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+        </button>
         <span style={styles.logo}>VOKYVO<span style={{ color: '#667eea' }}>NEWS</span></span>
         <input
           type="text"
@@ -150,10 +156,32 @@ function News() {
 
 const styles = {
   container: {
-    minHeight: '100vh',
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '100vh',
+    width: '100vw',
     background: '#0a0a0f',
     display: 'flex',
     flexDirection: 'column' as const,
+    zIndex: 1000,
+  },
+  backButton: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
+    flexShrink: 0,
   },
   header: {
     display: 'flex',
