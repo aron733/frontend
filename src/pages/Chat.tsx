@@ -643,7 +643,7 @@ function Chat() {
                   <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
                 </div>
               </div>
-              <button onClick={() => setShowMembres(!showMembres)} style={styles.chevronBtn}>
+              <button onClick={() => setShowMembres(!showMembres)} style={styles.chevronBtn} title={showMembres ? 'Masquer les membres' : 'Voir les membres'}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                   style={{ transform: showMembres ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
                   <polyline points="15 18 9 12 15 6" />
@@ -707,12 +707,15 @@ function Chat() {
 
             {showMembres && (
               <div style={styles.membresPanel}>
-                <button onClick={() => setShowMembres(false)} style={styles.panelCloseBtn}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                  <p style={styles.membresTitle}>Membres du groupe</p>
+                  <button onClick={() => setShowMembres(false)} style={styles.panelCloseBtn}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
                 <p style={styles.membresTitle}>Membres du groupe</p>
                 
                 {/* Recherche pour ajouter */}
@@ -1173,12 +1176,12 @@ const styles = {
     padding: '5px',
   },
   membresPanel: {
-    position: 'relative' as const,
     background: '#111120',
     borderBottom: '1px solid #2a2a3e',
     padding: '15px',
     maxHeight: '300px',
     overflowY: 'auto' as const,
+    flexShrink: 0,
   },
   membresTitle: { color: '#667eea', fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' },
   membreSearchInput: {
