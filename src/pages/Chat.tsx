@@ -342,8 +342,19 @@ function Chat() {
                     style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
-                {msg.fichier_url && (
-                  <img src={msg.fichier_url} style={styles.messageImage} alt="fichier" />
+                {msg.fichier_url && msg.fichier_url.includes('/image/') && (
+                  <img
+                    src={msg.fichier_url}
+                    style={styles.messageImage}
+                    alt="fichier"
+                    onClick={() => window.open(msg.fichier_url, '_blank')}
+                  />
+                )}
+                {msg.fichier_url && msg.fichier_url.includes('/video/') && (
+                  <video src={msg.fichier_url} style={styles.messageVideo} controls preload="metadata" />
+                )}
+                {msg.fichier_url && !msg.fichier_url.includes('/image/') && !msg.fichier_url.includes('/video/') && (
+                  <a href={msg.fichier_url} target="_blank" style={styles.messageFichier}>📎 Télécharger le fichier</a>
                 )}
                 {msg.audio_url && (
                   <audio src={msg.audio_url} style={styles.messageAudio} controls />
@@ -526,8 +537,30 @@ const styles = {
   },
   messageText: { color: 'white', fontSize: '14px' },
   tick: { color: '#4fc3f7', fontSize: '10px', marginLeft: '5px' },
-  messageImage: { maxWidth: '100%', maxHeight: '250px', borderRadius: '10px', marginTop: '5px' },
+  messageImage: {
+    maxWidth: '100%',
+    maxHeight: '350px',
+    borderRadius: '12px',
+    marginTop: '5px',
+    cursor: 'zoom-in',
+    objectFit: 'contain' as const,
+    transition: 'transform 0.2s',
+  },
+  messageVideo: {
+    maxWidth: '100%',
+    maxHeight: '350px',
+    borderRadius: '12px',
+    marginTop: '5px',
+    cursor: 'pointer',
+  },
   messageAudio: { maxWidth: '100%', marginTop: '5px' },
+  messageFichier: {
+    color: '#667eea',
+    textDecoration: 'none',
+    fontSize: '13px',
+    marginTop: '5px',
+    display: 'block',
+  },
   empty: { color: '#666', textAlign: 'center' as const, marginTop: '50px' },
   inputArea: {
     position: 'fixed' as const,
