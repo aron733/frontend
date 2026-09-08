@@ -17,6 +17,7 @@ function Chat() {
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
   const tempsEcoule = (timestamp: string) => {
     if (!timestamp) return 'Hors ligne';
@@ -343,15 +344,16 @@ function Chat() {
               </div>
 
               <div style={styles.inputArea}>
-                <label style={styles.uploadBtn}>
+                <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>
                   📎
-                  <input
-                    type="file"
-                    accept="image/*,video/*"
-                    style={{ display: 'none' }}
-                    onChange={(e) => setFichierSelectionne(e.target.files?.[0] || null)}
-                  />
-                </label>
+                </button>
+                <input
+                  ref={fichierInputRef}
+                  type="file"
+                  accept="image/*,video/*"
+                  style={{ display: 'none' }}
+                  onChange={(e) => setFichierSelectionne(e.target.files?.[0] || null)}
+                />
                 <input
                   type="text"
                   value={nouveauMessage}
