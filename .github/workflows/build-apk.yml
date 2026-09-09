@@ -49,6 +49,7 @@ jobs:
       - name: Add Firebase Config
         run: |
           cp google-services.json android/app/google-services.json
+          cp google-services.json android/app/src/main/google-services.json
 
       - name: Add Android Permissions
         run: |

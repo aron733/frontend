@@ -33,7 +33,12 @@ export async function initialiserNotificationsFCM() {
     }
 
     // Enregistre le device
-    await PushNotifications.register();
+    try {
+      await PushNotifications.register();
+      alert('FCM: register() OK');
+    } catch (e: any) {
+      alert('FCM: register() ERREUR: ' + (e.message || 'inconnue'));
+    }
     console.log('FCM: device enregistré');
 
     // Écoute le token
