@@ -32,16 +32,7 @@ export async function initialiserNotificationsFCM() {
       console.log('FCM: pas besoin de permission (Android 10)');
     }
 
-    // Enregistre le device
-    try {
-      await PushNotifications.register();
-      alert('FCM: register() OK');
-    } catch (e: any) {
-      alert('FCM: register() ERREUR: ' + (e.message || 'inconnue'));
-    }
-    console.log('FCM: device enregistré');
-
-    // Écoute le token
+    // Écoute le token AVANT le register
     PushNotifications.addListener('registration', async (token: any) => {
       alert('FCM: TOKEN REÇU ! ' + token.value);
       console.log('FCM: token reçu:', token.value);
@@ -60,6 +51,14 @@ export async function initialiserNotificationsFCM() {
         }
       }
     });
+
+    // Enregistre le device APRÈS le listener
+    try {
+      await PushNotifications.register();
+      alert('FCM: register() OK');
+    } catch (e: any) {
+      alert('FCM: register() ERREUR: ' + (e.message || 'inconnue'));
+    }
 
     // Écoute les notifications
     PushNotifications.addListener('pushNotificationReceived', (notification: any) => {
