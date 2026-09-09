@@ -78,7 +78,7 @@ jobs:
           echo "dependencies { implementation platform('com.google.firebase:firebase-bom:34.18.0'); implementation 'com.google.firebase:firebase-messaging' }" >> app/build.gradle
           # Ajoute le classpath Google Services dans build.gradle racine
           # Insère le classpath dans le buildscript EXISTANT
-          sed -i "/repositories {/i \        classpath 'com.google.gms:google-services:4.4.4'" build.gradle
+          sed -i "/classpath 'com.android.tools.build/a\\        classpath 'com.google.gms:google-services:4.4.4'" build.gradle
 
       - name: Decode Keystore
         run: |
