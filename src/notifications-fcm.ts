@@ -1,27 +1,37 @@
-import { PushNotifications } from '@capacitor/push-notifications';
 import axios from 'axios';
 import { API_URL } from './config';
 
-// Demande la permission et récupère le token FCM
+// Récupère le token FCM et l'envoie au backend
 export async function initialiserNotificationsFCM() {
-  try {
-    // Tente d'initialiser (le plugin sera disponible uniquement dans l'APK)
+  console.log('FCM: démarrage...');
 
-    // Demande la permission
-    const permission = await PushNotifications.requestPermissions();
-    if (permission.receive !== 'granted') {
-      console.log('Permission notifications refusée');
+  try {
+    // Accède au plugin via Capacitor global
+    const Capacitor = (window as any).Capacitor;
+    
+    if (!Capacitor || !Capacitor.Plugins || !Capacitor.Plugins.PushNotifications) {
+      console.log('FCM: plugin PushNotifications non disponible');
       return;
+    }
+
+    const PushNotifications = Capacitor.Plugins.PushNotifications;
+
+    // Demande la permission (Android 13+)
+    try {
+      const permission = await PushNotifications.requestPermissions();
+      console.log('FCM: permission:', JSON.stringify(permission));
+    } catch (e) {
+      console.log('FCM: pas besoin de permission (Android 10)');
     }
 
     // Enregistre le device
     await PushNotifications.register();
+    console.log('FCM: device enregistré');
 
-    // Écoute l'enregistrement du token
+    // Écoute le token
     PushNotifications.addListener('registration', async (token: any) => {
-      console.log('Token FCM reçu:', token.value);
-      
-      // Sauvegarde le token dans le backend
+      console.log('FCM: token reçu:', token.value);
+
       const accessToken = localStorage.getItem('access_token');
       if (accessToken && token.value) {
         try {
@@ -30,31 +40,28 @@ export async function initialiserNotificationsFCM() {
           }, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
-          console.log('Token FCM sauvegardé');
+          console.log('FCM: token sauvegardé au backend');
         } catch (err) {
-          console.error('Erreur sauvegarde token FCM:', err);
+          console.error('FCM: erreur sauvegarde token:', err);
         }
       }
     });
 
-    // Écoute les notifications entrantes
+    // Écoute les notifications
     PushNotifications.addListener('pushNotificationReceived', (notification: any) => {
-      console.log('Notification reçue:', notification);
-      // Affiche une notification système (Android le fait automatiquement)
+      console.log('FCM: notification reçue:', notification);
     });
 
-    // Écoute le clic sur une notification
     PushNotifications.addListener('pushNotificationActionPerformed', (notification: any) => {
-      console.log('Notification cliquée:', notification);
-      // Redirige vers la conversation si nécessaire
-      const data = notification.notification.data;
+      console.log('FCM: notification cliquée:', notification);
+      const data = notification.notification?.data;
       if (data && data.conversation_id) {
         window.location.href = `/texto?conversation=${data.conversation_id}`;
       }
     });
 
-    console.log('Notifications FCM initialisées');
+    console.log('FCM: initialisation complète');
   } catch (err) {
-    console.error('Erreur initialisation FCM:', err);
+    console.error('FCM: erreur:', err);
   }
 }
