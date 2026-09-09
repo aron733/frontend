@@ -21,6 +21,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
   const [showPolitique, setShowPolitique] = useState(false);
+  const estDansAPK = navigator.userAgent.includes('wv') || navigator.userAgent.includes('Capacitor');
   const [showConditions, setShowConditions] = useState(false);
 
   useEffect(() => {
@@ -309,10 +310,12 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
 
       {/* Footer */}
       <footer style={styles.footer}>
+        {!estDansAPK && (
         <a href="https://github.com/aron733/frontend/releases/download/v2.0.0/app-release.apk" target="_blank" style={styles.apkBtn}>
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px', background: '#667eea', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>V</span>
           Télécharger l'APK
         </a>
+        )}
         <p style={styles.footerText}>© 2026 VOKYVO - Tous droits réservés</p>
         <div style={styles.footerLinks}>
           <a href="#" onClick={(e) => { e.preventDefault(); setShowPolitique(true); }} style={styles.footerLink}>Confidentialité</a>
