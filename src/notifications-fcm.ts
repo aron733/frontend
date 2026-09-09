@@ -38,6 +38,7 @@ export async function initialiserNotificationsFCM() {
 
     // Écoute le token
     PushNotifications.addListener('registration', async (token: any) => {
+      alert('FCM: TOKEN REÇU ! ' + token.value);
       console.log('FCM: token reçu:', token.value);
 
       const accessToken = localStorage.getItem('access_token');
