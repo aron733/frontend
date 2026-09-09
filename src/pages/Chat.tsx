@@ -1343,10 +1343,12 @@ const styles = {
   userList: {
     position: 'fixed' as const,
     top: '60px',
+    bottom: 0,
     background: '#111120',
     left: 0,
     width: '80%',
     maxWidth: '300px',
+    maxHeight: 'calc(100vh - 60px)',
     zIndex: 50,
     boxShadow: '20px 0 60px rgba(0,0,0,0.5)',
     borderRight: '1px solid #1a1a2a',
