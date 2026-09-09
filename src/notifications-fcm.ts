@@ -4,6 +4,14 @@ import { API_URL } from './config';
 // Récupère le token FCM et l'envoie au backend
 export async function initialiserNotificationsFCM() {
   console.log('FCM: démarrage...');
+  
+  // Debug visuel
+  const cap = (window as any).Capacitor;
+  if (cap && cap.Plugins && cap.Plugins.PushNotifications) {
+    alert('✅ FCM: plugin trouvé !');
+  } else {
+    alert('❌ FCM: plugin NON trouvé !');
+  }
 
   try {
     // Accède au plugin via Capacitor global
