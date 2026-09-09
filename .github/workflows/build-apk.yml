@@ -35,7 +35,7 @@ jobs:
         run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7
 
       - name: Install Push Notifications Plugin
-        run: pnpm add @capacitor/push-notifications
+        run: pnpm add @capacitor/push-notifications@7
 
       - name: Init Capacitor
         run: npx cap init VOKYVO com.vokyvo.labs --web-dir=dist
