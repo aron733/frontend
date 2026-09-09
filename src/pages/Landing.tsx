@@ -309,6 +309,12 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
 
       {/* Footer */}
       <footer style={styles.footer}>
+        <a href="https://github.com/aron733/frontend/releases/download/v2.0.0/app-release.apk" target="_blank" style={styles.apkBtn}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9993s.4482-.9993.9993-.9993c.5511 0 .9993.4486.9993.9993s-.4482.9993-.9993.9993zm-11.046 0c-.5511 0-.9993-.4486-.9993-.9993s.4482-.9993.9993-.9993c.5511 0 .9993.4486.9993.9993s-.4482.9993-.9993.9993zm11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.2439 13.8533 7.8508 12 7.8508s-3.5902.3931-5.1367 1.0989L4.841 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3435-4.1021-2.6892-7.5743-6.1185-9.4396z"/>
+          </svg>
+          Télécharger l'APK
+        </a>
         <p style={styles.footerText}>© 2026 VOKYVO - Tous droits réservés</p>
         <div style={styles.footerLinks}>
           <a href="#" onClick={(e) => { e.preventDefault(); setShowPolitique(true); }} style={styles.footerLink}>Confidentialité</a>
@@ -472,6 +478,24 @@ const styles = {
     flexShrink: 0,
   },
   footerText: { color: '#555', fontSize: '10px', margin: 0 },
+  apkBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '12px 20px',
+    borderRadius: '12px',
+    background: '#28a745',
+    color: 'white',
+    textDecoration: 'none',
+    fontSize: '14px',
+    fontWeight: 600,
+    marginBottom: '10px',
+    width: '100%',
+    maxWidth: '300px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
   footerLinks: { display: 'flex', justifyContent: 'center', gap: '20px' },
   footerLink: { color: '#667eea', fontSize: '10px', textDecoration: 'none' },
   uptime: {
