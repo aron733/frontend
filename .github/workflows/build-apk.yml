@@ -1,4 +1,4 @@
-name: Build APK Debug
+name: Build APK Release
 
 on:
   push:
@@ -10,52 +10,82 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
-      
+          java-version: '17'
+
       - name: Install pnpm
         run: npm install -g pnpm
-      
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Build Vite
         run: pnpm build
         env:
           VITE_API_URL: https://django-43v1.onrender.com/api
-      
+
       - name: Install Capacitor
         run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7
-      
+
       - name: Init Capacitor
         run: npx cap init VOKYVO com.vokyvo.app --web-dir=dist
-      
+
       - name: Add Android
         run: npx cap add android
-      
+
       - name: Add Android Permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           sed -i 's/<application/<uses-permission android:name="android.permission.CAMERA" \/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO" \/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" \/>\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <application/' $MANIFEST
-      
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-      
-      - name: Build Debug APK
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/vokyvo-release.keystore
+
+      - name: Configure Release Signing
+        run: |
+          cd android
+          cat > app/signing.gradle << 'SIGNING'
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file('vokyvo-release.keystore')
+                      storePassword System.getenv('STORE_PASS')
+                      keyAlias System.getenv('KEY_ALIAS')
+                      keyPassword System.getenv('KEY_PASS')
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          SIGNING
+          echo "apply from: 'signing.gradle'" >> app/build.gradle
+
+      - name: Build Release APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
-      
+          ./gradlew assembleRelease
+        env:
+          STORE_PASS: ${{ secrets.STORE_PASS }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KEY_PASS }}
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: vokyvo-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: vokyvo-release
+          path: android/app/build/outputs/apk/release/app-release.apk
