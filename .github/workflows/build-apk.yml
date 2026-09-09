@@ -55,23 +55,7 @@ jobs:
       - name: Configure Release Signing
         run: |
           cd android
-          cat > app/signing.gradle << 'SIGNING'
-          android {
-              signingConfigs {
-                  release {
-                      storeFile file('vokyvo-release.keystore')
-                      storePassword System.getenv('STORE_PASS')
-                      keyAlias System.getenv('KEY_ALIAS')
-                      keyPassword System.getenv('KEY_PASS')
-                  }
-              }
-              buildTypes {
-                  release {
-                      signingConfig signingConfigs.release
-                  }
-              }
-          }
-          SIGNING
+          printf 'android {\n    signingConfigs {\n        release {\n            storeFile file("vokyvo-release.keystore")\n            storePassword System.getenv("STORE_PASS")\n            keyAlias System.getenv("KEY_ALIAS")\n            keyPassword System.getenv("KEY_PASS")\n        }\n    }\n    buildTypes {\n        release {\n            signingConfig signingConfigs.release\n        }\n    }\n}\n' > app/signing.gradle
           echo "apply from: 'signing.gradle'" >> app/build.gradle
 
       - name: Build Release APK
