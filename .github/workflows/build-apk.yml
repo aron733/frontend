@@ -73,13 +73,27 @@ jobs:
       - name: Add Firebase Dependencies
         run: |
           cd android
-          # Ajoute le plugin Google Services
-          echo "apply plugin: 'com.google.gms.google-services'" >> app/build.gradle
-          # Ajoute la dépendance Firebase BoM
-          echo "dependencies { implementation platform('com.google.firebase:firebase-bom:34.18.0'); implementation 'com.google.firebase:firebase-messaging' }" >> app/build.gradle
-          # Ajoute le classpath Google Services dans build.gradle racine
-          # Insère le classpath dans le buildscript EXISTANT
-          sed -i "/classpath 'com.android.tools.build/a\\        classpath 'com.google.gms:google-services:4.4.4'" build.gradle
+          python3 << 'PYEOF2'
+with open('build.gradle', 'r') as f:
+    build = f.read()
+with open('app/build.gradle', 'r') as f:
+    app_build = f.read()
+
+# Ajoute le classpath dans le buildscript
+if 'google-services' not in build:
+    build = build.replace('classpath ', "classpath 'com.google.gms:google-services:4.4.4'\n        classpath ", 1)
+
+with open('build.gradle', 'w') as f:
+    f.write(build)
+
+# Ajoute le plugin dans app/build.gradle
+if 'gms.google-services' not in app_build:
+    app_build = "apply plugin: 'com.google.gms.google-services'\n" + app_build
+with open('app/build.gradle', 'w') as f:
+    f.write(app_build)
+
+print('Firebase Gradle configuré')
+PYEOF2
 
       - name: Decode Keystore
         run: |
