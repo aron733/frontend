@@ -265,8 +265,7 @@ function Chat() {
         })(),
         fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
       }]);
-      setNouveauMessage('');
-      setFichierSelectionne(null);
+      // Déjà ajouté au state - ne rien faire ici
       
       // Sauvegarde en DB via l'API REST
       try {
@@ -299,6 +298,20 @@ function Chat() {
       return;
     }
     
+    // Ajoute IMMÉDIATEMENT au state (comme les groupes)
+    setMessages((prev) => [...prev, {
+      type: 'message',
+      message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
+      from_user_id: getMyId(),
+      from_username: (() => {
+        const u = JSON.parse(localStorage.getItem('user') || '{}');
+        return (u.prenom || u.first_name || u.username || 'Moi');
+      })(),
+      fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
+    }]);
+    setNouveauMessage('');
+    setFichierSelectionne(null);
+
     // Envoie via l'API REST du backend principal (sauvegarde en PostgreSQL)
     try {
       const convResponse = await axios.get(`${API_URL}/conversations/`, {
@@ -337,18 +350,7 @@ function Chat() {
         });
       }
       
-      // Ajoute au state local
-      const cloudinaryURL = sendResponse?.data?.fichier_url || null;
-      setMessages((prev) => [...prev, {
-        type: 'message',
-        message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
-        from_user_id: getMyId(),
-        from_username: (() => {
-          const u = JSON.parse(localStorage.getItem('user') || '{}');
-          return (u.prenom || u.first_name || u.username || 'Moi');
-        })(),
-        fichier_url: cloudinaryURL,
-      }]);
+      // Message déjà ajouté au state - ne rien faire ici
       
       // Notification via WebSocket
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -360,8 +362,7 @@ function Chat() {
         }));
       }
       
-      setNouveauMessage('');
-      setFichierSelectionne(null);
+      // Déjà ajouté au state - ne rien faire ici
     } catch (err) {
       console.error('Erreur envoi message:', err);
     }
