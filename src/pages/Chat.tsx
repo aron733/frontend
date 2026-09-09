@@ -532,6 +532,7 @@ function Chat() {
             placeholder="Rechercher..."
             style={styles.searchInput}
           />
+          <div style={styles.contactsScrollArea}>
           {groupes.map((groupe) => (
             <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
       setGroupeActif(groupe);
@@ -599,6 +600,8 @@ function Chat() {
             </>
           )}
           <p style={styles.contactsTitle}>Contacts</p>
+          </div>
+          <div style={styles.contactsScrollArea}>
           {usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
@@ -617,6 +620,7 @@ function Chat() {
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
               </button>
           ))}
+          </div>
         </div>
         )}
 
@@ -862,7 +866,8 @@ function Chat() {
               />
               <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
             </div>
-          </div>
+            </div>
+        </div>
         )}
 
         {/* Zone de chat - PRIVÉ */}
@@ -1355,6 +1360,11 @@ const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '5px',
+  },
+  contactsScrollArea: {
+    flex: 1,
+    overflowY: 'auto' as const,
+    minHeight: 0,
   },
   userItem: {
     padding: '12px 15px',
