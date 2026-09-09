@@ -5,12 +5,7 @@ import { API_URL } from './config';
 // Demande la permission et récupère le token FCM
 export async function initialiserNotificationsFCM() {
   try {
-    // Vérifie si on est dans l'APK Capacitor
-    const userAgent = navigator.userAgent;
-    if (!userAgent.includes('Capacitor') && !userAgent.includes('wv')) {
-      console.log('Pas dans l APK - notifications FCM désactivées');
-      return;
-    }
+    // Tente d'initialiser (le plugin sera disponible uniquement dans l'APK)
 
     // Demande la permission
     const permission = await PushNotifications.requestPermissions();
