@@ -48,16 +48,11 @@ jobs:
 
       - name: Copy Google Services
         run: |
-          cp google-services.json android/app/google-services.json
-          cp google-services.json android/app/src/main/google-services.json
 
       - name: Add Android Permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           sed -i 's/<application/<uses-permission android:name="android.permission.CAMERA" \/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO" \/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" \/>\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" \/>\n    <application/' $MANIFEST
-
-      - name: Configure Firebase Gradle
-        run: python3 configure-firebase.py
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
