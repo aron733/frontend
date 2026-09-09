@@ -24,7 +24,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build Vite
         run: pnpm build
@@ -34,7 +34,7 @@ jobs:
       - name: Install Capacitor
         run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7
 
-      - name: Install Push Notifications Plugin
+      - name: Install Push Notifications
         run: pnpm add @capacitor/push-notifications@7
 
       - name: Init Capacitor
@@ -46,7 +46,7 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Add Firebase Config
+      - name: Copy Google Services
         run: |
           cp google-services.json android/app/google-services.json
           cp google-services.json android/app/src/main/google-services.json
@@ -54,26 +54,13 @@ jobs:
       - name: Add Android Permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
-          sed -i 's/<application/<uses-permission android:name="android.permission.POST_NOTIFICATIONS" \/>\n    <uses-permission android:name="android.permission.CAMERA" \/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO" \/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" \/>\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <application/' $MANIFEST
+          sed -i 's/<application/<uses-permission android:name="android.permission.CAMERA" \/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO" \/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" \/>\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" \/>\n    <application/' $MANIFEST
+
+      - name: Configure Firebase Gradle
+        run: python3 configure-firebase.py
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
-      - name: Initialize Firebase in MainActivity
-        run: |
-          cd android
-          MAIN_ACTIVITY=$(find . -path "*/MainActivity.java" | head -1)
-          if [ -n "$MAIN_ACTIVITY" ]; then
-            # Ajoute FirebaseApp.initializeApp au onCreate
-            sed -i 's/import com.getcapacitor.BridgeActivity;/import com.getcapacitor.BridgeActivity;\nimport com.google.firebase.FirebaseApp;/' $MAIN_ACTIVITY
-            sed -i 's/super.onCreate(savedInstanceState);/super.onCreate(savedInstanceState);\n        FirebaseApp.initializeApp(this);/' $MAIN_ACTIVITY
-            cat $MAIN_ACTIVITY
-          fi
-
-      - name: Add Firebase Dependencies
-        run: |
-          python3 configure-firebase.py
-
 
       - name: Decode Keystore
         run: |
