@@ -58,6 +58,17 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Initialize Firebase in MainActivity
+        run: |
+          cd android
+          MAIN_ACTIVITY=$(find . -path "*/MainActivity.java" | head -1)
+          if [ -n "$MAIN_ACTIVITY" ]; then
+            # Ajoute FirebaseApp.initializeApp au onCreate
+            sed -i 's/import com.getcapacitor.BridgeActivity;/import com.getcapacitor.BridgeActivity;\nimport com.google.firebase.FirebaseApp;/' $MAIN_ACTIVITY
+            sed -i 's/super.onCreate(savedInstanceState);/super.onCreate(savedInstanceState);\n        FirebaseApp.initializeApp(this);/' $MAIN_ACTIVITY
+            cat $MAIN_ACTIVITY
+          fi
+
       - name: Add Firebase Dependencies
         run: |
           cd android
