@@ -52,6 +52,16 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Add Firebase Dependencies
+        run: |
+          cd android
+          # Ajoute le plugin Google Services
+          echo "apply plugin: 'com.google.gms.google-services'" >> app/build.gradle
+          # Ajoute la dépendance Firebase BoM
+          echo "dependencies { implementation platform('com.google.firebase:firebase-bom:34.18.0'); implementation 'com.google.firebase:firebase-messaging' }" >> app/build.gradle
+          # Ajoute le classpath Google Services dans build.gradle racine
+          echo "buildscript { dependencies { classpath 'com.google.gms:google-services:4.4.4' } }" >> build.gradle
+
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/vokyvo-release.keystore
