@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import axios from 'axios'
 import './index.css'
 import App from './App.tsx'
+import { initialiserNotificationsFCM } from './notifications-fcm'
 
 // Intercepteur Axios : refresh auto + bannissement
 axios.interceptors.response.use(
@@ -54,6 +55,9 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Initialise les notifications FCM (APK uniquement)
+initialiserNotificationsFCM();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
