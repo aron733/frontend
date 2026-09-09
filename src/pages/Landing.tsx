@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { reinitialiserNotificationsFCM } from '../notifications-fcm';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
@@ -85,6 +86,9 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         password: form.password
       });
       localStorage.setItem('access_token', response.data.access_token);
+      reinitialiserNotificationsFCM();
+      // Initialise FCM après connexion
+      reinitialiserNotificationsFCM();
       localStorage.setItem('refresh_token', response.data.refresh_token);
       localStorage.setItem('user', JSON.stringify(response.data));
       onLogin(response.data);
