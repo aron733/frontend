@@ -40,6 +40,10 @@ jobs:
       - name: Add Android
         run: npx cap add android
 
+      - name: Add Firebase Config
+        run: |
+          cp google-services.json android/app/google-services.json
+
       - name: Add Android Permissions
         run: |
           MANIFEST="android/app/src/main/AndroidManifest.xml"
