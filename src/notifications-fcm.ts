@@ -73,3 +73,10 @@ export async function initialiserNotificationsFCM() {
     console.error('FCM: erreur:', err);
   }
 }
+
+
+export async function reinitialiserNotificationsFCM() {
+  // Permet de réessayer après la connexion
+  (window as any)._fcmInitialise = false;
+  await initialiserNotificationsFCM();
+}
