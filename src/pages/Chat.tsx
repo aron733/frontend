@@ -334,8 +334,6 @@ function Chat() {
       // Ne PAS ajouter au state ici - l'API va renvoyer la réponse
       // avec le message sauvegardé (ID unique de la DB)
 
-      let sendResponse: any = null;
-
       if (conv) {
         const formData = new FormData();
         if (nouveauMessage.trim()) {
@@ -345,7 +343,7 @@ function Chat() {
           formData.append('fichier', fichierSelectionne);
         }
         
-        sendResponse = await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
+        await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
       }
@@ -358,7 +356,7 @@ function Chat() {
           action: 'message',
           dest_user_id: destUserId,
           message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
-          fichier_url: cloudinaryURL,
+          fichier_url: null,
         }));
       }
       
