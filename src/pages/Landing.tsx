@@ -312,7 +312,11 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       <footer style={styles.footer}>
         {!estDansAPK && (
         <a href="https://github.com/aron733/frontend/releases/download/v2.0.0/app-release.apk" target="_blank" style={styles.apkBtn}>
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '22px', height: '22px', background: '#667eea', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>V</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
           Télécharger l'APK
         </a>
         )}
@@ -483,19 +487,23 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    padding: '12px 20px',
-    borderRadius: '12px',
-    background: '#28a745',
+    gap: '10px',
+    padding: '14px 25px',
+    borderRadius: '15px',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     color: 'white',
     textDecoration: 'none',
-    fontSize: '14px',
-    fontWeight: 600,
-    marginBottom: '10px',
+    fontSize: '15px',
+    fontWeight: 700,
+    letterSpacing: '0.5px',
+    marginBottom: '15px',
     width: '100%',
-    maxWidth: '300px',
+    maxWidth: '320px',
     marginLeft: 'auto',
     marginRight: 'auto',
+    boxShadow: '0 10px 30px rgba(102,126,234,0.3)',
+    transition: 'all 0.3s',
+    border: '1px solid rgba(255,255,255,0.15)',
   },
   footerLinks: { display: 'flex', justifyContent: 'center', gap: '20px' },
   footerLink: { color: '#667eea', fontSize: '10px', textDecoration: 'none' },
