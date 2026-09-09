@@ -43,6 +43,9 @@ jobs:
       - name: Add Android
         run: npx cap add android
 
+      - name: Sync Capacitor
+        run: npx cap sync android
+
       - name: Add Firebase Config
         run: |
           cp google-services.json android/app/google-services.json
