@@ -20,7 +20,7 @@ function Vokyvo() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [chatsIA, setChatsIA] = useState<any[]>([]);
-  const [_chatIdActif, setChatIdActif] = useState<number | null>(null);
+  const [chatIdActif, setChatIdActif] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -98,6 +98,7 @@ function Vokyvo() {
       
       const formData = new FormData();
       formData.append('message', userMessage);
+      if (chatIdActif) formData.append('chat_id', String(chatIdActif));
       
       if (imageFile) {
         formData.append('image', imageFile);
@@ -110,6 +111,7 @@ function Vokyvo() {
         },
       });
 
+      if (response.data.chat_id) setChatIdActif(response.data.chat_id);
       setMessages(prev => [...prev, { role: 'assistant', content: response.data.reponse }]);
     } catch (err: any) {
       setErreur('Erreur : ' + (err.response?.data?.erreur || err.message));
