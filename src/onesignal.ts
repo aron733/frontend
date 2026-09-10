@@ -5,7 +5,7 @@
 const ONESIGNAL_APP_ID = 'd3dcbd09-2d90-4fa4-88fd-04d133f7106c';
 
 function isCapacitor(): boolean {
-  return typeof window !== 'undefined' && !!(window as any).Capacitor?.isNativePlatform?.();
+  return typeof navigator !== 'undefined' && (navigator.userAgent.includes('wv') || navigator.userAgent.includes('Capacitor'));
 }
 
 export async function initOneSignal() {
