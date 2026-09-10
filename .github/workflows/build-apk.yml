@@ -32,7 +32,7 @@ jobs:
           VITE_API_URL: https://django-43v1.onrender.com/api
 
       - name: Install Capacitor
-        run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7
+        run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7 && pnpm add onesignal-cordova-plugin
 
       - name: Init Capacitor
         run: npx cap init VOKYVO com.vokyvo.labs --web-dir=dist
@@ -41,10 +41,11 @@ jobs:
         run: npx cap add android
 
       - name: Sync Capacitor
-        run: npx cap sync android
+        run: npx cap sync android && npx cap plugin add onesignal-cordova-plugin
 
       - name: Copy Google Services
         run: |
+          cp google-services.json android/app/google-services.json
 
       - name: Add Android Permissions
         run: |

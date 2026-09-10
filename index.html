@@ -31,6 +31,18 @@
       gtag('js', new Date());
       gtag('config', 'G-QLZ6DS8GW2');
     </script>
+    <!-- OneSignal Web SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "d3dcbd09-2d90-4fa4-88fd-04d133f7106c",
+          allowLocalhostAsSecureOrigin: true,
+        });
+      });
+    </script>
+
     <title>VOKYVO</title>
   </head>
   <body>

@@ -4,6 +4,7 @@ import axios from 'axios'
 import './index.css'
 import App from './App.tsx'
 
+import { initOneSignal } from './onesignal'
 // Intercepteur Axios : refresh auto + bannissement
 axios.interceptors.response.use(
   (response) => response,
@@ -55,6 +56,7 @@ axios.interceptors.response.use(
   }
 );
 
+initOneSignal();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

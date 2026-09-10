@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { loginOneSignal } from '../onesignal';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
@@ -86,6 +87,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       });
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('refresh_token', response.data.refresh_token);
+      loginOneSignal(response.data.id || response.data.user_id);
       localStorage.setItem('user', JSON.stringify(response.data));
       onLogin(response.data);
     } catch (err: any) {
