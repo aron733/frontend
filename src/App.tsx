@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
+import GlobalNotifWS from './GlobalNotifWS';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -170,7 +171,10 @@ function App() {
   }
 
   return user ? (
-    <Profil user={user} onLogout={handleLogout} />
+    <>
+      <GlobalNotifWS />
+      <Profil user={user} onLogout={handleLogout} />
+    </>
   ) : (
     <Landing onLogin={handleLogin} />
   );
