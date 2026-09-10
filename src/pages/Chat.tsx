@@ -382,8 +382,9 @@ function Chat() {
       }
       
       // Déjà ajouté au state - ne rien faire ici
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erreur envoi message:', err);
+      alert('Erreur envoi : ' + (err.response?.data?.erreur || err.message || 'inconnu'));
     }
   };
 
