@@ -4,6 +4,7 @@ import axios from 'axios'
 import './index.css'
 import App from './App.tsx'
 
+import { NotificationProvider } from './NotificationContext'
 import { initOneSignal } from './onesignal'
 // Intercepteur Axios : refresh auto + bannissement
 axios.interceptors.response.use(
@@ -59,6 +60,8 @@ axios.interceptors.response.use(
 void initOneSignal();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <NotificationProvider>
+      <App />
+    </NotificationProvider>
   </StrictMode>,
 )
