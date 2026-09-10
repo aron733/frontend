@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import pkg from '../package.json';
 
 const API_URL = (import.meta as any).env?.VITE_API_URL || 'https://django-43v1.onrender.com/api';
-const VERSION_APK = '3.0.0';
+const VERSION_APK = pkg.version;
 
 type VersionInfo = {
   ok: boolean;

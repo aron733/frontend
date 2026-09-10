@@ -83,3 +83,29 @@ jobs:
         with:
           name: vokyvo-release
           path: android/app/build/outputs/apk/release/vokyvo.apk
+
+      - name: Lire la version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version détectée : $VERSION"
+
+      - name: Créer la release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: VOKYVO v${{ steps.version.outputs.version }}
+          files: android/app/build/outputs/apk/release/vokyvo.apk
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notifier le backend
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          LIEN="https://github.com/aron733/frontend/releases/download/v${VERSION}/vokyvo.apk"
+          curl -X POST https://django-43v1.onrender.com/api/webhook/release/ \
+            -H "Content-Type: application/json" \
+            -d "{\"token\":\"${{ secrets.RELEASE_WEBHOOK_TOKEN }}\",\"version\":\"${VERSION}\",\"lien\":\"${LIEN}\"}"
+          echo "Webhook envoyé pour version $VERSION"
