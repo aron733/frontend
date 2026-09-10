@@ -17,6 +17,7 @@ function Chat() {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
+  const [apercuUrl, setApercuUrl] = useState<string | null>(null);
   const [groupes, setGroupes] = useState<any[]>([]);
   const [groupeActif, setGroupeActif] = useState<any>(null);
   const [showCreerGroupe, setShowCreerGroupe] = useState(false);
@@ -857,8 +858,8 @@ function Chat() {
 
             {fichierSelectionne && (
               <div style={styles.fichierApercu}>
-                <span>📎 {fichierSelectionne.name}</span>
-                <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
+                {apercuUrl && <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />}
+                <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
               </div>
             )}
 
@@ -869,7 +870,7 @@ function Chat() {
                 type="file"
                 accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
                 style={{ display: 'none' }}
-                onChange={(e) => setFichierSelectionne(e.target.files?.[0] || null)}
+                onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); if (f && f.type.startsWith("image/")) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
               />
               <input
                 type="text"
@@ -955,8 +956,8 @@ function Chat() {
 
               {fichierSelectionne && (
                 <div style={styles.fichierApercu}>
-                  <span>📎 {fichierSelectionne.name}</span>
-                  <button onClick={() => setFichierSelectionne(null)} style={styles.fichierRetirer}>✕</button>
+                  {apercuUrl && <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />}
+                  <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
                 </div>
               )}
               <div style={styles.inputArea}>
@@ -968,7 +969,7 @@ function Chat() {
                   type="file"
                   accept="image/*,video/*"
                   style={{ display: 'none' }}
-                  onChange={(e) => setFichierSelectionne(e.target.files?.[0] || null)}
+                  onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); if (f && f.type.startsWith("image/")) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
                 />
                 <input
                   type="text"
