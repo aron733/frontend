@@ -20,6 +20,9 @@ importers:
       livekit-client:
         specifier: ^2.22.2
         version: 2.22.2(@types/dom-mediacapture-record@1.0.22)
+      onesignal-cordova-plugin:
+        specifier: ^5.5.5
+        version: 5.5.5
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -2141,6 +2144,10 @@ packages:
   object.assign@4.1.7:
     resolution: {integrity: sha512-nK28WOo+QIjBkDduTINE4JkF/UJJKyf2EJxvJKfblDpyg0Q+pkOHNTL0Qwy6NP6FhE/EnzV73BxxqcJaXY9anw==}
     engines: {node: '>= 0.4'}
+
+  onesignal-cordova-plugin@5.5.5:
+    resolution: {integrity: sha512-+ucKO35umKNMqzrRwRfYcF8IQzr8AIvPHomD+Kzk4uM5CdXjW4dKbyA29sIObi+gn6XtN00AltPcadeOnrmcZg==}
+    engines: {'0': {name: cordova-android, version: '>=4.0.0'}, '1': {name: apple-xcode, version: '>=8.0.0'}, '2': {name: apple-ios, version: '>=7.0.0'}, '3': {name: cordova, version: '>=6.4.0'}, '4': {name: cordova-ios, version: '>=4.3.0'}}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -4836,6 +4843,8 @@ snapshots:
       es-object-atoms: 1.1.2
       has-symbols: 1.1.0
       object-keys: 1.1.1
+
+  onesignal-cordova-plugin@5.5.5: {}
 
   optionator@0.9.4:
     dependencies:

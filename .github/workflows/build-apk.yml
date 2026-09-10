@@ -41,7 +41,7 @@ jobs:
         run: npx cap add android
 
       - name: Sync Capacitor
-        run: npx cap sync android && npx cap plugin add onesignal-cordova-plugin
+        run: npx cap sync android
 
       - name: Copy Google Services
         run: |
