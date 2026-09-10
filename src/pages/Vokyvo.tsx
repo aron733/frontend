@@ -53,10 +53,13 @@ function Vokyvo() {
   const choisirImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fichier = e.target.files?.[0];
     if (!fichier) return;
-    
+
     setImageFile(fichier);
-    const apercu = URL.createObjectURL(fichier);
-    setImagePreview(apercu);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(fichier);
   };
 
   const retirerImage = () => {
