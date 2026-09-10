@@ -519,10 +519,16 @@ const styles = {
     fontSize: '13px',
   },
   imagePreviewContainer: {
-    position: 'relative' as const,
+    position: 'fixed' as const,
+    bottom: '90px',
+    left: 0,
+    right: 0,
     padding: '10px 20px',
     display: 'flex',
     justifyContent: 'center',
+    zIndex: 99,
+    maxWidth: '500px',
+    margin: '0 auto',
   },
   retirerBtn: {
     position: 'absolute' as const,
