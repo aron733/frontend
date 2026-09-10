@@ -56,7 +56,7 @@ axios.interceptors.response.use(
   }
 );
 
-initOneSignal();
+void initOneSignal();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
