@@ -354,12 +354,21 @@ function Chat() {
           formData.append('fichier', fichierSelectionne);
         }
         
-        await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
+        const sendRes = await axios.post('' + API_URL + '/conversations/' + conv.id + '/envoyer/', formData, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
+
+        // Remplace le blob par la vraie URL Cloudinary
+        if (sendRes.data.fichier_url) {
+          const vraieUrl = sendRes.data.fichier_url;
+          setMessages((prev) => prev.map((m) => 
+            m.fichier_url && m.fichier_url.startsWith("blob:")
+              ? { ...m, fichier_url: vraieUrl }
+              : m
+          ));
+        }
       }
-      
-      // Message déjà ajouté au state - ne rien faire ici
+
       
       // Notification via WebSocket
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
