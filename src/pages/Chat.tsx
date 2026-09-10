@@ -929,7 +929,7 @@ function Chat() {
                     style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
-                {msg.fichier_url && msg.fichier_url.includes('/image/') && (
+                {msg.fichier_url && /\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(msg.fichier_url) && (
                   <img
                     src={msg.fichier_url}
                     style={styles.messageImage}
@@ -937,10 +937,10 @@ function Chat() {
                     onClick={() => window.open(msg.fichier_url, '_blank')}
                   />
                 )}
-                {msg.fichier_url && msg.fichier_url.includes('/video/') && (
+                {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
                   <video src={msg.fichier_url} style={styles.messageVideo} controls preload="metadata" />
                 )}
-                {msg.fichier_url && !msg.fichier_url.includes('/image/') && !msg.fichier_url.includes('/video/') && (
+                {msg.fichier_url && !/\.(jpg|jpeg|png|gif|webp|bmp|mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
                   <a href={msg.fichier_url} target="_blank" style={styles.messageFichier}>📎 Télécharger le fichier</a>
                 )}
                 {msg.audio_url && (
