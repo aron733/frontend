@@ -87,7 +87,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       });
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('refresh_token', response.data.refresh_token);
-      void loginOneSignal(response.data.id || response.data.user_id);
+      void loginOneSignal(response.data.user_id);
       localStorage.setItem('user', JSON.stringify(response.data));
       onLogin(response.data);
     } catch (err: any) {
