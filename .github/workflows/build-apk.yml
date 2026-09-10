@@ -40,6 +40,15 @@ jobs:
       - name: Add Android
         run: npx cap add android
 
+
+      - name: Injecter la version dans build.gradle
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          VERSION_CODE=$(echo $VERSION | tr -d '.')
+          sed -i "s/versionCode 1/versionCode $VERSION_CODE/" android/app/build.gradle
+          sed -i 's/versionName "1.0"/versionName "'$VERSION'"/' android/app/build.gradle
+          echo "Version injectée : $VERSION (code $VERSION_CODE)"
+
       - name: Sync Capacitor
         run: npx cap sync android
 
