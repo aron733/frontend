@@ -118,10 +118,14 @@ function Chat() {
 
   useEffect(() => {
     // Marque en ligne au chargement
+    let actif = true;
     axios.post(`${API_URL}/presence/en-ligne/`, {}, {
       headers: { Authorization: `Bearer ${getToken()}` }
     }).catch(() => {});
     
+    const connecter = () => {
+      if (!actif) return;
+
     const ws = new WebSocket(`${WS_URL}?token=${getToken()}`);
 
     ws.onopen = () => {
@@ -191,11 +195,18 @@ function Chat() {
       }
     };
 
-    ws.onclose = () => setConnecte(false);
+    ws.onclose = () => {
+      setConnecte(false);
+      if (actif) setTimeout(connecter, 1000);
+    };
     wsRef.current = ws;
+    };
+
+    connecter();
 
     return () => {
-      ws.close();
+      actif = false;
+      wsRef.current && wsRef.current.close();
       // Marque hors ligne
       axios.post(`${API_URL}/presence/hors-ligne/`, {}, {
         headers: { Authorization: `Bearer ${getToken()}` }
