@@ -21,6 +21,7 @@ export default function GlobalNotifWS() {
 
         ws.onopen = () => {
           console.log('🔔 WS Notif global connecté');
+          notifier('VOKYVO', 'Notifications internes actives');
         };
 
         ws.onmessage = (event) => {
