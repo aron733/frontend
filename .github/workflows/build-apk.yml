@@ -49,6 +49,13 @@ jobs:
             cp android-icons/mipmap-$density/ic_launcher_foreground.png android/app/src/main/res/mipmap-$density/ic_launcher_foreground.png
           done
           echo "Icones VOKYVO copiees"
+          # Copier les splashes VOKYVO
+          cp android-icons/splash/drawable/splash.png android/app/src/main/res/drawable/splash.png
+          for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp android-icons/splash/drawable-port-$density/splash.png android/app/src/main/res/drawable-port-$density/splash.png
+            cp android-icons/splash/drawable-land-$density/splash.png android/app/src/main/res/drawable-land-$density/splash.png
+          done
+          echo 'Splash VOKYVO copies'
 
 
       - name: Debug icones Android
