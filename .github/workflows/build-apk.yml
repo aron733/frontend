@@ -50,6 +50,16 @@ jobs:
           echo "Icones VOKYVO copiees"
 
 
+      - name: Debug icones Android
+        run: |
+          echo '=== Dossiers res ==='
+          ls android/app/src/main/res/ | head -20
+          echo '=== ic_launcher files ==='
+          find android/app/src/main/res -name 'ic_launcher*' | head -30
+          echo '=== Contenu xxxhdpi ==='
+          ls -la android/app/src/main/res/mipmap-xxxhdpi/ 2>/dev/null || echo 'pas de dossier xxxhdpi'
+
+
 
 
       - name: Injecter la version dans build.gradle
