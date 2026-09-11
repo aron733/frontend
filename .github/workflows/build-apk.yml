@@ -40,12 +40,6 @@ jobs:
       - name: Add Android
         run: npx cap add android
 
-      - name: Generer les icones VOKYVO
-        run: |
-          pnpm add -D @capacitor/assets
-          mkdir -p resources
-          cp public/vokyvo-icon-1024.png resources/icon.png
-          npx capacitor-assets generate --android
 
 
 
