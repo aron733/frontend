@@ -1,3 +1,8 @@
+packages:
+  - '.'
+
 onlyBuiltDependencies:
   - sharp
   - '@capacitor/assets'
+  - esbuild
+  - '@img/sharp-libvips-linux-x64'
