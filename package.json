@@ -35,8 +35,5 @@
     "typescript-eslint": "^8.67.0",
     "vite": "^8.2.2",
     "vite-plugin-pwa": "^1.3.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": ["sharp", "@capacitor/assets"]
   }
 }
