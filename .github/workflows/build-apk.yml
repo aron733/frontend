@@ -46,6 +46,7 @@ jobs:
           for density in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
             cp android-icons/mipmap-$density/ic_launcher.png android/app/src/main/res/mipmap-$density/ic_launcher.png
             cp android-icons/mipmap-$density/ic_launcher_round.png android/app/src/main/res/mipmap-$density/ic_launcher_round.png
+            cp android-icons/mipmap-$density/ic_launcher_foreground.png android/app/src/main/res/mipmap-$density/ic_launcher_foreground.png
           done
           echo "Icones VOKYVO copiees"
 
