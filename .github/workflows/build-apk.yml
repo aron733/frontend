@@ -58,6 +58,10 @@ jobs:
           echo '=== ic_launcher files ==='
           find android/app/src/main/res -name 'ic_launcher*' | head -30
           echo '=== Contenu xxxhdpi ==='
+          echo '=== splash files ==='
+          find android/app/src/main/res -name '*splash*' | head -30
+          echo '=== drawable ==='
+          ls -la android/app/src/main/res/drawable/ 2>/dev/null | head -20
           ls -la android/app/src/main/res/mipmap-xxxhdpi/ 2>/dev/null || echo 'pas de dossier xxxhdpi'
 
 
