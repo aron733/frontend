@@ -218,7 +218,7 @@ function Chat() {
       } catch (err) {
         // Silencieux
       }
-    }, 30000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [selectedUser, groupeActif]);
