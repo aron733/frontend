@@ -44,6 +44,31 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     convActiveRef.current = convActive;
   }, [convActive]);
 
+  // Charge les présences au démarrage (une seule fois)
+  useEffect(() => {
+    const chargerPresences = async () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      try {
+        const r = await fetch('https://django-43v1.onrender.com/api/rechercher-users/?q=%20', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await r.json();
+        const p: Record<string, string> = {};
+        const t: Record<string, string> = {};
+        (data.users || []).forEach((u: any) => {
+          p[u.id] = u.est_en_ligne ? 'online' : 'offline';
+          if (u.derniere_activite) t[u.id] = u.derniere_activite;
+        });
+        setPresence((prev) => ({ ...prev, ...p }));
+        setPresenceTime((prev) => ({ ...prev, ...t }));
+      } catch (e) {
+        // silencieux
+      }
+    };
+    chargerPresences();
+  }, []);
+
   const ajouterMessage = (convId: string, msg: Message) => {
     setMessagesParConv((prev) => ({
       ...prev,
