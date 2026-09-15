@@ -957,7 +957,7 @@ function Chat() {
                     />
                   )}
                   {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
-                    <video src={msg.fichier_url} style={styles.messageVideo} controls preload="metadata" controlsList="nodownload" />
+                    <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={styles.messageVideo} controls preload="metadata" controlsList="nodownload" />
                   )}
                 </div>
               ))}
@@ -1084,7 +1084,7 @@ function Chat() {
                   />
                 )}
                 {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
-                  <video src={msg.fichier_url} style={styles.messageVideo} controls preload="metadata" />
+                  <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={styles.messageVideo} controls preload="metadata" />
                 )}
                 {msg.fichier_url && !/\.(jpg|jpeg|png|gif|webp|bmp|mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
                   <a href={msg.fichier_url} target="_blank" style={styles.messageFichier}>📎 Télécharger le fichier</a>
