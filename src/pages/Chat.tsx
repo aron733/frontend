@@ -29,6 +29,12 @@ function Chat() {
   const [showRenommer, setShowRenommer] = useState(false);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const getToken = () => localStorage.getItem('access_token') || '';
+  const [, setTick] = useState(0);
+  // Force re-render toutes les 30s pour rafraîchir "il y a X min"
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 30000);
+    return () => clearInterval(interval);
+  }, []);
   const tempsEcoule = (timestamp: string) => {
     if (!timestamp) return 'Hors ligne';
     const diff = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000);
