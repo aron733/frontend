@@ -31,6 +31,8 @@ function Chat() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [enregistrement, setEnregistrement] = useState(false);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
+  const [audioEnAttente, setAudioEnAttente] = useState<Blob | null>(null);
+  const [apercuAudioUrl, setApercuAudioUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<any>(null);
@@ -245,10 +247,11 @@ function Chat() {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
 
-      mediaRecorder.onstop = async () => {
+      mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         stream.getTracks().forEach((t) => t.stop());
-        await envoyerAudio(blob);
+        setAudioEnAttente(blob);
+        setApercuAudioUrl(URL.createObjectURL(blob));
       };
 
       mediaRecorder.start();
@@ -271,6 +274,21 @@ function Chat() {
       if (timerRef.current) clearInterval(timerRef.current);
       setDureeEnregistrement(0);
     }
+  };
+
+  const annulerAudio = () => {
+    setAudioEnAttente(null);
+    if (apercuAudioUrl) URL.revokeObjectURL(apercuAudioUrl);
+    setApercuAudioUrl(null);
+  };
+
+  const envoyerAudioDepuisApercu = async () => {
+    if (!audioEnAttente) return;
+    const blob = audioEnAttente;
+    setAudioEnAttente(null);
+    if (apercuAudioUrl) URL.revokeObjectURL(apercuAudioUrl);
+    setApercuAudioUrl(null);
+    await envoyerAudio(blob);
   };
 
   const envoyerAudio = async (blob: Blob) => {
@@ -958,7 +976,7 @@ function Chat() {
                 placeholder={`Message dans ${groupeActif.nom}...`}
                 style={styles.input}
               />
-              <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
+              <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} style={styles.sendButton}>➤</button>
             </div>
           </div>
         )}
@@ -1045,6 +1063,25 @@ function Chat() {
                   <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
                 </div>
               )}
+              {audioEnAttente && apercuAudioUrl && (
+                <div style={styles.audioApercu}>
+                  <audio 
+                    src={apercuAudioUrl} 
+                    controls 
+                    controlsList="nodownload" 
+                    style={styles.audioApercuPlayer} 
+                  />
+                  <button 
+                    onClick={annulerAudio} 
+                    style={styles.audioAnnulerBtn}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
+                </div>
+              )}
               <div style={styles.inputArea}>
                 <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>
                   📎
@@ -1082,7 +1119,7 @@ function Chat() {
                   placeholder="Écris un message..."
                   style={styles.input}
                 />
-                <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
+                <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} style={styles.sendButton}>➤</button>
               </div>
             </>
           ) : (
@@ -1701,6 +1738,33 @@ const styles = {
     right: '15px',
     zIndex: 99,
     border: '1px solid #2a2a3e',
+  },
+  audioApercu: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '8px 12px',
+    background: '#111120',
+    borderRadius: '10px',
+    border: '1px solid #2a2a3e',
+    marginBottom: '8px',
+  },
+  audioApercuPlayer: {
+    flex: 1,
+    height: '40px',
+  },
+  audioAnnulerBtn: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    border: 'none',
+    background: '#dc3545',
+    color: 'white',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
   fichierRetirer: {
     background: 'none',
