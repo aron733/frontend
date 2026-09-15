@@ -9,7 +9,7 @@ interface Message {
   image?: string;
 }
 
-function Vokyvo() {
+function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Salut ! Je suis VOKYVO, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.' }
   ]);
@@ -189,7 +189,7 @@ function Vokyvo() {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <button onClick={() => window.location.reload()} style={styles.backButton}>
+          <button onClick={() => onRetour ? onRetour() : (localStorage.setItem('vokyvo_page', 'profil'), window.location.reload())} style={styles.backButton}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12" />
               <polyline points="12 19 5 12 12 5" />

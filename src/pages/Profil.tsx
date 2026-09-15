@@ -227,7 +227,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         )}
 
         
-        {pageActive === 'chat' && <Vokyvo />}
+        {pageActive === 'chat' && <Vokyvo onRetour={() => setPageActive('profil')} />}
         {pageActive === 'visio' && <Visio />}
         {pageActive === 'messages' && <Chat />}
         {pageActive === 'confidentialite' && <Confidentialite />}
