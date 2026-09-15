@@ -92,8 +92,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
     window.addEventListener('beforeunload', handleUnload);
   }, []);
-    chargerPresences();
-  }, []);
 
   const ajouterMessage = (convId: string, msg: Message) => {
     setMessagesParConv((prev) => ({
