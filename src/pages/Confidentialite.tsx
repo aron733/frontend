@@ -73,7 +73,7 @@ function Confidentialite() {
           </>
         )}
 
-        <button onClick={() => window.location.reload()} style={styles.fermerBtn}>Fermer</button>
+        <button onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} style={styles.fermerBtn}>Fermer</button>
       </div>
     </div>
   );
