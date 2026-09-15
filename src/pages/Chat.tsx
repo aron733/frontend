@@ -1372,8 +1372,7 @@ const styles = {
   chatTitle: { color: 'white', margin: 0, fontSize: '16px' },
   messagesArea: {
     flex: 1,
-    padding: '20px 20px 80px 20px',
-    overflowY: 'auto' as const,
+    padding: '20px 12px 80px 12px',
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '10px',
