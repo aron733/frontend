@@ -1,14 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
 import CreerGroupe from './CreerGroupe';
 
+const WS_URL = 'wss://daphne-5mxe.onrender.com/ws/chat/';
 
 function Chat() {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime } = useChat();
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
   const [nouveauMessage, setNouveauMessage] = useState('');
+  const [connecte, setConnecte] = useState(false);
+  const [presence, setPresence] = useState<Record<number, string>>({});
+  const [presenceTime, setPresenceTime] = useState<Record<number, string>>({});
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -27,20 +30,9 @@ function Chat() {
   const [showGestion, setShowGestion] = useState(false);
   const [renommer, setRenommer] = useState('');
   const [showRenommer, setShowRenommer] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  // Auto-scroll vers le dernier message
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messagesParConv, selectedUser, groupeActif]);
   const getToken = () => localStorage.getItem('access_token') || '';
-  const [, setTick] = useState(0);
-  // Force re-render toutes les 30s pour rafraîchir "il y a X min"
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 30000);
-    return () => clearInterval(interval);
-  }, []);
   const tempsEcoule = (timestamp: string) => {
     if (!timestamp) return 'Hors ligne';
     const diff = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000);
@@ -74,7 +66,6 @@ function Chat() {
           first_name: c.autre_user.prenom || '',
           last_name: c.autre_user.nom || '',
           photo: c.autre_user.photo || null,
-          nb_non_lus: c.nb_non_lus || 0,
         }));
         
         // Récupère aussi tous les users
@@ -84,6 +75,12 @@ function Chat() {
         
         const allUsers = (usersResponse.data.users || []).map((u: any) => {
           // Stocke la présence depuis la DB
+          if (u.est_en_ligne !== undefined) {
+            setPresence((prev) => ({ ...prev, [u.id]: u.est_en_ligne ? 'online' : 'offline' }));
+            if (u.derniere_activite) {
+              setPresenceTime((prev) => ({ ...prev, [u.id]: u.derniere_activite }));
+            }
+          }
           const convUser = convUsers.find((cu: any) => cu.id === u.id);
           return {
             ...u,
@@ -120,20 +117,111 @@ function Chat() {
     chargerGroupes();
   }, []);
 
-  // Reset la conv active au démontage (pour que les notifs s'affichent)
   useEffect(() => {
-    return () => setConvActive(null);
-  }, []);
+    // Marque en ligne au chargement
+    let actif = true;
+    axios.post(`${API_URL}/presence/en-ligne/`, {}, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    }).catch(() => {});
+    
+    const connecter = () => {
+      if (!actif) return;
 
+    const ws = new WebSocket(`${WS_URL}?token=${getToken()}`);
+
+    ws.onopen = () => {
+      console.log('✅ WebSocket connecté');
+      setConnecte(true);
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      
+      if (data.type === 'message') {
+        // Ignore son propre message (déjà ajouté au state)
+        if (String(data.from_user_id) === String(getMyId())) return;
+        
+        const msgRecu = {
+          type: 'message',
+          message: data.message || '',
+          from_user_id: data.from_user_id,
+          from_username: data.from_username,
+          fichier_url: data.fichier_url || null,
+        };
+        setMessages((prev) => [...prev, msgRecu]);
+      }
+
+      if (data.type === 'membre_ajoute') {
+        console.log('Membre ajouté:', data.user_info);
+        // Recharge les membres du groupe sans recharger la page
+        if (groupeActif) {
+          axios.get(`${API_URL}/groupes/`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+          }).then((response) => {
+            const grp = (response.data.groupes || []).find((g: any) => g.id === groupeActif.id);
+            if (grp) setGroupeActif(grp);
+          }).catch(() => {});
+        }
+      }
+
+      if (data.type === 'membre_banni') {
+        console.log('Membre banni:', data.user_id);
+        if (groupeActif) {
+          axios.get(`${API_URL}/groupes/`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+          }).then((response) => {
+            const grp = (response.data.groupes || []).find((g: any) => g.id === groupeActif.id);
+            if (grp) setGroupeActif(grp);
+          }).catch(() => {});
+        }
+      }
+      
+      if (data.type === 'membre_ajoute') {
+        console.log('Membre ajouté:', data.user_info);
+      }
+
+      if (data.type === 'membre_banni') {
+        console.log('Membre banni:', data.user_id);
+      }
+
+      if (data.type === 'presence') {
+        setPresence((prev) => ({
+          ...prev,
+          [data.user_id]: data.status,
+        }));
+        setPresenceTime((prev) => ({
+          ...prev,
+          [data.user_id]: data.timestamp || new Date().toISOString(),
+        }));
+      }
+    };
+
+    ws.onclose = () => {
+      setConnecte(false);
+      if (actif) setTimeout(connecter, 1000);
+    };
+    wsRef.current = ws;
+    };
+
+    connecter();
+
+    return () => {
+      actif = false;
+      wsRef.current && wsRef.current.close();
+      // Marque hors ligne
+      axios.post(`${API_URL}/presence/hors-ligne/`, {}, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      }).catch(() => {});
+    };
+  }, []);
 
   const selectUser = async (user: any) => {
     setSelectedUser(user);
+    setMessages([]);
     
     // Charge l'historique depuis le backend principal
     try {
       const userId = user.id || user.user_id;
-      const convId = `user_${userId}`;
-      setConvActive(convId);
       const convResponse = await axios.get(`${API_URL}/conversations/`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
@@ -163,65 +251,12 @@ function Chat() {
           audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://django-43v1.onrender.com${m.audio_url}`) : null,
         }));
         
-        setMessagesConv(convId, msgs);
+        setMessages(msgs);
       }
     } catch (err) {
       console.error('Erreur chargement historique:', err);
     }
   };
-
-  // Refresh auto toutes les 1s de la conv active (anti-coupure WS)
-  useEffect(() => {
-    if (!selectedUser && !groupeActif) return;
-
-    const interval = setInterval(async () => {
-      try {
-        if (groupeActif && !selectedUser) {
-          const convId = `groupe_${groupeActif.id}`;
-          const response = await axios.get(`${API_URL}/groupes/${groupeActif.id}/messages/`, {
-            headers: { Authorization: `Bearer ${getToken()}` }
-          });
-          const msgs = (response.data.messages || []).map((m: any) => ({
-            type: 'message',
-            message: m.texte || '',
-            from_user_id: m.expediteur_id,
-            from_username: m.expediteur_username,
-            fichier_url: m.fichier_url,
-          }));
-          setMessagesConv(convId, msgs);
-        } else if (selectedUser) {
-          const userId = selectedUser.id || selectedUser.user_id;
-          const convId = `user_${userId}`;
-
-          const convResponse = await axios.get(`${API_URL}/conversations/`, {
-            headers: { Authorization: `Bearer ${getToken()}` }
-          });
-          const conversations = convResponse.data.conversations || [];
-          const conv = conversations.find((c: any) => c.autre_user.id === userId);
-
-          if (conv) {
-            const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
-              headers: { Authorization: `Bearer ${getToken()}` }
-            });
-            const msgs = (msgResponse.data.messages || []).map((m: any) => ({
-              type: 'message',
-              message: m.texte || m.contenu || m.message || '',
-              from_user_id: m.expediteur || m.expediteur_id || 0,
-              from_username: m.expediteur_username || '',
-              lu: m.lu || false,
-              fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://django-43v1.onrender.com${m.fichier_url}`) : null,
-              audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://django-43v1.onrender.com${m.audio_url}`) : null,
-            }));
-            setMessagesConv(convId, msgs);
-          }
-        }
-      } catch (err) {
-        // Silencieux
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [selectedUser, groupeActif]);
 
   const envoyerMessage = async () => {
     if (!nouveauMessage.trim() && !fichierSelectionne) return;
@@ -232,7 +267,7 @@ function Chat() {
     // Envoi vers un groupe
     if (groupeActif && !selectedUser) {
       // Ajoute IMMÉDIATEMENT au state
-      ajouterMessage(`groupe_${groupeActif.id}`, {
+      setMessages((prev) => [...prev, {
         type: 'message',
         message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
         from_user_id: getMyId(),
@@ -241,7 +276,7 @@ function Chat() {
           return (u.prenom || u.first_name || u.username || 'Moi');
         })(),
         fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
-      });
+      }]);
       // Déjà ajouté au state - ne rien faire ici
       
       // Sauvegarde en DB via l'API REST
@@ -264,40 +299,28 @@ function Chat() {
       }
 
       // Notification via WebSocket au groupe (instantané)
-        envoyer({
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({
           action: 'groupe',
           groupe_id: groupeActif.id,
           message: nouveauMessage,
           fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
-        });
+        }));
+      }
       return;
     }
     
-    // Capture AVANT reset (sinon perdu)
-    const msgTexte = nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : '');
-    const fichierTemp = fichierSelectionne;
-
     // Ajoute IMMÉDIATEMENT au state (comme les groupes)
-    ajouterMessage(`user_${destUserId}`, {
+    setMessages((prev) => [...prev, {
       type: 'message',
-      message: msgTexte,
+      message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
       from_user_id: getMyId(),
       from_username: (() => {
         const u = JSON.parse(localStorage.getItem('user') || '{}');
         return (u.prenom || u.first_name || u.username || 'Moi');
       })(),
-      fichier_url: fichierTemp ? URL.createObjectURL(fichierTemp) : null,
-    });
-
-    // WS EN PREMIER (temps réel instantané)
-    envoyer({
-      action: 'message',
-      dest_user_id: destUserId,
-      message: msgTexte,
-      fichier_url: null,
-    });
-
-    // Reset states
+      fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
+    }]);
     setNouveauMessage('');
     setFichierSelectionne(null);
 
@@ -339,7 +362,7 @@ function Chat() {
         // Remplace le blob par la vraie URL Cloudinary
         if (sendRes.data.fichier_url) {
           const vraieUrl = sendRes.data.fichier_url;
-          setMessagesConv(`user_${destUserId}`, (messagesParConv[`user_${destUserId}`] || []).map((m) =>
+          setMessages((prev) => prev.map((m) => 
             m.fichier_url && m.fichier_url.startsWith("blob:")
               ? { ...m, fichier_url: vraieUrl }
               : m
@@ -347,6 +370,17 @@ function Chat() {
         }
       }
 
+      
+      // Notification via WebSocket
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({
+          action: 'message',
+          dest_user_id: destUserId,
+          message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
+          fichier_url: null,
+        }));
+      }
+      
       // Déjà ajouté au state - ne rien faire ici
     } catch (err: any) {
       console.error('Erreur envoi message:', err);
@@ -402,12 +436,15 @@ function Chat() {
         user_id: userId,
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
       
-      envoyer({
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({
           action: 'membre_banni',
           groupe_id: groupeActif.id,
           user_id: userId,
-        });
+        }));
+      }
     } catch (err) {
+      alert('Erreur bannissement');
     }
   };
 
@@ -453,7 +490,7 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} style={styles.backButton}>
+        <button onClick={() => window.location.reload()} style={styles.backButton}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
@@ -520,7 +557,7 @@ function Chat() {
             <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
       setGroupeActif(groupe);
       setSelectedUser(null);
-      setConvActive(`groupe_${groupe.id}`);
+      setMessages([]);
       setMenuOuvert(false);
       
       // Charge l'historique du groupe depuis l'API
@@ -535,8 +572,7 @@ function Chat() {
           from_username: m.expediteur_username,
           fichier_url: m.fichier_url,
         }));
-        const convId = `groupe_${groupe.id}`;
-        setMessagesConv(convId, msgs);
+        setMessages(msgs);
       } catch (err) {
         console.error('Erreur chargement messages groupe');
       }
@@ -587,7 +623,7 @@ function Chat() {
           {usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
-                onClick={() => { selectUser(user); setGroupeActif(null); setMenuOuvert(false); }}
+                onClick={() => { selectUser(user); setGroupeActif(null); setMessages([]); setMenuOuvert(false); }}
                 style={{
                   ...styles.userItem,
                   background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? '#2a2a3e' : 'transparent',
@@ -600,9 +636,6 @@ function Chat() {
                 )}
                 <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : tempsEcoule(presenceTime[user.id || user.user_id] || '')}</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
-                {user.nb_non_lus > 0 && (
-                  <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
-                )}
               </button>
           ))}
         </div>
@@ -813,8 +846,8 @@ function Chat() {
             )}
 
             <div style={styles.messagesArea}>
-              {(messagesParConv[`groupe_${groupeActif?.id}`] || []).map((msg, index) => (
-                <div key={index} style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}>
+              {messages.map((msg, index) => (
+                <div key={index} style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}>
                   <span style={styles.messageUsername}>{msg.from_username}</span>
                   <span style={styles.messageText}>{msg.message}</span>
                   {msg.fichier_url && (
@@ -822,8 +855,8 @@ function Chat() {
                   )}
                 </div>
               ))}
-              <div ref={messagesEndRef} />
             </div>
+
             {fichierSelectionne && (
               <div style={styles.fichierApercu}>
                 {apercuUrl && <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />}
@@ -892,7 +925,7 @@ function Chat() {
             )}
 
             <div style={styles.messagesArea}>
-                {(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || []).map((msg, index) => (
+                {messages.map((msg, index) => (
                   <div
                     key={index}
                     style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
@@ -903,7 +936,7 @@ function Chat() {
                     src={msg.fichier_url}
                     style={styles.messageImage}
                     alt="fichier"
-                    onClick={() => window.open(msg.fichier_url || '', '_blank')}
+                    onClick={() => window.open(msg.fichier_url, '_blank')}
                   />
                 )}
                 {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
@@ -920,7 +953,6 @@ function Chat() {
                 )}
                   </div>
                 ))}
-              <div ref={messagesEndRef} />
               </div>
 
               {fichierSelectionne && (
@@ -951,17 +983,7 @@ function Chat() {
                 <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
               </div>
             </>
-          ) : (
-            <div style={styles.emptyChat}>
-              <div style={styles.emptyIconWrap}>
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </div>
-              <h2 style={styles.emptyTitle}>Bienvenue sur VOKYVO</h2>
-              <p style={styles.emptyText}>Sélectionne une conversation ou un groupe pour commencer</p>
-            </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
@@ -1372,17 +1394,6 @@ const styles = {
   userOnline: { color: '#28a745', fontSize: '10px' },
   userPhoto: { width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' as const },
   userAvatar: { fontSize: '16px', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#667eea', borderRadius: '50%', color: 'white', fontWeight: 'bold' },
-  badgeNonLus: {
-    marginLeft: 'auto',
-    background: '#dc3545',
-    color: 'white',
-    fontSize: '11px',
-    fontWeight: 'bold' as const,
-    padding: '3px 8px',
-    borderRadius: '10px',
-    minWidth: '20px',
-    textAlign: 'center' as const,
-  },
   chatPhoto: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' as const },
   chatAvatar: { fontSize: '25px', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   userOffline: { color: '#666', fontSize: '10px' },
@@ -1395,40 +1406,10 @@ const styles = {
     alignItems: 'center',
   },
   chatTitle: { color: 'white', margin: 0, fontSize: '16px' },
-  emptyChat: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '40px 20px',
-    textAlign: 'center' as const,
-  },
-  emptyIconWrap: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    background: 'rgba(102,126,234,0.1)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '20px',
-  },
-  emptyTitle: {
-    color: 'white',
-    fontSize: '20px',
-    fontWeight: 600,
-    margin: '0 0 8px 0',
-  },
-  emptyText: {
-    color: '#888',
-    fontSize: '14px',
-    margin: 0,
-    maxWidth: '280px',
-  },
   messagesArea: {
     flex: 1,
-    padding: '20px 12px 80px 12px',
+    padding: '20px 20px 80px 20px',
+    overflowY: 'auto' as const,
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '10px',
@@ -1436,18 +1417,16 @@ const styles = {
   messageMoi: {
     alignSelf: 'flex-end' as const,
     background: '#667eea',
-    padding: '12px 18px',
+    padding: '10px 15px',
     borderRadius: '15px 15px 0 15px',
-    maxWidth: '85%',
-    minWidth: '60px',
+    maxWidth: '70%',
   },
   messageAutre: {
     alignSelf: 'flex-start' as const,
     background: '#1a1a2e',
-    padding: '12px 18px',
+    padding: '10px 15px',
     borderRadius: '15px 15px 15px 0',
-    maxWidth: '85%',
-    minWidth: '60px',
+    maxWidth: '70%',
   },
   messageText: { color: 'white', fontSize: '14px' },
   tick: { color: '#4fc3f7', fontSize: '10px', marginLeft: '5px' },
