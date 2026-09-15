@@ -152,6 +152,59 @@ function Chat() {
     }
   };
 
+  // Refresh auto toutes les 1s de la conv active (anti-coupure WS)
+  useEffect(() => {
+    if (!selectedUser && !groupeActif) return;
+
+    const interval = setInterval(async () => {
+      try {
+        if (groupeActif && !selectedUser) {
+          const convId = `groupe_${groupeActif.id}`;
+          const response = await axios.get(`${API_URL}/groupes/${groupeActif.id}/messages/`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+          });
+          const msgs = (response.data.messages || []).map((m: any) => ({
+            type: 'message',
+            message: m.texte || '',
+            from_user_id: m.expediteur_id,
+            from_username: m.expediteur_username,
+            fichier_url: m.fichier_url,
+          }));
+          setMessagesConv(convId, msgs);
+        } else if (selectedUser) {
+          const userId = selectedUser.id || selectedUser.user_id;
+          const convId = `user_${userId}`;
+
+          const convResponse = await axios.get(`${API_URL}/conversations/`, {
+            headers: { Authorization: `Bearer ${getToken()}` }
+          });
+          const conversations = convResponse.data.conversations || [];
+          const conv = conversations.find((c: any) => c.autre_user.id === userId);
+
+          if (conv) {
+            const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
+              headers: { Authorization: `Bearer ${getToken()}` }
+            });
+            const msgs = (msgResponse.data.messages || []).map((m: any) => ({
+              type: 'message',
+              message: m.texte || m.contenu || m.message || '',
+              from_user_id: m.expediteur || m.expediteur_id || 0,
+              from_username: m.expediteur_username || '',
+              lu: m.lu || false,
+              fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://django-43v1.onrender.com${m.fichier_url}`) : null,
+              audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://django-43v1.onrender.com${m.audio_url}`) : null,
+            }));
+            setMessagesConv(convId, msgs);
+          }
+        }
+      } catch (err) {
+        // Silencieux
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [selectedUser, groupeActif]);
+
   const envoyerMessage = async () => {
     if (!nouveauMessage.trim() && !fichierSelectionne) return;
     if (!groupeActif && !selectedUser) return;
