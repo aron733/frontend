@@ -453,7 +453,7 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button onClick={() => window.location.reload()} style={styles.backButton}>
+        <button onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} style={styles.backButton}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
