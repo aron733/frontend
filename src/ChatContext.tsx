@@ -10,13 +10,17 @@ type Message = {
   from_user_id: number | string;
   from_username: string;
   fichier_url: string | null;
+  audio_url?: string | null;
+  lu?: boolean;
 };
 
 type ChatCtx = {
-  wsRef: React.MutableRefObject<WebSocket | null>;
   connecte: boolean;
-  messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  convActive: string | null;
+  setConvActive: (convId: string | null) => void;
+  messagesParConv: Record<string, Message[]>;
+  ajouterMessage: (convId: string, msg: Message) => void;
+  setMessagesConv: (convId: string, msgs: Message[]) => void;
   presence: Record<string, string>;
   presenceTime: Record<string, string>;
   envoyer: (payload: any) => boolean;
@@ -28,10 +32,28 @@ export const useChat = () => useContext(ChatContext);
 export function ChatProvider({ children }: { children: ReactNode }) {
   const { notifier } = useNotification();
   const [connecte, setConnecte] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [convActive, setConvActive] = useState<string | null>(null);
+  const [messagesParConv, setMessagesParConv] = useState<Record<string, Message[]>>({});
   const [presence, setPresence] = useState<Record<string, string>>({});
   const [presenceTime, setPresenceTime] = useState<Record<string, string>>({});
   const wsRef = useRef<WebSocket | null>(null);
+  const convActiveRef = useRef<string | null>(null);
+
+  // Garde la conv active à jour dans la ref (pour le onmessage)
+  useEffect(() => {
+    convActiveRef.current = convActive;
+  }, [convActive]);
+
+  const ajouterMessage = (convId: string, msg: Message) => {
+    setMessagesParConv((prev) => ({
+      ...prev,
+      [convId]: [...(prev[convId] || []), msg],
+    }));
+  };
+
+  const setMessagesConv = (convId: string, msgs: Message[]) => {
+    setMessagesParConv((prev) => ({ ...prev, [convId]: msgs }));
+  };
 
   useEffect(() => {
     let actif = true;
@@ -56,27 +78,53 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            const myId = JSON.parse(localStorage.getItem('user') || '{}').user_id;
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            const myId = userData.user_id;
 
             if (data.type === 'message') {
+              // Ignore ses propres messages
               if (String(data.from_user_id) === String(myId)) return;
-              setMessages((prev) => [...prev, {
+
+              const msg: Message = {
                 type: 'message',
                 message: data.message || '',
                 from_user_id: data.from_user_id,
                 from_username: data.from_username,
                 fichier_url: data.fichier_url || null,
-              }]);
+              };
 
-              notifier(
-                data.from_username || 'Nouveau message',
-                data.message || 'Fichier reçu'
-              );
+              // Détermine dans quelle conv ajouter
+              const active = convActiveRef.current;
+              let convId: string;
+              if (active && active.startsWith('groupe_')) {
+                // Message de groupe → met dans la conv groupe active
+                convId = active;
+              } else {
+                // Message privé → conv avec l'émetteur
+                convId = `user_${data.from_user_id}`;
+              }
+
+              // Ajoute au state
+              setMessagesParConv((prev) => ({
+                ...prev,
+                [convId]: [...(prev[convId] || []), msg],
+              }));
+
+              // Notifie si la conv n'est PAS active
+              if (convActiveRef.current !== convId) {
+                notifier(
+                  data.from_username || 'Nouveau message',
+                  data.message || 'Fichier reçu'
+                );
+              }
             }
 
             if (data.type === 'presence') {
               setPresence((prev) => ({ ...prev, [data.user_id]: data.status }));
-              setPresenceTime((prev) => ({ ...prev, [data.user_id]: data.timestamp || new Date().toISOString() }));
+              setPresenceTime((prev) => ({
+                ...prev,
+                [data.user_id]: data.timestamp || new Date().toISOString(),
+              }));
             }
           } catch (e) {
             console.warn('WS parse err:', e);
@@ -113,7 +161,19 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ChatContext.Provider value={{ wsRef, connecte, messages, setMessages, presence, presenceTime, envoyer }}>
+    <ChatContext.Provider
+      value={{
+        connecte,
+        convActive,
+        setConvActive,
+        messagesParConv,
+        ajouterMessage,
+        setMessagesConv,
+        presence,
+        presenceTime,
+        envoyer,
+      }}
+    >
       {children}
     </ChatContext.Provider>
   );
