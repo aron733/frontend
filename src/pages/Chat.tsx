@@ -3,6 +3,7 @@ import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
 import CreerGroupe from './CreerGroupe';
+import EmptyChat from './EmptyChat';
 
 
 function Chat() {
@@ -952,15 +953,7 @@ function Chat() {
               </div>
             </>
           ) : (
-            <div style={styles.emptyChat}>
-              <div style={styles.emptyIconWrap}>
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </div>
-              <h2 style={styles.emptyTitle}>Bienvenue sur VOKYVO</h2>
-              <p style={styles.emptyText}>Sélectionne une conversation ou un groupe pour commencer</p>
-            </div>
+            <EmptyChat />
           )}
         </div>
       </div>
