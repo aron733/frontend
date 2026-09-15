@@ -14,7 +14,7 @@ const SCENES = [
 
 const SCENE_DURATION = 2500;
 
-const SCENE_COMPONENTS: Record<string, () => JSX.Element> = {
+const SCENE_COMPONENTS: Record<string, () => any> = {
   welcome: SceneWelcome,
   chat: SceneChat,
   groupes: SceneGroupes,
