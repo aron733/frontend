@@ -152,6 +152,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
   }, [notifier]);
 
+  // Keep-alive : ping toutes les 10s pour garder le WS ouvert (Render Free coupe à ~21s)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({ action: 'ping' }));
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   const envoyer = (payload: any): boolean => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(payload));
