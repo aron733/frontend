@@ -111,7 +111,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               }));
 
               // Notifie si la conv n'est PAS active
-              if (convActiveRef.current !== convId) {
+              if (true) {
                 notifier(
                   data.from_username || 'Nouveau message',
                   data.message || 'Fichier reçu'
