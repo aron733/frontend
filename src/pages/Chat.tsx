@@ -1002,7 +1002,12 @@ function Chat() {
                   <a href={msg.fichier_url} target="_blank" style={styles.messageFichier}>📎 Télécharger le fichier</a>
                 )}
                 {msg.audio_url && (
-                  <audio src={msg.audio_url} style={styles.messageAudio} controls />
+                  <audio 
+                    src={msg.audio_url ? msg.audio_url.replace('/video/upload/', '/video/upload/f_mp3/') : ''} 
+                    style={styles.messageAudio} 
+                    controls 
+                    controlsList="nodownload"
+                  />
                 )}
                 {msg.from_user_id === getMyId() && (
                   <span style={styles.tick}>{msg.lu ? '✓✓' : '✓'}</span>
