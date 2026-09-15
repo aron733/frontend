@@ -810,7 +810,7 @@ function Chat() {
 
             <div style={styles.messagesArea}>
               {(messagesParConv[`groupe_${groupeActif?.id}`] || []).map((msg, index) => (
-                <div key={index} style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}>
+                <div key={index} style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}>
                   <span style={styles.messageUsername}>{msg.from_username}</span>
                   <span style={styles.messageText}>{msg.message}</span>
                   {msg.fichier_url && (
