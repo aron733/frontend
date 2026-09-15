@@ -28,6 +28,12 @@ function Chat() {
   const [renommer, setRenommer] = useState('');
   const [showRenommer, setShowRenommer] = useState(false);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto-scroll vers le dernier message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messagesParConv, selectedUser, groupeActif]);
   const getToken = () => localStorage.getItem('access_token') || '';
   const [, setTick] = useState(0);
   // Force re-render toutes les 30s pour rafraîchir "il y a X min"
@@ -812,8 +818,8 @@ function Chat() {
                   )}
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
-
             {fichierSelectionne && (
               <div style={styles.fichierApercu}>
                 {apercuUrl && <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />}
@@ -910,6 +916,7 @@ function Chat() {
                 )}
                   </div>
                 ))}
+              <div ref={messagesEndRef} />
               </div>
 
               {fichierSelectionne && (
@@ -1374,16 +1381,18 @@ const styles = {
   messageMoi: {
     alignSelf: 'flex-end' as const,
     background: '#667eea',
-    padding: '10px 15px',
+    padding: '12px 18px',
     borderRadius: '15px 15px 0 15px',
-    maxWidth: '70%',
+    maxWidth: '85%',
+    minWidth: '60px',
   },
   messageAutre: {
     alignSelf: 'flex-start' as const,
     background: '#1a1a2e',
-    padding: '10px 15px',
+    padding: '12px 18px',
     borderRadius: '15px 15px 15px 0',
-    maxWidth: '70%',
+    maxWidth: '85%',
+    minWidth: '60px',
   },
   messageText: { color: 'white', fontSize: '14px' },
   tick: { color: '#4fc3f7', fontSize: '10px', marginLeft: '5px' },
