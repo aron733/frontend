@@ -854,6 +854,7 @@ function Chat() {
         )}
 
         {/* Zone de chat - PRIVÉ */}
+        {!groupeActif && (
         <div style={styles.chatArea}>
           {selectedUser ? (
             <>
@@ -963,6 +964,7 @@ function Chat() {
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );
