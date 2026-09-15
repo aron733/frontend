@@ -948,6 +948,17 @@ function Chat() {
                   {msg.fichier_url && (
                     <img src={msg.fichier_url} style={styles.messageImage} alt="fichier" />
                   )}
+                  {msg.audio_url && (
+                    <audio
+                      src={msg.audio_url ? msg.audio_url.replace('/video/upload/', '/video/upload/f_mp3/') : ''}
+                      style={styles.messageAudio}
+                      controls
+                      controlsList="nodownload"
+                    />
+                  )}
+                  {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
+                    <video src={msg.fichier_url} style={styles.messageVideo} controls preload="metadata" controlsList="nodownload" />
+                  )}
                 </div>
               ))}
               <div ref={messagesEndRef} />
