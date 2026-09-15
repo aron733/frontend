@@ -202,17 +202,31 @@ function Chat() {
       return;
     }
     
+    // Capture AVANT reset (sinon perdu)
+    const msgTexte = nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : '');
+    const fichierTemp = fichierSelectionne;
+
     // Ajoute IMMÉDIATEMENT au state (comme les groupes)
     ajouterMessage(`user_${destUserId}`, {
       type: 'message',
-      message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
+      message: msgTexte,
       from_user_id: getMyId(),
       from_username: (() => {
         const u = JSON.parse(localStorage.getItem('user') || '{}');
         return (u.prenom || u.first_name || u.username || 'Moi');
       })(),
-      fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
+      fichier_url: fichierTemp ? URL.createObjectURL(fichierTemp) : null,
     });
+
+    // WS EN PREMIER (temps réel instantané)
+    envoyer({
+      action: 'message',
+      dest_user_id: destUserId,
+      message: msgTexte,
+      fichier_url: null,
+    });
+
+    // Reset states
     setNouveauMessage('');
     setFichierSelectionne(null);
 
@@ -262,14 +276,6 @@ function Chat() {
         }
       }
 
-      
-      // Notification via WebSocket
-      envoyer({
-          action: 'message',
-          dest_user_id: destUserId,
-          message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
-          fichier_url: null,
-        });
       // Déjà ajouté au state - ne rien faire ici
     } catch (err: any) {
       console.error('Erreur envoi message:', err);
