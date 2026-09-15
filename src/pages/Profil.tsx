@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Vokyvo from './Vokyvo';
 import Visio from './Visio';
@@ -11,8 +11,9 @@ import { API_URL } from '../config';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite'>('profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
   const [userData, setUserData] = useState(user);
+
   const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
     const stored = localStorage.getItem('user');
     if (stored) {
@@ -25,10 +26,15 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem('vokyvo_page', pageActive);
+  }, [pageActive]);
   const token = localStorage.getItem('access_token');
 
   const deconnexion = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('vokyvo_page');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
     onLogout();
