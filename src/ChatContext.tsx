@@ -93,6 +93,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     window.addEventListener('beforeunload', handleUnload);
   }, []);
 
+  // Ping /presence/en-ligne/ toutes les 60s pour garder derniere_activite fraîche
+  useEffect(() => {
+    const ping = () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      fetch('https://django-43v1.onrender.com/api/presence/en-ligne/', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      }).catch(() => {});
+    };
+    const interval = setInterval(ping, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   const ajouterMessage = (convId: string, msg: Message) => {
     setMessagesParConv((prev) => ({
       ...prev,
