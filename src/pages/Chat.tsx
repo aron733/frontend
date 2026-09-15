@@ -271,6 +271,22 @@ function Chat() {
     if (!selectedUser && !groupeActif) return;
     const destUserId = selectedUser?.id || selectedUser?.user_id;
 
+    // Ajout local immédiat
+    const convIdLocal = groupeActif && !selectedUser
+      ? `groupe_${groupeActif.id}`
+      : `user_${destUserId}`;
+    const blobUrl = URL.createObjectURL(blob);
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    ajouterMessage(convIdLocal, {
+      type: 'message',
+      message: '',
+      from_user_id: getMyId(),
+      from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
+      fichier_url: null,
+      audio_url: blobUrl,
+      lu: false,
+    });
+
     try {
       const formData = new FormData();
       formData.append('audio', blob, 'vocal.webm');
