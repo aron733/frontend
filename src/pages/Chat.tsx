@@ -231,19 +231,6 @@ function Chat() {
     
     // Envoi vers un groupe
     if (groupeActif && !selectedUser) {
-//       // Ajoute IMMÉDIATEMENT au state
-//       ajouterMessage(`groupe_${groupeActif.id}`, {
-//         type: 'message',
-//         message: nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : ''),
-//         from_user_id: getMyId(),
-//         from_username: (() => {
-//           const u = JSON.parse(localStorage.getItem('user') || '{}');
-//           return (u.prenom || u.first_name || u.username || 'Moi');
-//         })(),
-//         fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
-//       });
-//       // Déjà ajouté au state - ne rien faire ici
-//       
       // Sauvegarde en DB via l'API REST
       try {
         const formData = new FormData();
@@ -270,6 +257,9 @@ function Chat() {
           message: nouveauMessage,
           fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
         });
+      setNouveauMessage('');
+      setFichierSelectionne(null);
+      setApercuUrl(null);
       return;
     }
     
