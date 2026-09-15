@@ -74,6 +74,7 @@ function Chat() {
           first_name: c.autre_user.prenom || '',
           last_name: c.autre_user.nom || '',
           photo: c.autre_user.photo || null,
+          nb_non_lus: c.nb_non_lus || 0,
         }));
         
         // Récupère aussi tous les users
@@ -599,8 +600,10 @@ function Chat() {
                 )}
                 <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : tempsEcoule(presenceTime[user.id || user.user_id] || '')}</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
+                {user.nb_non_lus > 0 && (
+                  <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
+                )}
               </button>
-          ))}
         </div>
         )}
 
@@ -1358,6 +1361,17 @@ const styles = {
   userOnline: { color: '#28a745', fontSize: '10px' },
   userPhoto: { width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' as const },
   userAvatar: { fontSize: '16px', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#667eea', borderRadius: '50%', color: 'white', fontWeight: 'bold' },
+  badgeNonLus: {
+    marginLeft: 'auto',
+    background: '#dc3545',
+    color: 'white',
+    fontSize: '11px',
+    fontWeight: 'bold' as const,
+    padding: '3px 8px',
+    borderRadius: '10px',
+    minWidth: '20px',
+    textAlign: 'center' as const,
+  },
   chatPhoto: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' as const },
   chatAvatar: { fontSize: '25px', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   userOffline: { color: '#666', fontSize: '10px' },
