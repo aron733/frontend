@@ -951,7 +951,17 @@ function Chat() {
                 <button onClick={envoyerMessage} style={styles.sendButton}>➤</button>
               </div>
             </>
-          ) : null}
+          ) : (
+            <div style={styles.emptyChat}>
+              <div style={styles.emptyIconWrap}>
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h2 style={styles.emptyTitle}>Bienvenue sur VOKYVO</h2>
+              <p style={styles.emptyText}>Sélectionne une conversation ou un groupe pour commencer</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -1385,6 +1395,37 @@ const styles = {
     alignItems: 'center',
   },
   chatTitle: { color: 'white', margin: 0, fontSize: '16px' },
+  emptyChat: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '40px 20px',
+    textAlign: 'center' as const,
+  },
+  emptyIconWrap: {
+    width: '120px',
+    height: '120px',
+    borderRadius: '50%',
+    background: 'rgba(102,126,234,0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '20px',
+  },
+  emptyTitle: {
+    color: 'white',
+    fontSize: '20px',
+    fontWeight: 600,
+    margin: '0 0 8px 0',
+  },
+  emptyText: {
+    color: '#888',
+    fontSize: '14px',
+    margin: 0,
+    maxWidth: '280px',
+  },
   messagesArea: {
     flex: 1,
     padding: '20px 12px 80px 12px',
