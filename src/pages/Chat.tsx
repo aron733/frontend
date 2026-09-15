@@ -29,6 +29,11 @@ function Chat() {
   const [showRenommer, setShowRenommer] = useState(false);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [enregistrement, setEnregistrement] = useState(false);
+  const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<any>(null);
 
   // Auto-scroll vers le dernier message
   useEffect(() => {
@@ -222,6 +227,99 @@ function Chat() {
 
     return () => clearInterval(interval);
   }, [selectedUser, groupeActif]);
+
+  const demarrerEnregistrement = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        stream.getTracks().forEach((t) => t.stop());
+        await envoyerAudio(blob);
+      };
+
+      mediaRecorder.start();
+      setEnregistrement(true);
+      setDureeEnregistrement(0);
+
+      timerRef.current = setInterval(() => {
+        setDureeEnregistrement((d) => d + 1);
+      }, 1000);
+    } catch (err) {
+      alert('Micro non autorisé ou erreur');
+      console.error(err);
+    }
+  };
+
+  const arreterEnregistrement = () => {
+    if (mediaRecorderRef.current && enregistrement) {
+      mediaRecorderRef.current.stop();
+      setEnregistrement(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+      setDureeEnregistrement(0);
+    }
+  };
+
+  const envoyerAudio = async (blob: Blob) => {
+    if (!selectedUser && !groupeActif) return;
+    const destUserId = selectedUser?.id || selectedUser?.user_id;
+
+    try {
+      const formData = new FormData();
+      formData.append('audio', blob, 'vocal.webm');
+
+      // Cas groupe
+      if (groupeActif && !selectedUser) {
+        formData.append('groupe_id', String(groupeActif.id));
+        await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
+          headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
+        });
+        envoyer({
+          action: 'groupe',
+          groupe_id: groupeActif.id,
+          message: 'Message vocal',
+          fichier_url: null,
+        });
+        setDureeEnregistrement(0);
+        return;
+      }
+
+      // Cas privé
+      const convResponse = await axios.get(`${API_URL}/conversations/`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      const conversations = convResponse.data.conversations || [];
+      let conv = conversations.find((c: any) => c.autre_user.id === destUserId);
+
+      if (!conv) {
+        const createRes = await axios.post(`${API_URL}/conversations/creer/`, {
+          user2_id: destUserId,
+        }, { headers: { Authorization: `Bearer ${getToken()}` } });
+        conv = { id: createRes.data.conversation_id };
+      }
+
+      await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
+        headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
+      });
+
+      envoyer({
+        action: 'message',
+        dest_user_id: destUserId,
+        message: 'Message vocal',
+        fichier_url: null,
+      });
+    } catch (err) {
+      console.error('Erreur envoi audio:', err);
+      alert('Erreur envoi vocal');
+    }
+  };
 
   const envoyerMessage = async () => {
     if (!nouveauMessage.trim() && !fichierSelectionne) return;
@@ -924,6 +1022,24 @@ function Chat() {
                 <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>
                   📎
                 </button>
+                <button
+                  type="button"
+                  onClick={enregistrement ? arreterEnregistrement : demarrerEnregistrement}
+                  style={enregistrement ? styles.micBtnActif : styles.micBtn}
+                >
+                  {enregistrement ? (
+                    <span style={{ fontSize: '12px', fontWeight: 'bold' }}>
+                      {dureeEnregistrement}s
+                    </span>
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                      <line x1="12" y1="19" x2="12" y2="23" />
+                      <line x1="8" y1="23" x2="16" y2="23" />
+                    </svg>
+                  )}
+                </button>
                 <input
                   ref={fichierInputRef}
                   type="file"
@@ -1501,6 +1617,36 @@ const styles = {
     justifyContent: 'center',
     fontSize: '20px',
     flexShrink: 0,
+  },
+  micBtn: {
+    width: '45px',
+    height: '45px',
+    borderRadius: '50%',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: '#667eea',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '20px',
+    flexShrink: 0,
+  },
+  micBtnActif: {
+    width: '45px',
+    height: '45px',
+    borderRadius: '50%',
+    border: 'none',
+    background: '#dc3545',
+    color: 'white',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '12px',
+    fontWeight: 'bold' as const,
+    flexShrink: 0,
+    animation: 'pulse 1s infinite',
   },
   sendButton: {
     width: '45px',
