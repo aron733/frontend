@@ -112,6 +112,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
               // Notifie si la conv n'est PAS active
               if (true) {
+              alert('WS RECU: ' + data.from_username + ' -> ' + data.message);
                 notifier(
                   data.from_username || 'Nouveau message',
                   data.message || 'Fichier reçu'
