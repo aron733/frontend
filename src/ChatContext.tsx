@@ -86,6 +86,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               // Ignore ses propres messages
               if (String(data.from_user_id) === String(myId)) return;
 
+              // Son de notification (message reçu)
+              try {
+                const audio = new Audio('/ping.mp3');
+                audio.volume = 0.4;
+                audio.play().catch(() => {});
+              } catch (e) {}
+
               const msg: Message = {
                 type: 'message',
                 message: data.message || '',
