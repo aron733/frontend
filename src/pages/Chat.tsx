@@ -1423,6 +1423,7 @@ const styles = {
     padding: '20px 12px 80px 12px',
     display: 'flex',
     flexDirection: 'column' as const,
+    overflowY: 'auto' as const,
     gap: '10px',
   },
   messageMoi: {
