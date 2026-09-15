@@ -45,44 +45,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [convActive]);
 
 
-  // Marque en ligne au démarrage + hors ligne au déchargement
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (!token) return;
-
-    // En ligne
-    fetch('https://django-43v1.onrender.com/api/presence/en-ligne/', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` }
-    }).catch(() => {});
-
-    // Hors ligne au déchargement
-    const handleUnload = () => {
-      const t = localStorage.getItem('access_token');
-      if (!t) return;
-      fetch('https://django-43v1.onrender.com/api/presence/hors-ligne/', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${t}` },
-        keepalive: true
-      }).catch(() => {});
-    };
-    window.addEventListener('beforeunload', handleUnload);
-  }, []);
-
-  // Ping /presence/en-ligne/ toutes les 60s pour garder derniere_activite fraîche
-  useEffect(() => {
-    const ping = () => {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-      fetch('https://django-43v1.onrender.com/api/presence/en-ligne/', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      }).catch(() => {});
-    };
-    const interval = setInterval(ping, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
   const ajouterMessage = (convId: string, msg: Message) => {
     setMessagesParConv((prev) => ({
       ...prev,
