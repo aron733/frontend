@@ -604,6 +604,7 @@ function Chat() {
                   <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
                 )}
               </button>
+          ))}
         </div>
         )}
 
