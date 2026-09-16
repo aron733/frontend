@@ -123,8 +123,31 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     setForm(prev => ({ ...prev, pays }));
   };
 
-  const formaterNumero = (valeur: string) => {
-    const chiffres = valeur.replace(/\D/g, '').slice(0, 8);
+  const longueurParIndicatif = (code: string): number => {
+    const longueurs: Record<string, number> = {
+      '+226': 8, '+223': 8, '+227': 8, '+225': 10, '+221': 9,
+      '+229': 8, '+228': 8, '+224': 9, '+245': 9, '+220': 7,
+      '+222': 8, '+231': 8, '+232': 8, '+233': 9, '+234': 10,
+      '+235': 8, '+236': 8, '+237': 9, '+240': 9, '+241': 8,
+      '+242': 9, '+243': 9, '+244': 9,
+      '+212': 9, '+213': 9, '+216': 8, '+218': 9, '+20': 10,
+      '+249': 9, '+211': 9, '+251': 9, '+252': 8, '+253': 8,
+      '+254': 9, '+255': 9, '+256': 9, '+250': 9, '+257': 8,
+      '+258': 9, '+260': 9, '+261': 9, '+263': 9, '+264': 9,
+      '+265': 9, '+266': 8, '+267': 8, '+268': 8, '+27': 9,
+      '+33': 9, '+32': 9, '+41': 9, '+49': 11, '+39': 10,
+      '+34': 9, '+351': 9, '+44': 10, '+31': 9, '+48': 9, '+7': 10,
+      '+1': 10, '+52': 10, '+55': 11, '+54': 10, '+56': 9, '+57': 10,
+      '+86': 11, '+91': 10, '+81': 10, '+82': 10,
+      '+971': 9, '+966': 9, '+90': 10,
+      '+61': 9, '+64': 9,
+    };
+    return longueurs[code] || 15;
+  };
+
+  const formaterNumero = (valeur: string, code: string) => {
+    const max = longueurParIndicatif(code);
+    const chiffres = valeur.replace(/\D/g, '').slice(0, max);
     return chiffres.replace(/(\d{2})(?=\d)/g, '$1 ');
   };
 
@@ -251,7 +274,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
                 name="numero" 
                 placeholder="XX XX XX XX" 
                 value={form.numero}
-                onChange={(e) => setForm({ ...form, numero: formaterNumero(e.target.value) })}
+                onChange={(e) => setForm({ ...form, numero: formaterNumero(e.target.value, indicatif) })}
                 required 
                 style={styles.input}
                 maxLength={11}
