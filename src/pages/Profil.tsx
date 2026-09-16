@@ -6,13 +6,14 @@ import Chat from './Chat';
 import Confidentialite from './Confidentialite';
 import News from './News';
 import Cours from './Cours';
-import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
+import VokyvoPlus from './VokyvoPlus';
+// import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 
 import { API_URL } from '../config';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
   const [userData, setUserData] = useState(user);
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
@@ -102,12 +103,14 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     }
   };
 
+/*
   const IconeProfil = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
     </svg>
   );
+*/
 
   const IconeChat = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -162,9 +165,11 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           pointerEvents: menuOuvert ? 'auto' : 'none',
           transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
         }}>
+          {/* BOUTON PROFIL CACHÉ - réactivable
           <button onClick={() => { setPageActive('profil'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeProfil /> Profil
           </button>
+          */}
           <button onClick={() => { setPageActive('chat'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeChat /> Chat VOKYVO
           </button>
@@ -180,11 +185,21 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <button onClick={() => { setPageActive('cours'); setMenuOuvert(false); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Cours
           </button>
+          {/* BOUTON PROFIL CACHÉ - réactivable
           <button onClick={async () => { await demanderPermissionNotifications(); envoyerNotificationTest(); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg> Notifications
           </button>
+          */}
           <button onClick={() => { setPageActive('confidentialite'); setMenuOuvert(false); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> Confidentialité
+          </button>
+          <button onClick={() => { setPageActive('vokyvo-plus'); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#f0ad4e' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f0ad4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
+              <path d="M10 7V5h4v2" />
+              <path d="M12 12v4" />
+              <path d="M10 14h4" />
+            </svg> VOKYVO+
           </button>
           <button onClick={confirmerDeconnexion} style={{ ...styles.menuItem, color: '#dc3545' }}>
             <IconeDeconnexion /> Déconnexion
@@ -242,6 +257,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         {pageActive === 'messages' && <Chat />}
         {pageActive === 'confidentialite' && <Confidentialite />}
         {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />}
+        {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}
         {pageActive === 'news' && <News />}
       </main>
 
