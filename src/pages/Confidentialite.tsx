@@ -1,11 +1,33 @@
 import { useState } from 'react';
 
-function Confidentialite() {
+interface ConfidentialiteProps {
+  onRetour?: () => void;
+}
+
+function Confidentialite({ onRetour }: ConfidentialiteProps) {
   const [onglet, setOnglet] = useState<'politique' | 'conditions'>('politique');
 
+  const fermer = () => {
+    if (onRetour) onRetour();
+    else {
+      localStorage.setItem('vokyvo_page', 'profil');
+      window.location.reload();
+    }
+  };
+
   return (
-    <div style={styles.overlay}>
-      <div style={styles.politiquePanel}>
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <button onClick={fermer} style={styles.backButton}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+        </button>
+        <h2 style={styles.title}>Confidentialité</h2>
+      </div>
+
+      <div style={styles.body}>
         <div style={styles.tabs}>
           <button
             onClick={() => setOnglet('politique')}
@@ -23,26 +45,26 @@ function Confidentialite() {
 
         {onglet === 'politique' ? (
           <>
-            <h2 style={styles.politiqueTitle}>Politique de confidentialité</h2>
-            <div style={styles.politiqueContent}>
-              <h3>1. Collecte des données</h3>
-              <p>VOKYVO collecte les données suivantes lors de l'inscription : nom, prénom, email, âge, sexe, numéro de téléphone, pays. Ces informations sont nécessaires pour créer votre compte et fournir nos services.</p>
-              <h3>2. Utilisation des données</h3>
-              <p>Vos données sont utilisées pour : la création de votre profil, la mise en relation avec d'autres utilisateurs, l'envoi de notifications, l'amélioration de nos services. Nous ne vendons JAMAIS vos données personnelles à des tiers.</p>
-              <h3>3. Cookies</h3>
-              <p>Nous utilisons des cookies essentiels au fonctionnement du service : cookies de session pour vous garder connecté, cookies de préférences pour vos paramètres. Aucun cookie publicitaire n'est utilisé.</p>
-              <h3>4. Stockage des données</h3>
-              <p>Vos données sont stockées de manière sécurisée sur des serveurs en Europe et aux États-Unis via nos partenaires certifiés (Render, Cloudinary). Les mots de passe sont chiffrés avec des algorithmes robustes.</p>
-              <h3>5. Vos droits (RGPD)</h3>
-              <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants : droit d'accès, de rectification, de suppression, de portabilité, d'opposition. Pour exercer ces droits, contactez-nous à aronvokouma01@gmail.com.</p>
-              <h3>6. Sécurité</h3>
-              <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées : chiffrement des données, accès restreint, surveillance continue, sauvegardes régulières.</p>
-              <h3>7. Conservation</h3>
-              <p>Vos données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte à tout moment. Les données sont supprimées sous 30 jours après la demande.</p>
-              <h3>8. Messagerie et conversations</h3>
-              <p>Vos messages, conversations et échanges avec l'assistant IA sont stockés de manière sécurisée pour vous permettre d'y accéder à tout moment. Vous pouvez demander la suppression de vos conversations à tout moment.</p>
-              <h3>9. Contact</h3>
-              <p>Email : aronvokouma01@gmail.com</p>
+            <h2 style={styles.sectionTitle}>Politique de confidentialité</h2>
+            <div style={styles.content}>
+              <h3 style={styles.h3}>1. Collecte des données</h3>
+              <p style={styles.p}>VOKYVO collecte les données suivantes lors de l'inscription : nom, prénom, email, âge, sexe, numéro de téléphone, pays. Ces informations sont nécessaires pour créer votre compte et fournir nos services.</p>
+              <h3 style={styles.h3}>2. Utilisation des données</h3>
+              <p style={styles.p}>Vos données sont utilisées pour : la création de votre profil, la mise en relation avec d'autres utilisateurs, l'envoi de notifications, l'amélioration de nos services. Nous ne vendons JAMAIS vos données personnelles à des tiers.</p>
+              <h3 style={styles.h3}>3. Cookies</h3>
+              <p style={styles.p}>Nous utilisons des cookies essentiels au fonctionnement du service : cookies de session pour vous garder connecté, cookies de préférences pour vos paramètres. Aucun cookie publicitaire n'est utilisé.</p>
+              <h3 style={styles.h3}>4. Stockage des données</h3>
+              <p style={styles.p}>Vos données sont stockées de manière sécurisée sur des serveurs en Europe et aux États-Unis via nos partenaires certifiés (Render, Cloudinary). Les mots de passe sont chiffrés avec des algorithmes robustes.</p>
+              <h3 style={styles.h3}>5. Vos droits (RGPD)</h3>
+              <p style={styles.p}>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants : droit d'accès, de rectification, de suppression, de portabilité, d'opposition. Pour exercer ces droits, contactez-nous à aronvokouma01@gmail.com.</p>
+              <h3 style={styles.h3}>6. Sécurité</h3>
+              <p style={styles.p}>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées : chiffrement des données, accès restreint, surveillance continue, sauvegardes régulières.</p>
+              <h3 style={styles.h3}>7. Conservation</h3>
+              <p style={styles.p}>Vos données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte à tout moment. Les données sont supprimées sous 30 jours après la demande.</p>
+              <h3 style={styles.h3}>8. Messagerie et conversations</h3>
+              <p style={styles.p}>Vos messages, conversations et échanges avec l'assistant IA sont stockés de manière sécurisée pour vous permettre d'y accéder à tout moment. Vous pouvez demander la suppression de vos conversations à tout moment.</p>
+              <h3 style={styles.h3}>9. Contact</h3>
+              <p style={styles.p}>Email : aronvokouma01@gmail.com</p>
               <div style={styles.contactButtons}>
                 <a href="https://t.me/aladin_dev_bot" target="_blank" style={styles.telegramBtn}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
@@ -57,130 +79,42 @@ function Confidentialite() {
           </>
         ) : (
           <>
-            <h2 style={styles.politiqueTitle}>Conditions d'utilisation</h2>
-            <div style={styles.politiqueContent}>
-              <h3>1. Acceptation</h3>
-              <p>En créant un compte VOKYVO, vous acceptez ces conditions d'utilisation.</p>
-              <h3>2. Service</h3>
-              <p>VOKYVO fournit une messagerie, visioconférence, assistant IA et actualités.</p>
-              <h3>3. Comportement</h3>
-              <p>Le harcèlement, les discours haineux et tout contenu illégal sont interdits.</p>
-              <h3>4. Bannissement</h3>
-              <p>VOKYVO se réserve le droit de bannir tout utilisateur ne respectant pas ces règles.</p>
-              <h3>5. Contact</h3>
-              <p>Telegram : @aladin_dev_bot · WhatsApp : +226 06 96 54 41</p>
+            <h2 style={styles.sectionTitle}>Conditions d'utilisation</h2>
+            <div style={styles.content}>
+              <h3 style={styles.h3}>1. Acceptation</h3>
+              <p style={styles.p}>En créant un compte VOKYVO, vous acceptez ces conditions d'utilisation.</p>
+              <h3 style={styles.h3}>2. Service</h3>
+              <p style={styles.p}>VOKYVO fournit une messagerie, visioconférence, assistant IA et actualités.</p>
+              <h3 style={styles.h3}>3. Comportement</h3>
+              <p style={styles.p}>Le harcèlement, les discours haineux et tout contenu illégal sont interdits.</p>
+              <h3 style={styles.h3}>4. Bannissement</h3>
+              <p style={styles.p}>VOKYVO se réserve le droit de bannir tout utilisateur ne respectant pas ces règles.</p>
+              <h3 style={styles.h3}>5. Contact</h3>
+              <p style={styles.p}>Telegram : @aladin_dev_bot · WhatsApp : +226 06 96 54 41</p>
             </div>
           </>
         )}
-
-        <button onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} style={styles.fermerBtn}>Fermer</button>
       </div>
     </div>
   );
 }
 
 const styles = {
-  overlay: {
-    position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'rgba(0,0,0,0.8)',
-    zIndex: 3000,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '10px',
-  },
-  politiquePanel: {
-    background: '#1a1a2e',
-    border: '1px solid #2a2a3e',
-    borderRadius: '15px',
-    maxWidth: '500px',
-    width: '100%',
-    maxHeight: '80vh',
-    overflowY: 'auto' as const,
-    padding: '15px',
-  },
-  tabs: {
-    display: 'flex',
-    gap: '10px',
-    marginBottom: '15px',
-  },
-  tab: {
-    flex: 1,
-    padding: '10px',
-    borderRadius: '10px',
-    border: '1px solid #2a2a3e',
-    background: 'transparent',
-    color: '#aaa',
-    cursor: 'pointer',
-    fontSize: '13px',
-  },
-  tabActive: {
-    flex: 1,
-    padding: '10px',
-    borderRadius: '10px',
-    border: '1px solid #667eea',
-    background: 'rgba(102,126,234,0.15)',
-    color: '#667eea',
-    cursor: 'pointer',
-    fontSize: '13px',
-    fontWeight: 'bold' as const,
-  },
-  politiqueTitle: {
-    color: '#667eea',
-    fontSize: '18px',
-    marginBottom: '10px',
-    textAlign: 'center' as const,
-  },
-  politiqueContent: {
-    color: '#aaa',
-    fontSize: '12px',
-    lineHeight: 1.6,
-  },
-  contactButtons: {
-    display: 'flex',
-    gap: '10px',
-    marginTop: '15px',
-  },
-  telegramBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '10px 15px',
-    borderRadius: '10px',
-    background: '#0088cc',
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '13px',
-    fontWeight: 600,
-  },
-  whatsappBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '10px 15px',
-    borderRadius: '10px',
-    background: '#25D366',
-    color: 'white',
-    textDecoration: 'none',
-    fontSize: '13px',
-    fontWeight: 600,
-  },
-  fermerBtn: {
-    width: '100%',
-    padding: '12px',
-    borderRadius: '10px',
-    border: 'none',
-    background: '#667eea',
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    cursor: 'pointer',
-    marginTop: '15px',
-  },
+  container: { position: 'fixed' as const, top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column' as const, background: '#0a0a0f', zIndex: 1000 },
+  header: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 15px', background: 'rgba(17,17,32,0.95)', borderBottom: '1px solid rgba(255,255,255,0.08)' },
+  backButton: { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', cursor: 'pointer', padding: '8px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px' },
+  title: { color: 'white', margin: 0, fontSize: '17px', fontWeight: 600 },
+  body: { flex: 1, overflowY: 'auto' as const, padding: '20px' },
+  tabs: { display: 'flex', gap: '10px', marginBottom: '20px' },
+  tab: { flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #2a2a3e', background: 'transparent', color: '#aaa', cursor: 'pointer', fontSize: '14px', transition: 'all 0.2s' },
+  tabActive: { flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #667eea', background: 'rgba(102,126,234,0.15)', color: '#667eea', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' as const, transition: 'all 0.2s' },
+  sectionTitle: { color: 'white', fontSize: '20px', marginBottom: '20px', textAlign: 'center' as const },
+  content: { color: '#ccc', fontSize: '14px', lineHeight: 1.7 },
+  h3: { color: '#667eea', fontSize: '15px', fontWeight: 600, marginTop: '20px', marginBottom: '8px' },
+  p: { margin: '0 0 10px 0', fontSize: '14px', lineHeight: 1.7 },
+  contactButtons: { display: 'flex', gap: '10px', marginTop: '20px' },
+  telegramBtn: { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 18px', borderRadius: '12px', background: '#0088cc', color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 600 },
+  whatsappBtn: { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 18px', borderRadius: '12px', background: '#25D366', color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 600 },
 };
 
 export default Confidentialite;

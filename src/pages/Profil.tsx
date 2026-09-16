@@ -259,7 +259,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         {pageActive === 'chat' && <Vokyvo onRetour={() => setPageActive('profil')} />}
         {pageActive === 'visio' && <Visio />}
         {pageActive === 'messages' && <Chat />}
-        {pageActive === 'confidentialite' && <Confidentialite />}
+        {pageActive === 'confidentialite' && <Confidentialite onRetour={() => setPageActive('profil')} />}
         {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />}
         {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}
         {pageActive === 'news' && <News />}
