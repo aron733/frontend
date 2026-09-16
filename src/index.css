@@ -39,8 +39,8 @@ input, textarea {
 
 /* Avatar photo profil */
 .avatar-photo {
-  width: 100px !important;
-  height: 100px !important;
+  width: 144px !important;
+  height: 144px !important;
   border-radius: 50% !important;
   object-fit: cover !important;
   object-position: center !important;
@@ -99,7 +99,7 @@ input, textarea {
 }
 
 @media (max-width: 600px) {
-  .avatar-photo { width: 70px !important; height: 70px !important; }
+  .avatar-photo { width: 144px !important; height: 144px !important; }
   .avatar-conv { width: 35px !important; height: 35px !important; }
   .avatar-mini { width: 24px !important; height: 24px !important; }
   .image-message { max-width: 150px; max-height: 150px; }
