@@ -6,6 +6,24 @@ interface CoursProps {
   onRetour?: () => void;
 }
 
+function nettoyerPourTTS(texte: string): string {
+  return texte
+    .replace(/VOKYVO LABS/gi, 'VOKIVO Labs')
+    .replace(/VOKYVO/gi, 'VOKIVO')
+    .replace(/\*\*/g, '')
+    .replace(/\*/g, '')
+    .replace(/#+\s/g, '')
+    .replace(/`/g, '')
+    .replace(/_/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\(([^)]+)\)/g, ', $1,')
+    .replace(/^\s*[-•]\s/gm, '')
+    .replace(/\n+/g, '. ')
+    .replace(/\s+/g, ' ')
+    .replace(/([.!?])\s*\./g, '$1')
+    .trim();
+}
+
 
 function Cours({ onRetour }: CoursProps) {
   const [imageSelectionnee, setImageSelectionnee] = useState<File | null>(null);
@@ -70,7 +88,7 @@ function Cours({ onRetour }: CoursProps) {
 
     const lancer = () => {
       const voices = window.speechSynthesis.getVoices();
-      const utterance = new SpeechSynthesisUtterance(texteExtrait);
+      const utterance = new SpeechSynthesisUtterance(nettoyerPourTTS(texteExtrait));
       utterance.lang = 'fr-FR';
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
@@ -135,7 +153,7 @@ function Cours({ onRetour }: CoursProps) {
       // Lecture auto de la réponse IA
       try {
         if ('speechSynthesis' in window) {
-          const utterance = new SpeechSynthesisUtterance(reponse);
+          const utterance = new SpeechSynthesisUtterance(nettoyerPourTTS(reponse));
           utterance.lang = 'fr-FR';
           utterance.rate = 1.0;
           utterance.pitch = 1.0;
