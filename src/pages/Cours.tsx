@@ -132,6 +132,23 @@ function Cours({ onRetour }: CoursProps) {
 
       const reponse = response.data.reponse || response.data.message || 'Pas de réponse';
       setHistorique(prev => [...prev, { role: 'ia', texte: reponse }]);
+      // Lecture auto de la réponse IA
+      try {
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(reponse);
+          utterance.lang = 'fr-FR';
+          utterance.rate = 1.0;
+          utterance.pitch = 1.0;
+          const voices = window.speechSynthesis.getVoices();
+          const voixFr = voices.find(v => v.lang.startsWith('fr'));
+          if (voixFr) utterance.voice = voixFr;
+          utterance.onend = () => setEnLecture(false);
+          utterance.onerror = () => setEnLecture(false);
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(utterance);
+          setEnLecture(true);
+        }
+      } catch (e) {}
     } catch (err) {
       console.error('Erreur IA:', err);
       setHistorique(prev => [...prev, { role: 'ia', texte: 'Erreur, réessaie.' }]);
@@ -276,9 +293,17 @@ function Cours({ onRetour }: CoursProps) {
                       <polygon points="22 2 15 22 11 13 2 9 22 2"/>
                     </svg>
                   </button>
+                  {enLecture && (
+                    <button
+                      onClick={() => { window.speechSynthesis.cancel(); setEnLecture(false); }}
+                      style={styles.stopBtn}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <rect x="6" y="6" width="12" height="12" rx="1" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
-          </div>
-        )}
       </div>
 
       <input
@@ -538,6 +563,19 @@ const styles = {
     borderRadius: '50%',
     border: 'none',
     background: '#667eea',
+    color: 'white',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  stopBtn: {
+    width: '45px',
+    height: '45px',
+    borderRadius: '50%',
+    border: 'none',
+    background: '#dc3545',
     color: 'white',
     cursor: 'pointer',
     display: 'flex',
