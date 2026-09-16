@@ -58,13 +58,45 @@ function Cours({ onRetour }: CoursProps) {
       setEnLecture(false);
       return;
     }
-    const utterance = new SpeechSynthesisUtterance(texteExtrait);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 1.0;
-    utterance.onend = () => setEnLecture(false);
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-    setEnLecture(true);
+
+    // Vérifier que speechSynthesis est dispo
+    if (!('speechSynthesis' in window)) {
+      alert('La lecture audio n\'est pas disponible sur ce navigateur');
+      return;
+    }
+
+    const lancer = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const utterance = new SpeechSynthesisUtterance(texteExtrait);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+
+      // Chercher une voix française
+      const voixFr = voices.find(v => v.lang.startsWith('fr'));
+      if (voixFr) utterance.voice = voixFr;
+
+      utterance.onend = () => setEnLecture(false);
+      utterance.onerror = (e) => {
+        console.error('Erreur TTS:', e);
+        setEnLecture(false);
+      };
+
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+      setEnLecture(true);
+    };
+
+    // Si les voix ne sont pas encore chargées
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        lancer();
+      };
+      setTimeout(lancer, 500);
+    } else {
+      lancer();
+    }
   };
 
   const reset = () => {
@@ -184,7 +216,6 @@ function Cours({ onRetour }: CoursProps) {
         ref={imageInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         style={{ display: 'none' }}
         onChange={(e) => {
           const f = e.target.files?.[0];
