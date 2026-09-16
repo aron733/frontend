@@ -249,14 +249,30 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       {confirmDeconnexion && (
         <div style={styles.overlayConfirmation} onClick={annulerDeconnexion}>
           <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modalIconWrap}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </div>
             <p style={styles.modalTexte}>Se déconnecter ?</p>
-            
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+            <p style={styles.modalSousTexte}>Tu pourras te reconnecter à tout moment.</p>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '24px' }}>
               <button onClick={annulerDeconnexion} style={styles.modalBtnAnnuler}>
                 Annuler
               </button>
-              <button onClick={confirmerEtQuitter} disabled={deconnexionEnCours} style={{ ...styles.modalBtnConfirmer, opacity: deconnexionEnCours ? 0.6 : 1, cursor: deconnexionEnCours ? 'not-allowed' : 'pointer' }}>
-                Confirmer
+              <button onClick={confirmerEtQuitter} disabled={deconnexionEnCours} style={{ ...styles.modalBtnConfirmer, opacity: deconnexionEnCours ? 0.6 : 1, cursor: deconnexionEnCours ? 'not-allowed' : 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                {deconnexionEnCours ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                      <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
+                      <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
+                    </svg>
+                    Déconnexion...
+                  </>
+                ) : 'Confirmer'}
               </button>
             </div>
           </div>
@@ -330,6 +346,8 @@ const styles = {
     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
   },
   modalTexte: { color: 'white', fontSize: '18px', fontWeight: 'bold' as const, margin: '0 0 10px' },
+  modalIconWrap: { width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(220, 53, 69, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' },
+  modalSousTexte: { color: '#888', fontSize: '14px', margin: '0 0 0', lineHeight: 1.4 },
   modalCompteRebours: { color: '#666', fontSize: '13px', margin: '0 0 20px' },
   modalBtnAnnuler: {
     padding: '10px 20px',
