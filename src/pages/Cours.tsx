@@ -164,7 +164,7 @@ function Cours({ onRetour }: CoursProps) {
 
       const reponse = response.data.reponse || response.data.message || 'Pas de réponse';
       setHistorique(prev => [...prev, { role: 'ia', texte: reponse }]);
-      if (response.data.chat_id && !chatIdIA) {
+      if (response.data.chat_id) {
         setChatIdIA(response.data.chat_id);
       }
       // Lecture auto de la réponse IA
