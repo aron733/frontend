@@ -12,7 +12,7 @@ import { API_URL } from '../config';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours'>(() => (localStorage.getItem('vokyvo_page') as any) || 'messages');
   const [userData, setUserData] = useState(user);
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
