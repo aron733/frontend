@@ -6,12 +6,6 @@ interface CoursProps {
   onRetour?: () => void;
 }
 
-type Extrait = {
-  id: number;
-  image: string;
-  texte: string;
-  date: string;
-};
 
 function Cours({ onRetour }: CoursProps) {
   const [imageSelectionnee, setImageSelectionnee] = useState<File | null>(null);
