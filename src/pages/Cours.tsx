@@ -12,6 +12,9 @@ function Cours({ onRetour }: CoursProps) {
   const [apercuUrl, setApercuUrl] = useState<string | null>(null);
   const [texteExtrait, setTexteExtrait] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [question, setQuestion] = useState('');
+  const [historique, setHistorique] = useState<{role: 'user' | 'ia', texte: string}[]>([]);
+  const [iaRepond, setIaRepond] = useState(false);
   const [enLecture, setEnLecture] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -107,11 +110,41 @@ function Cours({ onRetour }: CoursProps) {
     setTexteExtrait(null);
   };
 
+  const poserQuestion = async () => {
+    if (!question.trim() || !texteExtrait) return;
+    const q = question.trim();
+    setQuestion('');
+    setHistorique(prev => [...prev, { role: 'user', texte: q }]);
+    setIaRepond(true);
+
+    try {
+      const contexte = `Voici le cours de l'élève :\n\n${texteExtrait}\n\nQuestion de l'élève : ${q}\n\nRéponds de manière claire et pédagogique en te basant uniquement sur ce cours.`;
+
+      const response = await axios.post(`${API_URL}/vokyvo/chat/`, {
+        message: contexte,
+        chat_id: null,
+      }, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const reponse = response.data.reponse || response.data.message || 'Pas de réponse';
+      setHistorique(prev => [...prev, { role: 'ia', texte: reponse }]);
+    } catch (err) {
+      console.error('Erreur IA:', err);
+      setHistorique(prev => [...prev, { role: 'ia', texte: 'Erreur, réessaie.' }]);
+    } finally {
+      setIaRepond(false);
+    }
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.header}>
         <button
-          onClick={() => { window.speechSynthesis.cancel(); onRetour?.(); }}
+          onClick={() => { try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } onRetour?.(); }}
           style={styles.backButton}
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -208,6 +241,42 @@ function Cours({ onRetour }: CoursProps) {
                 </div>
               </div>
             )}
+
+                {historique.length > 0 && (
+                  <div style={styles.chatZone}>
+                    {historique.map((m, i) => (
+                      <div key={i} style={m.role === 'user' ? styles.msgUser : styles.msgIA}>
+                        <span style={styles.msgText}>{m.texte}</span>
+                      </div>
+                    ))}
+                    {iaRepond && (
+                      <div style={styles.msgIA}>
+                        <span style={styles.msgText}>...</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div style={styles.inputZone}>
+                  <input
+                    type="text"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && poserQuestion()}
+                    placeholder="Pose une question sur ton cours..."
+                    style={styles.inputChat}
+                  />
+                  <button
+                    onClick={poserQuestion}
+                    disabled={iaRepond}
+                    style={styles.sendBtn}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="22" y1="2" x2="11" y2="13"/>
+                      <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                  </button>
+                </div>
           </div>
         )}
       </div>
@@ -421,6 +490,60 @@ const styles = {
     lineHeight: 1.7,
     margin: 0,
     whiteSpace: 'pre-wrap' as const,
+  },
+  chatZone: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '10px',
+    padding: '16px 0',
+  },
+  msgUser: {
+    alignSelf: 'flex-end' as const,
+    background: '#667eea',
+    padding: '10px 14px',
+    borderRadius: '15px 15px 0 15px',
+    maxWidth: '85%',
+  },
+  msgIA: {
+    alignSelf: 'flex-start' as const,
+    background: '#1a1a2e',
+    padding: '10px 14px',
+    borderRadius: '15px 15px 15px 0',
+    maxWidth: '85%',
+  },
+  msgText: {
+    color: 'white',
+    fontSize: '14px',
+    lineHeight: 1.5,
+    whiteSpace: 'pre-wrap' as const,
+  },
+  inputZone: {
+    display: 'flex',
+    gap: '10px',
+    paddingTop: '12px',
+  },
+  inputChat: {
+    flex: 1,
+    padding: '12px 15px',
+    borderRadius: '20px',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: 'white',
+    fontSize: '14px',
+    outline: 'none',
+  },
+  sendBtn: {
+    width: '45px',
+    height: '45px',
+    borderRadius: '50%',
+    border: 'none',
+    background: '#667eea',
+    color: 'white',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
 };
 export default Cours;
