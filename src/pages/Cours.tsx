@@ -10,17 +10,28 @@ function nettoyerPourTTS(texte: string): string {
   return texte
     .replace(/VOKYVO LABS/gi, 'VOKIVO Labs')
     .replace(/VOKYVO/gi, 'VOKIVO')
+    // Tableaux markdown
+    .replace(/\|[^\n]*\|/g, '')
+    .replace(/^[-:| ]+$/gm, '')
+    // Titres
+    .replace(/^#{1,6}\s*/gm, '')
+    // Gras/italique
     .replace(/\*\*/g, '')
     .replace(/\*/g, '')
-    .replace(/#+\s/g, '')
-    .replace(/`/g, '')
     .replace(/_/g, '')
+    .replace(/`/g, '')
+    // Liens
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // Parenthèses -> pauses
     .replace(/\(([^)]+)\)/g, ', $1,')
-    .replace(/^\s*[-•]\s/gm, '')
+    // Listes
+    .replace(/^\s*[-•]\s*/gm, '')
+    .replace(/^\s*\d+\.\s*/gm, '')
+    // Sauts de ligne
     .replace(/\n+/g, '. ')
     .replace(/\s+/g, ' ')
-    .replace(/([.!?])\s*\./g, '$1')
+    .replace(/\.\s*\./g, '.')
+    .replace(/,\s*,/g, ',')
     .trim();
 }
 
@@ -136,7 +147,7 @@ function Cours({ onRetour }: CoursProps) {
     setIaRepond(true);
 
     try {
-      const contexte = `Voici le cours de l'élève :\n\n${texteExtrait}\n\nQuestion de l'élève : ${q}\n\nRéponds de manière claire et pédagogique en te basant uniquement sur ce cours.`;
+      const contexte = `Voici le cours de l'élève :\n\n${texteExtrait}\n\nQuestion de l'élève : ${q}\n\nRéponds en TEXTE SIMPLE et NATUREL, comme si tu parlais à voix haute. Pas de markdown, pas de tableaux, pas d'astérisques, pas de dièses, pas de tirets, pas de listes. Fais des phrases courtes et claires. Base-toi uniquement sur ce cours.`;
 
       const response = await axios.post(`${API_URL}/vokyvo/chat/`, {
         message: contexte,
