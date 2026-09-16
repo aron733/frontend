@@ -151,6 +151,10 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         </button>
       </header>
 
+        {menuOuvert && (
+          <div onClick={() => setMenuOuvert(false)} style={styles.overlayMenu} />
+        )}
+
         <div style={{
           ...styles.menu,
           transform: menuOuvert ? 'translateX(0)' : 'translateX(120%)',
@@ -269,7 +273,32 @@ const styles = {
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', position: 'sticky' as const, top: 0, zIndex: 1000 },
   logo: { color: 'white', fontSize: '22px', margin: 0, fontWeight: 'bold', letterSpacing: '2px' },
   hamburger: { background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', width: '45px', height: '45px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  menu: { position: 'absolute' as const, top: '75px', right: '20px', background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(20px)', borderRadius: '15px', padding: '10px', display: 'flex', flexDirection: 'column' as const, gap: '5px', zIndex: 1001, boxShadow: '0 20px 60px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)' },
+  menu: {
+    position: 'fixed' as const,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '75%',
+    maxWidth: '320px',
+    background: '#0a0a0f',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+    padding: '20px 15px',
+    paddingTop: '80px',
+    zIndex: 1001,
+    boxShadow: '-10px 0 40px rgba(0,0,0,0.6)',
+    overflowY: 'auto' as const,
+  },
+  overlayMenu: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(10, 10, 15, 0.4)',
+    zIndex: 1000,
+  },
   menuItem: { padding: '15px 20px', background: 'transparent', border: 'none', color: 'white', fontSize: '15px', cursor: 'pointer', textAlign: 'left' as const, borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px' },
   main: { padding: '20px', display: 'flex', justifyContent: 'center' },
   profilCard: { background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(20px)', borderRadius: '25px', padding: '40px', maxWidth: '450px', width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' as const },
