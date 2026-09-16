@@ -307,7 +307,6 @@ function Cours({ onRetour }: CoursProps) {
               </div>
             )}
           </div>
-      </div>
 
       <input
         ref={imageInputRef}
