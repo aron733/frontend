@@ -1,12 +1,10 @@
-import { useState } from 'react';
 
 interface CoursProps {
   onRetour?: () => void;
 }
 
-function Cours({ onRetour }: CoursProps) {
-  const [etape, setEtape] = useState<'accueil' | 'upload' | 'lecture' | 'chat' | 'quizz'>('accueil');
 
+function Cours({ onRetour }: CoursProps) {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
