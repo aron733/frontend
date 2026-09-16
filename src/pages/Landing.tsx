@@ -283,7 +283,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               <input 
                 type="text" 
                 name="numero" 
-                placeholder="XX XX XX XX" 
+                placeholder={genererPlaceholder(indicatif)} 
                 value={form.numero}
                 onChange={(e) => setForm({ ...form, numero: formaterNumero(e.target.value, indicatif) })}
                 required 
