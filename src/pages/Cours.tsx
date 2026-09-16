@@ -304,6 +304,9 @@ function Cours({ onRetour }: CoursProps) {
                     </button>
                   )}
                 </div>
+              </div>
+            )}
+          </div>
       </div>
 
       <input
