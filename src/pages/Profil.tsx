@@ -142,7 +142,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     <div style={styles.container}>
       <header style={styles.header}>
         <h1 style={styles.logo}>VOKYVO</h1>
-        <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
+        <button onClick={() => setMenuOuvert(!menuOuvert)} style={{ ...styles.hamburger, transform: menuOuvert ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
             <line x1="3" y1="6" x2="21" y2="6" />
             <line x1="3" y1="12" x2="21" y2="12" />
@@ -151,8 +151,13 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         </button>
       </header>
 
-      {menuOuvert && (
-        <div style={styles.menu}>
+        <div style={{
+          ...styles.menu,
+          transform: menuOuvert ? 'translateX(0)' : 'translateX(120%)',
+          opacity: menuOuvert ? 1 : 0,
+          pointerEvents: menuOuvert ? 'auto' : 'none',
+          transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}>
           <button onClick={() => { setPageActive('profil'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeProfil /> Profil
           </button>
@@ -181,7 +186,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <IconeDeconnexion /> Déconnexion
           </button>
         </div>
-      )}
 
       <main style={styles.main}>
         {pageActive === 'profil' && (
