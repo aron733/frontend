@@ -42,6 +42,7 @@ function Cours({ onRetour }: CoursProps) {
   const [texteExtrait, setTexteExtrait] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [question, setQuestion] = useState('');
+  const [chatIdIA, setChatIdIA] = useState<number | null>(null);
   const [historique, setHistorique] = useState<{role: 'user' | 'ia', texte: string}[]>([]);
   const [iaRepond, setIaRepond] = useState(false);
   const [enLecture, setEnLecture] = useState(false);
@@ -137,6 +138,8 @@ function Cours({ onRetour }: CoursProps) {
     setImageSelectionnee(null);
     setApercuUrl(null);
     setTexteExtrait(null);
+    setChatIdIA(null);
+    setHistorique([]);
   };
 
   const poserQuestion = async () => {
@@ -151,7 +154,7 @@ function Cours({ onRetour }: CoursProps) {
 
       const response = await axios.post(`${API_URL}/vokyvo/chat/`, {
         message: contexte,
-        chat_id: null,
+        chat_id: chatIdIA,
       }, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -161,6 +164,9 @@ function Cours({ onRetour }: CoursProps) {
 
       const reponse = response.data.reponse || response.data.message || 'Pas de réponse';
       setHistorique(prev => [...prev, { role: 'ia', texte: reponse }]);
+      if (response.data.chat_id && !chatIdIA) {
+        setChatIdIA(response.data.chat_id);
+      }
       // Lecture auto de la réponse IA
       try {
         if ('speechSynthesis' in window) {
