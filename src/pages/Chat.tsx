@@ -1045,6 +1045,7 @@ function Chat() {
                 )}
                 <h3 style={styles.chatTitle}>
                   {selectedUser.first_name || selectedUser.prenom || ''} {selectedUser.last_name || selectedUser.nom || ''}
+                  {selectedUser.badge_verifie && <BadgeVerifie />}
                 </h3>
                 <span style={presence[selectedUser.id || selectedUser.user_id] === 'online' ? styles.userOnline : styles.userOffline}>
                   {presence[selectedUser.id || selectedUser.user_id] === 'online' ? 'En ligne' : 'Hors ligne'}
