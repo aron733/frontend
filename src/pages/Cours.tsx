@@ -150,6 +150,7 @@ function Cours({ onRetour }: CoursProps) {
     setIaRepond(true);
 
     try {
+      console.log('[COURS] Envoi, chatIdIA =', chatIdIA);
       const contexte = `Voici le cours de l'élève :\n\n${texteExtrait}\n\nQuestion de l'élève : ${q}\n\nRéponds en TEXTE SIMPLE et NATUREL, comme si tu parlais à voix haute. Pas de markdown, pas de tableaux, pas d'astérisques, pas de dièses, pas de tirets, pas de listes. Fais des phrases courtes et claires. Base-toi uniquement sur ce cours.`;
 
       const response = await axios.post(`${API_URL}/vokyvo/chat/`, {
@@ -163,6 +164,7 @@ function Cours({ onRetour }: CoursProps) {
       });
 
       const reponse = response.data.reponse || response.data.message || 'Pas de réponse';
+      console.log('[COURS] Reçu chat_id =', response.data.chat_id);
       setHistorique(prev => [...prev, { role: 'ia', texte: reponse }]);
       if (response.data.chat_id) {
         setChatIdIA(response.data.chat_id);
