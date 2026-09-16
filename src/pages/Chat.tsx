@@ -12,8 +12,6 @@ function Chat() {
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
-  const [menuOuvert, setMenuOuvert] = useState(false);
-  const [rechercheUser, setRechercheUser] = useState('');
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
   const [apercuUrl, setApercuUrl] = useState<string | null>(null);
   const [groupes, setGroupes] = useState<any[]>([]);
@@ -24,9 +22,9 @@ function Chat() {
   const [resultatsRecherche, setResultatsRecherche] = useState<any[]>([]);
   const [demandes, _setDemandes] = useState<any[]>([]);
   const [showDemandes, setShowDemandes] = useState(false);
-  const [groupesDecouverts, setGroupesDecouverts] = useState<any[]>([]);
   const [showGestion, setShowGestion] = useState(false);
   const [renommer, setRenommer] = useState('');
+  const [rechercheUser, setRechercheUser] = useState('');
   const [showRenommer, setShowRenommer] = useState(false);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -589,27 +587,6 @@ function Chat() {
             <polyline points="12 19 5 12 12 5" />
           </svg>
         </button>
-        <button onClick={() => {
-      setMenuOuvert(!menuOuvert);
-      // Recharge les groupes à l'ouverture du menu
-      axios.get(`${API_URL}/groupes/`, {
-        headers: { Authorization: `Bearer ${getToken()}` }
-      }).then((response) => {
-        setGroupes(response.data.groupes || []);
-      }).catch(() => {});
-      
-      axios.get(`${API_URL}/groupes/decouvrir/`, {
-        headers: { Authorization: `Bearer ${getToken()}` }
-      }).then((response) => {
-        setGroupesDecouverts(response.data.groupes || []);
-      }).catch(() => {});
-    }} style={styles.hamburger}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
         <h2 style={styles.title}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle', marginRight: '8px' }}>
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
@@ -623,12 +600,12 @@ function Chat() {
 
       <div style={styles.body}>
         {/* Menu hamburger avec liste des utilisateurs */}
-        {menuOuvert && (
+        {!selectedUser && !groupeActif && (
         <div style={{
           ...styles.userList,
           animation: 'slideIn 0.3s ease-out',
         }}>
-          <button onClick={() => { setShowCreerGroupe(true); setMenuOuvert(false); }} style={styles.groupeBtn}>
+          <button onClick={() => { setShowCreerGroupe(true); }} style={styles.groupeBtn}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
@@ -649,7 +626,6 @@ function Chat() {
       setGroupeActif(groupe);
       setSelectedUser(null);
       setConvActive(`groupe_${groupe.id}`);
-      setMenuOuvert(false);
       
       // Charge l'historique du groupe depuis l'API
       try {
@@ -683,39 +659,11 @@ function Chat() {
               </div>
             </div>
           ))}
-          {groupesDecouverts.length > 0 && (
-            <>
-              <p style={styles.contactsTitle}>Découvrir</p>
-              {groupesDecouverts.map((groupe) => (
-                <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
-                  try {
-                    await axios.post(`${API_URL}/groupes/demander-acces/`, {
-                      groupe_id: groupe.id,
-                    }, { headers: { Authorization: `Bearer ${getToken()}` } });
-                    alert('Demande envoyée !');
-                  } catch (err) {
-                    alert('Erreur lors de la demande');
-                  }
-                }}>
-                  <span style={styles.groupeIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                  </svg>
-                </span>
-                  <div>
-                    <p style={styles.groupeNom}>{groupe.nom}</p>
-                    <p style={styles.groupeInfo}>{groupe.nb_participants} membres · Cliquez pour demander accès</p>
-                  </div>
-                </div>
-              ))}
-            </>
-          )}
           <p style={styles.contactsTitle}>Contacts</p>
           {usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
-                onClick={() => { selectUser(user); setGroupeActif(null); setMenuOuvert(false); }}
+                onClick={() => { selectUser(user); setGroupeActif(null); }}
                 style={{
                   ...styles.userItem,
                   background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? '#2a2a3e' : 'transparent',
@@ -1562,17 +1510,9 @@ const styles = {
   offline: { color: '#dc3545', fontSize: '12px' },
   body: { display: 'flex', flex: 1, overflow: 'hidden' },
   userList: {
-    position: 'fixed' as const,
-    top: '60px',
-    bottom: 0,
     background: '#111120',
-    left: 0,
-    width: '80%',
-    maxWidth: '300px',
-    height: 'calc(100vh - 60px)',
-    zIndex: 50,
-    boxShadow: '20px 0 60px rgba(0,0,0,0.5)',
-    borderRight: '1px solid #1a1a2a',
+    width: '100%',
+    flex: 1,
     overflowY: 'auto' as const,
     padding: '10px',
     display: 'flex',
