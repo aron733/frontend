@@ -151,6 +151,17 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     return chiffres.replace(/(\d{2})(?=\d)/g, '$1 ');
   };
 
+  const genererPlaceholder = (code: string): string => {
+    const max = longueurParIndicatif(code);
+    const blocs: string[] = [];
+    let reste = max;
+    while (reste > 0) {
+      blocs.push('XX');
+      reste -= 2;
+    }
+    return blocs.join(' ');
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
