@@ -228,12 +228,10 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                 <span style={styles.infoLabel}>Sexe</span>
                 <span style={styles.infoValue}>{userData.sexe}</span>
               </div>
-              {userData.numero && (
-                <div style={styles.infoItem}>
-                  <span style={styles.infoLabel}>Téléphone</span>
-                  <span style={styles.infoValue}>{userData.numero}</span>
-                </div>
-              )}
+              <div style={styles.infoItem}>
+                <span style={styles.infoLabel}>Téléphone</span>
+                <span style={styles.infoValue}>{userData.numero || 'Non renseigné'}</span>
+              </div>
             </div>
           </div>
         )}
