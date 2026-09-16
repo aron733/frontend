@@ -3,6 +3,7 @@ import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
 import CreerGroupe from './CreerGroupe';
+import BadgeVerifie from '../BadgeVerifie';
 
 
 function Chat() {
@@ -80,6 +81,7 @@ function Chat() {
           username: c.autre_user.username || '',
           first_name: c.autre_user.prenom || '',
           last_name: c.autre_user.nom || '',
+          badge_verifie: c.autre_user.badge_verifie || false,
           photo: c.autre_user.photo || null,
           nb_non_lus: c.nb_non_lus || 0,
         }));
@@ -728,6 +730,7 @@ function Chat() {
                 )}
                 <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : tempsEcoule(presenceTime[user.id || user.user_id] || '')}</span>
                 {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
+                {user.badge_verifie && <BadgeVerifie />}
                 {user.nb_non_lus > 0 && (
                   <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
                 )}
