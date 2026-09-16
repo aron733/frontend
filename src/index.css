@@ -128,3 +128,16 @@ input:focus {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
   background: rgba(102, 126, 234, 0.08) !important;
 }
+
+@keyframes apkPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes apkBell {
+  0%, 90%, 100% { transform: rotate(0deg); }
+  92% { transform: rotate(-12deg); }
+  94% { transform: rotate(12deg); }
+  96% { transform: rotate(-8deg); }
+  98% { transform: rotate(8deg); }
+}
