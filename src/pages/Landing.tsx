@@ -190,7 +190,15 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
 
               <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required style={styles.input} />
               <button type="submit" disabled={loading} style={styles.submitButton}>
-                {loading ? '...' : "S'inscrire"}
+                {loading ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                      <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
+                      <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
+                    </svg>
+                    Inscription...
+                  </span>
+                ) : "S'inscrire"}
               </button>
             </>
           ) : (
@@ -198,7 +206,15 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required style={styles.input} />
               <input type="password" name="password" placeholder="Mot de passe" value={form.password} onChange={handleChange} required style={styles.input} />
               <button type="submit" disabled={loading} style={styles.submitButton}>
-                {loading ? '...' : 'Se connecter'}
+                {loading ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                      <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
+                      <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
+                    </svg>
+                    Connexion...
+                  </span>
+                ) : 'Se connecter'}
               </button>
             </>
           )}
@@ -353,9 +369,6 @@ const styles = {
     gap: '15px',
   },
   card: {
-    background: 'rgba(255,255,255,0.05)',
-    backdropFilter: 'blur(20px)',
-    borderRadius: '20px',
     padding: '25px 20px',
     maxWidth: '400px',
     width: '100%',
@@ -363,8 +376,6 @@ const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     justifyContent: 'center',
-    boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
-    border: '1px solid rgba(255,255,255,0.1)',
   },
   logo: {
     textAlign: 'center' as const,
@@ -404,7 +415,18 @@ const styles = {
   switchContainer: { display: 'flex', gap: '10px', marginBottom: '30px', background: 'rgba(0,0,0,0.3)', borderRadius: '15px', padding: '5px' },
   switchButton: { flex: 1, padding: '12px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '15px', fontWeight: 'bold', transition: 'all 0.3s' },
   form: { display: 'flex', flexDirection: 'column' as const, gap: '12px' },
-  input: { padding: '14px 16px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.1)', color: 'white', fontSize: '15px', outline: 'none', boxSizing: 'border-box' as const },
+  input: {
+    padding: '14px 16px',
+    borderRadius: '12px',
+    border: '1px solid rgba(255,255,255,0.2)',
+    background: 'rgba(255,255,255,0.1)',
+    color: 'white',
+    fontSize: '15px',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+    transition: 'all 0.2s ease',
+    width: '100%',
+  },
   submitButton: { padding: '14px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' },
   success: { color: '#28a745', textAlign: 'center' as const, marginTop: '15px' },
   cookieBanner: {
