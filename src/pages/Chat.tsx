@@ -979,9 +979,8 @@ function Chat() {
         )}
 
         {/* Zone de chat - PRIVÉ */}
-        {!groupeActif && (
+        {!groupeActif && selectedUser && (
         <div style={styles.chatArea}>
-          {selectedUser ? (
             <>
               <div style={styles.chatHeader}>
                 {selectedUser.photo_profil || selectedUser.photo ? (
@@ -1120,17 +1119,6 @@ function Chat() {
                 <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} style={styles.sendButton}>➤</button>
               </div>
             </>
-          ) : (
-            <div style={styles.emptyChat}>
-              <div style={styles.emptyIconWrap}>
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </div>
-              <h2 style={styles.emptyTitle}>Bienvenue sur VOKYVO</h2>
-              <p style={styles.emptyText}>Sélectionne une conversation ou un groupe pour commencer</p>
-            </div>
-          )}
         </div>
         )}
       </div>
