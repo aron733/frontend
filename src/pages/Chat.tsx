@@ -664,6 +664,7 @@ function Chat() {
                 {presence[user.id || user.user_id] === 'online' && (
                   <span style={styles.userOnline}>● En ligne</span>
                 )}
+                {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
                 {user.badge_verifie && <BadgeVerifie />}
                 {user.nb_non_lus > 0 && (
                   <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
