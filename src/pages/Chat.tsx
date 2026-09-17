@@ -7,7 +7,7 @@ import BadgeVerifie from '../BadgeVerifie';
 
 
 function Chat() {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence } = useChat();
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [, setUsers] = useState<any[]>([]);
@@ -47,19 +47,6 @@ function Chat() {
     const interval = setInterval(() => setTick((t) => t + 1), 30000);
     return () => clearInterval(interval);
   }, []);
-  const tempsEcoule = (timestamp: string) => {
-    if (!timestamp) return 'Hors ligne';
-    const diff = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000);
-    if (diff < 1) return "Il y a moins d'une minute";
-    if (diff < 60) return `Il y a ${diff} min`;
-    if (diff < 1440) {
-      const heures = Math.floor(diff / 60);
-      return `Il y a ${heures}h`;
-    }
-    const jours = Math.floor(diff / 1440);
-    return `Il y a ${jours}j`;
-  };
-
   const getMyId = () => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
     return parseInt(userData.user_id || userData.id || '0');
@@ -581,7 +568,7 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} style={styles.backButton}>
+        <button onClick={() => { if (selectedUser || groupeActif) { setSelectedUser(null); setGroupeActif(null); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} style={styles.backButton}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
@@ -674,8 +661,9 @@ function Chat() {
                 ) : (
                   <span style={styles.userAvatar}>{((user.first_name || user.prenom || user.username || '?')[0] || '?').toUpperCase()}</span>
                 )}
-                <span style={presence[user.id || user.user_id] === 'online' ? styles.userOnline : styles.userOffline}>● {presence[user.id || user.user_id] === 'online' ? 'En ligne' : tempsEcoule(presenceTime[user.id || user.user_id] || '')}</span>
-                {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
+                {presence[user.id || user.user_id] === 'online' && (
+                  <span style={styles.userOnline}>● En ligne</span>
+                )}
                 {user.badge_verifie && <BadgeVerifie />}
                 {user.nb_non_lus > 0 && (
                   <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
