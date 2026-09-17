@@ -182,13 +182,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       <div style={styles.chatCard}>
         {/* Header */}
         <div style={styles.header}>
-          <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburger}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
           <button onClick={() => onRetour ? onRetour() : (localStorage.setItem('vokyvo_page', 'profil'), window.location.reload())} style={styles.backButton}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12" />
@@ -196,22 +189,39 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
             </svg>
           </button>
           <div style={styles.avatarVokyvo}>
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-              <line x1="12" y1="19" x2="12" y2="23" />
-            </svg>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="4" y="8" width="16" height="12" rx="2" />
+                <circle cx="9" cy="14" r="1.5" fill="#667eea" />
+                <circle cx="15" cy="14" r="1.5" fill="#667eea" />
+                <line x1="12" y1="4" x2="12" y2="8" />
+                <circle cx="12" cy="3" r="1" fill="#667eea" />
+              </svg>
           </div>
           <div style={styles.headerInfo}>
             <h1 style={styles.title}>VOKYVO</h1>
             <p style={styles.subtitle}>Assistant IA • VOKYVO</p>
           </div>
-          <div style={styles.statusDot}></div>
+          <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburgerRight}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
         </div>
 
-        {/* Menu historique des conversations */}
+        {/* Overlay */}
         {menuOuvert && (
-          <div style={styles.historyMenu}>
+          <div onClick={() => setMenuOuvert(false)} style={styles.overlayMenu} />
+        )}
+
+        {/* Sidebar historique */}
+        <div style={{
+          ...styles.menuSidebar,
+          transform: menuOuvert ? 'translateX(0)' : 'translateX(120%)',
+          opacity: menuOuvert ? 1 : 0,
+          pointerEvents: menuOuvert ? 'auto' : 'none',
+        }}>
             <button onClick={nouvelleConversation} style={styles.newChatButton}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
                 <line x1="12" y1="5" x2="12" y2="19" />
@@ -230,8 +240,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                 </div>
               ))
             )}
-          </div>
-        )}
+        </div>
 
         {/* Messages */}
         <div style={styles.messagesArea}>
@@ -241,10 +250,12 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
               <div key={index} style={{ ...styles.messageRow, justifyContent: estUser ? 'flex-end' : 'flex-start' }}>
                 {!estUser && (
                   <div style={styles.avatarVokyvoMsg}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2">
-                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                      <line x1="12" y1="19" x2="12" y2="23" />
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="4" y="8" width="16" height="12" rx="2" />
+                      <circle cx="9" cy="14" r="1.5" fill="#667eea" />
+                      <circle cx="15" cy="14" r="1.5" fill="#667eea" />
+                      <line x1="12" y1="4" x2="12" y2="8" />
+                      <circle cx="12" cy="3" r="1" fill="#667eea" />
                     </svg>
                   </div>
                 )}
@@ -347,19 +358,47 @@ const styles = {
     height: '38px',
     flexShrink: 0,
   },
-  historyMenu: {
-    position: 'absolute' as const,
-    top: '60px',
-    left: '10px',
-    right: '10px',
-    background: '#111120',
-    border: '1px solid #2a2a3e',
-    borderRadius: '15px',
-    padding: '15px',
-    zIndex: 200,
-    maxHeight: '60vh',
+  menuSidebar: {
+    position: 'fixed' as const,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '75%',
+    maxWidth: '320px',
+    background: '#0a0a0f',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+    padding: '20px 15px',
+    paddingTop: '80px',
+    zIndex: 1001,
+    boxShadow: '-10px 0 40px rgba(0,0,0,0.6)',
     overflowY: 'auto' as const,
-    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  overlayMenu: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(10, 10, 15, 0.4)',
+    zIndex: 1000,
+  },
+  hamburgerRight: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
+    flexShrink: 0,
   },
   newChatButton: {
     display: 'flex',
