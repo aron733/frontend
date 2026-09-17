@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
 
@@ -46,9 +46,69 @@ function Cours({ onRetour }: CoursProps) {
   const [historique, setHistorique] = useState<{role: 'user' | 'ia', texte: string}[]>([]);
   const [iaRepond, setIaRepond] = useState(false);
   const [enLecture, setEnLecture] = useState(false);
+  const [menuOuvert, setMenuOuvert] = useState(false);
+  const [coursListe, setCoursListe] = useState<{id: number, titre: string, apercu: string}[]>([]);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const getToken = () => localStorage.getItem('access_token') || '';
+
+  // Charger la liste des cours au montage
+  useEffect(() => {
+    chargerListeCours();
+  }, []);
+
+  const chargerListeCours = async () => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${API_URL}/cours/chats/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCoursListe(response.data.chats || []);
+    } catch (err) {
+      console.error('Erreur chargement liste cours:', err);
+    }
+  };
+
+  const chargerCours = async (chatId: number) => {
+    try {
+      const token = getToken();
+      const response = await axios.get(`${API_URL}/vokyvo/chats/${chatId}/messages/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const msgs = response.data.messages || [];
+      let texte = null;
+      const historiqueReconstruit: {role: 'user' | 'ia', texte: string}[] = [];
+
+      msgs.forEach((m: {role: string, contenu: string}, i: number) => {
+        if (i === 0 && m.role === 'user' && m.contenu.startsWith('[COURS] ')) {
+          texte = m.contenu.replace('[COURS] ', '');
+        } else if (m.role === 'user') {
+          historiqueReconstruit.push({ role: 'user', texte: m.contenu });
+        } else {
+          historiqueReconstruit.push({ role: 'ia', texte: m.contenu });
+        }
+      });
+
+      setTexteExtrait(texte);
+      setHistorique(historiqueReconstruit);
+      setChatIdIA(chatId);
+      setImageSelectionnee(null);
+      setApercuUrl(null);
+      setMenuOuvert(false);
+    } catch (err) {
+      console.error('Erreur chargement cours:', err);
+    }
+  };
+
+  const nouveauCours = () => {
+    setImageSelectionnee(null);
+    setApercuUrl(null);
+    setTexteExtrait(null);
+    setHistorique([]);
+    setChatIdIA(null);
+    setQuestion('');
+    setMenuOuvert(false);
+  };
 
   const selectionnerImage = (f: File) => {
     setImageSelectionnee(f);
@@ -65,16 +125,15 @@ function Cours({ onRetour }: CoursProps) {
     try {
       const formData = new FormData();
       formData.append('image', imageSelectionnee);
-      formData.append('message', 'Extrait TOUT le texte visible sur cette image. Retourne uniquement le texte, sans commentaire.');
 
-      const response = await axios.post(`${API_URL}/vokyvo/chat/`, formData, {
+      const response = await axios.post(`${API_URL}/cours/ocr/`, formData, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      const texte = response.data.reponse || response.data.message || '';
+      const texte = response.data.texte || '';
       setTexteExtrait(texte);
     } catch (err) {
       console.error('Erreur extraction:', err);
@@ -152,9 +211,15 @@ function Cours({ onRetour }: CoursProps) {
     try {
       const contexte = `Voici le cours de l'élève :\n\n${texteExtrait}\n\nQuestion de l'élève : ${q}\n\nRéponds en TEXTE SIMPLE et NATUREL, comme si tu parlais à voix haute. Pas de markdown, pas de tableaux, pas d'astérisques, pas de dièses, pas de tirets, pas de listes. Fais des phrases courtes et claires. Base-toi uniquement sur ce cours.`;
 
+      let messageFinal = contexte;
+      if (!chatIdIA && texteExtrait) {
+        messageFinal = `[COURS] ${texteExtrait}\n\n---\n\n${contexte}`;
+      }
+
       const response = await axios.post(`${API_URL}/vokyvo/chat/`, {
-        message: contexte,
+        message: messageFinal,
         chat_id: chatIdIA,
+        type: 'cours',
       }, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -205,6 +270,49 @@ function Cours({ onRetour }: CoursProps) {
           </svg>
         </button>
         <h2 style={styles.title}>Cours</h2>
+        <div style={{ flex: 1 }} />
+        <button
+          onClick={() => setMenuOuvert(!menuOuvert)}
+          style={styles.hamburgerRight}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Overlay */}
+      {menuOuvert && (
+        <div onClick={() => setMenuOuvert(false)} style={styles.overlayMenu} />
+      )}
+
+      {/* Sidebar historique */}
+      <div style={{
+        ...styles.menuSidebar,
+        transform: menuOuvert ? 'translateX(0)' : 'translateX(120%)',
+        opacity: menuOuvert ? 1 : 0,
+        pointerEvents: menuOuvert ? 'auto' : 'none',
+      }}>
+        <button onClick={nouveauCours} style={styles.newChatButton}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Nouveau cours
+        </button>
+        <p style={styles.historyTitle}>Mes cours</p>
+        {coursListe.length === 0 ? (
+          <p style={styles.historyEmpty}>Aucun cours sauvegardé</p>
+        ) : (
+          coursListe.map((c) => (
+            <div key={c.id} style={c.id === chatIdIA ? styles.coursItemActif : styles.coursItem} onClick={() => chargerCours(c.id)}>
+              <p style={styles.coursItemTitre}>{c.titre}</p>
+              <p style={styles.coursItemApercu}>{c.apercu}</p>
+            </div>
+          ))
+        )}
       </div>
 
       <div style={styles.body}>
@@ -581,6 +689,110 @@ const styles = {
     fontSize: '14px',
     lineHeight: 1.5,
     whiteSpace: 'pre-wrap' as const,
+  },
+  hamburgerRight: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    width: '38px',
+    height: '38px',
+    flexShrink: 0,
+  },
+  overlayMenu: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(10, 10, 15, 0.4)',
+    zIndex: 1000,
+  },
+  menuSidebar: {
+    position: 'fixed' as const,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '75%',
+    maxWidth: '320px',
+    background: '#0a0a0f',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+    padding: '20px 15px',
+    paddingTop: '80px',
+    zIndex: 1001,
+    boxShadow: '-10px 0 40px rgba(0,0,0,0.6)',
+    overflowY: 'auto' as const,
+    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  newChatButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px 15px',
+    borderRadius: '10px',
+    border: '1px solid #667eea',
+    background: 'rgba(102,126,234,0.15)',
+    color: '#667eea',
+    fontSize: '14px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    marginBottom: '15px',
+    width: '100%',
+  },
+  historyTitle: {
+    color: '#667eea',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    marginBottom: '10px',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '1px',
+  },
+  historyEmpty: {
+    color: '#666',
+    fontSize: '13px',
+    textAlign: 'center' as const,
+    padding: '20px',
+  },
+  coursItem: {
+    padding: '12px',
+    borderRadius: '10px',
+    background: 'rgba(255,255,255,0.03)',
+    marginBottom: '8px',
+    cursor: 'pointer',
+    border: '1px solid rgba(255,255,255,0.05)',
+  },
+  coursItemActif: {
+    padding: '12px',
+    borderRadius: '10px',
+    background: 'rgba(102,126,234,0.15)',
+    marginBottom: '8px',
+    cursor: 'pointer',
+    border: '1px solid #667eea',
+  },
+  coursItemTitre: {
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 600,
+    margin: '0 0 5px 0',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const,
+  },
+  coursItemApercu: {
+    color: '#888',
+    fontSize: '12px',
+    margin: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const,
   },
   inputZone: {
     display: 'flex',
