@@ -47,7 +47,7 @@ function Cours({ onRetour }: CoursProps) {
   const [iaRepond, setIaRepond] = useState(false);
   const [enLecture, setEnLecture] = useState(false);
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [coursListe, setCoursListe] = useState<{id: number, titre: string, apercu: string}[]>([]);
+  const [coursListe, setCoursListe] = useState<{id: number, titre: string, apercu: string, texte_ocr: string}[]>([]);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -72,17 +72,21 @@ function Cours({ onRetour }: CoursProps) {
   const chargerCours = async (chatId: number) => {
     try {
       const token = getToken();
+
+      // Recupere les messages du chat
       const response = await axios.get(`${API_URL}/vokyvo/chats/${chatId}/messages/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const msgs = response.data.messages || [];
-      let texte = null;
+
+      // Recupere le texte_ocr depuis la liste (deja chargee)
+      const cours = coursListe.find(c => c.id === chatId);
+      const texte = cours?.texte_ocr || '';
+
       const historiqueReconstruit: {role: 'user' | 'ia', texte: string}[] = [];
 
-      msgs.forEach((m: {role: string, contenu: string}, i: number) => {
-        if (i === 0 && m.role === 'user' && m.contenu.startsWith('[COURS] ')) {
-          texte = m.contenu.replace('[COURS] ', '');
-        } else if (m.role === 'user') {
+      msgs.forEach((m: {role: string, contenu: string}) => {
+        if (m.role === 'user') {
           historiqueReconstruit.push({ role: 'user', texte: m.contenu });
         } else {
           historiqueReconstruit.push({ role: 'ia', texte: m.contenu });
@@ -211,15 +215,11 @@ function Cours({ onRetour }: CoursProps) {
     try {
       const contexte = `Voici le cours de l'élève :\n\n${texteExtrait}\n\nQuestion de l'élève : ${q}\n\nRéponds en TEXTE SIMPLE et NATUREL, comme si tu parlais à voix haute. Pas de markdown, pas de tableaux, pas d'astérisques, pas de dièses, pas de tirets, pas de listes. Fais des phrases courtes et claires. Base-toi uniquement sur ce cours.`;
 
-      let messageFinal = contexte;
-      if (!chatIdIA && texteExtrait) {
-        messageFinal = `[COURS] ${texteExtrait}\n\n---\n\n${contexte}`;
-      }
-
       const response = await axios.post(`${API_URL}/vokyvo/chat/`, {
-        message: messageFinal,
+        message: contexte,
         chat_id: chatIdIA,
         type: 'cours',
+        texte_ocr: !chatIdIA ? texteExtrait : '',
       }, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
