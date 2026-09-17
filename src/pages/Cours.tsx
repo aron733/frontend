@@ -316,7 +316,7 @@ function Cours({ onRetour }: CoursProps) {
       </div>
 
       <div style={styles.body}>
-        {!imageSelectionnee && (
+        {!imageSelectionnee && !texteExtrait && (
           <div style={styles.accueil}>
             <div style={styles.iconWrap}>
               <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -339,7 +339,7 @@ function Cours({ onRetour }: CoursProps) {
           </div>
         )}
 
-        {imageSelectionnee && (
+        {(imageSelectionnee || texteExtrait) && (
           <div style={styles.zonePhoto}>
             {apercuUrl && (
               <img src={apercuUrl} style={styles.apercuImage} alt="Aperçu cours" />
