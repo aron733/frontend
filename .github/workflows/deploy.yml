@@ -1,0 +1,51 @@
+name: Deploy Frontend to VPS
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/workflows/build-apk.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current commit
+        uses: actions/checkout@v4
+      
+      - name: Deploy via SSH with rollback
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -e
+            cd ~/apps/frontend
+            
+            PREV_COMMIT=$(git rev-parse HEAD)
+            echo "🔄 Commit actuel : $PREV_COMMIT"
+            
+            git pull origin main
+            NEW_COMMIT=$(git rev-parse HEAD)
+            echo "🆕 Nouveau commit : $NEW_COMMIT"
+            
+            rollback() {
+              echo "❌ ERREUR détectée, rollback vers $PREV_COMMIT"
+              git reset --hard $PREV_COMMIT
+              pnpm install
+              pnpm build
+              exit 1
+            }
+            trap rollback ERR
+            
+            echo "📦 Installation des dépendances..."
+            pnpm install
+            
+            echo "🏗️ Build..."
+            pnpm build
+            
+            echo "✅ Frontend rebuild terminé"
+            trap - ERR
+            echo "🎉 Deploy réussi"
