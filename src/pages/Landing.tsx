@@ -238,7 +238,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         </div>
 
         <button 
-          onClick={() => window.location.href = 'https://django-43v1.onrender.com/oauth/google/'}
+          onClick={() => window.location.href = 'https://api.vokyvo.com/oauth/google/'}
           style={styles.googleBtn}
         >
           <svg width="20" height="20" viewBox="0 0 24 24">

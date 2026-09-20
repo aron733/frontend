@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNotification } from './NotificationContext';
 
-const WS_URL = 'wss://daphne-5mxe.onrender.com/ws/chat/';
+const WS_URL = 'wss://ws.vokyvo.com/ws/chat/';
 
 export default function GlobalNotifWS() {
   const { notifier } = useNotification();

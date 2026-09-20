@@ -49,7 +49,7 @@ function News() {
 
     try {
       // Utilise le backend Django comme proxy
-      const response = await fetch(`https://django-43v1.onrender.com/api/rss-proxy/?url=${encodeURIComponent(section.url)}`);
+      const response = await fetch(`https://api.vokyvo.com/api/rss-proxy/?url=${encodeURIComponent(section.url)}`);
       const data = await response.json();
       setArticles(data.articles || []);
     } catch (err) {

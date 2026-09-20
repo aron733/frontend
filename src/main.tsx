@@ -22,7 +22,7 @@ axios.interceptors.response.use(
       
       if (refreshToken) {
         try {
-          const response = await axios.post('https://django-43v1.onrender.com/api/token/refresh/', {
+          const response = await axios.post('https://api.vokyvo.com/api/token/refresh/', {
             refresh: refreshToken,
           });
           

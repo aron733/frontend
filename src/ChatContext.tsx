@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNotification } from './NotificationContext';
 
-const WS_URL = 'wss://daphne-5mxe.onrender.com/ws/chat/';
+const WS_URL = 'wss://ws.vokyvo.com/ws/chat/';
 
 type Message = {
   type: string;
