@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { loginOneSignal } from '../onesignal';
+import pkg from '../../package.json';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+const VERSION = pkg.version;
 
 function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [mode, setMode] = useState<'inscription' | 'connexion'>('connexion');
@@ -433,7 +435,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       {/* Footer */}
       <footer style={styles.footer}>
         {!estDansAPK && (
-        <a href="https://github.com/aron733/frontend/releases/download/v3.0.0/vokyvo.apk" target="_blank" style={{ ...styles.apkBtn, animation: 'apkPulse 2s ease-in-out infinite' }}>
+        <a href={`https://github.com/aron733/frontend/releases/download/v${VERSION}/vokyvo.apk`} target="_blank" style={{ ...styles.apkBtn, animation: 'apkPulse 2s ease-in-out infinite' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'apkBell 3s ease-in-out infinite', transformOrigin: 'top center' }}>
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
