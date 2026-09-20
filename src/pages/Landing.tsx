@@ -512,6 +512,13 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           </svg>
           Status
         </a>
+        <a href="mailto:support@vokyvo.com" style={styles.supportLink}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          support@vokyvo.com
+        </a>
       </footer>
     </div>
   );
@@ -745,6 +752,16 @@ const styles = {
   },
   footerLinks: { display: 'flex', justifyContent: 'center', gap: '20px' },
   footerLink: { color: '#667eea', fontSize: '10px', textDecoration: 'none' },
+  supportLink: {
+    color: '#667eea',
+    fontSize: '11px',
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
+    justifyContent: 'center',
+    marginTop: '5px',
+  },
   uptime: {
     color: '#28a745',
     fontSize: '11px',
