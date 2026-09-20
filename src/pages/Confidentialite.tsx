@@ -56,7 +56,7 @@ function Confidentialite({ onRetour }: ConfidentialiteProps) {
               <h3 style={styles.h3}>4. Stockage des données</h3>
               <p style={styles.p}>Vos données sont stockées de manière sécurisée sur des serveurs en Europe et aux États-Unis via nos partenaires certifiés (Render, Cloudinary). Les mots de passe sont chiffrés avec des algorithmes robustes.</p>
               <h3 style={styles.h3}>5. Vos droits (RGPD)</h3>
-              <p style={styles.p}>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants : droit d'accès, de rectification, de suppression, de portabilité, d'opposition. Pour exercer ces droits, contactez-nous à aronvokouma01@gmail.com.</p>
+              <p style={styles.p}>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants : droit d'accès, de rectification, de suppression, de portabilité, d'opposition. Pour exercer ces droits, contactez-nous à support@vokyvo.com.</p>
               <h3 style={styles.h3}>6. Sécurité</h3>
               <p style={styles.p}>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées : chiffrement des données, accès restreint, surveillance continue, sauvegardes régulières.</p>
               <h3 style={styles.h3}>7. Conservation</h3>
@@ -64,7 +64,7 @@ function Confidentialite({ onRetour }: ConfidentialiteProps) {
               <h3 style={styles.h3}>8. Messagerie et conversations</h3>
               <p style={styles.p}>Vos messages, conversations et échanges avec l'assistant IA sont stockés de manière sécurisée pour vous permettre d'y accéder à tout moment. Vous pouvez demander la suppression de vos conversations à tout moment.</p>
               <h3 style={styles.h3}>9. Contact</h3>
-              <p style={styles.p}>Email : aronvokouma01@gmail.com</p>
+              <p style={styles.p}>Email : support@vokyvo.com</p>
               <div style={styles.contactButtons}>
                 <a href="https://t.me/aladin_dev_bot" target="_blank" style={styles.telegramBtn}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
