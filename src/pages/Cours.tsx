@@ -47,6 +47,7 @@ function Cours({ onRetour }: CoursProps) {
   const [iaRepond, setIaRepond] = useState(false);
   const [enLecture, setEnLecture] = useState(false);
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [modeExpert, setModeExpert] = useState(false);
   const [coursListe, setCoursListe] = useState<{id: number, titre: string, apercu: string, texte_ocr: string}[]>([]);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -219,6 +220,7 @@ function Cours({ onRetour }: CoursProps) {
         message: contexte,
         chat_id: chatIdIA,
         type: 'cours',
+        mode: modeExpert ? 'expert_maths' : 'normal',
         texte_ocr: !chatIdIA ? texteExtrait : '',
       }, {
         headers: {
@@ -387,6 +389,17 @@ function Cours({ onRetour }: CoursProps) {
                         </svg>
                       )}
                       {enLecture ? 'Pause' : 'Écouter'}
+                    </button>
+                    <button
+                      onClick={() => setModeExpert(!modeExpert)}
+                      style={modeExpert ? styles.btnExpertActif : styles.btnExpert}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                      </svg>
+                      {modeExpert ? 'Expert ON' : 'Expert Maths'}
                     </button>
                     <button onClick={reset} style={styles.btnSecondaire}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -557,6 +570,33 @@ const styles = {
     fontSize: '15px',
     fontWeight: 600,
     cursor: 'pointer',
+  },
+  btnExpert: {
+    padding: '8px 12px',
+    borderRadius: '10px',
+    border: '1px solid #667eea',
+    background: 'transparent',
+    color: '#667eea',
+    fontSize: '12px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  },
+  btnExpertActif: {
+    padding: '8px 12px',
+    borderRadius: '10px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    boxShadow: '0 0 15px rgba(102, 126, 234, 0.5)',
   },
   btnSecondaire: {
     display: 'flex',
