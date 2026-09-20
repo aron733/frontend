@@ -29,7 +29,8 @@ jobs:
       - name: Build Vite
         run: pnpm build
         env:
-          VITE_API_URL: https://django-43v1.onrender.com/api
+          VITE_API_URL: https://api.vokyvo.com/api
+          VITE_WS_URL: wss://ws.vokyvo.com/ws/chat/
 
       - name: Install Capacitor
         run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7 && pnpm add onesignal-cordova-plugin
@@ -148,7 +149,7 @@ jobs:
         run: |
           VERSION=${{ steps.version.outputs.version }}
           LIEN="https://github.com/aron733/frontend/releases/download/v${VERSION}/vokyvo.apk"
-          curl -X POST https://django-43v1.onrender.com/api/webhook/release/ \
+          curl -X POST https://api.vokyvo.com/api/webhook/release/ \
             -H "Content-Type: application/json" \
             -d "{\"token\":\"${{ secrets.RELEASE_WEBHOOK_TOKEN }}\",\"version\":\"${VERSION}\",\"lien\":\"${LIEN}\"}"
           echo "Webhook envoyé pour version $VERSION"
