@@ -20,6 +20,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   });
   const [erreur, setErreur] = useState('');
   const [message, setMessage] = useState('');
+  const [ecranSucces, setEcranSucces] = useState<{type: 'inscription' | 'connexion', prenom?: string, userData?: any} | null>(null);
   const [loading, setLoading] = useState(false);
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
@@ -174,8 +175,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     setMessage('');
     try {
       await axios.post(`${API_URL}/inscription/`, form);
-      setMessage('Compte créé ! Connecte-toi maintenant.');
-      setMode('connexion');
+      setEcranSucces({ type: 'inscription', prenom: form.prenom });
       setForm({ ...form, password: '' });
     } catch (err: any) {
       setErreur(err.response?.data?.raison || err.response?.data?.erreur || 'Erreur inscription');
@@ -196,7 +196,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       localStorage.setItem('refresh_token', response.data.refresh_token);
       void loginOneSignal(response.data.user_id);
       localStorage.setItem('user', JSON.stringify(response.data));
-      onLogin(response.data);
+      setEcranSucces({ type: 'connexion', prenom: response.data.prenom || response.data.username, userData: response.data });
     } catch (err: any) {
       setErreur(err.response?.data?.raison || err.response?.data?.erreur || 'Erreur de connexion');
     } finally {
@@ -217,6 +217,62 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       await handleInscription();
     }
   };
+
+  // Ecran de succes (inscription ou connexion)
+  if (ecranSucces) {
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <h1 style={styles.logo}>VOKYVO</h1>
+          <p style={styles.subtitle}>Ta plateforme tout-en-un</p>
+
+          <div style={styles.successBox}>
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="url(#successGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '20px' }}>
+              <defs>
+                <linearGradient id="successGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#667eea" />
+                  <stop offset="100%" stopColor="#764ba2" />
+                </linearGradient>
+              </defs>
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="8 12 11 15 16 9" />
+            </svg>
+
+            {ecranSucces.type === 'inscription' ? (
+              <>
+                <h2 style={styles.successTitle}>Compte créé !</h2>
+                <p style={styles.successText}>
+                  Bienvenue {ecranSucces.prenom || ''} sur VOKYVO.
+                </p>
+                <button
+                  onClick={() => {
+                    setEcranSucces(null);
+                    setMode('connexion');
+                  }}
+                  style={styles.successBtn}
+                >
+                  Se connecter
+                </button>
+              </>
+            ) : (
+              <>
+                <h2 style={styles.successTitle}>Connexion réussie !</h2>
+                <p style={styles.successText}>
+                  Bienvenue {ecranSucces.prenom || ''} sur VOKYVO.
+                </p>
+                <button
+                  onClick={() => onLogin(ecranSucces.userData)}
+                  style={styles.successBtn}
+                >
+                  Voir mon profil
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.container}>
@@ -472,6 +528,42 @@ const styles = {
     background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
     padding: '40px 15px',
     gap: '15px',
+  },
+  successBox: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '30px 20px',
+    textAlign: 'center' as const,
+  },
+  successTitle: {
+    fontSize: '26px',
+    fontWeight: 'bold' as const,
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    margin: '0 0 10px 0',
+  },
+  successText: {
+    fontSize: '15px',
+    color: '#aaa',
+    margin: '0 0 30px 0',
+    lineHeight: '1.5',
+  },
+  successBtn: {
+    padding: '14px 30px',
+    borderRadius: '12px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    fontSize: '16px',
+    fontWeight: 'bold' as const,
+    cursor: 'pointer',
+    width: '100%',
+    maxWidth: '280px',
+    boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)',
   },
   card: {
     padding: '25px 20px',
