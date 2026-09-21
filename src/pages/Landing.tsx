@@ -24,6 +24,8 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [otpRequis, setOtpRequis] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpEmail, setOtpEmail] = useState('');
+  const [tempsRestant, setTempsRestant] = useState(300);
+  const [renvoiEnCours, setRenvoiEnCours] = useState(false);
   const [loading, setLoading] = useState(false);
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
@@ -204,6 +206,36 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     }
   };
 
+  // Compte a rebours OTP (5 min)
+  useEffect(() => {
+    if (!otpRequis) return;
+    setTempsRestant(300);
+    const interval = setInterval(() => {
+      setTempsRestant((t) => {
+        if (t <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [otpRequis]);
+
+  const handleRenvoyerOtp = async () => {
+    setRenvoiEnCours(true);
+    setErreur('');
+    try {
+      await axios.post(`${API_URL}/envoyer-otp/`, { email: otpEmail });
+      setOtpCode('');
+      setTempsRestant(300);
+    } catch (err: any) {
+      setErreur(err.response?.data?.erreur || 'Erreur renvoi');
+    } finally {
+      setRenvoiEnCours(false);
+    }
+  };
+
   const handleValiderOtp = async () => {
     setLoading(true);
     setErreur('');
@@ -283,6 +315,12 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               Saisis le code a 6 chiffres envoye a <strong>{otpEmail}</strong>
             </p>
 
+            <p style={{ color: tempsRestant > 0 ? '#888' : '#dc3545', fontSize: '14px', marginTop: '5px', marginBottom: '10px' }}>
+              {tempsRestant > 0
+                ? `Code valide encore ${Math.floor(tempsRestant / 60)}:${String(tempsRestant % 60).padStart(2, '0')}`
+                : 'Code expire'}
+            </p>
+
             <input
               type="text"
               value={otpCode}
@@ -320,6 +358,27 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
             >
               {loading ? 'Verification...' : 'Valider'}
             </button>
+
+            {tempsRestant === 0 && (
+              <button
+                onClick={handleRenvoyerOtp}
+                disabled={renvoiEnCours}
+                style={{
+                  background: 'transparent',
+                  border: '1px solid #667eea',
+                  color: '#667eea',
+                  fontSize: '14px',
+                  marginTop: '15px',
+                  padding: '10px 20px',
+                  borderRadius: '10px',
+                  cursor: renvoiEnCours ? 'wait' : 'pointer',
+                  width: '100%',
+                  fontWeight: 600,
+                }}
+              >
+                {renvoiEnCours ? 'Envoi...' : 'Renvoyer le code'}
+              </button>
+            )}
 
             <button
               onClick={() => { setOtpRequis(false); setOtpCode(''); setErreur(''); }}
