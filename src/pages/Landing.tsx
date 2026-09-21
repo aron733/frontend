@@ -27,6 +27,14 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [showPolitique, setShowPolitique] = useState(false);
   const estDansAPK = navigator.userAgent.includes('wv') || navigator.userAgent.includes('Capacitor');
   const [showConditions, setShowConditions] = useState(false);
+  const [banRaison, setBanRaison] = useState<string | null>(() => {
+    const r = localStorage.getItem('ban_raison');
+    if (r) {
+      localStorage.removeItem('ban_raison');
+      return r;
+    }
+    return null;
+  });
 
   useEffect(() => {
     if (localStorage.getItem('show_politique') === 'true') {
@@ -269,6 +277,39 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               </>
             )}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Overlay de ban (prioritaire)
+  if (banRaison) {
+    return (
+      <div style={styles.banOverlay}>
+        <div style={styles.banCard}>
+          <div style={styles.banIcon}>
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+            </svg>
+          </div>
+          <h2 style={styles.banTitle}>Compte banni</h2>
+          <p style={styles.banText}>
+            Ton compte a été banni de VOKYVO.
+          </p>
+          <div style={styles.banRaisonBox}>
+            <p style={styles.banRaisonLabel}>Raison :</p>
+            <p style={styles.banRaisonText}>{banRaison}</p>
+          </div>
+          <p style={styles.banContact}>
+            Pour contester, contacte le support : support@vokyvo.com
+          </p>
+          <button
+            onClick={() => setBanRaison(null)}
+            style={styles.banBtn}
+          >
+            Compris
+          </button>
         </div>
       </div>
     );
@@ -571,6 +612,82 @@ const styles = {
     width: '100%',
     maxWidth: '280px',
     boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)',
+  },
+  banOverlay: {
+    position: 'fixed' as const,
+    top: 0, left: 0, right: 0, bottom: 0,
+    background: '#0a0a0f',
+    zIndex: 9999,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
+  },
+  banCard: {
+    background: '#111120',
+    borderRadius: '20px',
+    padding: '30px 25px',
+    maxWidth: '400px',
+    width: '100%',
+    textAlign: 'center' as const,
+    border: '1px solid #2a2a3e',
+    boxShadow: '0 20px 60px rgba(220, 53, 69, 0.3)',
+  },
+  banIcon: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '20px',
+  },
+  banTitle: {
+    color: '#dc3545',
+    fontSize: '24px',
+    fontWeight: 'bold' as const,
+    margin: '0 0 10px 0',
+  },
+  banText: {
+    color: '#ccc',
+    fontSize: '15px',
+    margin: '0 0 20px 0',
+    lineHeight: '1.5',
+  },
+  banRaisonBox: {
+    background: 'rgba(220, 53, 69, 0.1)',
+    border: '1px solid rgba(220, 53, 69, 0.3)',
+    borderRadius: '12px',
+    padding: '15px',
+    marginBottom: '20px',
+  },
+  banRaisonLabel: {
+    color: '#dc3545',
+    fontSize: '12px',
+    fontWeight: 'bold' as const,
+    textTransform: 'uppercase' as const,
+    letterSpacing: '1px',
+    margin: '0 0 5px 0',
+  },
+  banRaisonText: {
+    color: 'white',
+    fontSize: '15px',
+    margin: 0,
+    fontWeight: 'bold' as const,
+  },
+  banContact: {
+    color: '#888',
+    fontSize: '13px',
+    margin: '0 0 25px 0',
+    lineHeight: '1.4',
+  },
+  banBtn: {
+    padding: '14px 30px',
+    borderRadius: '12px',
+    border: 'none',
+    background: '#dc3545',
+    color: 'white',
+    fontSize: '15px',
+    fontWeight: 'bold' as const,
+    cursor: 'pointer',
+    width: '100%',
+    maxWidth: '200px',
   },
   card: {
     padding: '25px 20px',

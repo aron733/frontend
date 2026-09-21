@@ -4,6 +4,9 @@ import { useNotification } from './NotificationContext';
 
 const WS_URL = 'wss://ws.vokyvo.com/ws/chat/';
 
+// Flag global : arret de la reconnexion si banni
+let STOP_RECONNECT = false;
+
 type Message = {
   type: string;
   message: string;
@@ -60,7 +63,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     let actif = true;
 
     const connecter = () => {
-      if (!actif) return;
+      if (!actif || STOP_RECONNECT) return;
 
       const token = localStorage.getItem('access_token');
       if (!token) {
@@ -150,7 +153,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             }
 
             if (data.type === 'user_banned') {
-              // Le user est banni → déconnexion immédiate
+              // STOP la reconnexion auto
+              STOP_RECONNECT = true;
+
+              // Supprime les tokens
               try {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
@@ -158,10 +164,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 localStorage.removeItem('vokyvo_page');
               } catch (e) {}
 
-              // Message
-              alert(`Tu as été banni. Raison : ${data.raison || 'Non spécifiée'}`);
+              // Stocke la raison pour l'afficher sur la landing
+              try {
+                localStorage.setItem('ban_raison', data.raison || 'Non spécifiée');
+              } catch (e) {}
 
-              // Redirige vers la landing
+              // Redirige vers la landing (elle affichera le message)
               window.location.href = '/';
             }
           } catch (e) {
@@ -171,14 +179,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
         ws.onclose = () => {
           setConnecte(false);
-          if (actif) setTimeout(connecter, 2000);
+          if (actif && !STOP_RECONNECT) setTimeout(connecter, 2000);
         };
 
         ws.onerror = () => {};
         wsRef.current = ws;
       } catch (e) {
         console.warn('WS err:', e);
-        if (actif) setTimeout(connecter, 3000);
+        if (actif && !STOP_RECONNECT) setTimeout(connecter, 3000);
       }
     };
 
