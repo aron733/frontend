@@ -12,6 +12,8 @@
   "dependencies": {
     "@livekit/components-react": "^2.9.24",
     "@livekit/components-styles": "^1.2.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
     "axios": "^1.20.0",
     "livekit-client": "^2.22.2",
     "onesignal-cordova-plugin": "^5.5.5",

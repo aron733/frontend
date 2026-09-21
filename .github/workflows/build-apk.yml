@@ -33,10 +33,10 @@ jobs:
           VITE_WS_URL: wss://ws.vokyvo.com/ws/chat/
 
       - name: Install Capacitor
-        run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7 && pnpm add onesignal-cordova-plugin
+        run: pnpm add -D @capacitor/cli@7 @capacitor/core@7 @capacitor/android@7 @capacitor/splash-screen@7 && pnpm add onesignal-cordova-plugin
 
       - name: Init Capacitor
-        run: npx cap init VOKYVO com.vokyvo.labs --web-dir=dist
+        run: npx cap init VOKYVO com.vokyvo.labs --web-dir=dist || echo "capacitor.config.ts existe deja"
 
       - name: Add Android
         run: npx cap add android

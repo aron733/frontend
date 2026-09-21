@@ -1,5 +1,7 @@
 // import axios from 'axios';  // Test : désactive refresh badge
 import { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { SplashScreen } from '@capacitor/splash-screen';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
@@ -158,6 +160,10 @@ function App() {
     }, 1000);
 
     setLoading(false);
+
+    if (Capacitor.isNativePlatform()) {
+      SplashScreen.hide();
+    }
 
     return () => {
       window.removeEventListener('user-updated', handleUserUpdated);
