@@ -35,6 +35,14 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     }
     return null;
   });
+  const [banType, setBanType] = useState<string | null>(() => {
+    const t = localStorage.getItem('ban_type');
+    if (t) {
+      localStorage.removeItem('ban_type');
+      return t;
+    }
+    return null;
+  });
 
   useEffect(() => {
     if (localStorage.getItem('show_politique') === 'true') {
@@ -283,6 +291,32 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   }
 
   // Overlay de ban (prioritaire)
+  // Overlay MAINTENANCE (bleu)
+  if (banRaison && banType === 'global_banned') {
+    return (
+      <div style={styles.banOverlay}>
+        <div style={{ ...styles.banCard, boxShadow: '0 20px 60px rgba(102, 126, 234, 0.3)' }}>
+          <div style={styles.banIcon}>
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+            </svg>
+          </div>
+          <h2 style={{ ...styles.banTitle, color: '#667eea' }}>Maintenance en cours</h2>
+          <p style={styles.banText}>
+            VOKYVO est temporairement en maintenance. Merci de revenir dans quelques minutes.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ ...styles.banBtn, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+          >
+            Compris
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Overlay BAN (rouge)
   if (banRaison) {
     return (
       <div style={styles.banOverlay}>
@@ -305,7 +339,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
             Pour contester, contacte le support : support@vokyvo.com
           </p>
           <button
-            onClick={() => setBanRaison(null)}
+            onClick={() => { setBanRaison(null); setBanType(null); }}
             style={styles.banBtn}
           >
             Compris

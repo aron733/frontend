@@ -152,7 +152,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               window.dispatchEvent(new CustomEvent('user-updated', { detail: updated }));
             }
 
-            if (data.type === 'user_banned') {
+            if (data.type === 'user_banned' || data.type === 'global_banned') {
               // STOP la reconnexion auto
               STOP_RECONNECT = true;
 
@@ -164,9 +164,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 localStorage.removeItem('vokyvo_page');
               } catch (e) {}
 
-              // Stocke la raison pour l'afficher sur la landing
+              // Stocke la raison + le type
               try {
                 localStorage.setItem('ban_raison', data.raison || 'Non spécifiée');
+                localStorage.setItem('ban_type', data.type); // 'user_banned' ou 'global_banned'
               } catch (e) {}
 
               // Redirige vers la landing (elle affichera le message)
