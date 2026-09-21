@@ -694,7 +694,7 @@ function Chat() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'flex-end', gap: '5px', flexShrink: 0 }}>
                   <span style={styles.userTime}>
-                    {user.date_modification ? new Date(user.date_modification).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : ''}
+                    {user.date_modification ? new Date(user.date_modification).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Ouagadougou' }) : ''}
                   </span>
                   {user.nb_non_lus > 0 && (
                     <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
@@ -1929,15 +1929,15 @@ const styles = {
     gap: '5px',
   },
   userPhoto: {
-    width: '56px',
-    height: '56px',
+    width: '48px',
+    height: '48px',
     borderRadius: '50%',
     objectFit: 'cover' as const,
     flexShrink: 0,
   },
   userAvatar: {
-    width: '56px',
-    height: '56px',
+    width: '48px',
+    height: '48px',
     borderRadius: '50%',
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     color: 'white',
@@ -1945,7 +1945,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     fontWeight: 'bold' as const,
-    fontSize: '20px',
+    fontSize: '18px',
     flexShrink: 0,
   },
   userOnlineDot: {
@@ -1989,8 +1989,8 @@ const styles = {
     textAlign: 'center' as const,
   },
   userItem: {
-    padding: '10px 12px',
-    marginBottom: '4px',
+    padding: '8px 10px',
+    marginBottom: '6px',
     borderRadius: '12px',
     border: 'none',
     color: 'white',
