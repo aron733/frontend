@@ -649,17 +649,17 @@ function Chat() {
         console.error('Erreur chargement messages groupe');
       }
     }}>
-              <span style={styles.groupeIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                </span>
-              <div>
-                <p style={styles.groupeNom}>{groupe.nom}</p>
-                <p style={styles.groupeInfo}>{groupe.participants.length} membres</p>
+              <div style={styles.groupeAvatar}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
+                <span style={styles.groupeNom}>{groupe.nom}</span>
+                <span style={styles.groupeInfo}>{groupe.participants.length} membres</span>
               </div>
             </div>
           ))}
@@ -887,14 +887,14 @@ function Chat() {
           <div style={styles.chatArea}>
             <div style={styles.chatHeader}>
               <div style={styles.groupeHeaderInfo}>
-                <span style={styles.groupeIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <div style={styles.groupeAvatarSmall}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                   </svg>
-                </span>
+                </div>
                 <div>
                   <h3 style={styles.chatTitle}>{groupeActif.nom}</h3>
                   <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
@@ -1412,14 +1412,35 @@ const styles = {
   groupeItem: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
-    padding: '12px',
-    borderRadius: '10px',
+    gap: '12px',
+    padding: '8px 10px',
+    borderRadius: '12px',
     cursor: 'pointer',
     background: 'rgba(255,255,255,0.03)',
-    marginBottom: '5px',
+    marginBottom: '6px',
+    width: '100%',
+    transition: 'background 0.2s',
   },
-  groupeIcon: { fontSize: '24px' },
+  groupeAvatarSmall: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  groupeAvatar: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
   groupeHeaderInfo: { display: 'flex', alignItems: 'center', gap: '10px', flex: 1 },
   gestionBtn: {
     background: 'rgba(255,255,255,0.06)',
@@ -1678,8 +1699,8 @@ const styles = {
     fontSize: '12px',
   },
   messageUsername: { color: '#aaa', fontSize: '11px', marginBottom: '3px', display: 'block' },
-  groupeNom: { color: 'white', fontSize: '14px', fontWeight: 600, margin: 0 },
-  groupeInfo: { color: '#888', fontSize: '11px', margin: 0 },
+  groupeNom: { color: 'white', fontSize: '15px', fontWeight: 600, margin: 0, whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis' },
+  groupeInfo: { color: '#888', fontSize: '13px', margin: 0 },
   contactsTitle: {
     color: '#667eea',
     fontSize: '12px',
