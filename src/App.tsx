@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { Network } from '@capacitor/network';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
@@ -9,6 +10,29 @@ import { ecouterNotifications, afficherMessagesManques } from './notifications';
 function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const checkNetwork = async () => {
+      const status = await Network.getStatus();
+      if (!status.connected) {
+        window.location.href = '/offline.html';
+      }
+    };
+
+    checkNetwork();
+
+    const listener = Network.addListener('networkStatusChange', (status) => {
+      if (!status.connected) {
+        window.location.href = '/offline.html';
+      }
+    });
+
+    return () => {
+      listener.then(l => l.remove());
+    };
+  }, []);
 
   useEffect(() => {
     // Gère le callback Google OAuth
