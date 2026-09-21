@@ -12,6 +12,7 @@
   "dependencies": {
     "@capacitor/core": "^7.0.0",
     "@capacitor/network": "^7.0.4",
+    "@capacitor/push-notifications": "^7.0.7",
     "@capacitor/splash-screen": "^7.0.0",
     "@capacitor/status-bar": "^7.0.6",
     "@livekit/components-react": "^2.9.24",
