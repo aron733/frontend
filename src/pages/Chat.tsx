@@ -683,7 +683,7 @@ function Chat() {
                     <span style={styles.userOnlineDot} />
                   )}
                 </div>
-                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' as const, gap: '1px' }}>
+                <div style={{ flex: 1, minWidth: 0, height: '48px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'space-between', padding: '3px 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <span style={styles.userName}>{user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}</span>
                     {user.badge_verifie && <BadgeVerifie size={14} />}
