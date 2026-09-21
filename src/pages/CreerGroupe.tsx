@@ -224,8 +224,10 @@ const styles = {
     background: '#0a0a0f',
     padding: '20px',
     width: '100%',
-    minHeight: '100%',
+    minHeight: '100vh',
     boxSizing: 'border-box' as const,
+    display: 'flex',
+    flexDirection: 'column' as const,
   },
   header: {
     display: 'flex',
@@ -410,6 +412,7 @@ const styles = {
     justifyContent: 'center',
     gap: '8px',
     boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)',
+    marginTop: 'auto',
   },
 };
 
