@@ -21,6 +21,9 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [erreur, setErreur] = useState('');
   const [message, setMessage] = useState('');
   const [ecranSucces, setEcranSucces] = useState<{type: 'inscription' | 'connexion', prenom?: string, userData?: any} | null>(null);
+  const [otpRequis, setOtpRequis] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpEmail, setOtpEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
@@ -190,11 +193,32 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     setErreur('');
     setMessage('');
     try {
-      await axios.post(`${API_URL}/inscription/`, form);
-      setEcranSucces({ type: 'inscription', prenom: form.prenom });
+      const res = await axios.post(`${API_URL}/inscription/`, form);
+      setOtpEmail(res.data.email || form.email);
+      setOtpRequis(true);
       setForm({ ...form, password: '' });
     } catch (err: any) {
       setErreur(err.response?.data?.raison || err.response?.data?.erreur || 'Erreur inscription');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleValiderOtp = async () => {
+    setLoading(true);
+    setErreur('');
+    try {
+      const response = await axios.post(`${API_URL}/verifier-otp/`, {
+        email: otpEmail,
+        code: otpCode,
+      });
+      localStorage.setItem('access_token', response.data.access_token);
+      localStorage.setItem('refresh_token', response.data.refresh_token);
+      localStorage.setItem('user', JSON.stringify(response.data));
+      setOtpRequis(false);
+      setEcranSucces({ type: 'connexion', prenom: response.data.prenom, userData: response.data });
+    } catch (err: any) {
+      setErreur(err.response?.data?.erreur || 'Code invalide');
     } finally {
       setLoading(false);
     }
@@ -233,6 +257,81 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       await handleInscription();
     }
   };
+
+  // Ecran OTP (apres inscription)
+  if (otpRequis) {
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <h1 style={styles.logo}>VOKYVO</h1>
+          <p style={styles.subtitle}>Verification email</p>
+
+          <div style={styles.successBox}>
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="url(#otpGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '15px' }}>
+              <defs>
+                <linearGradient id="otpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#667eea" />
+                  <stop offset="100%" stopColor="#764ba2" />
+                </linearGradient>
+              </defs>
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <polyline points="3 7 12 13 21 7" />
+            </svg>
+
+            <h2 style={styles.successTitle}>Code envoye</h2>
+            <p style={styles.successText}>
+              Saisis le code a 6 chiffres envoye a <strong>{otpEmail}</strong>
+            </p>
+
+            <input
+              type="text"
+              value={otpCode}
+              onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+              placeholder="000000"
+              inputMode="numeric"
+              maxLength={6}
+              style={{
+                width: '100%',
+                padding: '15px',
+                fontSize: '24px',
+                letterSpacing: '8px',
+                textAlign: 'center',
+                background: '#0a0a0f',
+                border: '1px solid #2a2a3e',
+                borderRadius: '12px',
+                color: 'white',
+                marginTop: '15px',
+                marginBottom: '15px',
+                fontFamily: 'monospace',
+              }}
+              autoFocus
+            />
+
+            {erreur && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '10px' }}>{erreur}</p>}
+
+            <button
+              onClick={handleValiderOtp}
+              disabled={loading || otpCode.length !== 6}
+              style={{
+                ...styles.successBtn,
+                opacity: loading || otpCode.length !== 6 ? 0.5 : 1,
+                cursor: loading || otpCode.length !== 6 ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {loading ? 'Verification...' : 'Valider'}
+            </button>
+
+            <button
+              onClick={() => { setOtpRequis(false); setOtpCode(''); setErreur(''); }}
+              style={{ background: 'transparent', border: 'none', color: '#888', fontSize: '13px', marginTop: '15px', cursor: 'pointer' }}
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Ecran de succes (inscription ou connexion)
   if (ecranSucces) {
