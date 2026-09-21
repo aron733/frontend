@@ -134,6 +134,20 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 [data.user_id]: data.timestamp || new Date().toISOString(),
               }));
             }
+
+            if (data.type === 'badge_update') {
+              // Met à jour le badge du user dans le localStorage
+              const userData = JSON.parse(localStorage.getItem('user') || '{}');
+              const updated = {
+                ...userData,
+                badge_verifie: data.badge_verifie,
+              };
+              localStorage.setItem('user', JSON.stringify(updated));
+
+              // Force un refresh de l'app pour refléter le changement
+              // (Profil, Chat, etc. lisent depuis localStorage)
+              window.dispatchEvent(new CustomEvent('user-updated', { detail: updated }));
+            }
           } catch (e) {
             console.warn('WS parse err:', e);
           }

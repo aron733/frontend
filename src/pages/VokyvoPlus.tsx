@@ -26,6 +26,18 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
       } catch (e) {}
     };
     chargerStatut();
+
+    // Écoute les mises à jour du badge via WS (ChatContext)
+    const handleUserUpdated = (e: any) => {
+      if (e.detail && typeof e.detail.badge_verifie === 'boolean') {
+        setBadgeVerifie(e.detail.badge_verifie);
+      }
+    };
+    window.addEventListener('user-updated', handleUserUpdated);
+
+    return () => {
+      window.removeEventListener('user-updated', handleUserUpdated);
+    };
   }, []);
 
   const demanderBadge = async () => {

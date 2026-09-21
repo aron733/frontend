@@ -141,8 +141,13 @@ function App() {
 
     if (userData && token) {
       setUser(JSON.parse(userData));
-      // rafraichirUser();  // Test : désactive refresh auto au démarrage
     }
+
+    // Écoute les mises à jour du user (via WS badge_update)
+    const handleUserUpdated = (e: any) => {
+      setUser(e.detail);
+    };
+    window.addEventListener('user-updated', handleUserUpdated);
 
     // Écoute les notifications
     ecouterNotifications();
@@ -154,9 +159,9 @@ function App() {
 
     setLoading(false);
 
-    // Rafraîchit le user toutes les 60s
-    // const interval = setInterval(rafraichirUser, 15000);  // Test : désactive
-    // return () => clearInterval(interval);
+    return () => {
+      window.removeEventListener('user-updated', handleUserUpdated);
+    };
   }, []);
 
 //   const rafraichirUser = async () => {
