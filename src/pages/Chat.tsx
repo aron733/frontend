@@ -25,6 +25,10 @@ function Chat() {
   const [showGestion, setShowGestion] = useState(false);
   const [renommer, setRenommer] = useState('');
   const [rechercheUser, setRechercheUser] = useState('');
+  const [showNouveauContact, setShowNouveauContact] = useState(false);
+  const [tabActif, setTabActif] = useState<'discussions' | 'groupes'>('discussions');
+  const [rechercheGlobale, setRechercheGlobale] = useState('');
+  const [resultatsGlobaux, setResultatsGlobaux] = useState<any[]>([]);
   const [showRenommer, setShowRenommer] = useState(false);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -608,7 +612,7 @@ function Chat() {
             placeholder="Rechercher..."
             style={styles.searchInput}
           />
-          {groupes.map((groupe) => (
+          {tabActif === 'groupes' && groupes.map((groupe) => (
             <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
       setGroupeActif(groupe);
       setSelectedUser(null);
@@ -646,8 +650,8 @@ function Chat() {
               </div>
             </div>
           ))}
-          <p style={styles.contactsTitle}>Contacts</p>
-          {usersFiltres.map((user) => (
+          {tabActif === 'discussions' && <p style={styles.contactsTitle}>Contacts</p>}
+          {tabActif === 'discussions' && usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
                 onClick={() => { selectUser(user); setGroupeActif(null); }}
@@ -672,6 +676,116 @@ function Chat() {
               </button>
           ))}
         </div>
+        )}
+
+        {/* Bottom navigation (uniquement sur la liste) */}
+        {!selectedUser && !groupeActif && (
+          <div style={styles.bottomNav}>
+            <button
+              onClick={() => setTabActif('discussions')}
+              style={tabActif === 'discussions' ? styles.bottomNavBtnActif : styles.bottomNavBtn}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+              <span style={styles.bottomNavLabel}>Discussions</span>
+            </button>
+
+            <button
+              onClick={() => setShowNouveauContact(true)}
+              style={styles.bottomNavBtnPlus}
+            >
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => setTabActif('groupes')}
+              style={tabActif === 'groupes' ? styles.bottomNavBtnActif : styles.bottomNavBtn}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span style={styles.bottomNavLabel}>Groupes</span>
+            </button>
+          </div>
+        )}
+
+        {/* Modal Nouveau Contact */}
+        {showNouveauContact && (
+          <div style={styles.overlay} onClick={() => { setShowNouveauContact(false); setRechercheGlobale(''); setResultatsGlobaux([]); }}>
+            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+              <div style={styles.modalHeader}>
+                <h3 style={styles.modalTitle}>Nouveau contact</h3>
+                <button onClick={() => { setShowNouveauContact(false); setRechercheGlobale(''); setResultatsGlobaux([]); }} style={styles.modalClose}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <input
+                type="text"
+                value={rechercheGlobale}
+                onChange={async (e) => {
+                  const q = e.target.value;
+                  setRechercheGlobale(q);
+                  if (q.trim().length < 2) {
+                    setResultatsGlobaux([]);
+                    return;
+                  }
+                  try {
+                    const r = await axios.get(`${API_URL}/rechercher-users/?q=${encodeURIComponent(q)}`, {
+                      headers: { Authorization: `Bearer ${getToken()}` }
+                    });
+                    setResultatsGlobaux(r.data.users || []);
+                  } catch (err) {}
+                }}
+                placeholder="Nom, email ou numéro..."
+                style={styles.modalInput}
+                autoFocus
+              />
+              <div style={styles.modalResults}>
+                {resultatsGlobaux.length === 0 && rechercheGlobale.length >= 2 && (
+                  <p style={styles.modalEmpty}>Aucun utilisateur trouvé</p>
+                )}
+                {resultatsGlobaux.map((u) => (
+                  <div
+                    key={u.id}
+                    style={styles.modalResultItem}
+                    onClick={async () => {
+                      try {
+                        await axios.post(`${API_URL}/conversations/creer/`, {
+                          user2_id: u.id,
+                        }, { headers: { Authorization: `Bearer ${getToken()}` } });
+                        setShowNouveauContact(false);
+                        setRechercheGlobale('');
+                        setResultatsGlobaux([]);
+                        window.location.reload();
+                      } catch (err) {
+                        alert('Erreur lors de la création de la conversation');
+                      }
+                    }}
+                  >
+                    {u.photo_profil ? (
+                      <img src={u.photo_profil} style={styles.modalAvatar} alt="" />
+                    ) : (
+                      <span style={styles.modalAvatarText}>{((u.first_name || u.prenom || u.username || '?')[0] || '?').toUpperCase()}</span>
+                    )}
+                    <div>
+                      <p style={styles.modalUserName}>{u.first_name || u.prenom || ''} {u.last_name || u.nom || ''}</p>
+                      <p style={styles.modalUserInfo}>@{u.username}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Zone de chat - GROUPE */}
@@ -1471,6 +1585,170 @@ const styles = {
     textTransform: 'uppercase' as const,
     letterSpacing: '1px',
     margin: '15px 0 5px 0',
+  },
+  bottomNav: {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    padding: '10px 15px',
+    background: '#111120',
+    borderTop: '1px solid #1a1a2a',
+    zIndex: 50,
+  },
+  bottomNavBtn: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    gap: '4px',
+    background: 'transparent',
+    border: 'none',
+    color: '#666',
+    cursor: 'pointer',
+    padding: '8px 15px',
+    borderRadius: '10px',
+    flex: 1,
+  },
+  bottomNavBtnActif: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    gap: '4px',
+    background: 'rgba(102, 126, 234, 0.15)',
+    border: 'none',
+    color: '#667eea',
+    cursor: 'pointer',
+    padding: '8px 15px',
+    borderRadius: '10px',
+    flex: 1,
+  },
+  bottomNavBtnPlus: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    border: 'none',
+    color: 'white',
+    cursor: 'pointer',
+    width: '52px',
+    height: '52px',
+    borderRadius: '50%',
+    boxShadow: '0 5px 20px rgba(102, 126, 234, 0.4)',
+    flexShrink: 0,
+  },
+  bottomNavLabel: {
+    fontSize: '11px',
+    fontWeight: 600,
+  },
+  overlay: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.7)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '20px',
+  },
+  modalContent: {
+    background: '#111120',
+    borderRadius: '15px',
+    width: '100%',
+    maxWidth: '450px',
+    maxHeight: '80vh',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    overflow: 'hidden',
+    border: '1px solid #2a2a3e',
+  },
+  modalHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '15px 20px',
+    borderBottom: '1px solid #2a2a3e',
+  },
+  modalTitle: {
+    color: 'white',
+    margin: 0,
+    fontSize: '17px',
+    fontWeight: 600,
+  },
+  modalClose: {
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '5px',
+    display: 'flex',
+    alignItems: 'center',
+    color: '#aaa',
+  },
+  modalInput: {
+    margin: '15px 20px',
+    padding: '12px 15px',
+    borderRadius: '10px',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: 'white',
+    fontSize: '14px',
+    outline: 'none',
+  },
+  modalResults: {
+    flex: 1,
+    overflowY: 'auto' as const,
+    padding: '0 10px 15px 10px',
+  },
+  modalEmpty: {
+    color: '#666',
+    textAlign: 'center' as const,
+    padding: '20px',
+    fontSize: '13px',
+  },
+  modalResultItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '12px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    background: 'transparent',
+    transition: 'background 0.2s',
+  },
+  modalAvatar: {
+    width: '42px',
+    height: '42px',
+    borderRadius: '50%',
+    objectFit: 'cover' as const,
+  },
+  modalAvatarText: {
+    width: '42px',
+    height: '42px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold' as const,
+    fontSize: '16px',
+    flexShrink: 0,
+  },
+  modalUserName: {
+    color: 'white',
+    margin: 0,
+    fontSize: '14px',
+    fontWeight: 600,
+  },
+  modalUserInfo: {
+    color: '#888',
+    margin: '2px 0 0 0',
+    fontSize: '12px',
   },
   searchInput: {
     width: '100%',
