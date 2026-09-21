@@ -469,7 +469,9 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         <div style={styles.cookieBanner}>
           <p style={styles.cookieText}>
             VOKYVO LABS utilise des cookies essentiels.
-            <a href="#" onClick={(e) => { e.preventDefault(); setShowPolitique(true); }} style={styles.cookieLink}>Politique de confidentialité</a>
+            <a href="/confidentialite.html" style={styles.cookieLink}>Politique de confidentialité</a>
+            {' · '}
+            <a href="/cgu.html" style={styles.cookieLink}>Conditions d'utilisation</a>
           </p>
           <div style={{ marginTop: '10px' }}>
             <label style={styles.checkboxLabel}>
