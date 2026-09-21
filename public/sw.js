@@ -3,8 +3,8 @@ self.addEventListener('push', (event) => {
   
   const options = {
     body: data.body || 'Nouvelle notification',
-    icon: '/pwa-icon.svg',
-    badge: '/pwa-icon.svg',
+    icon: '/favicon.png',
+    badge: '/favicon.png',
     vibrate: [200, 100, 200],
     data: {
       url: data.url || '/',
