@@ -93,11 +93,20 @@ function Chat() {
           };
         });
         
-        // Fusionne : users des conversations en premier, puis le reste
-        const mergedUsers = [...convUsers, ...allUsers.filter((u: any) => 
-          !convUsers.find((cu: any) => cu.id === u.id)
-        )];
-        
+        // Fusionne : convUsers + allUsers (en gardant dernier_message de allUsers)
+        const mergedUsers = convUsers.map((cu: any) => {
+          const full = allUsers.find((u: any) => u.id === cu.id);
+          return {
+            ...cu,
+            ...(full || {}),
+            photo_profil: cu.photo || (full && full.photo_profil) || null,
+            first_name: cu.prenom || (full && full.first_name) || '',
+            last_name: cu.nom || (full && full.last_name) || '',
+          };
+        }).concat(
+          allUsers.filter((u: any) => !convUsers.find((cu: any) => cu.id === u.id))
+        );
+
         setUsers(mergedUsers);
         setAllUsers(mergedUsers);
       } catch (err) {
