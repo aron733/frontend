@@ -661,22 +661,36 @@ function Chat() {
                 onClick={() => { selectUser(user); setGroupeActif(null); }}
                 style={{
                   ...styles.userItem,
-                  background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? '#2a2a3e' : 'transparent',
+                  background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? 'rgba(102,126,234,0.15)' : 'transparent',
                 }}
               >
-                {user.photo_profil || user.photo ? (
-                  <img src={user.photo_profil || user.photo} style={styles.userPhoto} alt="" />
-                ) : (
-                  <span style={styles.userAvatar}>{((user.first_name || user.prenom || user.username || '?')[0] || '?').toUpperCase()}</span>
-                )}
-                {presence[user.id || user.user_id] === 'online' && (
-                  <span style={styles.userOnline}>● En ligne</span>
-                )}
-                {user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}
-                {user.badge_verifie && <BadgeVerifie />}
-                {user.nb_non_lus > 0 && (
-                  <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
-                )}
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  {user.photo_profil || user.photo ? (
+                    <img src={user.photo_profil || user.photo} style={styles.userPhoto} alt="" />
+                  ) : (
+                    <span style={styles.userAvatar}>{((user.first_name || user.prenom || user.username || '?')[0] || '?').toUpperCase()}</span>
+                  )}
+                  {presence[user.id || user.user_id] === 'online' && (
+                    <span style={styles.userOnlineDot} />
+                  )}
+                </div>
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' as const, gap: '3px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={styles.userName}>{user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}</span>
+                    {user.badge_verifie && <BadgeVerifie size={14} />}
+                  </div>
+                  <span style={styles.userLastMsg}>
+                    {user.dernier_message ? (user.dernier_message.length > 35 ? user.dernier_message.slice(0, 35) + '...' : user.dernier_message) : 'Démarrer une discussion'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'flex-end', gap: '5px', flexShrink: 0 }}>
+                  <span style={styles.userTime}>
+                    {user.date_modification ? new Date(user.date_modification).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : ''}
+                  </span>
+                  {user.nb_non_lus > 0 && (
+                    <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
+                  )}
+                </div>
               </button>
           ))}
         </div>
@@ -1905,6 +1919,66 @@ const styles = {
     flexDirection: 'column' as const,
     gap: '5px',
   },
+  userPhoto: {
+    width: '56px',
+    height: '56px',
+    borderRadius: '50%',
+    objectFit: 'cover' as const,
+    flexShrink: 0,
+  },
+  userAvatar: {
+    width: '56px',
+    height: '56px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold' as const,
+    fontSize: '20px',
+    flexShrink: 0,
+  },
+  userOnlineDot: {
+    position: 'absolute' as const,
+    bottom: '2px',
+    right: '2px',
+    width: '14px',
+    height: '14px',
+    borderRadius: '50%',
+    background: '#28a745',
+    border: '2px solid #0a0a0f',
+    boxShadow: '0 0 8px #28a745',
+  },
+  userName: {
+    color: 'white',
+    fontSize: '15px',
+    fontWeight: 600,
+    whiteSpace: 'nowrap' as const,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  userLastMsg: {
+    color: '#888',
+    fontSize: '13px',
+    whiteSpace: 'nowrap' as const,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  userTime: {
+    color: '#666',
+    fontSize: '11px',
+  },
+  badgeNonLus: {
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    fontSize: '11px',
+    fontWeight: 'bold' as const,
+    padding: '2px 8px',
+    borderRadius: '12px',
+    minWidth: '20px',
+    textAlign: 'center' as const,
+  },
   userItem: {
     padding: '12px 15px',
     borderRadius: '10px',
@@ -1918,19 +1992,6 @@ const styles = {
     gap: '8px',
   },
   userOnline: { color: '#28a745', fontSize: '10px' },
-  userPhoto: { width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover' as const },
-  userAvatar: { fontSize: '16px', width: '35px', height: '35px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#667eea', borderRadius: '50%', color: 'white', fontWeight: 'bold' },
-  badgeNonLus: {
-    marginLeft: 'auto',
-    background: '#dc3545',
-    color: 'white',
-    fontSize: '11px',
-    fontWeight: 'bold' as const,
-    padding: '3px 8px',
-    borderRadius: '10px',
-    minWidth: '20px',
-    textAlign: 'center' as const,
-  },
   chatPhoto: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' as const },
   chatAvatar: { fontSize: '25px', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   userOffline: { color: '#666', fontSize: '10px' },
