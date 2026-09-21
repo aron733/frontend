@@ -155,7 +155,7 @@ function App() {
     setLoading(false);
 
     // Rafraîchit le user toutes les 60s
-    const interval = setInterval(rafraichirUser, 60000);
+    const interval = setInterval(rafraichirUser, 15000);
     return () => clearInterval(interval);
   }, []);
 
