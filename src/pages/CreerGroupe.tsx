@@ -206,27 +206,26 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
 }
 
 const styles = {
+  '@keyframes slideUpFromBottom': {
+    from: { transform: 'translateY(100%)' },
+    to: { transform: 'translateY(0)' },
+  },
   overlay: {
     position: 'fixed' as const,
     top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0,0,0,0.85)',
-    backdropFilter: 'blur(4px)',
+    background: '#0a0a0f',
     zIndex: 5000,
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '15px',
+    flexDirection: 'column' as const,
+    animation: 'slideUpFromBottom 0.3s ease-out',
+    overflowY: 'auto' as const,
   },
   panel: {
     background: '#0a0a0f',
-    borderRadius: '20px',
     padding: '20px',
-    maxWidth: '450px',
     width: '100%',
-    maxHeight: '85vh',
-    overflowY: 'auto' as const,
-    border: '1px solid #2a2a3e',
-    boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+    minHeight: '100%',
+    boxSizing: 'border-box' as const,
   },
   header: {
     display: 'flex',
