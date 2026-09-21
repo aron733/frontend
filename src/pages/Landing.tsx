@@ -310,15 +310,15 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               <polyline points="3 7 12 13 21 7" />
             </svg>
 
-            <h2 style={styles.successTitle}>Code envoye</h2>
+            <h2 style={styles.successTitle}>Code envoyé</h2>
             <p style={styles.successText}>
-              Saisis le code a 6 chiffres envoye a <strong>{otpEmail}</strong>
+              Saisis le code à 6 chiffres envoyé à <strong>{otpEmail}</strong>
             </p>
 
             <p style={{ color: tempsRestant > 0 ? '#888' : '#dc3545', fontSize: '14px', marginTop: '5px', marginBottom: '10px' }}>
               {tempsRestant > 0
                 ? `Code valide encore ${Math.floor(tempsRestant / 60)}:${String(tempsRestant % 60).padStart(2, '0')}`
-                : 'Code expire'}
+                : 'Code expiré'}
             </p>
 
             <input
