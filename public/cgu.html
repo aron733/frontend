@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Conditions d'utilisation — VOKYVO</title>
 <style>
-.back{position:fixed;top:15px;left:15px;background:rgba(102,126,234,0.15);border:1px solid #667eea;color:#667eea;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;z-index:10}
+.back{position:fixed;top:15px;left:15px;display:inline-flex;align-items:center;gap:8px;background:rgba(17,17,32,0.95);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;text-decoration:none;z-index:10;backdrop-filter:blur(10px);box-shadow:0 4px 12px rgba(0,0,0,0.3);transition:all 0.2s}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#ccc;line-height:1.7;padding:70px 20px 20px;max-width:700px;margin:0 auto}
 h1{color:#fff;font-size:24px;margin-bottom:8px}
@@ -14,10 +14,14 @@ h3{color:#667eea;font-size:16px;font-weight:600;margin-top:24px;margin-bottom:8p
 p{margin-bottom:12px;font-size:14px}
 a{color:#667eea;text-decoration:none}
 .footer{margin-top:40px;padding-top:20px;border-top:1px solid #2a2a3e;font-size:13px;color:#888;text-align:center}
+.back:hover{background:rgba(102,126,234,0.2);border-color:#667eea;color:#667eea}
 </style>
 </head>
 <body>
-<a href="javascript:history.back()" class="back">← Retour</a>
+<a href="javascript:history.back()" class="back">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Retour
+</a>
 <h1>Conditions d'utilisation</h1>
 <p class="sub">Dernière mise à jour : 21 septembre 2026</p>
 
