@@ -747,140 +747,136 @@ function Chat() {
           </button>
         )}
 
-        {/* Modal Nouveau Contact */}
+        {/* Modal Nouveau Contact - Plein écran */}
         {showNouveauContact && (
-          <div style={styles.overlay} onClick={() => { setShowNouveauContact(false); setRechercheGlobale(''); setResultatsGlobaux([]); setRechercheEnCours(false); setContactEnCours(null); }}>
-            <div style={{ ...styles.modalContent, animation: 'modalSlideUp 0.3s ease-out' }} onClick={(e) => e.stopPropagation()}>
-              <div style={styles.modalHeader}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div style={styles.fullscreenModal}>
+            <div style={styles.fsHeader}>
+              <button onClick={() => { setShowNouveauContact(false); setRechercheGlobale(''); setResultatsGlobaux([]); setRechercheEnCours(false); setContactEnCours(null); }} style={styles.fsCloseBtn}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                  <line x1="19" y1="12" x2="5" y2="12" />
+                  <polyline points="12 19 5 12 12 5" />
+                </svg>
+              </button>
+              <h2 style={styles.fsTitle}>Nouvelle discussion</h2>
+            </div>
+
+            <div style={styles.fsSearchWrap}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                value={rechercheGlobale}
+                onChange={async (e) => {
+                  const q = e.target.value;
+                  setRechercheGlobale(q);
+                  if (q.trim().length < 2) {
+                    setResultatsGlobaux([]);
+                    setRechercheEnCours(false);
+                    return;
+                  }
+                  setRechercheEnCours(true);
+                  try {
+                    const r = await axios.get(`${API_URL}/rechercher-users/?q=${encodeURIComponent(q)}`, {
+                      headers: { Authorization: `Bearer ${getToken()}` }
+                    });
+                    setResultatsGlobaux(r.data.users || []);
+                  } catch (err) {
+                    setResultatsGlobaux([]);
+                  } finally {
+                    setRechercheEnCours(false);
+                  }
+                }}
+                placeholder="Nom, email ou numéro..."
+                style={styles.fsInput}
+                autoFocus
+              />
+            </div>
+
+            <div style={styles.fsResults}>
+              {rechercheEnCours && (
+                <div style={styles.modalLoader}>
+                  <div style={styles.spinner}></div>
+                  <p style={styles.modalLoadingText}>Recherche en cours...</p>
+                </div>
+              )}
+
+              {!rechercheEnCours && rechercheGlobale.length < 2 && (
+                <div style={styles.modalEmptyWrap}>
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="8.5" cy="7" r="4" />
                     <line x1="20" y1="8" x2="20" y2="14" />
                     <line x1="23" y1="11" x2="17" y2="11" />
                   </svg>
-                  <h3 style={styles.modalTitle}>Nouvelle discussion</h3>
+                  <p style={styles.modalEmptyText}>Trouve quelqu'un sur VOKYVO</p>
+                  <p style={styles.modalEmptyHint}>Recherche par nom, email ou numéro</p>
                 </div>
-                <button onClick={() => { setShowNouveauContact(false); setRechercheGlobale(''); setResultatsGlobaux([]); setRechercheEnCours(false); setContactEnCours(null); }} style={styles.modalClose}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </div>
+              )}
 
-              <div style={styles.modalSearchWrap}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '28px', top: '50%', transform: 'translateY(-50%)' }}>
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                  type="text"
-                  value={rechercheGlobale}
-                  onChange={async (e) => {
-                    const q = e.target.value;
-                    setRechercheGlobale(q);
-                    if (q.trim().length < 2) {
-                      setResultatsGlobaux([]);
-                      setRechercheEnCours(false);
-                      return;
-                    }
-                    setRechercheEnCours(true);
+              {!rechercheEnCours && rechercheGlobale.length >= 2 && resultatsGlobaux.length === 0 && (
+                <div style={styles.modalEmptyWrap}>
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                  <p style={styles.modalEmptyText}>Aucun utilisateur trouvé</p>
+                  <p style={styles.modalEmptyHint}>Essaie avec un autre nom</p>
+                </div>
+              )}
+
+              {!rechercheEnCours && resultatsGlobaux.map((u) => (
+                <div
+                  key={u.id}
+                  style={{
+                    ...styles.fsResultItem,
+                    opacity: contactEnCours && contactEnCours !== u.id ? 0.4 : 1,
+                  }}
+                  onClick={async () => {
+                    if (contactEnCours) return;
+                    setContactEnCours(u.id);
                     try {
-                      const r = await axios.get(`${API_URL}/rechercher-users/?q=${encodeURIComponent(q)}`, {
-                        headers: { Authorization: `Bearer ${getToken()}` }
-                      });
-                      setResultatsGlobaux(r.data.users || []);
-                    } catch (err) {
+                      await axios.post(`${API_URL}/conversations/creer/`, {
+                        user2_id: u.id,
+                      }, { headers: { Authorization: `Bearer ${getToken()}` } });
+                      setShowNouveauContact(false);
+                      setRechercheGlobale('');
                       setResultatsGlobaux([]);
-                    } finally {
                       setRechercheEnCours(false);
+                      setContactEnCours(null);
+                      window.location.reload();
+                    } catch (err) {
+                      alert('Erreur lors de la création de la conversation');
+                      setContactEnCours(null);
                     }
                   }}
-                  placeholder="Nom, email ou numéro..."
-                  style={{ ...styles.modalInput, paddingLeft: '45px' }}
-                  autoFocus
-                />
-              </div>
-
-              <div style={styles.modalResults}>
-                {rechercheEnCours && (
-                  <div style={styles.modalLoader}>
-                    <div style={styles.spinner}></div>
-                    <p style={styles.modalLoadingText}>Recherche en cours...</p>
+                >
+                  {u.photo_profil ? (
+                    <img src={u.photo_profil} style={styles.fsAvatar} alt="" />
+                  ) : (
+                    <span style={styles.fsAvatarText}>{((u.first_name || u.prenom || u.username || '?')[0] || '?').toUpperCase()}</span>
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={styles.fsUserName}>{u.first_name || u.prenom || ''} {u.last_name || u.nom || ''}</p>
+                    <p style={styles.fsUserInfo}>@{u.username}</p>
                   </div>
-                )}
-
-                {!rechercheEnCours && rechercheGlobale.length < 2 && (
-                  <div style={styles.modalEmptyWrap}>
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="11" cy="11" r="8" />
-                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  {contactEnCours === u.id ? (
+                    <div style={styles.spinnerSmall}></div>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2.5" strokeLinecap="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
-                    <p style={styles.modalEmptyText}>Recherche un utilisateur par son nom, email ou numéro</p>
-                    <p style={styles.modalEmptyHint}>Minimum 2 caractères</p>
-                  </div>
-                )}
-
-                {!rechercheEnCours && rechercheGlobale.length >= 2 && resultatsGlobaux.length === 0 && (
-                  <div style={styles.modalEmptyWrap}>
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                      <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
-                    <p style={styles.modalEmptyText}>Aucun utilisateur trouvé</p>
-                    <p style={styles.modalEmptyHint}>Essaie avec un autre nom</p>
-                  </div>
-                )}
-
-                {!rechercheEnCours && resultatsGlobaux.map((u) => (
-                  <div
-                    key={u.id}
-                    style={{
-                      ...styles.modalResultItem,
-                      opacity: contactEnCours && contactEnCours !== u.id ? 0.4 : 1,
-                      background: contactEnCours === u.id ? 'rgba(102, 126, 234, 0.15)' : 'transparent',
-                    }}
-                    onClick={async () => {
-                      if (contactEnCours) return;
-                      setContactEnCours(u.id);
-                      try {
-                        await axios.post(`${API_URL}/conversations/creer/`, {
-                          user2_id: u.id,
-                        }, { headers: { Authorization: `Bearer ${getToken()}` } });
-                        setShowNouveauContact(false);
-                        setRechercheGlobale('');
-                        setResultatsGlobaux([]);
-                        setRechercheEnCours(false);
-                        setContactEnCours(null);
-                        window.location.reload();
-                      } catch (err) {
-                        alert('Erreur lors de la création de la conversation');
-                        setContactEnCours(null);
-                      }
-                    }}
-                  >
-                    {u.photo_profil ? (
-                      <img src={u.photo_profil} style={styles.modalAvatar} alt="" />
-                    ) : (
-                      <span style={styles.modalAvatarText}>{((u.first_name || u.prenom || u.username || '?')[0] || '?').toUpperCase()}</span>
-                    )}
-                    <div style={{ flex: 1 }}>
-                      <p style={styles.modalUserName}>{u.first_name || u.prenom || ''} {u.last_name || u.nom || ''}</p>
-                      <p style={styles.modalUserInfo}>@{u.username}</p>
-                    </div>
-                    {contactEnCours === u.id && (
-                      <div style={styles.spinnerSmall}></div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Zone de chat - GROUPE */}
+        {/* Zone de chat - GROUPE */}        {/* Zone de chat - GROUPE */}
         {groupeActif && !selectedUser && (
           <div style={styles.chatArea}>
             <div style={styles.chatHeader}>
@@ -1333,6 +1329,10 @@ const styles = {
   '@keyframes modalSlideUp': {
     from: { transform: 'translateY(30px)', opacity: 0 },
     to: { transform: 'translateY(0)', opacity: 1 },
+  },
+  '@keyframes slideUpFromBottom': {
+    from: { transform: 'translateY(100%)' },
+    to: { transform: 'translateY(0)' },
   },
   '@keyframes spin': {
     from: { transform: 'rotate(0deg)' },
@@ -1831,6 +1831,106 @@ const styles = {
     color: '#555',
     fontSize: '12px',
     margin: 0,
+  },
+  fullscreenModal: {
+    position: 'fixed' as const,
+    top: 0, left: 0, right: 0, bottom: 0,
+    background: '#0a0a0f',
+    zIndex: 5000,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    animation: 'slideUpFromBottom 0.3s ease-out',
+  },
+  fsHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '15px 20px',
+    borderBottom: '1px solid #1a1a2a',
+    flexShrink: 0,
+  },
+  fsCloseBtn: {
+    background: 'rgba(255,255,255,0.06)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+    width: '40px',
+    height: '40px',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  fsTitle: {
+    color: 'white',
+    margin: 0,
+    fontSize: '18px',
+    fontWeight: 600,
+  },
+  fsSearchWrap: {
+    position: 'relative' as const,
+    padding: '15px 20px',
+    flexShrink: 0,
+  },
+  fsInput: {
+    width: '100%',
+    padding: '14px 18px 14px 45px',
+    borderRadius: '25px',
+    border: '1px solid #2a2a3e',
+    background: '#1a1a2e',
+    color: 'white',
+    fontSize: '15px',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+  },
+  fsResults: {
+    flex: 1,
+    overflowY: 'auto' as const,
+    padding: '0 10px 20px 10px',
+  },
+  fsResultItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '14px',
+    padding: '12px 15px',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    transition: 'background 0.2s',
+  },
+  fsAvatar: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    objectFit: 'cover' as const,
+    flexShrink: 0,
+  },
+  fsAvatarText: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 'bold' as const,
+    fontSize: '18px',
+    flexShrink: 0,
+  },
+  fsUserName: {
+    color: 'white',
+    margin: 0,
+    fontSize: '15px',
+    fontWeight: 600,
+    whiteSpace: 'nowrap' as const,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  fsUserInfo: {
+    color: '#888',
+    margin: '2px 0 0 0',
+    fontSize: '13px',
   },
   modalContent: {
     background: '#111120',
