@@ -336,7 +336,10 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
             <p style={styles.banRaisonText}>{banRaison}</p>
           </div>
           <p style={styles.banContact}>
-            Pour contester, contacte le support : support@vokyvo.com
+            Pour contester, contacte le support :{' '}
+            <a href="mailto:support@vokyvo.com" style={{ color: '#dc3545', textDecoration: 'underline' }}>
+              support@vokyvo.com
+            </a>
           </p>
           <button
             onClick={() => { setBanRaison(null); setBanType(null); }}
@@ -530,7 +533,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               <p>Vos données sont stockées de manière sécurisée sur des serveurs en Europe et aux États-Unis via nos partenaires certifiés (Render, Cloudinary). Les mots de passe sont chiffrés avec des algorithmes robustes.</p>
               
               <h3>5. Vos droits (RGPD)</h3>
-              <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants : droit d'accès, de rectification, de suppression, de portabilité, d'opposition. Pour exercer ces droits, contactez-nous à support@vokyvo.com.</p>
+              <p>Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez des droits suivants : droit d'accès, de rectification, de suppression, de portabilité, d'opposition. Pour exercer ces droits, contactez-nous à <a href="mailto:support@vokyvo.com" style={{ color: '#667eea', textDecoration: 'underline' }}>support@vokyvo.com</a>.</p>
               
               <h3>6. Sécurité</h3>
               <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées : chiffrement des données, accès restreint, surveillance continue, sauvegardes régulières.</p>
@@ -539,7 +542,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               <p>Vos données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte à tout moment. Les données sont supprimées sous 30 jours après la demande.</p>
               
               <h3>8. Contact</h3>
-              <p>Pour toute question concernant vos données : support@vokyvo.com</p>
+              <p>Pour toute question concernant vos données : <a href="mailto:support@vokyvo.com" style={{ color: '#667eea', textDecoration: 'underline' }}>support@vokyvo.com</a></p>
               <div style={styles.contactButtons}>
                 <a href="https://t.me/vokyvo_bot" target="_blank" style={styles.telegramBtn}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
