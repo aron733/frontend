@@ -596,15 +596,17 @@ function Chat() {
           ...styles.userList,
           animation: 'slideIn 0.3s ease-out',
         }}>
-          <button onClick={() => { setShowCreerGroupe(true); }} style={styles.groupeBtn}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            Groupe
-          </button>
+          {tabActif === 'groupes' && (
+            <button onClick={() => { setShowCreerGroupe(true); }} style={styles.groupeBtn}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              Créer un groupe
+            </button>
+          )}
           <input
             type="text"
             value={rechercheUser}
@@ -692,16 +694,6 @@ function Chat() {
             </button>
 
             <button
-              onClick={() => setShowNouveauContact(true)}
-              style={styles.bottomNavBtnPlus}
-            >
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-            </button>
-
-            <button
               onClick={() => setTabActif('groupes')}
               style={tabActif === 'groupes' ? styles.bottomNavBtnActif : styles.bottomNavBtn}
             >
@@ -714,6 +706,19 @@ function Chat() {
               <span style={styles.bottomNavLabel}>Groupes</span>
             </button>
           </div>
+        )}
+
+        {/* Bouton + flottant (surélevé, à droite) */}
+        {!selectedUser && !groupeActif && (
+          <button
+            onClick={() => setShowNouveauContact(true)}
+            style={styles.bottomNavBtnPlus}
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
         )}
 
         {/* Modal Nouveau Contact */}
@@ -1626,6 +1631,9 @@ const styles = {
     flex: 1,
   },
   bottomNavBtnPlus: {
+    position: 'absolute' as const,
+    right: '20px',
+    bottom: '80px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1633,11 +1641,11 @@ const styles = {
     border: 'none',
     color: 'white',
     cursor: 'pointer',
-    width: '52px',
-    height: '52px',
+    width: '56px',
+    height: '56px',
     borderRadius: '50%',
-    boxShadow: '0 5px 20px rgba(102, 126, 234, 0.4)',
-    flexShrink: 0,
+    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.5)',
+    zIndex: 100,
   },
   bottomNavLabel: {
     fontSize: '11px',
