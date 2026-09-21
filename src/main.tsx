@@ -45,13 +45,18 @@ axios.interceptors.response.use(
     // Si 403 = Accès refusé (banni)
     if (error.response && error.response.status === 403) {
       const data = error.response.data || {};
-      // Vérifie si c'est un bannissement
+      const url = error.config?.url || '';
+
+      // Si c'est un appel /connexion/ → laisse la Landing gerer l'erreur
+      if (url.includes('/connexion/')) {
+        return Promise.reject(error);
+      }
+
+      // Sinon (bannissement en cours de session)
       if (data.erreur === 'Accès refusé' || data.raison) {
-        // Déconnecte : supprime token + user
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
-        // Redirige vers la page de connexion
         window.location.href = '/';
       }
     }
