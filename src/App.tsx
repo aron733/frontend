@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';  // Test : désactive refresh badge
 import { useState, useEffect } from 'react';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
@@ -141,7 +141,7 @@ function App() {
 
     if (userData && token) {
       setUser(JSON.parse(userData));
-      rafraichirUser();
+      // rafraichirUser();  // Test : désactive refresh auto au démarrage
     }
 
     // Écoute les notifications
@@ -155,33 +155,33 @@ function App() {
     setLoading(false);
 
     // Rafraîchit le user toutes les 60s
-    const interval = setInterval(rafraichirUser, 15000);
-    return () => clearInterval(interval);
+    // const interval = setInterval(rafraichirUser, 15000);  // Test : désactive
+    // return () => clearInterval(interval);
   }, []);
 
-  const rafraichirUser = async () => {
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-      const API_URL = (import.meta as any).env?.VITE_API_URL || 'https://api.vokyvo.com/api';
-      const r = await axios.get(`${API_URL}/verifier-acces/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (r.data && r.data.user_id) {
-        const current = JSON.parse(localStorage.getItem('user') || '{}');
-        const updated = {
-          ...current,
-          badge_verifie: r.data.badge_verifie,
-          est_banni: r.data.est_banni,
-          est_actif: r.data.est_actif,
-        };
-        localStorage.setItem('user', JSON.stringify(updated));
-        setUser(updated);
-      }
-    } catch (err) {
-      // silencieux
-    }
-  };
+//   const rafraichirUser = async () => {
+//     try {
+//       const token = localStorage.getItem('access_token');
+//       if (!token) return;
+//       const API_URL = (import.meta as any).env?.VITE_API_URL || 'https://api.vokyvo.com/api';
+//       const r = await axios.get(`${API_URL}/verifier-acces/`, {
+//         headers: { Authorization: `Bearer ${token}` }
+//       });
+//       if (r.data && r.data.user_id) {
+//         const current = JSON.parse(localStorage.getItem('user') || '{}');
+//         const updated = {
+//           ...current,
+//           badge_verifie: r.data.badge_verifie,
+//           est_banni: r.data.est_banni,
+//           est_actif: r.data.est_actif,
+//         };
+//         localStorage.setItem('user', JSON.stringify(updated));
+//         setUser(updated);
+//       }
+//     } catch (err) {
+//       // silencieux
+//     }
+//   };
 
   const handleLogin = (data: any) => {
     setUser(data);
