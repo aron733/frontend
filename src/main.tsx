@@ -7,7 +7,7 @@ import App from './App.tsx'
 import { NotificationProvider } from './NotificationContext'
 import ForceUpdateModal from './ForceUpdateModal'
 import { ChatProvider } from './ChatContext'
-import { initOneSignal } from './onesignal'
+// import { initOneSignal } from './onesignal'
 // Intercepteur Axios : refresh auto + bannissement
 axios.interceptors.response.use(
   (response) => response,
@@ -64,7 +64,7 @@ axios.interceptors.response.use(
   }
 );
 
-void initOneSignal();
+// void initOneSignal();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <NotificationProvider>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { loginOneSignal } from '../onesignal';
+// import { loginOneSignal } from '../onesignal';
 import pkg from '../../package.json';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
@@ -210,7 +210,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       });
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('refresh_token', response.data.refresh_token);
-      void loginOneSignal(response.data.user_id);
+      // void loginOneSignal(response.data.user_id);
       localStorage.setItem('user', JSON.stringify(response.data));
       setEcranSucces({ type: 'connexion', prenom: response.data.prenom || response.data.username, userData: response.data });
     } catch (err: any) {
