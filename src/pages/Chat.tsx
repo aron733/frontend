@@ -595,9 +595,7 @@ function Chat() {
           </svg>
           Messages
         </h2>
-        <span style={connecte ? styles.online : styles.offline}>
-          {connecte ? '● Connecté' : '○ Déconnecté'}
-        </span>
+        <span style={connecte ? styles.onlineDot : styles.offlineDot} />
       </div>
 
       <div style={styles.body}>
@@ -1930,14 +1928,30 @@ const styles = {
   },
   searchInput: {
     width: '100%',
-    padding: '10px 15px',
-    borderRadius: '20px',
+    padding: '14px 18px',
+    borderRadius: '25px',
     border: '1px solid #2a2a3e',
     background: '#1a1a2e',
     color: 'white',
-    fontSize: '14px',
+    fontSize: '15px',
     outline: 'none',
-    marginBottom: '10px',
+    marginBottom: '15px',
+  },
+  onlineDot: {
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    background: '#28a745',
+    boxShadow: '0 0 8px #28a745',
+    display: 'inline-block',
+  },
+  offlineDot: {
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    background: '#dc3545',
+    boxShadow: '0 0 8px #dc3545',
+    display: 'inline-block',
   },
   online: { color: '#28a745', fontSize: '12px' },
   offline: { color: '#dc3545', fontSize: '12px' },
