@@ -17,6 +17,9 @@ importers:
       '@capacitor/splash-screen':
         specifier: ^7.0.0
         version: 7.0.5(@capacitor/core@7.6.9)
+      '@capacitor/status-bar':
+        specifier: ^7.0.6
+        version: 7.0.6(@capacitor/core@7.6.9)
       '@livekit/components-react':
         specifier: ^2.9.24
         version: 2.9.24(livekit-client@2.22.3(@types/dom-mediacapture-record@1.0.22))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(tslib@2.8.1)
@@ -613,6 +616,11 @@ packages:
 
   '@capacitor/splash-screen@7.0.5':
     resolution: {integrity: sha512-bPG2SamFL7VT5I3XsgsGgJhkiyxq3OXCOVKEDupSieVdtEiG7j2vLbSD0xL+91zteF/qLuxsjbugGy5LD8mS2A==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/status-bar@7.0.6':
+    resolution: {integrity: sha512-7AVqj46b26QikImQzWfsJmzG8NUJZBGkrVSuoeTo+SX/YH3hXH0MqwwFgMqMGHfa/BICDgSvTjM9miVFlq0+RQ==}
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
@@ -3258,6 +3266,10 @@ snapshots:
       '@capacitor/core': 7.6.9
 
   '@capacitor/splash-screen@7.0.5(@capacitor/core@7.6.9)':
+    dependencies:
+      '@capacitor/core': 7.6.9
+
+  '@capacitor/status-bar@7.0.6(@capacitor/core@7.6.9)':
     dependencies:
       '@capacitor/core': 7.6.9
 

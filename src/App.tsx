@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Network } from '@capacitor/network';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
@@ -32,6 +33,12 @@ function App() {
     return () => {
       listener.then(l => l.remove());
     };
+  }, []);
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    StatusBar.setStyle({ style: Style.Dark });
+    StatusBar.setBackgroundColor({ color: '#0a0a0f' });
   }, []);
 
   useEffect(() => {
