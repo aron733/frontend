@@ -148,6 +148,22 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               // (Profil, Chat, etc. lisent depuis localStorage)
               window.dispatchEvent(new CustomEvent('user-updated', { detail: updated }));
             }
+
+            if (data.type === 'user_banned') {
+              // Le user est banni → déconnexion immédiate
+              try {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('vokyvo_page');
+              } catch (e) {}
+
+              // Message
+              alert(`Tu as été banni. Raison : ${data.raison || 'Non spécifiée'}`);
+
+              // Redirige vers la landing
+              window.location.href = '/';
+            }
           } catch (e) {
             console.warn('WS parse err:', e);
           }
