@@ -683,7 +683,7 @@ function Chat() {
                     <span style={styles.userOnlineDot} />
                   )}
                 </div>
-                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' as const, gap: '3px' }}>
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' as const, gap: '1px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <span style={styles.userName}>{user.first_name || user.prenom || ''} {user.last_name || user.nom || ''}</span>
                     {user.badge_verifie && <BadgeVerifie size={14} />}
@@ -693,9 +693,12 @@ function Chat() {
                   </span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'flex-end', gap: '5px', flexShrink: 0 }}>
-                  <span style={styles.userTime}>
-                    {user.date_modification ? new Date(user.date_modification).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Ouagadougou' }) : ''}
-                  </span>
+                  {/* Heure cachée temporairement */}
+                  {false && (
+                    <span style={styles.userTime}>
+                      {user.date_modification ? new Date(user.date_modification).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : ''}
+                    </span>
+                  )}
                   {user.nb_non_lus > 0 && (
                     <span style={styles.badgeNonLus}>{user.nb_non_lus}</span>
                   )}
@@ -1999,7 +2002,7 @@ const styles = {
     textAlign: 'left' as const,
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    gap: '10px',
     width: '100%',
     transition: 'background 0.2s',
   },
