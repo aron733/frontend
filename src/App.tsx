@@ -205,7 +205,7 @@ function App() {
   if (loading) {
     return (
       <div style={styles.loading}>
-        <p style={styles.loadingText}>Chargement...</p>
+        
       </div>
     );
   }
