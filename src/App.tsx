@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
@@ -137,21 +138,50 @@ function App() {
   useEffect(() => {
     const userData = localStorage.getItem('user');
     const token = localStorage.getItem('access_token');
-    
+
     if (userData && token) {
       setUser(JSON.parse(userData));
+      rafraichirUser();
     }
-    
+
     // Écoute les notifications
     ecouterNotifications();
-    
+
     // Affiche les messages manqués
     setTimeout(() => {
       afficherMessagesManques();
     }, 1000);
-    
+
     setLoading(false);
+
+    // Rafraîchit le user toutes les 60s
+    const interval = setInterval(rafraichirUser, 60000);
+    return () => clearInterval(interval);
   }, []);
+
+  const rafraichirUser = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      const API_URL = (import.meta as any).env?.VITE_API_URL || 'https://api.vokyvo.com/api';
+      const r = await axios.get(`${API_URL}/verifier-acces/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (r.data && r.data.user_id) {
+        const current = JSON.parse(localStorage.getItem('user') || '{}');
+        const updated = {
+          ...current,
+          badge_verifie: r.data.badge_verifie,
+          est_banni: r.data.est_banni,
+          est_actif: r.data.est_actif,
+        };
+        localStorage.setItem('user', JSON.stringify(updated));
+        setUser(updated);
+      }
+    } catch (err) {
+      // silencieux
+    }
+  };
 
   const handleLogin = (data: any) => {
     setUser(data);
