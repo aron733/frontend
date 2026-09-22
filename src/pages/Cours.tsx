@@ -534,6 +534,12 @@ const styles = {
     textAlign: 'center' as const,
     padding: '40px 20px',
     minHeight: '80%',
+    position: 'relative' as const,
+    backgroundImage: "url('/mascotte.webp')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: '#0a0a0f',
   },
   iconWrap: {
     width: '140px',
