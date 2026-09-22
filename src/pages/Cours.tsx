@@ -320,7 +320,12 @@ function Cours({ onRetour }: CoursProps) {
       <div style={styles.body}>
         {!imageSelectionnee && !texteExtrait && (
           <div style={styles.accueil}>
-            <img src="/mascotte-new.webp" alt="Mascotte VOKYVO" style={styles.mascotteImg} />
+            <div style={styles.iconWrap}>
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+            </div>
             <h3 style={styles.accueilTitle}>Étudie plus intelligemment</h3>
             <p style={styles.accueilText}>Prends une photo de ton cours et je te le lis à voix haute</p>
             <button
@@ -488,22 +493,14 @@ const styles = {
     flexDirection: 'column' as const,
     background: '#0a0a0f',
     zIndex: 1000,
-    overflow: 'hidden' as const,
-  },
-  mascotteImg: {
-    width: '200px',
-    height: '200px',
-    objectFit: 'contain' as const,
-    marginBottom: '20px',
-    opacity: 0.95,
   },
   header: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
     padding: '12px 15px',
-    background: 'rgba(17,17,32,0.85)',
-    borderBottom: '1px solid rgba(255,255,255,0.06)',
+    background: 'rgba(17,17,32,0.95)',
+    borderBottom: '1px solid rgba(255,255,255,0.08)',
   },
   backButton: {
     background: 'rgba(255,255,255,0.06)',
@@ -537,7 +534,6 @@ const styles = {
     textAlign: 'center' as const,
     padding: '40px 20px',
     minHeight: '80%',
-    position: 'relative' as const,
   },
   iconWrap: {
     width: '140px',
