@@ -1,4 +1,30 @@
+# Robots standards (Google, Bing, etc.)
 User-agent: *
+Allow: /
+
+# Robots des IA (autorises explicitement)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://vokyvo.com/sitemap.xml
