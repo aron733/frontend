@@ -58,6 +58,35 @@ jobs:
           done
           echo 'Splash VOKYVO copies'
 
+      - name: Fix styles.xml (fond noir anti-flash blanc)
+        run: |
+          STYLES="android/app/src/main/res/values/styles.xml"
+          if [ -f "$STYLES" ]; then
+            # Remplace toutes les couleurs blanches par #0a0a0f
+            sed -i 's|<item name="android:windowBackground">.*</item>|<item name="android:windowBackground">#0a0a0f</item>|' $STYLES
+            sed -i 's|<item name="android:colorBackground">.*</item>|<item name="android:colorBackground">#0a0a0f</item>|' $STYLES
+            sed -i 's|<item name="colorPrimaryDark">.*</item>|<item name="colorPrimaryDark">#0a0a0f</item>|' $STYLES
+            echo "=== styles.xml apres modification ==="
+            cat $STYLES
+          else
+            echo "styles.xml non trouve, creation..."
+            mkdir -p android/app/src/main/res/values
+            cat > $STYLES << 'STYLESEOF'
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">#0a0a0f</item>
+        <item name="android:colorBackground">#0a0a0f</item>
+        <item name="colorPrimaryDark">#0a0a0f</item>
+    </style>
+    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme">
+        <item name="android:background">@drawable/splash</item>
+        <item name="android:windowBackground">#0a0a0f</item>
+    </style>
+</resources>
+STYLESEOF
+            echo "styles.xml cree"
+          fi
 
       - name: Debug icones Android
         run: |
