@@ -26,6 +26,10 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [otpEmail, setOtpEmail] = useState('');
   const [tempsRestant, setTempsRestant] = useState(300);
   const [renvoiEnCours, setRenvoiEnCours] = useState(false);
+  const [modeForgot, setModeForgot] = useState<null | 'email' | 'otp' | 'succes'>(null);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotCode, setForgotCode] = useState('');
+  const [forgotNouveauMdp, setForgotNouveauMdp] = useState('');
   const [loading, setLoading] = useState(false);
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
@@ -281,6 +285,30 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     setCookiesAcceptes(true);
   };
 
+  const handleMotDePasseOublie = async () => {
+    setLoading(true); setErreur(''); setMessage('');
+    try {
+      await axios.post(`${API_URL}/mot-de-passe-oublie/`, { email: forgotEmail });
+      setModeForgot('otp');
+      setMessage('Code envoye par email');
+    } catch (err: any) {
+      setErreur(err.response?.data?.erreur || 'Erreur');
+    } finally { setLoading(false); }
+  };
+
+  const handleReinitialiserMdp = async () => {
+    setLoading(true); setErreur(''); setMessage('');
+    try {
+      await axios.post(`${API_URL}/reinitialiser-mdp/`, {
+        email: forgotEmail, code: forgotCode, nouveau_mdp: forgotNouveauMdp,
+      });
+      setModeForgot('succes');
+      setMessage('');
+    } catch (err: any) {
+      setErreur(err.response?.data?.erreur || 'Code invalide ou mot de passe trop faible');
+    } finally { setLoading(false); }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === 'connexion') {
@@ -289,6 +317,131 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       await handleInscription();
     }
   };
+
+  // ===== MOT DE PASSE OUBLIE =====
+  if (modeForgot === 'email') {
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <h1 style={styles.logo}>VOKYVO</h1>
+          <p style={styles.subtitle}>Mot de passe oublié</p>
+          <div style={styles.successBox}>
+            <h2 style={styles.successTitle}>Réinitialisation</h2>
+            <p style={styles.successText}>
+              Saisis ton email pour recevoir un code de vérification.
+            </p>
+            <input
+              type="email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              placeholder="ton@email.com"
+              style={{ width: '100%', padding: '14px 16px', fontSize: '15px', background: '#0a0a0f', border: '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginTop: '15px', marginBottom: '15px' }}
+              autoFocus
+            />
+            {erreur && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '10px' }}>{erreur}</p>}
+            <button
+              onClick={handleMotDePasseOublie}
+              disabled={loading || !forgotEmail}
+              style={{ ...styles.successBtn, opacity: loading || !forgotEmail ? 0.5 : 1 }}
+            >
+              {loading ? 'Envoi...' : 'Envoyer le code'}
+            </button>
+            <button
+              onClick={() => { setModeForgot(null); setErreur(''); }}
+              style={{ background: 'transparent', border: 'none', color: '#888', fontSize: '13px', marginTop: '15px', cursor: 'pointer' }}
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (modeForgot === 'otp') {
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <h1 style={styles.logo}>VOKYVO</h1>
+          <p style={styles.subtitle}>Nouveau mot de passe</p>
+          <div style={styles.successBox}>
+            <h2 style={styles.successTitle}>Vérification</h2>
+            <p style={styles.successText}>
+              Saisis le code envoyé à <strong>{forgotEmail}</strong>
+            </p>
+            <input
+              type="text"
+              value={forgotCode}
+              onChange={(e) => setForgotCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+              placeholder="000000"
+              inputMode="numeric"
+              maxLength={6}
+              style={{ width: '100%', padding: '15px', fontSize: '24px', letterSpacing: '8px', textAlign: 'center', background: '#0a0a0f', border: '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginTop: '15px', marginBottom: '15px', fontFamily: 'monospace' }}
+              autoFocus
+            />
+            <input
+              type="password"
+              value={forgotNouveauMdp}
+              onChange={(e) => setForgotNouveauMdp(e.target.value)}
+              placeholder="Nouveau mot de passe"
+              style={{ width: '100%', padding: '14px 16px', fontSize: '15px', background: '#0a0a0f', border: '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginBottom: '15px' }}
+            />
+            {erreur && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '10px' }}>{erreur}</p>}
+            <button
+              onClick={handleReinitialiserMdp}
+              disabled={loading || forgotCode.length !== 6 || forgotNouveauMdp.length < 6}
+              style={{ ...styles.successBtn, opacity: loading || forgotCode.length !== 6 || forgotNouveauMdp.length < 6 ? 0.5 : 1 }}
+            >
+              {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
+            </button>
+            <button
+              onClick={() => { setModeForgot(null); setForgotCode(''); setForgotNouveauMdp(''); setErreur(''); }}
+              style={{ background: 'transparent', border: 'none', color: '#888', fontSize: '13px', marginTop: '15px', cursor: 'pointer' }}
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (modeForgot === 'succes') {
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <h1 style={styles.logo}>VOKYVO</h1>
+          <p style={styles.subtitle}>Mot de passe réinitialisé</p>
+          <div style={styles.successBox}>
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="url(#succesGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '20px' }}>
+              <defs>
+                <linearGradient id="succesGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#667eea" />
+                  <stop offset="100%" stopColor="#764ba2" />
+                </linearGradient>
+              </defs>
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="8 12 11 15 16 9" />
+            </svg>
+            <h2 style={styles.successTitle}>Mot de passe modifié</h2>
+            <p style={styles.successText}>
+              Ton mot de passe a été réinitialisé avec succès.
+            </p>
+            <button
+              onClick={() => {
+                setModeForgot(null);
+                setMode('connexion');
+                setForgotEmail(''); setForgotCode(''); setForgotNouveauMdp('');
+              }}
+              style={styles.successBtn}
+            >
+              Se connecter
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Ecran OTP (apres inscription)
   if (otpRequis) {
@@ -614,6 +767,13 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
                   </span>
                 ) : 'Se connecter'}
               </button>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); setModeForgot('email'); setForgotEmail(form.email); setErreur(''); setMessage(''); }}
+                style={{ color: '#667eea', fontSize: '13px', textAlign: 'center', marginTop: '12px', textDecoration: 'none', display: 'block' }}
+              >
+                Mot de passe oublié ?
+              </a>
             </>
           )}
         </form>
