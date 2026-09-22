@@ -942,6 +942,64 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         </div>
       )}
 
+      {/* Bloc SEO (visible, indexe par Google + IA) */}
+      <section style={styles.seoSection}>
+        <h2 style={styles.seoTitle}>VOKYVO : la plateforme tout-en-un pour l'Afrique de l'Ouest</h2>
+
+        <p style={styles.seoText}>
+          <strong>VOKYVO</strong> est une application de communication et de productivite
+          concue pour les utilisateurs d'Afrique de l'Ouest francophone. Developpee par
+          <strong> VOKYVO LABS</strong>, elle rassemble dans une seule application tout ce
+          dont vous avez besoin pour communiquer, apprendre et rester informe.
+        </p>
+
+        <h3 style={styles.seoSubtitle}>Messagerie et groupes</h3>
+        <p style={styles.seoText}>
+          Echangez instantanement avec vos contacts en prive ou en groupe. Creez vos
+          communautes, attribuez des roles (administrateur, moderateur, membre) et
+          partagez photos, videos et fichiers en toute simplicite.
+        </p>
+
+        <h3 style={styles.seoSubtitle}>Appels video en direct</h3>
+        <p style={styles.seoText}>
+          Passez des appels video haute qualite avec jusqu'a 5 participants. Une salle
+          se cree en un clic et se partage avec un simple code.
+        </p>
+
+        <h3 style={styles.seoSubtitle}>Assistant IA VOKYVO</h3>
+        <p style={styles.seoText}>
+          Posez vos questions a notre assistant intelligent developpe par VOKYVO LABS.
+          Il vous aide en mathematiques, francais, sciences, programmation et bien plus.
+          Le <strong>mode Expert Maths</strong> guide les eleves pas a pas, sans jamais
+          donner la reponse directement.
+        </p>
+
+        <h3 style={styles.seoSubtitle}>Cours intelligent avec OCR</h3>
+        <p style={styles.seoText}>
+          Prenez une photo de votre cours, et VOKYVO extrait automatiquement le texte,
+          le lit a voix haute et vous permet de poser des questions dessus. Ideal pour
+          les etudiants qui souhaitent reviser plus efficacement.
+        </p>
+
+        <h3 style={styles.seoSubtitle}>Actualites en 31 rubriques</h3>
+        <p style={styles.seoText}>
+          Suivez l'essentiel de l'actualite africaine et internationale dans 31 rubriques
+          thematiques, directement dans l'application.
+        </p>
+
+        <h3 style={styles.seoSubtitle}>Gratuit et securise</h3>
+        <p style={styles.seoText}>
+          VOKYVO est <strong>gratuit</strong>. Vos messages, appels et donnees sont
+          proteges par un chiffrement robuste. Notre plateforme est hebergee sur des
+          serveurs securises et respecte les regles du RGPD.
+        </p>
+
+        <p style={styles.seoText}>
+          Disponible sur Android (APK), sur le web et bientot sur iOS, VOKYVO est
+          votre compagnon quotidien pour rester connecte, apprendre et vous informer.
+        </p>
+      </section>
+
       {/* Footer */}
       <footer style={styles.footer}>
         {!estDansAPK && (
@@ -1247,6 +1305,32 @@ const styles = {
     fontSize: '12px',
     cursor: 'pointer',
     whiteSpace: 'nowrap' as const,
+  },
+  seoSection: {
+    maxWidth: '700px',
+    margin: '40px auto 20px',
+    padding: '0 20px',
+    textAlign: 'left' as const,
+  },
+  seoTitle: {
+    color: '#fff',
+    fontSize: '18px',
+    fontWeight: 700,
+    marginBottom: '14px',
+    textAlign: 'center' as const,
+  },
+  seoSubtitle: {
+    color: '#667eea',
+    fontSize: '14px',
+    fontWeight: 600,
+    marginTop: '18px',
+    marginBottom: '6px',
+  },
+  seoText: {
+    color: '#888',
+    fontSize: '12px',
+    lineHeight: 1.7,
+    margin: '0 0 8px 0',
   },
   footer: {
     padding: '10px',
