@@ -491,7 +491,7 @@ const styles = {
     bottom: 0,
     display: 'flex',
     flexDirection: 'column' as const,
-    backgroundImage: "linear-gradient(rgba(10,10,15,0.78), rgba(10,10,15,0.92)), url('/mascotte.webp')",
+    backgroundImage: "linear-gradient(rgba(10,10,15,0.78), rgba(10,10,15,0.92)), url('/mascotte-new.webp')",
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat',
