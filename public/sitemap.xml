@@ -6,8 +6,18 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://vokyvo.com/confidentialite</loc>
+    <loc>https://vokyvo.com/a-propos.html</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://vokyvo.com/confidentialite.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://vokyvo.com/cgu.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>
