@@ -26,10 +26,11 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [otpEmail, setOtpEmail] = useState('');
   const [tempsRestant, setTempsRestant] = useState(300);
   const [renvoiEnCours, setRenvoiEnCours] = useState(false);
-  const [modeForgot, setModeForgot] = useState<null | 'email' | 'otp' | 'succes'>(null);
+  const [modeForgot, setModeForgot] = useState<null | 'email' | 'otp' | 'nouveau_mdp' | 'succes'>(null);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotCode, setForgotCode] = useState('');
   const [forgotNouveauMdp, setForgotNouveauMdp] = useState('');
+  const [forgotConfirmMdp, setForgotConfirmMdp] = useState('');
   const [loading, setLoading] = useState(false);
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
@@ -296,6 +297,18 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     } finally { setLoading(false); }
   };
 
+  const handleVerifierCodeReset = async () => {
+    setLoading(true); setErreur('');
+    try {
+      await axios.post(`${API_URL}/verifier-code-reset/`, {
+        email: forgotEmail, code: forgotCode,
+      });
+      setModeForgot('nouveau_mdp');
+    } catch (err: any) {
+      setErreur(err.response?.data?.erreur || 'Code invalide ou expiré');
+    } finally { setLoading(false); }
+  };
+
   const handleReinitialiserMdp = async () => {
     setLoading(true); setErreur(''); setMessage('');
     try {
@@ -363,7 +376,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       <div style={styles.container}>
         <div style={styles.card}>
           <h1 style={styles.logo}>VOKYVO</h1>
-          <p style={styles.subtitle}>Nouveau mot de passe</p>
+          <p style={styles.subtitle}>Vérification</p>
           <div style={styles.successBox}>
             <h2 style={styles.successTitle}>Vérification</h2>
             <p style={styles.successText}>
@@ -379,26 +392,69 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               style={{ width: '100%', padding: '15px', fontSize: '24px', letterSpacing: '8px', textAlign: 'center', background: '#0a0a0f', border: '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginTop: '15px', marginBottom: '15px', fontFamily: 'monospace' }}
               autoFocus
             />
+            {erreur && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '10px' }}>{erreur}</p>}
+            <button
+              onClick={handleVerifierCodeReset}
+              disabled={loading || forgotCode.length !== 6}
+              style={{ ...styles.successBtn, opacity: loading || forgotCode.length !== 6 ? 0.5 : 1 }}
+            >
+              {loading ? 'Vérification...' : 'Vérifier'}
+            </button>
+            <button
+              onClick={() => { setModeForgot(null); setForgotCode(''); setErreur(''); }}
+              style={{ background: 'transparent', border: 'none', color: '#888', fontSize: '13px', marginTop: '15px', cursor: 'pointer' }}
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (modeForgot === 'nouveau_mdp') {
+    const mdpMatch = forgotNouveauMdp === forgotConfirmMdp && forgotNouveauMdp.length >= 6;
+    return (
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <h1 style={styles.logo}>VOKYVO</h1>
+          <p style={styles.subtitle}>Nouveau mot de passe</p>
+          <div style={styles.successBox}>
+            <h2 style={styles.successTitle}>Nouveau mot de passe</h2>
+            <p style={styles.successText}>
+              Choisis un mot de passe sécurisé (min. 6 caractères).
+            </p>
             <input
               type="password"
               value={forgotNouveauMdp}
               onChange={(e) => setForgotNouveauMdp(e.target.value)}
               placeholder="Nouveau mot de passe"
-              style={{ width: '100%', padding: '14px 16px', fontSize: '15px', background: '#0a0a0f', border: '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginBottom: '15px' }}
+              style={{ width: '100%', padding: '14px 16px', fontSize: '15px', background: '#0a0a0f', border: '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginTop: '15px', marginBottom: '10px' }}
+              autoFocus
             />
+            <input
+              type="password"
+              value={forgotConfirmMdp}
+              onChange={(e) => setForgotConfirmMdp(e.target.value)}
+              placeholder="Confirme le mot de passe"
+              style={{ width: '100%', padding: '14px 16px', fontSize: '15px', background: '#0a0a0f', border: forgotConfirmMdp && forgotNouveauMdp !== forgotConfirmMdp ? '1px solid #dc3545' : '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginBottom: '10px' }}
+            />
+            {forgotConfirmMdp && forgotNouveauMdp !== forgotConfirmMdp && (
+              <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '10px' }}>Les mots de passe ne correspondent pas</p>
+            )}
             {erreur && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '10px' }}>{erreur}</p>}
             <button
               onClick={handleReinitialiserMdp}
-              disabled={loading || forgotCode.length !== 6 || forgotNouveauMdp.length < 6}
-              style={{ ...styles.successBtn, opacity: loading || forgotCode.length !== 6 || forgotNouveauMdp.length < 6 ? 0.5 : 1 }}
+              disabled={loading || !mdpMatch}
+              style={{ ...styles.successBtn, opacity: loading || !mdpMatch ? 0.5 : 1 }}
             >
               {loading ? 'Réinitialisation...' : 'Réinitialiser le mot de passe'}
             </button>
             <button
-              onClick={() => { setModeForgot(null); setForgotCode(''); setForgotNouveauMdp(''); setErreur(''); }}
+              onClick={() => { setModeForgot('otp'); setErreur(''); setForgotNouveauMdp(''); setForgotConfirmMdp(''); }}
               style={{ background: 'transparent', border: 'none', color: '#888', fontSize: '13px', marginTop: '15px', cursor: 'pointer' }}
             >
-              Annuler
+              Retour
             </button>
           </div>
         </div>
