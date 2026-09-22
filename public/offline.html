@@ -16,16 +16,8 @@
       justify-content: center;
       padding: 20px;
     }
-    .card {
-      max-width: 400px;
-      text-align: center;
-    }
-    .logo {
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 30px;
-      display: block;
-    }
+    .card { max-width: 400px; text-align: center; }
+    .logo { width: 100px; height: 100px; margin: 0 auto 30px; display: block; }
     h1 {
       font-size: 24px;
       font-weight: 600;
@@ -35,12 +27,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    p {
-      font-size: 15px;
-      color: #888;
-      line-height: 1.6;
-      margin-bottom: 30px;
-    }
+    p { font-size: 15px; color: #888; line-height: 1.6; margin-bottom: 30px; }
     button {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #fff;
@@ -53,14 +40,99 @@
       transition: opacity 0.2s;
     }
     button:active { opacity: 0.8; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(102,126,234,0.2);
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .statut {
+      color: #667eea;
+      font-size: 14px;
+      margin-top: 10px;
+      min-height: 20px;
+    }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <div class="card">
     <img src="/vokyvo-logo.png" alt="VOKYVO" class="logo" />
-    <h1>Pas de connexion</h1>
-    <p>Vérifie ta connexion internet et réessaie.</p>
-    <button onclick="window.location.href='/'">Réessayer</button>
+
+    <div id="initial">
+      <h1>Pas de connexion</h1>
+      <p>Vérifie ta connexion internet et réessaie.</p>
+      <button id="btnRetry" onclick="reessayer()">Réessayer</button>
+    </div>
+
+    <div id="loading" class="hidden">
+      <div class="loader"></div>
+      <h1>Reconnexion...</h1>
+      <p>Tentative <span id="numTentative">1</span>/5</p>
+      <div class="statut" id="statut"></div>
+    </div>
+
+    <div id="echoue" class="hidden">
+      <h1>Connexion impossible</h1>
+      <p>Vérifie ta connexion internet et réessaie plus tard.</p>
+      <button onclick="reessayer()">Réessayer</button>
+    </div>
   </div>
+
+  <script>
+    const MAX_TENTATIVES = 5;
+
+    function testConnexion() {
+      return new Promise((resolve) => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => {
+          controller.abort();
+          resolve(false);
+        }, 1000);
+
+        fetch('/', { method: 'HEAD', cache: 'no-store', signal: controller.signal })
+          .then((r) => {
+            clearTimeout(timer);
+            resolve(r.ok);
+          })
+          .catch(() => {
+            clearTimeout(timer);
+            resolve(false);
+          });
+      });
+    }
+
+    async function reessayer() {
+      document.getElementById('initial').classList.add('hidden');
+      document.getElementById('echoue').classList.add('hidden');
+      document.getElementById('loading').classList.remove('hidden');
+
+      for (let i = 1; i <= MAX_TENTATIVES; i++) {
+        document.getElementById('numTentative').textContent = i;
+        document.getElementById('statut').textContent = 'Connexion en cours...';
+
+        const ok = await testConnexion();
+
+        if (ok) {
+          document.getElementById('statut').textContent = 'Connecté ! Redirection...';
+          setTimeout(() => { window.location.href = '/'; }, 400);
+          return;
+        }
+
+        await new Promise((r) => setTimeout(r, 500));
+      }
+
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('echoue').classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>
