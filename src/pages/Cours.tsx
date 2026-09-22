@@ -261,8 +261,6 @@ function Cours({ onRetour }: CoursProps) {
 
   return (
     <div style={styles.container}>
-      <img src="/mascotte-new.webp" alt="" style={styles.bgImage} />
-      <div style={styles.bgOverlay} />
       <div style={styles.header}>
         <button
           onClick={() => { try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } onRetour?.(); }}
@@ -322,12 +320,7 @@ function Cours({ onRetour }: CoursProps) {
       <div style={styles.body}>
         {!imageSelectionnee && !texteExtrait && (
           <div style={styles.accueil}>
-            <div style={styles.iconWrap}>
-              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
-            </div>
+            <img src="/mascotte-new.webp" alt="Mascotte VOKYVO" style={styles.mascotteImg} />
             <h3 style={styles.accueilTitle}>Étudie plus intelligemment</h3>
             <p style={styles.accueilText}>Prends une photo de ton cours et je te le lis à voix haute</p>
             <button
@@ -497,27 +490,12 @@ const styles = {
     zIndex: 1000,
     overflow: 'hidden' as const,
   },
-  bgImage: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover' as const,
-    opacity: 0.35,
-    filter: 'blur(1px)',
-    pointerEvents: 'none' as const,
-    zIndex: 0,
-  },
-  bgOverlay: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(rgba(10,10,15,0.55), rgba(10,10,15,0.85))',
-    pointerEvents: 'none' as const,
-    zIndex: 1,
+  mascotteImg: {
+    width: '200px',
+    height: '200px',
+    objectFit: 'contain' as const,
+    marginBottom: '20px',
+    opacity: 0.95,
   },
   header: {
     display: 'flex',
