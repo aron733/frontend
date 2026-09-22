@@ -502,9 +502,7 @@ const styles = {
     alignItems: 'center',
     gap: '12px',
     padding: '12px 15px',
-    background: 'rgba(17,17,32,0.55)',
-    backdropFilter: 'blur(12px)',
-    WebkitBackdropFilter: 'blur(12px)',
+    background: 'rgba(17,17,32,0.85)',
     borderBottom: '1px solid rgba(255,255,255,0.06)',
   },
   backButton: {
