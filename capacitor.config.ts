@@ -4,6 +4,10 @@ const config: CapacitorConfig = {
   appId: 'com.vokyvo.labs',
   appName: 'VOKYVO',
   webDir: 'dist',
+  backgroundColor: '#0a0a0f',
+  android: {
+    backgroundColor: '#0a0a0f',
+  },
   plugins: {
     SplashScreen: {
       launchAutoHide: false,
