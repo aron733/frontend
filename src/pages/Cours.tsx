@@ -261,6 +261,8 @@ function Cours({ onRetour }: CoursProps) {
 
   return (
     <div style={styles.container}>
+      <img src="/mascotte-new.webp" alt="" style={styles.bgImage} />
+      <div style={styles.bgOverlay} />
       <div style={styles.header}>
         <button
           onClick={() => { try { window.speechSynthesis.cancel(); } catch (e) { /* ignore */ } onRetour?.(); }}
@@ -491,12 +493,31 @@ const styles = {
     bottom: 0,
     display: 'flex',
     flexDirection: 'column' as const,
-    backgroundImage: "linear-gradient(rgba(10,10,15,0.78), rgba(10,10,15,0.92)), url('/mascotte-new.webp')",
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
-    backgroundRepeat: 'no-repeat',
-    backgroundColor: '#0a0a0f',
+    background: '#0a0a0f',
     zIndex: 1000,
+    overflow: 'hidden' as const,
+  },
+  bgImage: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover' as const,
+    opacity: 0.35,
+    filter: 'blur(1px)',
+    pointerEvents: 'none' as const,
+    zIndex: 0,
+  },
+  bgOverlay: {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(rgba(10,10,15,0.55), rgba(10,10,15,0.85))',
+    pointerEvents: 'none' as const,
+    zIndex: 1,
   },
   header: {
     display: 'flex',
