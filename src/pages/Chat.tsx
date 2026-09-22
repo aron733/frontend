@@ -58,75 +58,73 @@ function Chat() {
     return parseInt(userData.user_id || userData.id || '0');
   };
 
-  useEffect(() => {
-    // Charger la liste des utilisateurs
-    const chargerUsers = async () => {
-      try {
-        // Récupère les conversations pour avoir les photos
-        const convResponse = await axios.get(`${API_URL}/conversations/`, {
-          headers: { Authorization: `Bearer ${getToken()}` }
-        });
-        
-        const convUsers = (convResponse.data.conversations || []).map((c: any) => ({
-          id: c.autre_user.id,
-          username: c.autre_user.username || '',
-          first_name: c.autre_user.prenom || '',
-          last_name: c.autre_user.nom || '',
-          badge_verifie: c.autre_user.badge_verifie || false,
-          photo: c.autre_user.photo || null,
-          nb_non_lus: c.nb_non_lus || 0,
-        }));
-        
-        // Récupère aussi tous les users
-        const usersResponse = await axios.get(`${API_URL}/rechercher-users/?q=%20`, {
-          headers: { Authorization: `Bearer ${getToken()}` }
-        });
-        
-        const allUsers = (usersResponse.data.users || []).map((u: any) => {
-          // Stocke la présence depuis la DB
-          const convUser = convUsers.find((cu: any) => cu.id === u.id);
-          return {
-            ...u,
-            photo_profil: (convUser && convUser.photo) || u.photo_profil || u.photo || null,
-            first_name: u.first_name || u.prenom || '',
-            last_name: u.last_name || u.nom || '',
-          };
-        });
-        
-        // Fusionne : convUsers + allUsers (en gardant dernier_message de allUsers)
-        const mergedUsers = convUsers.map((cu: any) => {
-          const full = allUsers.find((u: any) => u.id === cu.id);
-          return {
-            ...cu,
-            ...(full || {}),
-            photo_profil: cu.photo || (full && full.photo_profil) || null,
-            first_name: cu.prenom || (full && full.first_name) || '',
-            last_name: cu.nom || (full && full.last_name) || '',
-          };
-        }).concat(
-          allUsers.filter((u: any) => !convUsers.find((cu: any) => cu.id === u.id))
-        );
+  // Fonction reutilisable : charge conversations + groupes
+  const chargerConversationsEtGroupes = async () => {
+    try {
+      const convResponse = await axios.get(`${API_URL}/conversations/`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
 
-        setUsers(mergedUsers);
-        setAllUsers(mergedUsers);
-      } catch (err) {
-        console.error('Erreur chargement users');
-      }
+      const convUsers = (convResponse.data.conversations || []).map((c: any) => ({
+        id: c.autre_user.id,
+        username: c.autre_user.username || '',
+        first_name: c.autre_user.prenom || '',
+        last_name: c.autre_user.nom || '',
+        badge_verifie: c.autre_user.badge_verifie || false,
+        photo: c.autre_user.photo || null,
+        nb_non_lus: c.nb_non_lus || 0,
+      }));
+
+      const usersResponse = await axios.get(`${API_URL}/rechercher-users/?q=%20`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+
+      const allUsers = (usersResponse.data.users || []).map((u: any) => {
+        const convUser = convUsers.find((cu: any) => cu.id === u.id);
+        return {
+          ...u,
+          photo_profil: (convUser && convUser.photo) || u.photo_profil || u.photo || null,
+          first_name: u.first_name || u.prenom || '',
+          last_name: u.last_name || u.nom || '',
+        };
+      });
+
+      const mergedUsers = convUsers.map((cu: any) => {
+        const full = allUsers.find((u: any) => u.id === cu.id);
+        return {
+          ...cu,
+          ...(full || {}),
+          photo_profil: cu.photo || (full && full.photo_profil) || null,
+          first_name: cu.prenom || (full && full.first_name) || '',
+          last_name: cu.nom || (full && full.last_name) || '',
+        };
+      }).concat(
+        allUsers.filter((u: any) => !convUsers.find((cu: any) => cu.id === u.id))
+      );
+
+      setUsers(mergedUsers);
+      setAllUsers(mergedUsers);
+
+      const groupesResponse = await axios.get(`${API_URL}/groupes/`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      setGroupes(groupesResponse.data.groupes || []);
+    } catch (err) {
+      console.error('Erreur chargement conversations/groupes');
+    }
+  };
+
+  useEffect(() => {
+    chargerConversationsEtGroupes();
+  }, []);
+
+  // Resynchronise apres une reconnexion WS
+  useEffect(() => {
+    const handleReconnect = () => {
+      chargerConversationsEtGroupes();
     };
-    chargerUsers();
-    
-    // Charge les groupes
-    const chargerGroupes = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/groupes/`, {
-          headers: { Authorization: `Bearer ${getToken()}` }
-        });
-        setGroupes(response.data.groupes || []);
-      } catch (err) {
-        console.error('Erreur chargement groupes');
-      }
-    };
-    chargerGroupes();
+    window.addEventListener('ws-reconnect', handleReconnect);
+    return () => window.removeEventListener('ws-reconnect', handleReconnect);
   }, []);
 
   // Reset la conv active au démontage (pour que les notifs s'affichent)

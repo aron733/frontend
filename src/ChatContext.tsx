@@ -77,6 +77,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         ws.onopen = () => {
           console.log('🌐 WS Global connecté');
           setConnecte(true);
+          // Notifie les pages de se resynchroniser (messages manques)
+          window.dispatchEvent(new CustomEvent('ws-reconnect'));
         };
 
         ws.onmessage = (event) => {
