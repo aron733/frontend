@@ -12,6 +12,7 @@ import { ecouterNotifications, afficherMessagesManques } from './notifications';
 function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
@@ -100,7 +101,7 @@ function App() {
               if (rep.data.prenom) stored.prenom = rep.data.prenom;
               if (rep.data.nom) stored.nom = rep.data.nom;
               localStorage.setItem('user', JSON.stringify(stored));
-              setUser(stored);
+              setShowSuccess(true);
             }
           } catch (e) { console.warn('appUrlOpen verifier-acces', e); }
         }
@@ -154,7 +155,7 @@ function App() {
             if (rep.data.age) stored.age = rep.data.age;
             if (rep.data.numero) stored.numero = rep.data.numero;
             localStorage.setItem('user', JSON.stringify(stored));
-            setUser(stored);
+            setShowSuccess(true);
           }
         } catch (e) {}
       })();
@@ -330,6 +331,61 @@ function App() {
     );
   }
 
+  // Ecran succes apres OAuth Google
+  if (showSuccess) {
+    return (
+      <div style={styles.successContainer}>
+        <div style={styles.successCard}>
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="url(#succesGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <defs>
+              <linearGradient id="succesGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#667eea" />
+                <stop offset="100%" stopColor="#764ba2" />
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="8 12 11 15 16 9" />
+          </svg>
+          <h2 style={styles.successTitle}>Connexion réussie !</h2>
+          <p style={styles.successText}>
+            Bienvenue {(user && (user.prenom || user.first_name)) || ''} sur VOKYVO.
+          </p>
+          <button
+            onClick={async () => {
+              try {
+                const { default: ax } = await import('axios');
+                const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+                const token = localStorage.getItem('access_token');
+                const rep = await ax.get(`${API}/verifier-acces/`, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+                if (rep.data) {
+                  const stored = JSON.parse(localStorage.getItem('user') || '{}');
+                  Object.assign(stored, {
+                    badge_verifie: rep.data.badge_verifie,
+                    photo_profil: rep.data.photo_profil || stored.photo_profil,
+                    est_banni: rep.data.est_banni,
+                    pays: rep.data.pays,
+                    age: rep.data.age,
+                    numero: rep.data.numero,
+                    prenom: rep.data.prenom || stored.prenom,
+                    nom: rep.data.nom || stored.nom,
+                  });
+                  localStorage.setItem('user', JSON.stringify(stored));
+                  setUser(stored);
+                }
+              } catch (e) {}
+              setShowSuccess(false);
+            }}
+            style={styles.successBtn}
+          >
+            Voir mon profil
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return user ? (
     <>
       <Profil user={user} onLogout={handleLogout} />
@@ -350,6 +406,45 @@ const styles = {
   loadingText: {
     color: 'white',
     fontSize: '20px',
+  },
+  successContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    background: '#0a0a0f',
+    padding: '20px',
+  },
+  successCard: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    textAlign: 'center' as const,
+    padding: '30px 20px',
+    maxWidth: '400px',
+    width: '100%',
+  },
+  successTitle: {
+    color: '#fff',
+    fontSize: '24px',
+    fontWeight: 600,
+    marginBottom: '15px',
+  },
+  successText: {
+    color: '#888',
+    fontSize: '15px',
+    lineHeight: 1.6,
+    marginBottom: '30px',
+  },
+  successBtn: {
+    padding: '14px 30px',
+    borderRadius: '12px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    fontSize: '16px',
+    fontWeight: 'bold' as const,
+    cursor: 'pointer',
   },
 };
 
