@@ -67,7 +67,7 @@ function App() {
   // Ecoute les deep links (App Links Android)
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
-    const listener = CapacitorApp.addListener('appUrlOpen', (event: any) => {
+    const listener = CapacitorApp.addListener('appUrlOpen', async (event: any) => {
       try {
         const url = new URL(event.url);
         const token = url.searchParams.get('access_token');
@@ -83,6 +83,23 @@ function App() {
           localStorage.setItem('user', JSON.stringify({
             user_id: userId, email, prenom, nom, photo_profil: photo,
           }));
+          try {
+            const { default: ax } = await import('axios');
+            const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+            const rep = await ax.get(`${API}/verifier-acces/`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (rep.data) {
+              const stored = JSON.parse(localStorage.getItem('user') || '{}');
+              if (rep.data.badge_verifie !== undefined) stored.badge_verifie = rep.data.badge_verifie;
+              if (rep.data.photo_profil) stored.photo_profil = rep.data.photo_profil;
+              if (rep.data.est_banni !== undefined) stored.est_banni = rep.data.est_banni;
+              if (rep.data.pays) stored.pays = rep.data.pays;
+              if (rep.data.age) stored.age = rep.data.age;
+              if (rep.data.numero) stored.numero = rep.data.numero;
+              localStorage.setItem('user', JSON.stringify(stored));
+            }
+          } catch (e) {}
           window.location.reload();
         }
       } catch (e) {
