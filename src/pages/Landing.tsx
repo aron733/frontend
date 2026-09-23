@@ -1080,6 +1080,8 @@ const styles = {
     fontSize: '16px',
     fontWeight: 'bold' as const,
     cursor: 'pointer',
+    outline: 'none',
+    transition: 'opacity 0.2s',
     width: '100%',
     maxWidth: '280px',
     boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)',
