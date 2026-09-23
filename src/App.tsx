@@ -97,10 +97,12 @@ function App() {
               if (rep.data.pays) stored.pays = rep.data.pays;
               if (rep.data.age) stored.age = rep.data.age;
               if (rep.data.numero) stored.numero = rep.data.numero;
+              if (rep.data.prenom) stored.prenom = rep.data.prenom;
+              if (rep.data.nom) stored.nom = rep.data.nom;
               localStorage.setItem('user', JSON.stringify(stored));
+              setUser(stored);
             }
-          } catch (e) {}
-          window.location.reload();
+          } catch (e) { console.warn('appUrlOpen verifier-acces', e); }
         }
       } catch (e) {
         console.warn('appUrlOpen error', e);
