@@ -135,8 +135,27 @@ function App() {
       window.history.replaceState({}, document.title, '/');
       
       // Redémarre avec le user
-      const userData = JSON.parse(localStorage.getItem('user') || '{}');
-      setUser(userData);
+      // Recharge les infos completes du user (badge, photo uploadee, etc.)
+      (async () => {
+        try {
+          const { default: ax } = await import('axios');
+          const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+          const rep = await ax.get(`${API}/verifier-acces/`, {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
+          if (rep.data) {
+            const stored = JSON.parse(localStorage.getItem('user') || '{}');
+            if (rep.data.badge_verifie !== undefined) stored.badge_verifie = rep.data.badge_verifie;
+            if (rep.data.photo_profil) stored.photo_profil = rep.data.photo_profil;
+            if (rep.data.est_banni !== undefined) stored.est_banni = rep.data.est_banni;
+            if (rep.data.pays) stored.pays = rep.data.pays;
+            if (rep.data.age) stored.age = rep.data.age;
+            if (rep.data.numero) stored.numero = rep.data.numero;
+            localStorage.setItem('user', JSON.stringify(stored));
+            setUser(stored);
+          }
+        } catch (e) {}
+      })();
     }
   }, []);
 
