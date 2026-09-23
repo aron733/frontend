@@ -1001,25 +1001,25 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         <div style={styles.footerLinks}>
           <a href="#" onClick={async (e) => {
             e.preventDefault();
-            const url = 'https://vokyvo.com/a-propos';
+            const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/a-propos?from=app' : 'https://vokyvo.com/a-propos';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>À propos</a>
           <a href="#" onClick={async (e) => {
             e.preventDefault();
-            const url = 'https://vokyvo.com/confidentialite';
+            const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/confidentialite?from=app' : 'https://vokyvo.com/confidentialite';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>Confidentialité</a>
           <a href="#" onClick={async (e) => {
             e.preventDefault();
-            const url = 'https://vokyvo.com/cgu';
+            const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/cgu?from=app' : 'https://vokyvo.com/cgu';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>Conditions</a>
           <a href="#" onClick={async (e) => {
             e.preventDefault();
-            const url = 'https://vokyvo.com/confidentialite';
+            const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/confidentialite?from=app' : 'https://vokyvo.com/confidentialite';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>RGPD</a>
