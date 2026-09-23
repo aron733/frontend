@@ -8,6 +8,7 @@ const WS_URL = 'wss://ws.vokyvo.com/ws/chat/';
 let STOP_RECONNECT = false;
 
 type Message = {
+  id?: number;
   type: string;
   message: string;
   from_user_id: number | string;

@@ -8,6 +8,7 @@ import BadgeVerifie from '../BadgeVerifie';
 
 function Chat() {
   const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence } = useChat();
+  const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [, setUsers] = useState<any[]>([]);
@@ -56,6 +57,26 @@ function Chat() {
   const getMyId = () => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
     return parseInt(userData.user_id || userData.id || '0');
+  };
+
+  const supprimerMessage = async (messageId: number) => {
+    setMessageMenu(null);
+    try {
+      await axios.post(`${API_URL}/messages/${messageId}/supprimer/`, {}, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      // Retire le message de l'UI
+      const newMap: any = { ...messagesParConv };
+      Object.keys(newMap).forEach((key) => {
+        newMap[key] = newMap[key].filter((m: any) => m.id !== messageId);
+      });
+      // Re-set le state complet
+      Object.keys(newMap).forEach((key) => {
+        setMessagesConv(key, newMap[key]);
+      });
+    } catch (err) {
+      console.error('Erreur suppression message:', err);
+    }
   };
 
   // Fonction reutilisable : charge conversations + groupes
@@ -161,6 +182,7 @@ function Chat() {
         });
         
         const msgs = (msgResponse.data.messages || []).map((m: any) => ({
+          id: m.id,
           type: 'message',
           message: m.texte || m.contenu || m.message || '',
           from_user_id: m.expediteur || m.expediteur_id || 0,
@@ -189,6 +211,7 @@ function Chat() {
             headers: { Authorization: `Bearer ${getToken()}` }
           });
           const msgs = (response.data.messages || []).map((m: any) => ({
+            id: m.id,
             type: 'message',
             message: m.texte || '',
             from_user_id: m.expediteur_id,
@@ -633,6 +656,7 @@ function Chat() {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
         const msgs = (response.data.messages || []).map((m: any) => ({
+          id: m.id,
           type: 'message',
           message: m.texte || '',
           from_user_id: m.expediteur_id,
@@ -1080,7 +1104,33 @@ function Chat() {
 
             <div style={styles.messagesArea}>
               {(messagesParConv[`groupe_${groupeActif?.id}`] || []).map((msg, index) => (
-                <div key={index} style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}>
+                <div
+                  key={index}
+                  style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}
+                  onContextMenu={(e) => {
+                    if (String(msg.from_user_id) === String(getMyId()) && msg.id) {
+                      e.preventDefault();
+                      setMessageMenu({ id: msg.id, x: e.clientX, y: e.clientY });
+                    }
+                  }}
+                  onTouchStart={(e) => {
+                    if (String(msg.from_user_id) === String(getMyId()) && msg.id) {
+                      const touch = e.touches[0];
+                      const timer = setTimeout(() => {
+                        setMessageMenu({ id: msg.id!, x: touch.clientX, y: touch.clientY });
+                      }, 500);
+                      (e.currentTarget as any)._longPressTimer = timer;
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    const timer = (e.currentTarget as any)._longPressTimer;
+                    if (timer) clearTimeout(timer);
+                  }}
+                  onTouchMove={(e) => {
+                    const timer = (e.currentTarget as any)._longPressTimer;
+                    if (timer) clearTimeout(timer);
+                  }}
+                >
                   <span style={styles.messageUsername}>{msg.from_username}</span>
                   <span style={styles.messageText}>{msg.message}</span>
                   {msg.fichier_url && (
@@ -1311,6 +1361,50 @@ function Chat() {
         </div>
         )}
       </div>
+      {/* Menu contextuel (appui long) */}
+      {messageMenu && (
+        <>
+          <div
+            onClick={() => setMessageMenu(null)}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9998 }}
+          />
+          <div style={{
+            position: 'fixed',
+            top: messageMenu.y,
+            left: messageMenu.x,
+            background: '#1a1a2e',
+            border: '1px solid #2a2a3e',
+            borderRadius: '10px',
+            padding: '8px 0',
+            zIndex: 9999,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+            minWidth: '140px',
+          }}>
+            <button
+              onClick={() => supprimerMessage(messageMenu.id)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#dc3545',
+                padding: '12px 16px',
+                width: '100%',
+                textAlign: 'left',
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+              Supprimer
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
