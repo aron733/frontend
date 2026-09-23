@@ -1261,6 +1261,29 @@ function Chat() {
                   <div
                     key={index}
                     style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
+                    onContextMenu={(e) => {
+                      if (msg.from_user_id === getMyId() && msg.id) {
+                        e.preventDefault();
+                        setMessageMenu({ id: msg.id, x: e.clientX, y: e.clientY });
+                      }
+                    }}
+                    onTouchStart={(e) => {
+                      if (msg.from_user_id === getMyId() && msg.id) {
+                        const touch = e.touches[0];
+                        const timer = setTimeout(() => {
+                          setMessageMenu({ id: msg.id!, x: touch.clientX, y: touch.clientY });
+                        }, 500);
+                        (e.currentTarget as any)._longPressTimer = timer;
+                      }
+                    }}
+                    onTouchEnd={(e) => {
+                      const timer = (e.currentTarget as any)._longPressTimer;
+                      if (timer) clearTimeout(timer);
+                    }}
+                    onTouchMove={(e) => {
+                      const timer = (e.currentTarget as any)._longPressTimer;
+                      if (timer) clearTimeout(timer);
+                    }}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
                 {msg.fichier_url && /\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(msg.fichier_url) && (
