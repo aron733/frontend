@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.vokyvo.labs",
+    "sha256_cert_fingerprints": [
+      "97:94:00:1C:C2:C3:7A:B8:7F:AB:BC:68:C4:4E:D8:8D:20:92:4D:35:67:92:7B:ED:A9:CC:5B:5B:65:F3:A3:06"
+    ]
+  }
+}]
