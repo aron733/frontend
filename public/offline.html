@@ -6,9 +6,9 @@
   <title>VOKYVO — Hors ligne</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { background: #0a0a0f; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0a0a0f;
       color: #fff;
       min-height: 100vh;
       display: flex;
@@ -40,7 +40,6 @@
       transition: opacity 0.2s;
     }
     button:active { opacity: 0.8; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
     .loader {
       width: 48px;
       height: 48px;
@@ -53,12 +52,6 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
-    }
-    .statut {
-      color: #667eea;
-      font-size: 14px;
-      margin-top: 10px;
-      min-height: 20px;
     }
     .hidden { display: none; }
   </style>
@@ -75,9 +68,7 @@
 
     <div id="loading" class="hidden">
       <div class="loader"></div>
-      <h1>Reconnexion...</h1>
-      <p>Tentative <span id="numTentative">1</span>/5</p>
-      <div class="statut" id="statut"></div>
+      <p>Reconnexion...</p>
     </div>
 
     <div id="echoue" class="hidden">
@@ -88,7 +79,8 @@
   </div>
 
   <script>
-    const MAX_TENTATIVES = 5;
+    const TIMEOUT_GLOBAL = 10000;   // 10 sec
+    const DELAI_ENTRE = 500;         // 500 ms
 
     function testConnexion() {
       return new Promise((resolve) => {
@@ -96,17 +88,10 @@
         const timer = setTimeout(() => {
           controller.abort();
           resolve(false);
-        }, 1000);
-
-        fetch('/', { method: 'HEAD', cache: 'no-store', signal: controller.signal })
-          .then((r) => {
-            clearTimeout(timer);
-            resolve(r.ok);
-          })
-          .catch(() => {
-            clearTimeout(timer);
-            resolve(false);
-          });
+        }, 2000);
+        fetch('/', { method: 'GET', cache: 'no-store', signal: controller.signal })
+          .then((r) => { clearTimeout(timer); resolve(r.ok); })
+          .catch(() => { clearTimeout(timer); resolve(false); });
       });
     }
 
@@ -115,19 +100,15 @@
       document.getElementById('echoue').classList.add('hidden');
       document.getElementById('loading').classList.remove('hidden');
 
-      for (let i = 1; i <= MAX_TENTATIVES; i++) {
-        document.getElementById('numTentative').textContent = i;
-        document.getElementById('statut').textContent = 'Connexion en cours...';
+      const debut = Date.now();
 
+      while (Date.now() - debut < TIMEOUT_GLOBAL) {
         const ok = await testConnexion();
-
         if (ok) {
-          document.getElementById('statut').textContent = 'Connecté ! Redirection...';
-          setTimeout(() => { window.location.href = '/'; }, 400);
+          window.location.href = '/';
           return;
         }
-
-        await new Promise((r) => setTimeout(r, 500));
+        await new Promise((r) => setTimeout(r, DELAI_ENTRE));
       }
 
       document.getElementById('loading').classList.add('hidden');
