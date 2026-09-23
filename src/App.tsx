@@ -23,7 +23,7 @@ function App() {
         if (timerOffline) clearTimeout(timerOffline);
         timerOffline = setTimeout(() => {
           window.location.href = '/offline.html';
-        }, 10000);
+        }, 1000);
       }
     };
 
@@ -34,7 +34,7 @@ function App() {
         if (timerOffline) clearTimeout(timerOffline);
         timerOffline = setTimeout(() => {
           window.location.href = '/offline.html';
-        }, 10000);
+        }, 1000);
       } else {
         if (timerOffline) {
           clearTimeout(timerOffline);
