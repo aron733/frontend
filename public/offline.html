@@ -79,26 +79,38 @@
   </div>
 
   <script>
+    var enCours = false;
+
     function reessayer() {
+      if (enCours) return;  // bloque les doubles clics
+      enCours = true;
+
       document.getElementById('initial').classList.add('hidden');
       document.getElementById('echoue').classList.add('hidden');
       document.getElementById('loading').classList.remove('hidden');
 
-      // Lance 1 seule tentative de connexion, sans afficher
-      let connexionOk = false;
-      const controller = new AbortController();
-      fetch('/', { method: 'GET', cache: 'no-store', signal: controller.signal })
-        .then((r) => { if (r.ok) connexionOk = true; })
-        .catch(() => { connexionOk = false; });
+      // Attendre 10 secondes AVANT de tester la connexion
+      setTimeout(function() {
+        var controller = new AbortController();
+        var t = setTimeout(function() { controller.abort(); }, 3000);
 
-      // Après 10 secondes PILE
-      setTimeout(() => {
-        if (connexionOk) {
-          window.location.href = '/';
-        } else {
-          document.getElementById('loading').classList.add('hidden');
-          document.getElementById('echoue').classList.remove('hidden');
-        }
+        fetch('/', { method: 'GET', cache: 'no-store', signal: controller.signal })
+          .then(function(r) {
+            clearTimeout(t);
+            if (r.ok) {
+              window.location.href = '/';
+            } else {
+              document.getElementById('loading').classList.add('hidden');
+              document.getElementById('echoue').classList.remove('hidden');
+              enCours = false;
+            }
+          })
+          .catch(function() {
+            clearTimeout(t);
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('echoue').classList.remove('hidden');
+            enCours = false;
+          });
       }, 10000);
     }
   </script>
