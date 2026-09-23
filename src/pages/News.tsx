@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 
 const SECTIONS = [
   { id: 'flash', nom: 'Flash', url: 'https://news.google.com/rss?hl=fr&gl=FR&ceid=FR:fr' },
@@ -137,6 +138,15 @@ function News() {
                 key={index}
                 href={article.link}
                 target="_blank"
+                onClick={async (e) => {
+                  e.preventDefault();
+                  if (Capacitor.isNativePlatform()) {
+                    const { Browser } = await import('@capacitor/browser');
+                    await Browser.open({ url: article.link });
+                  } else {
+                    window.open(article.link, '_blank');
+                  }
+                }}
                 style={styles.item}
               >
                 <span style={styles.itemTitle}>{article.title}</span>
