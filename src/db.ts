@@ -1,6 +1,6 @@
 // IndexedDB pour cache local des messages
 const DB_NAME = 'vokyvo_cache';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_MESSAGES = 'messages';
 const STORE_CONVERSATIONS = 'conversations';
 
