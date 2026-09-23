@@ -1032,6 +1032,7 @@ const styles = {
     justifyContent: 'center',
     padding: '30px 20px',
     textAlign: 'center' as const,
+    marginTop: '80px',
   },
   successTitle: {
     fontSize: '26px',
