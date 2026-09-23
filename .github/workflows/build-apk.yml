@@ -110,20 +110,9 @@ jobs:
 
       - name: Add App Links (deep link OAuth)
         run: |
-          MANIFEST="android/app/src/main/AndroidManifest.xml"
-          # Insere l'intent-filter App Links apres le intent-filter LAUNCHER
-          # Utilise un fichier temporaire pour eviter les problemes YAML
-          printf '%s\n' \
-            '                <intent-filter android:autoVerify="true">' \
-            '                    <action android:name="android.intent.action.VIEW" />' \
-            '                    <category android:name="android.intent.category.DEFAULT" />' \
-            '                    <category android:name="android.intent.category.BROWSABLE" />' \
-            '                    <data android:scheme="https" android:host="vokyvo.com" android:pathPrefix="/oauth-callback" />' \
-            '                </intent-filter>' > /tmp/intent_links.xml
-          sed -i '/android.intent.category.LAUNCHER/e cat /tmp/intent_links.xml' $MANIFEST 2>/dev/null || \
-          perl -i -pe 's{(<category android:name="android.intent.category.LAUNCHER" />\s*</intent-filter>)}{$1\n$(cat /tmp/intent_links.xml)}e' $MANIFEST
+          python3 scripts/patch_manifest.py
           echo "=== AndroidManifest apres modif ==="
-          grep -A5 "LAUNCHER" $MANIFEST
+          grep -A12 "LAUNCHER" android/app/src/main/AndroidManifest.xml
 
 
       - name: Accept Android SDK Licenses
