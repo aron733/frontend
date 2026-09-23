@@ -999,10 +999,30 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         )}
         <p style={styles.footerText}>© 2026 VOKYVO - Tous droits réservés</p>
         <div style={styles.footerLinks}>
-          <a href="/a-propos" style={styles.footerLink}>À propos</a>
-          <a href="/confidentialite" style={styles.footerLink}>Confidentialité</a>
-          <a href="/cgu" style={styles.footerLink}>Conditions</a>
-          <a href="/confidentialite" style={styles.footerLink}>RGPD</a>
+          <a href="#" onClick={async (e) => {
+            e.preventDefault();
+            const url = 'https://vokyvo.com/a-propos';
+            if (Capacitor.isNativePlatform()) await Browser.open({ url });
+            else window.location.href = url;
+          }} style={styles.footerLink}>À propos</a>
+          <a href="#" onClick={async (e) => {
+            e.preventDefault();
+            const url = 'https://vokyvo.com/confidentialite';
+            if (Capacitor.isNativePlatform()) await Browser.open({ url });
+            else window.location.href = url;
+          }} style={styles.footerLink}>Confidentialité</a>
+          <a href="#" onClick={async (e) => {
+            e.preventDefault();
+            const url = 'https://vokyvo.com/cgu';
+            if (Capacitor.isNativePlatform()) await Browser.open({ url });
+            else window.location.href = url;
+          }} style={styles.footerLink}>Conditions</a>
+          <a href="#" onClick={async (e) => {
+            e.preventDefault();
+            const url = 'https://vokyvo.com/confidentialite';
+            if (Capacitor.isNativePlatform()) await Browser.open({ url });
+            else window.location.href = url;
+          }} style={styles.footerLink}>RGPD</a>
         </div>
         <a href="https://stats.uptimerobot.com/0DXeqdPiLO" target="_blank" style={styles.uptime}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="#28a745">
