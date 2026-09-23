@@ -11,12 +11,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://vokyvo.com/confidentialite.html</loc>
+    <loc>https://vokyvo.com/confidentialite</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://vokyvo.com/cgu.html</loc>
+    <loc>https://vokyvo.com/cgu</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

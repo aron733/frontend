@@ -874,9 +874,9 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         <div style={styles.cookieBanner}>
           <p style={styles.cookieText}>
             VOKYVO LABS utilise des cookies essentiels.
-            <a href="/confidentialite.html" style={styles.cookieLink}>Politique de confidentialité</a>
+            <a href="/confidentialite" style={styles.cookieLink}>Politique de confidentialité</a>
             {' · '}
-            <a href="/cgu.html" style={styles.cookieLink}>Conditions d'utilisation</a>
+            <a href="/cgu" style={styles.cookieLink}>Conditions d'utilisation</a>
           </p>
           <div style={{ marginTop: '10px' }}>
             <label style={styles.checkboxLabel}>
@@ -999,10 +999,10 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         )}
         <p style={styles.footerText}>© 2026 VOKYVO - Tous droits réservés</p>
         <div style={styles.footerLinks}>
-          <a href="/a-propos.html" style={styles.footerLink}>À propos</a>
-          <a href="/confidentialite.html" style={styles.footerLink}>Confidentialité</a>
-          <a href="/cgu.html" style={styles.footerLink}>Conditions</a>
-          <a href="/confidentialite.html" style={styles.footerLink}>RGPD</a>
+          <a href="/a-propos" style={styles.footerLink}>À propos</a>
+          <a href="/confidentialite" style={styles.footerLink}>Confidentialité</a>
+          <a href="/cgu" style={styles.footerLink}>Conditions</a>
+          <a href="/confidentialite" style={styles.footerLink}>RGPD</a>
         </div>
         <a href="https://stats.uptimerobot.com/0DXeqdPiLO" target="_blank" style={styles.uptime}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="#28a745">
