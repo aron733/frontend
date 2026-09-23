@@ -223,17 +223,28 @@ function Chat() {
           const userId = selectedUser.id || selectedUser.user_id;
           const convId = `user_${userId}`;
 
-          const convResponse = await axios.get(`${API_URL}/conversations/`, {
-            headers: { Authorization: `Bearer ${getToken()}` }
-          });
-          const conversations = convResponse.data.conversations || [];
-          const conv = conversations.find((c: any) => c.autre_user.id === userId);
+          // Utilise un cache de conv.id pour eviter le double fetch
+          const cachedConvId = (window as any).__convIds?.[userId];
+          let conv = null;
+          if (cachedConvId) {
+            conv = { id: cachedConvId };
+          } else {
+            const convResponse = await axios.get(`${API_URL}/conversations/`, {
+              headers: { Authorization: `Bearer ${getToken()}` }
+            });
+            const conversations = convResponse.data.conversations || [];
+            conv = conversations.find((c: any) => c.autre_user.id === userId);
+            if (conv) {
+              (window as any).__convIds = { ...((window as any).__convIds || {}), [userId]: conv.id };
+            }
+          }
 
           if (conv) {
             const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
               headers: { Authorization: `Bearer ${getToken()}` }
             });
             const msgs = (msgResponse.data.messages || []).map((m: any) => ({
+              id: m.id,
               type: 'message',
               message: m.texte || m.contenu || m.message || '',
               from_user_id: m.expediteur || m.expediteur_id || 0,
@@ -1107,29 +1118,6 @@ function Chat() {
                 <div
                   key={index}
                   style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}
-                  onContextMenu={(e) => {
-                    if (String(msg.from_user_id) === String(getMyId()) && msg.id) {
-                      e.preventDefault();
-                      setMessageMenu({ id: msg.id, x: e.clientX, y: e.clientY });
-                    }
-                  }}
-                  onTouchStart={(e) => {
-                    if (String(msg.from_user_id) === String(getMyId()) && msg.id) {
-                      const touch = e.touches[0];
-                      const timer = setTimeout(() => {
-                        setMessageMenu({ id: msg.id!, x: touch.clientX, y: touch.clientY });
-                      }, 500);
-                      (e.currentTarget as any)._longPressTimer = timer;
-                    }
-                  }}
-                  onTouchEnd={(e) => {
-                    const timer = (e.currentTarget as any)._longPressTimer;
-                    if (timer) clearTimeout(timer);
-                  }}
-                  onTouchMove={(e) => {
-                    const timer = (e.currentTarget as any)._longPressTimer;
-                    if (timer) clearTimeout(timer);
-                  }}
                 >
                   <span style={styles.messageUsername}>{msg.from_username}</span>
                   <span style={styles.messageText}>{msg.message}</span>
