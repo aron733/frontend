@@ -3,7 +3,6 @@ import axios from 'axios';
 import Vokyvo from './Vokyvo';
 import Visio from './Visio';
 import Chat from './Chat';
-import Confidentialite from './Confidentialite';
 import News from './News';
 import Cours from './Cours';
 import VokyvoPlus from './VokyvoPlus';
@@ -195,7 +194,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg> Notifications
           </button>
           */}
-          <button onClick={() => { window.location.href = '/confidentialite'; }} style={styles.menuItem}>
+          <button onClick={async () => { const url = "https://vokyvo.com/confidentialite"; const { Browser } = await import("@capacitor/browser"); const { Capacitor } = await import("@capacitor/core"); if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> Confidentialité
           </button>
           <button onClick={() => { setPageActive('vokyvo-plus'); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#f0ad4e' }}>
@@ -263,7 +262,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         {pageActive === 'chat' && <Vokyvo onRetour={() => setPageActive('profil')} />}
         {pageActive === 'visio' && <Visio />}
         {pageActive === 'messages' && <Chat />}
-        {pageActive === 'confidentialite' && <Confidentialite onRetour={() => setPageActive('profil')} />}
+        {/* Composant Confidentialite retire (remplace par page HTML statique) */}
         {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />}
         {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}
         {pageActive === 'news' && <News />}
