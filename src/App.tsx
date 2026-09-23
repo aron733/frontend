@@ -97,6 +97,7 @@ function App() {
               if (rep.data.est_banni !== undefined) stored.est_banni = rep.data.est_banni;
               if (rep.data.pays) stored.pays = rep.data.pays;
               if (rep.data.age) stored.age = rep.data.age;
+              if (rep.data.sexe) stored.sexe = rep.data.sexe;
               if (rep.data.numero) stored.numero = rep.data.numero;
               if (rep.data.prenom) stored.prenom = rep.data.prenom;
               if (rep.data.nom) stored.nom = rep.data.nom;
@@ -153,6 +154,7 @@ function App() {
             if (rep.data.est_banni !== undefined) stored.est_banni = rep.data.est_banni;
             if (rep.data.pays) stored.pays = rep.data.pays;
             if (rep.data.age) stored.age = rep.data.age;
+            if (rep.data.sexe) stored.sexe = rep.data.sexe;
             if (rep.data.numero) stored.numero = rep.data.numero;
             localStorage.setItem('user', JSON.stringify(stored));
             setShowSuccess(true);
@@ -367,6 +369,7 @@ function App() {
                     est_banni: rep.data.est_banni,
                     pays: rep.data.pays,
                     age: rep.data.age,
+                    sexe: rep.data.sexe || stored.sexe,
                     numero: rep.data.numero,
                     prenom: rep.data.prenom || stored.prenom,
                     nom: rep.data.nom || stored.nom,
