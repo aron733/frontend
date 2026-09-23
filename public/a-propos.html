@@ -59,14 +59,11 @@ Retour
 Contact : <a href="mailto:support@vokyvo.com">support@vokyvo.com</a>
 </div>
   <script>
-    // Cache le bouton retour si on est dans l'app Capacitor
+    // Cache le bouton retour si ouvert depuis l'app (?from=app)
     (function() {
-      const isCapacitor = window.location.protocol === 'capacitor:' 
-        || window.location.hostname === 'localhost'
-        || navigator.userAgent.includes('Capacitor');
-      if (isCapacitor) {
+      if (window.location.search.includes('from=app')) {
         const btn = document.querySelector('.back');
-        if (btn) btn.classList.add('hidden-in-app');
+        if (btn) btn.style.display = 'none';
       }
     })();
   </script>
