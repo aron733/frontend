@@ -108,6 +108,41 @@ jobs:
           MANIFEST="android/app/src/main/AndroidManifest.xml"
           sed -i 's/<application/<uses-permission android:name="android.permission.CAMERA" \/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO" \/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" \/>\n    <uses-permission android:name="android.permission.INTERNET" \/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" \/>\n    <application/' $MANIFEST
 
+      - name: Add App Links (deep link OAuth)
+        run: |
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          python3 << 'PYEOF_INNER'
+import re
+with open("android/app/src/main/AndroidManifest.xml", "r") as f:
+    content = f.read()
+
+# Bloc intent-filter pour App Links vokyvo.com
+app_links = '''
+                <intent-filter android:autoVerify="true">
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="https" android:host="vokyvo.com" android:pathPrefix="/oauth-callback" />
+                </intent-filter>
+'''
+
+# Chercher une activite MAIN/LAUNCHER et ajouter l'intent-filter juste apres
+pattern = r'(<intent-filter>\s*<action android:name="android\.intent\.action\.MAIN"[^>]*\/>\s*<category android:name="android\.intent\.category\.LAUNCHER"[^>]*\/>\s*<\/intent-filter>)'
+match = re.search(pattern, content)
+
+if match:
+    content = content.replace(match.group(1), match.group(1) + app_links)
+    with open("android/app/src/main/AndroidManifest.xml", "w") as f:
+        f.write(content)
+    print("OK: App Links ajoute")
+else:
+    print("ATTENTION: intent-filter MAIN/LAUNCHER non trouve")
+    print("Contenu actuel du manifest (extrait):")
+    print(content[:2000])
+PYEOF_INNER
+          echo "=== AndroidManifest apres modif ==="
+          cat $MANIFEST | head -60
+
 
       - name: Accept Android SDK Licenses
         run: yes | sdkmanager --licenses || true
