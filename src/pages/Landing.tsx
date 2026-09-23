@@ -351,6 +351,16 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           <h1 style={styles.logo}>VOKYVO</h1>
           <p style={styles.subtitle}>Mot de passe oublié</p>
           <div style={styles.successBox}>
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="url(#forgotGrad)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '15px' }}>
+              <defs>
+                <linearGradient id="forgotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#667eea" />
+                  <stop offset="100%" stopColor="#764ba2" />
+                </linearGradient>
+              </defs>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
             <h2 style={styles.successTitle}>Réinitialisation</h2>
             <p style={styles.successText}>
               Saisis ton email pour recevoir un code de vérification.
@@ -360,14 +370,14 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               value={forgotEmail}
               onChange={(e) => setForgotEmail(e.target.value)}
               placeholder="ton@email.com"
-              style={{ width: '100%', padding: '14px 16px', fontSize: '15px', background: '#0a0a0f', border: '1px solid #2a2a3e', borderRadius: '12px', color: 'white', marginTop: '15px', marginBottom: '15px' }}
+              style={styles.input}
               autoFocus
             />
             {erreur && <p style={{ color: '#dc3545', fontSize: '13px', marginBottom: '10px' }}>{erreur}</p>}
             <button
               onClick={handleMotDePasseOublie}
               disabled={loading || !forgotEmail}
-              style={{ ...styles.successBtn, opacity: loading || !forgotEmail ? 0.5 : 1 }}
+              style={{ ...styles.successBtn, opacity: loading || !forgotEmail ? 0.5 : 1, marginTop: '15px' }}
             >
               {loading ? 'Envoi...' : 'Envoyer le code'}
             </button>
