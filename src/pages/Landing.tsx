@@ -211,19 +211,29 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     }
   };
 
-  // Compte a rebours OTP (5 min)
+  // Compte a rebours OTP (5 min) - base sur localStorage pour survivre au demontage
   useEffect(() => {
     if (!otpRequis) return;
-    setTempsRestant(300);
+
+    // Lit la deadline existante ou en cree une nouvelle (5 min)
+    let deadline = parseInt(localStorage.getItem('otp_deadline') || '0', 10);
+    if (!deadline || deadline < Date.now()) {
+      deadline = Date.now() + 300 * 1000;
+      localStorage.setItem('otp_deadline', String(deadline));
+    }
+
+    const updateTemps = () => {
+      const restant = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+      setTempsRestant(restant);
+      return restant;
+    };
+
+    updateTemps();
     const interval = setInterval(() => {
-      setTempsRestant((t) => {
-        if (t <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return t - 1;
-      });
+      const r = updateTemps();
+      if (r <= 0) clearInterval(interval);
     }, 1000);
+
     return () => clearInterval(interval);
   }, [otpRequis]);
 
@@ -233,6 +243,8 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     try {
       await axios.post(`${API_URL}/envoyer-otp/`, { email: otpEmail });
       setOtpCode('');
+      const nouvelleDeadline = Date.now() + 300 * 1000;
+      localStorage.setItem('otp_deadline', String(nouvelleDeadline));
       setTempsRestant(300);
     } catch (err: any) {
       setErreur(err.response?.data?.erreur || 'Erreur renvoi');
@@ -590,7 +602,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
             )}
 
             <button
-              onClick={() => { setOtpRequis(false); setOtpCode(''); setErreur(''); }}
+              onClick={() => { setOtpRequis(false); setOtpCode(''); setErreur(''); localStorage.removeItem('otp_deadline'); }}
               style={{ background: 'transparent', border: 'none', color: '#888', fontSize: '13px', marginTop: '15px', cursor: 'pointer' }}
             >
               Annuler
