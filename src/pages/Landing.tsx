@@ -300,6 +300,19 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     setCookiesAcceptes(true);
   };
 
+  const refuserCookies = async () => {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        const { App: CapApp } = await import('@capacitor/app');
+        await CapApp.exitApp();
+      } else {
+        window.location.href = 'about:blank';
+      }
+    } catch (e) {
+      window.location.href = 'about:blank';
+    }
+  };
+
   const handleMotDePasseOublie = async () => {
     setLoading(true); setErreur(''); setMessage('');
     try {
@@ -871,30 +884,40 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
 
       {/* Bandeau cookies RGPD */}
       {!cookiesAcceptes && (
-        <div style={styles.cookieBanner}>
-          <p style={styles.cookieText}>
-            VOKYVO LABS utilise des cookies essentiels.
-            <a href="/confidentialite" style={styles.cookieLink}>Politique de confidentialité</a>
-            {' · '}
-            <a href="/cgu" style={styles.cookieLink}>Conditions d'utilisation</a>
-          </p>
-          <div style={{ marginTop: '10px' }}>
-            <label style={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={approuveLecture}
-                onChange={(e) => setApprouveLecture(e.target.checked)}
-                style={styles.checkbox}
-              />
-              J'ai lu et j'approuve la politique et les conditions
-            </label>
-            <button
-              onClick={accepterCookies}
-              style={approuveLecture ? styles.cookieBtn : styles.cookieBtnDisabled}
-              disabled={!approuveLecture}
-            >
-              Accepter
-            </button>
+        <div style={styles.cookieOverlay}>
+          <div style={styles.cookieBanner}>
+            <p style={styles.cookieText}>
+              VOKYVO LABS utilise des cookies essentiels.
+              <a href="/confidentialite" style={styles.cookieLink}>Politique de confidentialité</a>
+              {' · '}
+              <a href="/cgu" style={styles.cookieLink}>Conditions d'utilisation</a>
+            </p>
+            <div style={{ marginTop: '10px' }}>
+              <label style={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={approuveLecture}
+                  onChange={(e) => setApprouveLecture(e.target.checked)}
+                  style={styles.checkbox}
+                />
+                J'ai lu et j'approuve la politique et les conditions
+              </label>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button
+                  onClick={accepterCookies}
+                  style={{ ...(approuveLecture ? styles.cookieBtn : styles.cookieBtnDisabled), flex: 1 }}
+                  disabled={!approuveLecture}
+                >
+                  Accepter
+                </button>
+                <button
+                  onClick={refuserCookies}
+                  style={{ ...styles.cookieBtn, flex: 1, background: 'transparent', border: '1px solid #444', color: '#888' }}
+                >
+                  Refuser
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1251,6 +1274,19 @@ const styles = {
   },
   submitButton: { padding: '14px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' },
   success: { color: '#28a745', textAlign: 'center' as const, marginTop: '15px' },
+  cookieOverlay: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.7)',
+    zIndex: 9998,
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    padding: '15px',
+  },
   cookieBanner: {
     position: 'fixed' as const,
     bottom: '60px',
