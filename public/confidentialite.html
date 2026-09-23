@@ -16,7 +16,8 @@ p{margin-bottom:12px;font-size:14px}
 a{color:#667eea;text-decoration:none}
 .footer{margin-top:40px;padding-top:20px;border-top:1px solid #2a2a3e;font-size:13px;color:#888;text-align:center}
 .back:hover{background:rgba(102,126,234,0.2);border-color:#667eea;color:#667eea}
-</style>
+    .hidden-in-app { display: none !important; }
+  </style>
 </head>
 <body>
 <a href="javascript:history.back()" class="back">
@@ -56,5 +57,17 @@ Telegram : <a href="https://t.me/vokyvo_bot">@vokyvo_bot</a><br>
 WhatsApp : <a href="https://wa.me/22606965441">+226 06 96 54 41</a></p>
 
 <div class="footer">© 2026 VOKYVO — <a href="https://vokyvo.com">vokyvo.com</a></div>
+  <script>
+    // Cache le bouton retour si on est dans l'app Capacitor
+    (function() {
+      const isCapacitor = window.location.protocol === 'capacitor:' 
+        || window.location.hostname === 'localhost'
+        || navigator.userAgent.includes('Capacitor');
+      if (isCapacitor) {
+        const btn = document.querySelector('.back');
+        if (btn) btn.classList.add('hidden-in-app');
+      }
+    })();
+  </script>
 </body>
 </html>

@@ -18,7 +18,8 @@ p{margin-bottom:14px;font-size:15px;line-height:1.7;color:#aaa}
 strong{color:#fff}
 .footer{margin-top:50px;padding-top:20px;border-top:1px solid #2a2a3e;font-size:13px;color:#666;text-align:center}
 a{color:#667eea;text-decoration:none}
-</style>
+    .hidden-in-app { display: none !important; }
+  </style>
 </head>
 <body>
 <a href="/" class="back">
@@ -57,5 +58,17 @@ Retour
 &copy; 2026 VOKYVO LABS — <a href="https://vokyvo.com">vokyvo.com</a><br>
 Contact : <a href="mailto:support@vokyvo.com">support@vokyvo.com</a>
 </div>
+  <script>
+    // Cache le bouton retour si on est dans l'app Capacitor
+    (function() {
+      const isCapacitor = window.location.protocol === 'capacitor:' 
+        || window.location.hostname === 'localhost'
+        || navigator.userAgent.includes('Capacitor');
+      if (isCapacitor) {
+        const btn = document.querySelector('.back');
+        if (btn) btn.classList.add('hidden-in-app');
+      }
+    })();
+  </script>
 </body>
 </html>
