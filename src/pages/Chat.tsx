@@ -1393,8 +1393,8 @@ function Chat() {
           />
           <div style={{
             position: 'fixed',
-            top: messageMenu.y,
-            left: messageMenu.x,
+            top: Math.min(messageMenu.y, window.innerHeight - 80),
+            left: Math.max(10, Math.min(messageMenu.x, window.innerWidth - 160)),
             background: '#1a1a2e',
             border: '1px solid #2a2a3e',
             borderRadius: '10px',
