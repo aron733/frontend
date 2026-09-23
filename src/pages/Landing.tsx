@@ -888,9 +888,9 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           <div style={styles.cookieBanner}>
             <p style={styles.cookieText}>
               VOKYVO LABS utilise des cookies essentiels.
-              <a href="/confidentialite" style={styles.cookieLink}>Politique de confidentialité</a>
+              <a href="#" onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/confidentialite'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Politique de confidentialité</a>
               {' · '}
-              <a href="/cgu" style={styles.cookieLink}>Conditions d'utilisation</a>
+              <a href="#" onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/cgu'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Conditions d'utilisation</a>
             </p>
             <div style={{ marginTop: '10px' }}>
               <label style={styles.checkboxLabel}>
