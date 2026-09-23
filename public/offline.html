@@ -79,40 +79,35 @@
   </div>
 
   <script>
-    const TIMEOUT_GLOBAL = 10000;   // 10 sec
-    const DELAI_ENTRE = 500;         // 500 ms
+    const TIMEOUT = 10000;
 
-    function testConnexion() {
-      return new Promise((resolve) => {
-        const controller = new AbortController();
-        const timer = setTimeout(() => {
-          controller.abort();
-          resolve(false);
-        }, 2000);
-        fetch('/', { method: 'GET', cache: 'no-store', signal: controller.signal })
-          .then((r) => { clearTimeout(timer); resolve(r.ok); })
-          .catch(() => { clearTimeout(timer); resolve(false); });
-      });
-    }
-
-    async function reessayer() {
+    function reessayer() {
       document.getElementById('initial').classList.add('hidden');
       document.getElementById('echoue').classList.add('hidden');
       document.getElementById('loading').classList.remove('hidden');
 
-      const debut = Date.now();
+      const controller = new AbortController();
+      const timer = setTimeout(() => {
+        controller.abort();
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('echoue').classList.remove('hidden');
+      }, TIMEOUT);
 
-      while (Date.now() - debut < TIMEOUT_GLOBAL) {
-        const ok = await testConnexion();
-        if (ok) {
-          window.location.href = '/';
-          return;
-        }
-        await new Promise((r) => setTimeout(r, DELAI_ENTRE));
-      }
-
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('echoue').classList.remove('hidden');
+      fetch('/', { method: 'GET', cache: 'no-store', signal: controller.signal })
+        .then((r) => {
+          clearTimeout(timer);
+          if (r.ok) {
+            window.location.href = '/';
+          } else {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('echoue').classList.remove('hidden');
+          }
+        })
+        .catch(() => {
+          clearTimeout(timer);
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('echoue').classList.remove('hidden');
+        });
     }
   </script>
 </body>
