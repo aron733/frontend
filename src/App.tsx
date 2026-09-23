@@ -15,10 +15,15 @@ function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
+    let timerOffline: ReturnType<typeof setTimeout> | null = null;
+
     const checkNetwork = async () => {
       const status = await Network.getStatus();
       if (!status.connected) {
-        window.location.href = '/offline.html';
+        if (timerOffline) clearTimeout(timerOffline);
+        timerOffline = setTimeout(() => {
+          window.location.href = '/offline.html';
+        }, 10000);
       }
     };
 
@@ -26,12 +31,21 @@ function App() {
 
     const listener = Network.addListener('networkStatusChange', (status) => {
       if (!status.connected) {
-        window.location.href = '/offline.html';
+        if (timerOffline) clearTimeout(timerOffline);
+        timerOffline = setTimeout(() => {
+          window.location.href = '/offline.html';
+        }, 10000);
+      } else {
+        if (timerOffline) {
+          clearTimeout(timerOffline);
+          timerOffline = null;
+        }
       }
     });
 
     return () => {
       listener.then(l => l.remove());
+      if (timerOffline) clearTimeout(timerOffline);
     };
   }, []);
 

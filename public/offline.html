@@ -79,19 +79,13 @@
   </div>
 
   <script>
-    const TIMEOUT = 10000;
-
     function reessayer() {
       document.getElementById('initial').classList.add('hidden');
       document.getElementById('echoue').classList.add('hidden');
       document.getElementById('loading').classList.remove('hidden');
 
       const controller = new AbortController();
-      const timer = setTimeout(() => {
-        controller.abort();
-        document.getElementById('loading').classList.add('hidden');
-        document.getElementById('echoue').classList.remove('hidden');
-      }, TIMEOUT);
+      const timer = setTimeout(() => controller.abort(), 10000);
 
       fetch('/', { method: 'GET', cache: 'no-store', signal: controller.signal })
         .then((r) => {
@@ -99,8 +93,7 @@
           if (r.ok) {
             window.location.href = '/';
           } else {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('echoue').classList.remove('hidden');
+            throw new Error('KO');
           }
         })
         .catch(() => {
