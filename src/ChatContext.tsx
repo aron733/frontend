@@ -35,6 +35,8 @@ export const useChat = () => useContext(ChatContext);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const { notifier } = useNotification();
+  const notifierRef = useRef(notifier);
+  useEffect(() => { notifierRef.current = notifier; }, [notifier]);
   const [connecte, setConnecte] = useState(false);
   const [convActive, setConvActive] = useState<string | null>(null);
   const [messagesParConv, setMessagesParConv] = useState<Record<string, Message[]>>({});
@@ -126,7 +128,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
               // Notifie si la conv n'est PAS active
               if (convActiveRef.current !== convId) {
-                notifier(
+                notifierRef.current(
                   data.from_username || 'Nouveau message',
                   data.message || 'Fichier reçu'
                 );
@@ -200,7 +202,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       actif = false;
       wsRef.current?.close();
     };
-  }, [notifier]);
+  }, []);  // notifier via notifierRef (evite reconnexion WS)
 
   // Keep-alive : ping toutes les 10s pour garder le WS ouvert (Render Free coupe à ~21s)
   useEffect(() => {
