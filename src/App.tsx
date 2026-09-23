@@ -1,6 +1,7 @@
 // import axios from 'axios';  // Test : désactive refresh badge
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { Network } from '@capacitor/network';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -51,7 +52,7 @@ function App() {
     });
 
     return () => {
-      listener.then(l => l.remove());
+      listener.then((l: any) => l.remove());
       if (timerOffline) clearTimeout(timerOffline);
     };
   }, []);
@@ -61,6 +62,34 @@ function App() {
     StatusBar.setOverlaysWebView({ overlay: false });
     StatusBar.setStyle({ style: Style.Dark });
     StatusBar.setBackgroundColor({ color: '#0a0a0f' });
+  }, []);
+
+  // Ecoute les deep links (App Links Android)
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    const listener = CapacitorApp.addListener('appUrlOpen', (event: any) => {
+      try {
+        const url = new URL(event.url);
+        const token = url.searchParams.get('access_token');
+        const userId = url.searchParams.get('user_id');
+        const refreshToken = url.searchParams.get('refresh_token');
+        const email = url.searchParams.get('email');
+        const prenom = url.searchParams.get('prenom');
+        const nom = url.searchParams.get('nom');
+        const photo = url.searchParams.get('photo');
+        if (token && userId) {
+          localStorage.setItem('access_token', token);
+          localStorage.setItem('refresh_token', refreshToken || '');
+          localStorage.setItem('user', JSON.stringify({
+            user_id: userId, email, prenom, nom, photo_profil: photo,
+          }));
+          window.location.reload();
+        }
+      } catch (e) {
+        console.warn('appUrlOpen error', e);
+      }
+    });
+    return () => { listener.then((l: any) => l.remove()); };
   }, []);
 
   useEffect(() => {
