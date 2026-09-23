@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { chargerMessages, sauvegarderMessages } from '../db';
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
@@ -156,31 +157,37 @@ function Chat() {
 
   const selectUser = async (user: any) => {
     setSelectedUser(user);
-    
-    // Charge l'historique depuis le backend principal
+
+    const userId = user.id || user.user_id;
+    const convId = `user_${userId}`;
+    setConvActive(convId);
+
+    // 1. Affiche le cache IMMEDIATEMENT (0ms)
+    const cachedMsgs = await chargerMessages(convId);
+    if (cachedMsgs && cachedMsgs.length > 0) {
+      setMessagesConv(convId, cachedMsgs);
+    }
+
+    // 2. Puis fetch les nouveaux messages depuis le backend
     try {
-      const userId = user.id || user.user_id;
-      const convId = `user_${userId}`;
-      setConvActive(convId);
       const convResponse = await axios.get(`${API_URL}/conversations/`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
-      
+
       const conversations = convResponse.data.conversations || [];
-      const conv = conversations.find((c: any) => 
+      const conv = conversations.find((c: any) =>
         c.autre_user.id === userId
       );
-      
+
       if (conv) {
-        // Marque les messages comme lus
         await axios.post(`${API_URL}/conversations/${conv.id}/marquer-lus/`, {}, {
           headers: { Authorization: `Bearer ${getToken()}` }
         }).catch(() => {});
-        
+
         const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
-        
+
         const msgs = (msgResponse.data.messages || []).map((m: any) => ({
           id: m.id,
           type: 'message',
@@ -191,8 +198,9 @@ function Chat() {
           fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://api.vokyvo.com${m.fichier_url}`) : null,
           audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://api.vokyvo.com${m.audio_url}`) : null,
         }));
-        
+
         setMessagesConv(convId, msgs);
+        await sauvegarderMessages(convId, msgs);
       }
     } catch (err) {
       console.error('Erreur chargement historique:', err);
@@ -254,6 +262,7 @@ function Chat() {
               audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://api.vokyvo.com${m.audio_url}`) : null,
             }));
             setMessagesConv(convId, msgs);
+            sauvegarderMessages(convId, msgs);
           }
         }
       } catch (err) {
