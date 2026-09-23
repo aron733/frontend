@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { chargerMessages, sauvegarderMessages } from '../db';
+import { chargerMessages, sauvegarderMessages, chargerConversations as chargerConversationsCache, sauvegarderConversations as sauvegarderConversationsCache } from '../db';
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
@@ -82,6 +82,17 @@ function Chat() {
 
   // Fonction reutilisable : charge conversations + groupes
   const chargerConversationsEtGroupes = async () => {
+    // 1. Affiche le cache IMMEDIATEMENT
+    const cached = await chargerConversationsCache();
+    if (cached && cached.users && cached.users.length > 0) {
+      setUsers(cached.users);
+      setAllUsers(cached.users);
+    }
+    if (cached && cached.groupes) {
+      setGroupes(cached.groupes);
+    }
+
+    // 2. Puis fetch les nouvelles donnees
     try {
       const convResponse = await axios.get(`${API_URL}/conversations/`, {
         headers: { Authorization: `Bearer ${getToken()}` }
@@ -130,7 +141,11 @@ function Chat() {
       const groupesResponse = await axios.get(`${API_URL}/groupes/`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
-      setGroupes(groupesResponse.data.groupes || []);
+      const groupesData = groupesResponse.data.groupes || [];
+      setGroupes(groupesData);
+
+      // 3. Sauvegarde dans le cache
+      await sauvegarderConversationsCache({ users: mergedUsers, groupes: groupesData });
     } catch (err) {
       console.error('Erreur chargement conversations/groupes');
     }
