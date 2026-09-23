@@ -15,6 +15,9 @@ function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
+    // Ne rien faire si on est deja sur offline.html
+    if (window.location.pathname.includes('offline')) return;
+
     let timerOffline: ReturnType<typeof setTimeout> | null = null;
 
     const checkNetwork = async () => {
@@ -22,7 +25,9 @@ function App() {
       if (!status.connected) {
         if (timerOffline) clearTimeout(timerOffline);
         timerOffline = setTimeout(() => {
-          window.location.href = '/offline.html';
+          if (!window.location.pathname.includes('offline')) {
+            window.location.href = '/offline.html';
+          }
         }, 1000);
       }
     };
@@ -33,7 +38,9 @@ function App() {
       if (!status.connected) {
         if (timerOffline) clearTimeout(timerOffline);
         timerOffline = setTimeout(() => {
-          window.location.href = '/offline.html';
+          if (!window.location.pathname.includes('offline')) {
+            window.location.href = '/offline.html';
+          }
         }, 1000);
       } else {
         if (timerOffline) {
