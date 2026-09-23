@@ -46,7 +46,7 @@ function Chat() {
 
   // Auto-scroll vers le dernier message
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messagesParConv, selectedUser, groupeActif]);
   const getToken = () => localStorage.getItem('access_token') || '';
   const [, setTick] = useState(0);
