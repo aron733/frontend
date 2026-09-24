@@ -27,6 +27,7 @@ type ChatCtx = {
   setMessagesConv: (convId: string, msgs: Message[]) => void;
   presence: Record<string, string>;
   presenceTime: Record<string, string>;
+  setPresenceFromRest: (userId: number | string, estEnLigne: boolean, derniereActivite: string | null) => void;
   envoyer: (payload: any) => boolean;
 };
 
@@ -256,6 +257,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return false;
   };
 
+  // Initialise la presence depuis les donnees REST (pour les users deja hors ligne)
+  const setPresenceFromRest = (userId: number | string, estEnLigne: boolean, derniereActivite: string | null) => {
+    setPresence((prev) => ({ ...prev, [userId]: estEnLigne ? 'online' : 'offline' }));
+    if (derniereActivite) {
+      setPresenceTime((prev) => ({ ...prev, [userId]: derniereActivite }));
+    }
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -267,6 +276,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setMessagesConv,
         presence,
         presenceTime,
+        setPresenceFromRest,
         envoyer,
       }}
     >

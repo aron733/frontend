@@ -8,7 +8,7 @@ import BadgeVerifie from '../BadgeVerifie';
 
 
 function Chat() {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [nouveauMessage, setNouveauMessage] = useState('');
@@ -120,15 +120,25 @@ function Chat() {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
 
-      const convUsers = (convResponse.data.conversations || []).map((c: any) => ({
-        id: c.autre_user.id,
-        username: c.autre_user.username || '',
-        first_name: c.autre_user.prenom || '',
-        last_name: c.autre_user.nom || '',
-        badge_verifie: c.autre_user.badge_verifie || false,
-        photo: c.autre_user.photo || null,
-        nb_non_lus: c.nb_non_lus || 0,
-      }));
+      const convUsers = (convResponse.data.conversations || []).map((c: any) => {
+        // Initialise la presence depuis le REST (pour les users deja hors ligne)
+        if (c.autre_user && c.autre_user.id) {
+          setPresenceFromRest(
+            c.autre_user.id,
+            c.autre_user.est_en_ligne || false,
+            c.autre_user.derniere_activite || null
+          );
+        }
+        return {
+          id: c.autre_user.id,
+          username: c.autre_user.username || '',
+          first_name: c.autre_user.prenom || '',
+          last_name: c.autre_user.nom || '',
+          badge_verifie: c.autre_user.badge_verifie || false,
+          photo: c.autre_user.photo || null,
+          nb_non_lus: c.nb_non_lus || 0,
+        };
+      });
 
       const usersResponse = await axios.get(`${API_URL}/rechercher-users/?q=%20`, {
         headers: { Authorization: `Bearer ${getToken()}` }
