@@ -1,3 +1,4 @@
+import { viderCache } from '../db';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Vokyvo from './Vokyvo';
@@ -34,11 +35,13 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   }, [pageActive]);
   const token = localStorage.getItem('access_token');
 
-  const deconnexion = () => {
+  const deconnexion = async () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('vokyvo_page');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
+    // Vide le cache IndexedDB (messages + conversations)
+    await viderCache();
     onLogout();
   };
 
