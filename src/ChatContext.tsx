@@ -261,7 +261,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const setPresenceFromRest = (userId: number | string, estEnLigne: boolean, derniereActivite: string | null) => {
     setPresence((prev) => ({ ...prev, [userId]: estEnLigne ? 'online' : 'offline' }));
     if (derniereActivite) {
-      setPresenceTime((prev) => ({ ...prev, [userId]: derniereActivite }));
+      setPresenceTime((prev) => {
+        const ancien = prev[userId];
+        // Garde TOUJOURS la date la plus recente (WS > REST)
+        if (ancien) {
+          try {
+            const dAncien = new Date(ancien).getTime();
+            const dNouveau = new Date(derniereActivite).getTime();
+            if (dAncien > dNouveau) return prev; // On garde l'ancien (plus recent)
+          } catch (e) {}
+        }
+        return { ...prev, [userId]: derniereActivite };
+      });
     }
   };
 
