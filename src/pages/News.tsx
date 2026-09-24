@@ -50,7 +50,14 @@ function News() {
 
     try {
       // Utilise le backend Django comme proxy
-      const response = await fetch(`https://api.vokyvo.com/api/rss-proxy/?url=${encodeURIComponent(section.url)}`);
+      const token = localStorage.getItem('access_token') || '';
+      const response = await fetch(`https://api.vokyvo.com/api/rss-proxy/?url=${encodeURIComponent(section.url)}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) {
+        setArticles([]);
+        return;
+      }
       const data = await response.json();
       setArticles(data.articles || []);
     } catch (err) {
