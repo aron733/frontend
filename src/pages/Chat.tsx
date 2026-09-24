@@ -8,7 +8,7 @@ import BadgeVerifie from '../BadgeVerifie';
 
 
 function Chat() {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [nouveauMessage, setNouveauMessage] = useState('');
@@ -58,6 +58,28 @@ function Chat() {
   const getMyId = () => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
     return parseInt(userData.user_id || userData.id || '0');
+  };
+
+  // Retourne le texte du statut : "En ligne" | "Il y a X min" | "Hors ligne"
+  const getStatutText = (userId: number | string) => {
+    const status = presence[userId];
+    if (status === 'online') return 'En ligne';
+    const ts = presenceTime[userId];
+    if (!ts) return 'Hors ligne';
+    try {
+      const diff = Date.now() - new Date(ts).getTime();
+      const min = Math.floor(diff / 60000);
+      if (min < 1) return 'À l\'instant';
+      if (min < 60) return `Il y a ${min} min`;
+      const heures = Math.floor(min / 60);
+      if (heures < 24) return `Il y a ${heures} h`;
+      const jours = Math.floor(heures / 24);
+      if (jours === 1) return 'Hier';
+      if (jours < 7) return `Il y a ${jours} jours`;
+      return 'Hors ligne';
+    } catch {
+      return 'Hors ligne';
+    }
   };
 
   const supprimerMessage = async (messageId: number) => {
@@ -1244,7 +1266,7 @@ function Chat() {
                   {selectedUser.badge_verifie && <BadgeVerifie />}
                 </h3>
                 <span style={presence[selectedUser.id || selectedUser.user_id] === 'online' ? styles.userOnline : styles.userOffline}>
-                  {presence[selectedUser.id || selectedUser.user_id] === 'online' ? 'En ligne' : 'Hors ligne'}
+                  {getStatutText(selectedUser.id || selectedUser.user_id)}
                 </span>
               </div>
 
