@@ -43,6 +43,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [presence, setPresence] = useState<Record<string, string>>({});
   const [presenceTime, setPresenceTime] = useState<Record<string, string>>({});
   const wsRef = useRef<WebSocket | null>(null);
+  const connecterRef = useRef<(() => void) | null>(null);
   const convActiveRef = useRef<string | null>(null);
 
   // Garde la conv active à jour dans la ref (pour le onmessage)
@@ -64,6 +65,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let actif = true;
+    let reconnectDelay = 0;
 
     const connecter = () => {
       if (!actif || STOP_RECONNECT) return;
@@ -79,6 +81,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
         ws.onopen = () => {
           console.log('🌐 WS Global connecté');
+          reconnectDelay = 0; // Reset backoff
           setConnecte(true);
           // Notifie les pages de se resynchroniser (messages manques)
           window.dispatchEvent(new CustomEvent('ws-reconnect'));
@@ -185,10 +188,16 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
         ws.onclose = () => {
           setConnecte(false);
-          if (actif && !STOP_RECONNECT) setTimeout(connecter, 2000);
+          if (actif && !STOP_RECONNECT) {
+            // Backoff court : 300ms -> 600ms -> 1.2s -> 3s max
+            reconnectDelay = Math.min(reconnectDelay * 2 || 100, 3000);
+            setTimeout(connecter, reconnectDelay);
+          }
         };
 
-        ws.onerror = () => {};
+        ws.onerror = () => {
+          // Rien (onclose gerera le backoff)
+        };
         wsRef.current = ws;
       } catch (e) {
         console.warn('WS err:', e);
@@ -196,15 +205,40 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    connecterRef.current = connecter;
     connecter();
 
     return () => {
       actif = false;
       wsRef.current?.close();
     };
+  }, []);
+
+  // Reconnexion IMMEDIATE au retour sur l'app (visibility / online)
+  useEffect(() => {
+    const reconnecterImmediat = () => {
+      if (STOP_RECONNECT) return;
+      const ws = wsRef.current;
+      if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+        connecterRef.current?.();
+      }
+    };
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') reconnecterImmediat();
+    };
+    const onOnline = () => reconnecterImmediat();
+
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('online', onOnline);
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('online', onOnline);
+    };
   }, []);  // notifier via notifierRef (evite reconnexion WS)
 
-  // Keep-alive : ping toutes les 10s pour garder le WS ouvert (Render Free coupe à ~21s)
+  // Keep-alive : ping toutes les 10s pour garder le WS ouvert
   useEffect(() => {
     const interval = setInterval(() => {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
