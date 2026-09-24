@@ -644,7 +644,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       <div style={styles.container}>
         <div style={styles.card}>
           <h1 style={styles.logo}>VOKYVO</h1>
-          <p style={styles.subtitle}>Ta plateforme tout-en-un</p>
+          <p style={styles.subtitle}>Everything. Everyone. Everywhere.</p>
 
           <div style={styles.successBox}>
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="url(#successGrad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '20px' }}>
@@ -760,7 +760,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.logo}>VOKYVO</h1>
-        <p style={styles.subtitle}>Ta plateforme tout-en-un</p>
+        <p style={styles.subtitle}>Everything. Everyone. Everywhere.</p>
 
         <div style={styles.switchContainer}>
           <button
