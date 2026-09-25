@@ -12,9 +12,6 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [erreur, setErreur] = useState('');
-  const [premiumLoading, setPremiumLoading] = useState(false);
-  const [premiumMessage, setPremiumMessage] = useState('');
-  const [premiumErreur, setPremiumErreur] = useState('');
 
   const getToken = () => localStorage.getItem('access_token') || '';
 
@@ -42,38 +39,6 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
       window.removeEventListener('user-updated', handleUserUpdated);
     };
   }, []);
-
-  // Détection du retour de paiement Dodo
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('paiement') === 'succes') {
-      setPremiumMessage('Paiement reçu ! Ton compte VOKYVO+ sera activé dans quelques instants.');
-      // Nettoie l'URL
-      window.history.replaceState({}, '', '/vokyvo-plus');
-    }
-  }, []);
-
-  const acheterPremium = async () => {
-    setPremiumLoading(true);
-    setPremiumErreur('');
-    setPremiumMessage('');
-    try {
-      const res = await axios.post(`${API_URL}/dodo/checkout/`, {}, {
-        headers: { Authorization: `Bearer ${getToken()}` }
-      });
-      const url = res.data.checkout_url;
-      if (!url) {
-        setPremiumErreur('URL de paiement introuvable');
-        return;
-      }
-      // Ouvre le checkout Dodo
-      window.location.href = url;
-    } catch (err: any) {
-      setPremiumErreur(err.response?.data?.erreur || 'Erreur lors de la création du paiement');
-    } finally {
-      setPremiumLoading(false);
-    }
-  };
 
   const demanderBadge = async () => {
     setLoading(true);
@@ -158,11 +123,16 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
           <p style={{ color: '#667eea', fontSize: '22px', fontWeight: 800, margin: '0 0 15px' }}>
             2 500 FCFA <span style={{ fontSize: '13px', color: '#888', fontWeight: 400 }}>/ mois</span>
           </p>
+          {/* Bouton Dodo Payments — caché en attendant la finalisation
           <button onClick={acheterPremium} disabled={premiumLoading} style={{ ...styles.btnPrimaire, width: '100%' }}>
             {premiumLoading ? 'Redirection...' : 'Passer à VOKYVO+'}
           </button>
           {premiumMessage && <p style={{ color: '#28a745', marginTop: '12px', fontSize: '14px' }}>{premiumMessage}</p>}
           {premiumErreur && <p style={{ color: '#dc3545', marginTop: '12px', fontSize: '14px' }}>{premiumErreur}</p>}
+          */}
+          <div style={{ padding: '14px', background: 'rgba(255,255,255,0.05)', border: '1px dashed rgba(102,126,234,0.4)', borderRadius: '12px', textAlign: 'center' }}>
+            <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>Bientôt disponible</p>
+          </div>
         </div>
 
         <div style={styles.features}>
