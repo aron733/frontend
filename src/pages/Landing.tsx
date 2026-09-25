@@ -1030,6 +1030,12 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           }} style={styles.footerLink}>À propos</a>
           <a href="#" onClick={async (e) => {
             e.preventDefault();
+            const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/blog?from=app' : 'https://vokyvo.com/blog';
+            if (Capacitor.isNativePlatform()) await Browser.open({ url });
+            else window.location.href = url;
+          }} style={styles.footerLink}>Blog</a>
+          <a href="#" onClick={async (e) => {
+            e.preventDefault();
             const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/confidentialite?from=app' : 'https://vokyvo.com/confidentialite';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
