@@ -12,6 +12,9 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [erreur, setErreur] = useState('');
+  const [premiumLoading, setPremiumLoading] = useState(false);
+  const [premiumMessage, setPremiumMessage] = useState('');
+  const [premiumErreur, setPremiumErreur] = useState('');
 
   const getToken = () => localStorage.getItem('access_token') || '';
 
@@ -39,6 +42,38 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
       window.removeEventListener('user-updated', handleUserUpdated);
     };
   }, []);
+
+  // Détection du retour de paiement Dodo
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paiement') === 'succes') {
+      setPremiumMessage('Paiement reçu ! Ton compte VOKYVO+ sera activé dans quelques instants.');
+      // Nettoie l'URL
+      window.history.replaceState({}, '', '/vokyvo-plus');
+    }
+  }, []);
+
+  const acheterPremium = async () => {
+    setPremiumLoading(true);
+    setPremiumErreur('');
+    setPremiumMessage('');
+    try {
+      const res = await axios.post(`${API_URL}/dodo/checkout/`, {}, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      const url = res.data.checkout_url;
+      if (!url) {
+        setPremiumErreur('URL de paiement introuvable');
+        return;
+      }
+      // Ouvre le checkout Dodo
+      window.location.href = url;
+    } catch (err: any) {
+      setPremiumErreur(err.response?.data?.erreur || 'Erreur lors de la création du paiement');
+    } finally {
+      setPremiumLoading(false);
+    }
+  };
 
   const demanderBadge = async () => {
     setLoading(true);
@@ -114,6 +149,21 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
 
         {message && <p style={styles.message}>{message}</p>}
         {erreur && <p style={styles.erreur}>{erreur}</p>}
+
+        <div style={{ marginTop: '30px', padding: '20px', background: 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)', border: '1px solid rgba(102,126,234,0.3)', borderRadius: '15px', textAlign: 'left' }}>
+          <h3 style={{ color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700 }}>VOKYVO+ Premium</h3>
+          <p style={{ color: '#aaa', fontSize: '14px', margin: '0 0 15px', lineHeight: 1.5 }}>
+            Débloque toutes les fonctionnalités premium de VOKYVO.
+          </p>
+          <p style={{ color: '#667eea', fontSize: '22px', fontWeight: 800, margin: '0 0 15px' }}>
+            2 500 FCFA <span style={{ fontSize: '13px', color: '#888', fontWeight: 400 }}>/ mois</span>
+          </p>
+          <button onClick={acheterPremium} disabled={premiumLoading} style={{ ...styles.btnPrimaire, width: '100%' }}>
+            {premiumLoading ? 'Redirection...' : 'Passer à VOKYVO+'}
+          </button>
+          {premiumMessage && <p style={{ color: '#28a745', marginTop: '12px', fontSize: '14px' }}>{premiumMessage}</p>}
+          {premiumErreur && <p style={{ color: '#dc3545', marginTop: '12px', fontSize: '14px' }}>{premiumErreur}</p>}
+        </div>
 
         <div style={styles.features}>
           <p style={styles.featuresTitle}>Bientôt disponible sur VOKYVO+</p>
