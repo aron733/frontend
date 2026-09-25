@@ -231,6 +231,11 @@ function Chat() {
           headers: { Authorization: `Bearer ${getToken()}` }
         }).catch(() => {});
 
+        // Fix cosmétique : mettre le badge à 0 immédiatement (sans attendre le refresh)
+        setAllUsers((prev: any[]) => prev.map((u: any) =>
+          u.id === userId ? { ...u, nb_non_lus: 0 } : u
+        ));
+
         const msgResponse = await axios.get(`${API_URL}/conversations/${conv.id}/messages/`, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
