@@ -115,6 +115,7 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
         {message && <p style={styles.message}>{message}</p>}
         {erreur && <p style={styles.erreur}>{erreur}</p>}
 
+        {/* Bloc VOKYVO+ Premium — caché en attendant la finalisation
         <div style={{ marginTop: '30px', padding: '20px', background: 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)', border: '1px solid rgba(102,126,234,0.3)', borderRadius: '15px', textAlign: 'left' }}>
           <h3 style={{ color: 'white', fontSize: '18px', margin: '0 0 8px', fontWeight: 700 }}>VOKYVO+ Premium</h3>
           <p style={{ color: '#aaa', fontSize: '14px', margin: '0 0 15px', lineHeight: 1.5 }}>
@@ -129,12 +130,12 @@ function VokyvoPlus({ onRetour }: VokyvoPlusProps) {
           </button>
           {premiumMessage && <p style={{ color: '#28a745', marginTop: '12px', fontSize: '14px' }}>{premiumMessage}</p>}
           {premiumErreur && <p style={{ color: '#dc3545', marginTop: '12px', fontSize: '14px' }}>{premiumErreur}</p>}
-          */}
           <div style={{ padding: '14px', background: 'rgba(255,255,255,0.05)', border: '1px dashed rgba(102,126,234,0.4)', borderRadius: '12px', textAlign: 'center' }}>
             <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>Bientôt disponible</p>
           </div>
         </div>
 
+        */}
         <div style={styles.features}>
           <p style={styles.featuresTitle}>Bientôt disponible sur VOKYVO+</p>
           <div style={styles.featureItem}>
