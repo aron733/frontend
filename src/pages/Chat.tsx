@@ -514,14 +514,6 @@ function Chat() {
       fichier_url: fichierTemp ? URL.createObjectURL(fichierTemp) : null,
     });
 
-    // WS EN PREMIER (temps réel instantané)
-    envoyer({
-      action: 'message',
-      dest_user_id: destUserId,
-      message: msgTexte,
-      fichier_url: null,
-    });
-
     // Reset states
     setNouveauMessage('');
     setFichierSelectionne(null);
@@ -570,6 +562,14 @@ function Chat() {
               : m
           ));
         }
+
+        // WS APRÈS REST (avec la vraie URL Cloudinary)
+        envoyer({
+          action: 'message',
+          dest_user_id: destUserId,
+          message: msgTexte,
+          fichier_url: sendRes.data.fichier_url || null,
+        });
       }
 
       // Déjà ajouté au state - ne rien faire ici
