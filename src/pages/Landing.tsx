@@ -4,6 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 // import { loginOneSignal } from '../onesignal';
 import pkg from '../../package.json';
+import BandeauRentree from '../BandeauRentree';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 const VERSION = pkg.version;
@@ -757,6 +758,8 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   }
 
   return (
+    <>
+      <BandeauRentree />
     <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.logo}>VOKYVO</h1>
@@ -1095,6 +1098,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         </div>
       </footer>
     </div>
+    </>
   );
 }
 
