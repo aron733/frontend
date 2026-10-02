@@ -5,6 +5,8 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import CreerGroupe from './CreerGroupe';
 import BadgeVerifie from '../BadgeVerifie';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 
 
 function Chat() {
@@ -1340,14 +1342,19 @@ function Chat() {
                     src={msg.fichier_url}
                     style={styles.messageImage}
                     alt="fichier"
-                    onClick={() => window.open(msg.fichier_url || '', '_blank')}
+                    onClick={async () => {
+                      const url = msg.fichier_url || '';
+                      if (!url) return;
+                      if (Capacitor.isNativePlatform()) await Browser.open({ url });
+                      else window.open(url, '_blank');
+                    }}
                   />
                 )}
                 {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
                   <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={styles.messageVideo} controls preload="metadata" />
                 )}
                 {msg.fichier_url && !/\.(jpg|jpeg|png|gif|webp|bmp|mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
-                  <a href={msg.fichier_url} target="_blank" style={styles.messageFichier}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', verticalAlign: 'middle' }}><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>Télécharger le fichier</a>
+                  <a href={msg.fichier_url} target="_blank" onClick={async (e) => { if (Capacitor.isNativePlatform()) { e.preventDefault(); await Browser.open({ url: msg.fichier_url || '' }); } }} style={styles.messageFichier}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', verticalAlign: 'middle' }}><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>Télécharger le fichier</a>
                 )}
                 {msg.audio_url && (
                   <audio 
