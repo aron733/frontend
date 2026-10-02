@@ -1051,10 +1051,10 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           }} style={styles.footerLink}>Conditions</a>
           <a href="#" onClick={async (e) => {
             e.preventDefault();
-            const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/confidentialite?from=app' : 'https://vokyvo.com/confidentialite';
+            const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/aron-vokouma?from=app' : 'https://vokyvo.com/aron-vokouma';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
-          }} style={styles.footerLink}>RGPD</a>
+          }} style={styles.footerLink}>Fondateur</a>
         </div>
         <a href="#" onClick={async (e) => { e.preventDefault(); const url = "https://stats.uptimerobot.com/0DXeqdPiLO"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.open(url, "_blank"); }} style={styles.uptime}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="#28a745">
