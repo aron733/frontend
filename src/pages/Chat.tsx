@@ -1266,7 +1266,14 @@ function Chat() {
                 placeholder={`Message dans ${groupeActif.nom}...`}
                 style={styles.input}
               />
-              <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} style={styles.sendButton}>➤</button>
+              <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} disabled={uploadEnCours} style={styles.sendButton}>
+                {uploadEnCours ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
+                    <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
+                  </svg>
+                ) : '➤'}
+              </button>
             </div>
           </div>
         )}
@@ -1437,7 +1444,14 @@ function Chat() {
                   placeholder="Écris un message..."
                   style={styles.input}
                 />
-                <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} style={styles.sendButton}>➤</button>
+                <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} disabled={uploadEnCours} style={styles.sendButton}>
+                {uploadEnCours ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
+                    <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
+                  </svg>
+                ) : '➤'}
+              </button>
               </div>
             </>
         </div>
