@@ -45,6 +45,7 @@ function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<any>(null);
+  const [uploadEnCours, setUploadEnCours] = useState(false);
 
   // Auto-scroll vers le dernier message
   useEffect(() => {
@@ -265,7 +266,11 @@ function Chat() {
   useEffect(() => {
     if (!selectedUser && !groupeActif) return;
 
+    let tick = 0;
     const interval = setInterval(async () => {
+      tick++;
+      // Si pas d'upload, ne fetch qu'une fois toutes les 30 secondes
+      if (!uploadEnCours && tick % 30 !== 0) return;
       try {
         if (groupeActif && !selectedUser) {
           const convId = `groupe_${groupeActif.id}`;
@@ -322,10 +327,10 @@ function Chat() {
       } catch (err) {
         // Silencieux
       }
-    }, 30000);
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, [selectedUser, groupeActif]);
+  }, [selectedUser, groupeActif, uploadEnCours]);
 
   const demarrerEnregistrement = async () => {
     try {
@@ -462,6 +467,9 @@ function Chat() {
     if (!nouveauMessage.trim() && !fichierSelectionne) return;
     if (!groupeActif && !selectedUser) return;
 
+    const uploadNecessaire = !!fichierSelectionne;
+    if (uploadNecessaire) setUploadEnCours(true);
+
     const destUserId = selectedUser?.id || selectedUser?.user_id;
     
     // Envoi vers un groupe
@@ -495,6 +503,7 @@ function Chat() {
       setNouveauMessage('');
       setFichierSelectionne(null);
       setApercuUrl(null);
+      if (uploadNecessaire) setUploadEnCours(false);
       return;
     }
     
@@ -576,6 +585,8 @@ function Chat() {
     } catch (err: any) {
       console.error('Erreur envoi message:', err);
       alert('Erreur envoi : ' + (err.response?.data?.erreur || err.message || 'inconnu'));
+    } finally {
+      if (uploadNecessaire) setUploadEnCours(false);
     }
   };
 
