@@ -315,14 +315,20 @@ function Chat() {
               fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://api.vokyvo.com${m.fichier_url}`) : null,
               audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://api.vokyvo.com${m.audio_url}`) : null,
             }));
-            setMessagesConv(convId, msgs);
-            sauvegarderMessages(convId, msgs);
+            // Garde les messages en cours d'upload (blob) pour éviter la disparition
+            const anciens = messagesParConv[convId] || [];
+            const enCours = anciens.filter((m) => m.fichier_url && m.fichier_url.startsWith('blob:'));
+            const idsBackend = new Set(msgs.map((m: any) => m.message));
+            const orphelins = enCours.filter((e) => !idsBackend.has(e.message));
+            const fusion = [...msgs, ...orphelins];
+            setMessagesConv(convId, fusion);
+            sauvegarderMessages(convId, fusion);
           }
         }
       } catch (err) {
         // Silencieux
       }
-    }, 60000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [selectedUser, groupeActif]);
@@ -1337,7 +1343,7 @@ function Chat() {
                     }}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
-                {msg.fichier_url && /\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(msg.fichier_url) && (
+                {msg.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(msg.fichier_url) || (msg.fichier_url.includes('cloudinary.com') && msg.fichier_url.includes('/image/upload/'))) && (
                   <img
                     src={msg.fichier_url}
                     style={styles.messageImage}
@@ -1353,7 +1359,7 @@ function Chat() {
                 {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
                   <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={styles.messageVideo} controls preload="metadata" />
                 )}
-                {msg.fichier_url && !/\.(jpg|jpeg|png|gif|webp|bmp|mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
+                {msg.fichier_url && !/\.(jpg|jpeg|png|gif|webp|bmp|mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && !(msg.fichier_url.includes('cloudinary.com') && msg.fichier_url.includes('/image/upload/')) && !(msg.fichier_url.includes('cloudinary.com') && msg.fichier_url.includes('/video/upload/')) && (
                   <a href={msg.fichier_url} target="_blank" onClick={async (e) => { if (Capacitor.isNativePlatform()) { e.preventDefault(); await Browser.open({ url: msg.fichier_url || '' }); } }} style={styles.messageFichier}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', verticalAlign: 'middle' }}><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>Télécharger le fichier</a>
                 )}
                 {msg.audio_url && (

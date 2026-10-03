@@ -61,7 +61,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   };
 
   const setMessagesConv = (convId: string, msgs: Message[]) => {
-    setMessagesParConv((prev) => ({ ...prev, [convId]: msgs }));
+    setMessagesParConv((prev) => {
+      const anciens = prev[convId] || [];
+      // Préserve les messages locaux en cours d'upload (blob URL)
+      const blobs = anciens.filter((m) => m.fichier_url && m.fichier_url.startsWith('blob:'));
+      if (blobs.length === 0) {
+        return { ...prev, [convId]: msgs };
+      }
+      // Fusionne : les blobs locaux + les messages backend (sans doublon)
+      const idsBackend = new Set(msgs.map((m: any) => m.message));
+      const orphelins = blobs.filter((b) => !idsBackend.has(b.message));
+      return { ...prev, [convId]: [...msgs, ...orphelins] };
+    });
   };
 
   useEffect(() => {
