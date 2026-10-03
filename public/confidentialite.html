@@ -48,11 +48,11 @@ Retour
 <ul>
   <li><strong>InterServer</strong> (hébergement serveur) : base de données, comptes, messages</li>
   <li><strong>Cloudinary</strong> (stockage média) : photos de profil, fichiers, images partagées</li>
-  <li><strong>Groq</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à Groq pour générer les réponses</li>
+  <li><strong>Groq</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à Groq pour générer les réponses. Ils <strong>ne sont PAS utilisés pour entraîner un modèle d'IA</strong>.</li>
   <li><strong>Zoho</strong> (email) : envoi des emails transactionnels (bienvenue, OTP)</li>
   <li><strong>Brevo</strong> (email) : envoi des notifications par email</li>
 </ul>
-<p>Les mots de passe sont chiffrés avec des algorithmes robustes. Aucune donnée n'est vendue ni partagée à des fins publicitaires.</p>
+<p>Les mots de passe sont stockés sous forme de <strong>hachage sécurisé</strong> (PBKDF2, algorithme par défaut de Django) et ne sont <strong>jamais stockés en clair</strong>. Aucune donnée n'est vendue ni partagée à des fins publicitaires.</p>
 
 <h3>5. Vos droits (RGPD)</h3>
 <p>Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi burkinabè sur la protection des données personnelles, vous disposez des droits suivants :</p>
@@ -89,7 +89,17 @@ Retour
 
 <p><strong>Suppression :</strong> vous pouvez demander la suppression de tout ou partie de vos conversations à tout moment en contactant <a href="mailto:support@vokyvo.com">support@vokyvo.com</a>. La suppression est effective sous 30 jours maximum.</p>
 
-<h3>9. Contact</h3>
+<h3>9. Intelligence artificielle — Limites</h3>
+<p>L'assistant IA intégré à VOKYVO est un outil d'aide. Il peut se tromper, produire des informations inexactes ou incomplètes. <strong>Vérifiez toujours les réponses importantes auprès de sources fiables.</strong></p>
+<ul>
+  <li>L'IA <strong>ne remplace pas</strong> un professionnel (médecin, avocat, enseignant, etc.).</li>
+  <li>Vos conversations avec l'IA sont transmises à notre prestataire <strong>Groq</strong> pour générer les réponses.</li>
+  <li>Groq <strong>ne conserve pas</strong> vos messages au-delà du temps nécessaire à la génération de la réponse.</li>
+  <li>Vos conversations IA <strong>ne sont PAS utilisées pour entraîner</strong> un modèle d'intelligence artificielle.</li>
+  <li>Vous pouvez demander la suppression de vos conversations IA à tout moment (voir section 5).</li>
+</ul>
+
+<h3>10. Contact</h3>
 <p>Email : <a href="mailto:support@vokyvo.com">support@vokyvo.com</a><br>
 Telegram : <a href="https://t.me/vokyvo_bot">@vokyvo_bot</a><br>
 WhatsApp : <a href="https://wa.me/22606965441">+226 06 96 54 41</a></p>
