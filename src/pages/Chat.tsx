@@ -503,7 +503,8 @@ function Chat() {
       setNouveauMessage('');
       setFichierSelectionne(null);
       setApercuUrl(null);
-      if (uploadNecessaire) setUploadEnCours(false);
+      // Garde le spinner au moins 1.5s pour un retour visuel propre
+      if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
       return;
     }
     
@@ -588,7 +589,8 @@ function Chat() {
       console.error('Erreur envoi message:', err);
       alert('Erreur envoi : ' + (err.response?.data?.erreur || err.message || 'inconnu'));
     } finally {
-      if (uploadNecessaire) setUploadEnCours(false);
+      // Garde le spinner au moins 1.5s pour un retour visuel propre
+      if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
     }
   };
 
