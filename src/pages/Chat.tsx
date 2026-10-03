@@ -510,10 +510,20 @@ function Chat() {
     // Capture AVANT reset (sinon perdu)
     const msgTexte = nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : '');
 
-    // Ajoute IMMÉDIATEMENT au state (comme les groupes)
-    // Plan B : ne PAS ajouter le blob local (évite les doublons).
-    // Le message apparaîtra quand le backend aura renvoyé l'URL Cloudinary.
-    // (fichierTemp est conservé pour l'upload REST plus bas)
+    // Ajout local UNIQUEMENT pour les textos (pas les fichiers)
+    // Les fichiers apparaîtront après upload Cloudinary (2-4s)
+    if (!fichierSelectionne && nouveauMessage.trim()) {
+      ajouterMessage(`user_${destUserId}`, {
+        type: 'message',
+        message: nouveauMessage,
+        from_user_id: getMyId(),
+        from_username: (() => {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          return (u.prenom || u.first_name || u.username || 'Moi');
+        })(),
+        fichier_url: null,
+      });
+    }
 
     // Reset states
     setNouveauMessage('');
