@@ -315,14 +315,8 @@ function Chat() {
               fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://api.vokyvo.com${m.fichier_url}`) : null,
               audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://api.vokyvo.com${m.audio_url}`) : null,
             }));
-            // Garde les messages en cours d'upload (blob) pour éviter la disparition
-            const anciens = messagesParConv[convId] || [];
-            const enCours = anciens.filter((m) => m.fichier_url && m.fichier_url.startsWith('blob:'));
-            const idsBackend = new Set(msgs.map((m: any) => m.message));
-            const orphelins = enCours.filter((e) => !idsBackend.has(e.message));
-            const fusion = [...msgs, ...orphelins];
-            setMessagesConv(convId, fusion);
-            sauvegarderMessages(convId, fusion);
+            setMessagesConv(convId, msgs);
+            sauvegarderMessages(convId, msgs);
           }
         }
       } catch (err) {

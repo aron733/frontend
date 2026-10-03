@@ -63,14 +63,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const setMessagesConv = (convId: string, msgs: Message[]) => {
     setMessagesParConv((prev) => {
       const anciens = prev[convId] || [];
-      // Préserve les messages locaux en cours d'upload (blob URL)
+      // Préserve uniquement les blobs locaux (upload en cours), pas les messages déjà en DB
       const blobs = anciens.filter((m) => m.fichier_url && m.fichier_url.startsWith('blob:'));
       if (blobs.length === 0) {
         return { ...prev, [convId]: msgs };
       }
-      // Fusionne : les blobs locaux + les messages backend (sans doublon)
-      const idsBackend = new Set(msgs.map((m: any) => m.message));
-      const orphelins = blobs.filter((b) => !idsBackend.has(b.message));
+      // Retire les blobs qui ont déjà leur équivalent en DB (même texte OU même fichier)
+      const textesBackend = new Set(msgs.map((m: any) => m.message));
+      const urlsBackend = new Set(msgs.map((m: any) => m.fichier_url).filter(Boolean));
+      const orphelins = blobs.filter((b: any) => 
+        !textesBackend.has(b.message) && !urlsBackend.has(b.fichier_url)
+      );
+      // Trie par id (les messages backend d'abord)
       return { ...prev, [convId]: [...msgs, ...orphelins] };
     });
   };
