@@ -33,10 +33,14 @@ function openDB(): Promise<IDBDatabase> {
 export async function sauvegarderMessages(convId: string, messages: any[]): Promise<void> {
   try {
     const db = await openDB();
+    // ⚠️ Ne PAS sauvegarder les blobs locaux (ils ne survivent pas au refresh)
+    const messagesFiltres = messages.filter(
+      (m: any) => !m.fichier_url || !String(m.fichier_url).startsWith('blob:')
+    );
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_MESSAGES, 'readwrite');
       const store = tx.objectStore(STORE_MESSAGES);
-      const req = store.put({ convId, messages, updatedAt: Date.now() });
+      const req = store.put({ convId, messages: messagesFiltres, updatedAt: Date.now() });
       req.onsuccess = () => resolve();
       req.onerror = () => reject(req.error);
     });
