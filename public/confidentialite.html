@@ -32,7 +32,7 @@ Retour
   <p style="margin:0; font-size:18px; font-weight:bold;">📧 support@vokyvo.com</p>
   <p style="margin:10px 0 0 0; font-size:14px;">⏱️ Traitement sous <strong>30 JOURS MAXIMUM</strong></p>
 </div>
-<p class="sub">Dernière mise à jour : 21 septembre 2026</p>
+<p class="sub">Dernière mise à jour : 05 octobre 2026</p>
 
 <h3>1. Collecte des données</h3>
 <p>VOKYVO collecte les données suivantes lors de l'inscription : nom, prénom, email, âge, sexe, numéro de téléphone, pays. Ces informations sont nécessaires pour créer votre compte et fournir nos services.</p>
@@ -48,7 +48,7 @@ Retour
 <ul>
   <li><strong>InterServer</strong> (hébergement serveur) : base de données, comptes, messages</li>
   <li><strong>Cloudinary</strong> (stockage média) : photos de profil, fichiers, images partagées</li>
-  <li><strong>Groq</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à Groq pour générer les réponses. <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Ils <strong>ne sont PAS utilisés pour entraîner un modèle d'IA</strong>.</li>
+  <li><strong>Groq</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à Groq pour générer les réponses. <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Nous ne conservons pas ces échanges au-delà de votre conversation, et nous ne les utilisons pas pour entraîner de modèle d'IA. Pour plus d'informations, consultez la politique de confidentialité de Groq.</li>
   <li><strong>Zoho</strong> (email) : envoi des emails transactionnels (bienvenue, OTP)</li>
   <li><strong>Brevo</strong> (email) : envoi des notifications par email</li>
 </ul>
@@ -71,10 +71,19 @@ Retour
 </p>
 
 <h3>6. Sécurité</h3>
-<p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées : chiffrement des données, accès restreint, surveillance continue, sauvegardes régulières.</p>
+<p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées :</p>
+<ul>
+  <li><strong>Chiffrement en transit</strong> : toutes les communications entre votre appareil et nos serveurs sont chiffrées via HTTPS/TLS.</li>
+  <li><strong>Mots de passe hachés</strong> : vos mots de passe sont hachés avec PBKDF2 (algorithme par défaut de Django) et ne sont jamais stockés en clair.</li>
+  <li><strong>Accès restreint</strong> : seules les personnes habilitées ont accès aux données sensibles.</li>
+  <li><strong>Surveillance continue</strong> : nos serveurs sont surveillés en permanence.</li>
+  <li><strong>Sauvegardes régulières</strong> : vos données sont sauvegardées pour prévenir toute perte.</li>
+</ul>
+<p>⚠️ <strong>Important :</strong> vos messages ne sont <strong>pas chiffrés de bout en bout</strong>. Ils sont chiffrés en transit (entre vous et nos serveurs) mais lisibles par nos serveurs pour assurer le service (recherche, notifications, modération).</p>
 
 <h3>7. Conservation</h3>
 <p>Vos données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte à tout moment. Les données sont supprimées sous 30 jours après la demande.</p>
+<p><strong>Comptes inactifs :</strong> les comptes inactifs depuis <strong>24 mois</strong> peuvent être supprimés après notification par email à l'adresse enregistrée. Vous pouvez vous opposer à cette suppression en vous connectant simplement à votre compte.</p>
 
 <p>⚠️ <strong>Note importante :</strong> certaines données peuvent subsister temporairement dans nos <strong>sauvegardes de sécurité</strong>. Ces sauvegardes sont automatiquement purgées après <strong>7 jours</strong>. Vos données disparaissent donc définitivement de nos serveurs dans un délai maximum de <strong>30 jours</strong> après votre demande.</p>
 
@@ -96,14 +105,42 @@ Retour
 <ul>
   <li>L'IA <strong>ne remplace pas</strong> un professionnel (médecin, avocat, enseignant, etc.).</li>
   <li>Vos conversations avec l'IA sont transmises à notre prestataire <strong>Groq</strong> pour générer les réponses.</li>
-  <li>Groq <strong>ne conserve pas</strong> vos messages au-delà du temps nécessaire à la génération de la réponse.</li>
+  <li>Groq traite vos messages uniquement pour générer la réponse. Nous ne conservons pas ces échanges au-delà de votre conversation. Pour plus de détails, consultez la politique de confidentialité de Groq.</li>
   <li>Vos conversations IA <strong>ne sont PAS utilisées pour entraîner</strong> un modèle d'intelligence artificielle.</li>
   <li>Vous pouvez demander la suppression de vos conversations IA à tout moment (voir section 5).</li>
 </ul>
 
-<h3>10. Contact</h3>
+<h3>10. Transfert international de données</h3>
+<p>Certaines de vos données sont transférées en dehors du Burkina Faso pour assurer le fonctionnement du service :</p>
+<ul>
+  <li><strong>États-Unis</strong> : hébergement serveur (InterServer), stockage média (Cloudinary), intelligence artificielle (Groq)</li>
+  <li><strong>Inde</strong> : envoi d'emails transactionnels (Zoho)</li>
+  <li><strong>France</strong> : envoi de notifications email (Brevo)</li>
+</ul>
+<p>Ces transferts sont nécessaires à la fourniture du service. Nous choisissons des prestataires présentant des garanties de protection des données, et nous nous engageons à maintenir un niveau de protection conforme au RGPD et à la loi burkinabè sur la protection des données personnelles.</p>
+
+<h3>11. Âge minimum</h3>
+<p>L'utilisation de VOKYVO est réservée aux personnes âgées de <strong>15 ans ou plus</strong>.</p>
+<ul>
+  <li><strong>Moins de 15 ans</strong> : inscription interdite.</li>
+  <li><strong>Entre 15 et 18 ans</strong> : autorisation parentale obligatoire.</li>
+  <li><strong>18 ans et plus</strong> : inscription libre.</li>
+</ul>
+<p>VOKYVO se réserve le droit de suspendre tout compte créé par un mineur sans autorisation parentale.</p>
+
+<h3>12. Éditeur du service</h3>
+<p><strong>VOKYVO</strong> est édité par <strong>VOKYVO LABS</strong>, projet porté par Aron VOKOUMA.</p>
+<ul>
+  <li><strong>Siège</strong> : Ouagadougou, Burkina Faso</li>
+  <li><strong>Email</strong> : <a href="mailto:support@vokyvo.com">support@vokyvo.com</a></li>
+  <li><strong>Site</strong> : <a href="https://vokyvo.com">vokyvo.com</a></li>
+</ul>
+<p>VOKYVO LABS est un projet en cours de structuration. Nous travaillons activement à son développement et à son organisation.</p>
+
+<h3>13. Contact</h3>
 <p>Email : <a href="mailto:support@vokyvo.com">support@vokyvo.com</a><br>
-Telegram : <a href="https://t.me/vokyvo_bot">@vokyvo_bot</a><br>
+Telegram (canal) : <a href="https://t.me/vokyvo_app">@vokyvo_app</a><br>
+Telegram (bot) : <a href="https://t.me/vokyvo_bot">@vokyvo_bot</a><br>
 WhatsApp : <a href="https://wa.me/22606965441">+226 06 96 54 41</a></p>
 
 <div class="footer">© 2026 VOKYVO — <a href="https://vokyvo.com">vokyvo.com</a></div>
