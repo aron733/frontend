@@ -48,9 +48,12 @@ Retour
 <ul>
   <li><strong>InterServer</strong> (hébergement serveur) : base de données, comptes, messages</li>
   <li><strong>Cloudinary</strong> (stockage média) : photos de profil, fichiers, images partagées</li>
-  <li><strong>Groq</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à Groq pour générer les réponses. <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. VOKYVO ne conserve pas ces échanges au-delà de votre conversation, et ne les utilise pas pour entraîner un modèle d'IA. Pour plus d'informations, consultez la politique de confidentialité de Groq.</li>
+  <li><strong>Groq</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à Groq pour générer les réponses. <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Vos conversations IA sont stockées dans votre compte tant qu'il est actif, pour vous permettre de retrouver votre historique. VOKYVO ne les utilise pas pour entraîner de modèle d'IA. Pour plus d'informations, consultez la politique de confidentialité de Groq.</li>
   <li><strong>Zoho</strong> (email) : envoi des emails transactionnels (bienvenue, OTP)</li>
   <li><strong>Brevo</strong> (email) : envoi des notifications par email</li>
+  <li><strong>Cloudflare</strong> (réseau) : protection, cache et distribution du trafic (CDN)</li>
+  <li><strong>LiveKit</strong> (visioconférence) : gestion des salles d'appels vidéo</li>
+  <li><strong>Telegram</strong> (bot) : publication des annonces sur le canal officiel VOKYVO</li>
 </ul>
 <p>Les mots de passe sont stockés sous forme de <strong>hachage sécurisé</strong> (PBKDF2, algorithme par défaut de Django) et ne sont <strong>jamais stockés en clair</strong>. Aucune donnée n'est vendue ni partagée à des fins publicitaires.</p>
 
@@ -79,7 +82,7 @@ Retour
   <li><strong>Surveillance continue</strong> : nos serveurs sont surveillés en permanence.</li>
   <li><strong>Sauvegardes régulières</strong> : vos données sont sauvegardées pour prévenir toute perte.</li>
 </ul>
-<p>⚠️ <strong>Important :</strong> vos messages ne sont <strong>pas chiffrés de bout en bout</strong>. Ils sont chiffrés en transit (entre vous et nos serveurs) mais lisibles par nos serveurs pour assurer le service (recherche, notifications, modération).</p>
+<p>⚠️ <strong>Important :</strong> vos messages ne sont <strong>pas chiffrés de bout en bout</strong>. Ils sont chiffrés en transit (entre vous et nos serveurs) mais lisibles par nos serveurs pour assurer le service (recherche, notifications).</p>
 
 <h3>7. Conservation</h3>
 <p>Vos données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte à tout moment. Les données sont supprimées sous 30 jours après la demande.</p>
@@ -104,7 +107,7 @@ Retour
 <p>L'assistant IA intégré à VOKYVO est un outil d'aide. Il peut se tromper, produire des informations inexactes ou incomplètes. <strong>Vérifiez toujours les réponses importantes auprès de sources fiables.</strong></p>
 <ul>
   <li>L'IA <strong>ne remplace pas</strong> un professionnel (médecin, avocat, enseignant, etc.).</li>
-  <li>Vos messages sont transmis à Groq pour générer la réponse. VOKYVO ne conserve pas ces échanges au-delà de votre conversation, et ne les utilise pas pour entraîner de modèle d'IA. Pour connaître la politique de confidentialité de Groq, consultez leur site officiel.</li>
+  <li>Vos messages sont transmis à Groq pour générer la réponse. VOKYVO ne conserve pas de copie supplémentaire au-delà de votre historique dans l'application, et ne les utilise pas pour entraîner de modèle d'IA. Pour connaître la politique de conservation de Groq, consultez leur site officiel.</li>
   <li>Vous pouvez demander la suppression de vos conversations IA à tout moment (voir section 5).</li>
 </ul>
 
@@ -114,6 +117,8 @@ Retour
   <li><strong>États-Unis</strong> : hébergement serveur (InterServer), stockage média (Cloudinary), intelligence artificielle (Groq)</li>
   <li><strong>Inde</strong> : envoi d'emails transactionnels (Zoho)</li>
   <li><strong>France</strong> : envoi de notifications email (Brevo)</li>
+  <li><strong>Réseau mondial</strong> : Cloudflare (protection, cache, distribution)</li>
+  <li><strong>Royaume-Uni / États-Unis</strong> : LiveKit (visioconférence)</li>
 </ul>
 <p>Ces transferts sont nécessaires à la fourniture du service. Nous choisissons des prestataires présentant des garanties de protection des données, et nous nous engageons à maintenir un niveau de protection conforme au RGPD et à la loi burkinabè sur la protection des données personnelles.</p>
 
@@ -124,16 +129,16 @@ Retour
   <li><strong>Entre 15 et 18 ans</strong> : autorisation parentale obligatoire.</li>
   <li><strong>18 ans et plus</strong> : inscription libre.</li>
 </ul>
-<p>VOKYVO se réserve le droit de suspendre tout compte créé par un mineur sans autorisation parentale.</p>
+<p>La vérification de l'âge et de l'autorisation parentale se fait par une <strong>déclaration sur l'honneur</strong> lors de la première utilisation de l'application. VOKYVO se réserve le droit de suspendre tout compte créé par un mineur sans autorisation parentale.</p>
 
 <h3>12. Éditeur du service</h3>
-<p><strong>VOKYVO</strong> est édité par <strong>VOKYVO LABS</strong>, projet porté par Aron VOKOUMA.</p>
+<p><strong>VOKYVO</strong> est édité par <strong>Aron VOKOUMA</strong>, développeur indépendant basé à Ouagadougou, Burkina Faso, sous le nom de projet <strong>VOKYVO LABS</strong>.</p>
 <ul>
   <li><strong>Siège</strong> : Ouagadougou, Burkina Faso</li>
   <li><strong>Email</strong> : <a href="mailto:support@vokyvo.com">support@vokyvo.com</a></li>
   <li><strong>Site</strong> : <a href="https://vokyvo.com">vokyvo.com</a></li>
 </ul>
-<p>VOKYVO LABS est un projet en cours de structuration. Nous travaillons activement à son développement et à son organisation.</p>
+<p>À ce jour, VOKYVO n'est pas une entité juridique enregistrée. Le service est opéré à titre individuel par Aron VOKOUMA.</p>
 
 <h3>13. Contact</h3>
 <p>Email : <a href="mailto:support@vokyvo.com">support@vokyvo.com</a><br>

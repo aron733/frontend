@@ -890,7 +890,8 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         <div style={styles.cookieOverlay}>
           <div style={styles.cookieBanner}>
             <p style={styles.cookieText}>
-              VOKYVO LABS utilise des cookies essentiels.
+              VOKYVO utilise des cookies essentiels au fonctionnement du service.<br />
+              L'utilisation de VOKYVO est réservée aux personnes de <strong>15 ans ou plus</strong>. Entre 15 et 18 ans, l'autorisation d'un parent ou tuteur légal est obligatoire.<br />
               <a href="#" onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/confidentialite'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Politique de confidentialité</a>
               {' · '}
               <a href="#" onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/cgu'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Conditions d'utilisation</a>
@@ -903,7 +904,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
                   onChange={(e) => setApprouveLecture(e.target.checked)}
                   style={styles.checkbox}
                 />
-                J'ai lu et j'approuve la politique et les conditions
+                Je certifie avoir 15 ans ou plus (autorisation parentale si 15-18 ans) et j'accepte la politique et les conditions
               </label>
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                 <button
