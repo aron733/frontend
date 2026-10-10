@@ -28,12 +28,76 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
+  const [modalSuppression, setModalSuppression] = useState(false);
+  const [etapeSuppression, setEtapeSuppression] = useState<'otp' | 'raison'>('otp');
+  const [otpSuppression, setOtpSuppression] = useState('');
+  const [raisonSuppression, setRaisonSuppression] = useState('');
+  const [erreurSuppression, setErreurSuppression] = useState('');
+  const [chargementSuppression, setChargementSuppression] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     localStorage.setItem('vokyvo_page', pageActive);
   }, [pageActive]);
   const token = localStorage.getItem('access_token');
+
+  const demanderSuppression = async () => {
+    setErreurSuppression('');
+    setChargementSuppression(true);
+    try {
+      await axios.post(`${API_URL}/supprimer-compte/demander/`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setEtapeSuppression('otp');
+      setModalSuppression(true);
+    } catch (e: any) {
+      setErreurSuppression(e.response?.data?.erreur || 'Erreur lors de l\'envoi du code');
+    } finally {
+      setChargementSuppression(false);
+    }
+  };
+
+  const validerOtpSuppression = () => {
+    setErreurSuppression('');
+    if (otpSuppression.length !== 6) {
+      setErreurSuppression('Code à 6 chiffres requis');
+      return;
+    }
+    setEtapeSuppression('raison');
+  };
+
+  const confirmerSuppressionFinale = async () => {
+    setErreurSuppression('');
+    setChargementSuppression(true);
+    try {
+      await axios.post(`${API_URL}/supprimer-compte/confirmer/`, {
+        code: otpSuppression,
+        raison: raisonSuppression,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Succès → déconnexion + reload
+      localStorage.clear();
+      await viderCache();
+      window.location.href = '/';
+    } catch (e: any) {
+      setErreurSuppression(e.response?.data?.erreur || 'Erreur lors de la suppression');
+      // Si erreur OTP, revenir à l'étape OTP
+      if (e.response?.data?.erreur?.includes('Code')) {
+        setEtapeSuppression('otp');
+      }
+    } finally {
+      setChargementSuppression(false);
+    }
+  };
+
+  const fermerModalSuppression = () => {
+    setModalSuppression(false);
+    setEtapeSuppression('otp');
+    setOtpSuppression('');
+    setRaisonSuppression('');
+    setErreurSuppression('');
+  };
 
   const deconnexion = async () => {
     localStorage.removeItem('access_token');
@@ -255,6 +319,12 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <button onClick={confirmerDeconnexion} style={{ ...styles.menuItem, color: '#dc3545' }}>
             <IconeDeconnexion /> Déconnexion
           </button>
+          <button onClick={demanderSuppression} style={{ ...styles.menuItem, color: '#dc3545', opacity: 0.8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg> Supprimer mon compte
+          </button>
         </div>
 
       <main style={styles.main}>
@@ -316,6 +386,107 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       </main>
 
       {/* Modal de confirmation déconnexion */}
+      {modalSuppression && (
+        <div style={styles.overlayConfirmation} onClick={fermerModalSuppression}>
+          <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
+            {etapeSuppression === 'otp' && (
+              <>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '15px' }}>
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <h3 style={{ ...styles.modalTexte, color: '#dc3545', fontSize: '17px' }}>Supprimer mon compte</h3>
+                <p style={{ ...styles.modalTexte, fontSize: '13px', marginTop: '10px' }}>
+                  Un code à 6 chiffres a été envoyé à <strong>{userData.email}</strong>.
+                  Saisis-le pour confirmer la suppression définitive.
+                </p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={otpSuppression}
+                  onChange={(e) => setOtpSuppression(e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder="000000"
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '10px',
+                    padding: '14px',
+                    color: '#fff',
+                    fontSize: '20px',
+                    textAlign: 'center',
+                    letterSpacing: '8px',
+                    marginTop: '15px',
+                    outline: 'none',
+                  }}
+                />
+                {erreurSuppression && <p style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '10px' }}>{erreurSuppression}</p>}
+                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                  <button onClick={fermerModalSuppression} style={styles.modalBtnAnnuler}>
+                    Annuler
+                  </button>
+                  <button
+                    onClick={validerOtpSuppression}
+                    style={{ ...styles.modalBtnAnnuler, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: '#fff', border: 'none' }}
+                  >
+                    Continuer
+                  </button>
+                </div>
+              </>
+            )}
+
+            {etapeSuppression === 'raison' && (
+              <>
+                <h3 style={{ ...styles.modalTexte, color: '#dc3545', fontSize: '17px' }}>Une dernière chose…</h3>
+                <p style={{ ...styles.modalTexte, fontSize: '13px', marginTop: '10px' }}>
+                  Peux-tu nous dire pourquoi tu pars ? (facultatif)<br />
+                  Cela nous aide à améliorer VOKYVO.
+                </p>
+                <textarea
+                  value={raisonSuppression}
+                  onChange={(e) => setRaisonSuppression(e.target.value)}
+                  placeholder="Trop lent, trop buggé, pas utile…"
+                  rows={3}
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '10px',
+                    padding: '12px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    marginTop: '15px',
+                    outline: 'none',
+                    resize: 'none',
+                    fontFamily: 'inherit',
+                  }}
+                />
+                <div style={{ background: 'rgba(220,53,69,0.15)', border: '1px solid #dc3545', borderRadius: '8px', padding: '12px', marginTop: '15px' }}>
+                  <p style={{ color: '#ff6b6b', fontSize: '12px', margin: 0, lineHeight: 1.5 }}>
+                    ⚠️ Cette action est <strong>définitive</strong>. Tous tes messages, photos, conversations seront supprimés.
+                  </p>
+                </div>
+                {erreurSuppression && <p style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '10px' }}>{erreurSuppression}</p>}
+                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                  <button onClick={fermerModalSuppression} style={styles.modalBtnAnnuler}>
+                    Annuler
+                  </button>
+                  <button
+                    onClick={confirmerSuppressionFinale}
+                    disabled={chargementSuppression}
+                    style={{ background: '#dc3545', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 20px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', flex: 1 }}
+                  >
+                    {chargementSuppression ? 'Suppression…' : 'Supprimer définitivement'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {confirmDeconnexion && (
         <div style={styles.overlayConfirmation} onClick={annulerDeconnexion}>
           <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
