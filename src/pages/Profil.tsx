@@ -28,6 +28,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
+  const [modalQuitter, setModalQuitter] = useState(false);
   const [modalSuppression, setModalSuppression] = useState(false);
   const [etapeSuppression, setEtapeSuppression] = useState<'otp' | 'raison'>('otp');
   const [otpSuppression, setOtpSuppression] = useState('');
@@ -316,14 +317,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               <path d="M10 14h4" />
             </svg> VOKYVO+
           </button>
-          <button onClick={confirmerDeconnexion} style={{ ...styles.menuItem, color: '#dc3545' }}>
-            <IconeDeconnexion /> Déconnexion
-          </button>
-          <button onClick={demanderSuppression} style={{ ...styles.menuItem, color: '#dc3545', opacity: 0.8 }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-            </svg> Supprimer mon compte
+          <button onClick={() => setModalQuitter(true)} style={{ ...styles.menuItem, color: '#dc3545' }}>
+            <IconeDeconnexion /> Quitter
           </button>
         </div>
 
@@ -483,6 +478,80 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {modalQuitter && (
+        <div style={styles.overlayConfirmation} onClick={() => setModalQuitter(false)}>
+          <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
+            <h3 style={styles.modalTexte}>Que veux-tu faire ?</h3>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+              <button
+                onClick={() => { setModalQuitter(false); confirmerDeconnexion(); }}
+                style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Déconnexion
+              </button>
+
+              <button
+                onClick={() => { setModalQuitter(false); demanderSuppression(); }}
+                style={{
+                  background: 'rgba(220,53,69,0.15)',
+                  color: '#dc3545',
+                  border: '1px solid #dc3545',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                Supprimer mon compte
+              </button>
+
+              <button
+                onClick={() => setModalQuitter(false)}
+                style={{
+                  background: 'transparent',
+                  color: '#888',
+                  border: '1px solid #2a2a3e',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                }}
+              >
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}
