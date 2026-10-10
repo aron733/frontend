@@ -121,12 +121,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 fichier_url: data.fichier_url || null,
               };
 
-              // Détermine dans quelle conv ajouter
-              const active = convActiveRef.current;
+              // Détermine dans quelle conv ajouter (selon groupe_id ou user_id)
               let convId: string;
-              if (active && active.startsWith('groupe_')) {
-                // Message de groupe → met dans la conv groupe active
-                convId = active;
+              if (data.groupe_id) {
+                // Message de groupe → utiliser le groupe_id envoyé par le backend
+                convId = `groupe_${data.groupe_id}`;
               } else {
                 // Message privé → conv avec l'émetteur
                 convId = `user_${data.from_user_id}`;
