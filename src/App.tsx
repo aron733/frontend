@@ -8,12 +8,14 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
 import ModalCompleterProfil from './ModalCompleterProfil';
+import NotFound from './pages/NotFound';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
 
 function App() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
@@ -162,6 +164,21 @@ function App() {
           }
         } catch (e) {}
       })();
+    }
+  }, []);
+
+  // Détection 404 : URL inconnue
+  useEffect(() => {
+    const path = window.location.pathname;
+    const routesValides = [
+      '/', '/a-propos', '/blog', '/cgu', '/confidentialite',
+      '/aron-vokouma', '/desabonnement', '/supprimer-compte',
+      '/offline', '/oauth-callback', '/oauth/google/callback'
+    ];
+    // Le path est valide s'il est dans la liste OU s'il commence par /blog/
+    const estValide = routesValides.includes(path) || path.startsWith('/blog/');
+    if (!estValide) {
+      setNotFound(true);
     }
   }, []);
 
@@ -388,6 +405,10 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  if (notFound) {
+    return <NotFound />;
   }
 
   return user ? (
