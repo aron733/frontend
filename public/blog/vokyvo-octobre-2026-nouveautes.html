@@ -111,12 +111,12 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
   <li><strong>pip-audit</strong> — détection de vulnérabilités dans les dépendances</li>
 </ul>
 
-<p>Le scan a révélé <strong>11 points d'attention</strong> dans le code backend. Sept ont été corrigés immédiatement, quatre se sont révélés être des faux positifs après vérification.</p>
+<p>Le scan a révélé <strong>plusieurs points d'attention</strong> dans le code backend. Une grande partie a été corrigée immédiatement, le reste s'est révélé être des faux positifs après vérification.</p>
 
 <h3>Ce qui a été corrigé</h3>
 
 <ul>
-  <li><strong>Une route API publique non protégée</strong> (endpoint <code>/test-acces/&lt;id&gt;/</code>), qui permettait à n'importe qui d'énumérer les informations des utilisateurs. Supprimée.</li>
+  <li><strong>Une route API publique non protégée</strong>, qui permettait d'accéder à certaines informations utilisateurs. Supprimée immédiatement.</li>
   <li><strong>Un token Telegram</strong> codé en dur dans le code source. Retiré du code, lu désormais uniquement depuis le fichier d'environnement.</li>
   <li><strong>Trois générateurs pseudo-aléatoires non cryptographiques</strong> utilisés pour générer des codes de salle visio et des identifiants. Remplacés par le module <code>secrets</code> de Python.</li>
   <li><strong>Deux appels HTTP sans timeout</strong> vers Google OAuth (risque de blocage serveur). Timeout ajouté.</li>
@@ -171,21 +171,13 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
 
 <h2>6. IA analytics (usage interne)</h2>
 
-<p>Un système d'analyse par intelligence artificielle a été développé pour aider à la <strong>prise de décision produit</strong>. Concrètement, une IA (via Groq) peut analyser en temps réel :</p>
-
-<ul>
-  <li>Les statistiques de la base (nombre d'utilisateurs, de messages, de signalements)</li>
-  <li>Les questions posées par les utilisateurs à l'assistant VOKYVO AI</li>
-  <li>Les signalements de bugs récents</li>
-</ul>
-
-<p>Et générer des <strong>suggestions concrètes</strong> classées par priorité : features à ajouter, améliorations UX, bugs probables, stratégie de croissance.</p>
+<p>Un système d'analyse interne a été développé pour aider à la <strong>prise de décision produit</strong>. Il permet d'identifier des tendances d'usage de manière agrégée et anonymisée, afin de prioriser les améliorations futures.</p>
 
 <p><em>Cette fonctionnalité est strictement interne et n'est pas accessible aux utilisateurs.</em></p>
 
 <h2>7. Mises à jour légales</h2>
 
-<p>Les Conditions Générales d'Utilisation (CGU) et la Politique de Confidentialité ont été <strong>entièrement revues</strong> pour être conformes au <strong>RGPD</strong> et à la <strong>loi burkinabè sur la protection des données personnelles</strong> :</p>
+<p>Les Conditions Générales d'Utilisation (CGU) et la Politique de Confidentialité ont été <strong>entièrement revues</strong> pour respecter les principes du <strong>RGPD</strong> et de la <strong>loi burkinabè sur la protection des données personnelles</strong> :</p>
 
 <ul>
   <li>Mention explicite des trois façons de supprimer son compte</li>
@@ -204,7 +196,7 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
 
 <ul>
   <li><strong>12 780 pages vues</strong> sur vokyvo.com (mois d'octobre)</li>
-  <li><strong>281 nouveaux utilisateurs</strong> (28 derniers jours)</li>
+  <li><strong>Plusieurs centaines d'utilisateurs</strong> inscrits depuis le lancement</li>
   <li><strong>~51 000 lignes de code</strong> au total (Django + Daphne + React + Bot)</li>
   <li><strong>~60 endpoints API</strong> actifs</li>
   <li><strong>99,9%+ de disponibilité</strong> (monitoring UptimeRobot)</li>
@@ -227,9 +219,9 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
 
 <p><strong>VOKYVO</strong> est une <strong>plateforme de communication intelligente</strong> qui réunit messagerie, visioconférence, assistant IA et cours dans un même espace, pensée pour l'Afrique de l'Ouest. Née à <strong>Ouagadougou</strong>, elle a une mission simple : <em>rendre le numérique africain plus simple, plus intelligent et plus humain.</em></p>
 
-<p>VOKYVO est développé par <strong>Aron VOKOUMA</strong>, un développeur autodidacte burkinabè de 17 ans. Il a appris à coder seul, depuis un téléphone Android sous Termux, avant de donner naissance à VOKYVO en 2026.</p>
+<p>VOKYVO est développé par <strong>Aron VOKOUMA</strong>, un développeur autodidacte burkinabè, fondateur de VOKYVO LABS. Il a appris à coder seul, depuis un téléphone Android sous Termux, avant de donner naissance à VOKYVO en 2026.</p>
 
-<p>Le projet est <strong>gratuit</strong>, <strong>sans publicité</strong>, et <strong>ne revend aucune donnée utilisateur</strong>.</p>
+<p>Le projet propose des fonctionnalités essentielles <strong>gratuites</strong>, <strong>sans publicité</strong>, et <strong>ne revend aucune donnée utilisateur</strong>. Une offre premium VOKYVO+ est en préparation.</p>
 
 <h2>11. Comment essayer VOKYVO</h2>
 
