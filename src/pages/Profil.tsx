@@ -1,5 +1,6 @@
 import { viderCache } from '../db';
 import { useState, useRef, useEffect } from 'react';
+import { useSwipeable } from 'react-swipeable';
 import axios from 'axios';
 import Vokyvo from './Vokyvo';
 // import Visio from './Visio'; // Caché temporairement
@@ -40,6 +41,21 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   useEffect(() => {
     localStorage.setItem('vokyvo_page', pageActive);
   }, [pageActive]);
+
+  // Swipe edge : retour arrière depuis le bord gauche
+  const swipeHandlers = useSwipeable({
+    onSwipedRight: () => {
+      if (pageActive !== 'profil') {
+        setPageActive('profil');
+        setMenuOuvert(false);
+      }
+    },
+    trackTouch: true,
+    trackMouse: false,
+    delta: 50,           // 50px minimum pour déclencher
+    preventScrollOnSwipe: false,
+    swipeDuration: 500,  // max 500ms pour un swipe
+  });
   const token = localStorage.getItem('access_token');
 
   const demanderSuppression = async () => {
@@ -322,7 +338,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </button>
         </div>
 
-      <main style={styles.main}>
+      <main style={styles.main} {...swipeHandlers}>
         {pageActive === 'profil' && (
           <div style={styles.profilCard}>
             <div style={styles.avatarContainer}>
