@@ -68,7 +68,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let actif = true;
     let reconnectDelay = 0;
-    let localWs: WebSocket | null = null;
 
     const connecter = () => {
       if (!actif || STOP_RECONNECT) return;
@@ -81,7 +80,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       try {
         const ws = new WebSocket(`${WS_URL}?token=${token}`);
-        localWs = ws;
 
         ws.onopen = () => {
           console.log('🌐 WS Global connecté');
@@ -116,17 +114,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 fichier_url: data.fichier_url || null,
               };
 
-              // Détermine dans quelle conv ajouter (selon groupe_id ou user_id)
+              // Détermine dans quelle conv ajouter
+              const active = convActiveRef.current;
               let convId: string;
-              if (data.groupe_id) {
-                // Message de groupe → utiliser le groupe_id envoyé par le backend
-                convId = `groupe_${data.groupe_id}`;
+              if (active && active.startsWith('groupe_')) {
+                // Message de groupe → met dans la conv groupe active
+                convId = active;
               } else {
                 // Message privé → conv avec l'émetteur
                 convId = `user_${data.from_user_id}`;
               }
 
-              // Ajoute au state (pas de dédup par contenu - garde l'id comme unique)
+              // Ajoute au state
               setMessagesParConv((prev) => ({
                 ...prev,
                 [convId]: [...(prev[convId] || []), msg],
@@ -213,7 +212,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
     return () => {
       actif = false;
-      localWs?.close();
+      wsRef.current?.close();
     };
   }, []);
 
