@@ -1,6 +1,8 @@
 # Robots standards (Google, Bing, etc.)
 User-agent: *
 Allow: /
+Disallow: /supprimer-compte
+Disallow: /desabonnement
 
 # Robots des IA (autorises explicitement)
 User-agent: GPTBot

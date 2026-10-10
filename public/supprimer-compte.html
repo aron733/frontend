@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supprimer mon compte — VOKYVO</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://vokyvo.com/supprimer-compte">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#ccc;line-height:1.7;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.card{max-width:460px;width:100%;background:#111120;border:1px solid #1a1a2e;border-radius:20px;padding:40px 30px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.logo{font-size:32px;font-weight:900;letter-spacing:3px;background:linear-gradient(90deg,#667eea,#764ba2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;text-align:center}
+.subtitle{color:#888;font-size:13px;text-align:center;margin-bottom:30px}
+h1{color:#fff;font-size:20px;font-weight:600;margin-bottom:12px;text-align:center}
+p{color:#888;font-size:14px;margin-bottom:20px;line-height:1.6;text-align:center}
+.input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:14px;color:#fff;font-size:15px;outline:none;margin-bottom:14px;box-sizing:border-box;font-family:inherit;transition:border-color 0.2s}
+.input:focus{border-color:#667eea}
+.input-otp{text-align:center;font-size:22px;letter-spacing:10px;font-family:monospace;padding:16px}
+.btn{display:block;width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;font-family:inherit;transition:opacity 0.2s}
+.btn-primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
+.btn-primary:hover{opacity:0.9}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed}
+.btn-danger{background:#dc3545;color:#fff}
+.btn-danger:hover{opacity:0.9}
+.btn-danger:disabled{opacity:0.5;cursor:not-allowed}
+.btn-link{background:transparent;color:#667eea;border:none;font-size:13px;cursor:pointer;text-decoration:underline;padding:8px;width:100%;font-family:inherit}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error{color:#ff6b6b;font-size:13px;text-align:center;margin-top:10px;min-height:18px}
+.success-icon{width:72px;height:72px;border-radius:50%;background:rgba(40,167,69,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.hidden{display:none}
+.warning-box{background:rgba(220,53,69,0.1);border-left:3px solid #dc3545;border-radius:6px;padding:12px 16px;margin-bottom:20px;color:#ff8a8a;font-size:13px;line-height:1.5;text-align:left}
+.footer{margin-top:30px;text-align:center;font-size:12px;color:#555}
+a{color:#667eea;text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">VOKYVO</div>
+  <div class="subtitle">Suppression de compte</div>
+
+  <div id="step1">
+    <h1>Supprimer mon compte</h1>
+    <p>Saisis ton adresse email pour recevoir un code de confirmation.</p>
+    <div class="warning-box">
+      Cette action est <strong>définitive</strong>. Tous tes messages, photos et conversations seront effacés.
+    </div>
+    <input type="email" id="email" class="input" placeholder="ton@email.com" autocomplete="email">
+    <button id="btnDemander" class="btn btn-danger">Recevoir le code</button>
+    <div class="error" id="err1"></div>
+  </div>
+
+  <div id="step2" class="hidden">
+    <h1>Vérification</h1>
+    <p>Un code à 6 chiffres a été envoyé à <strong id="emailAffiche" style="color:#ccc"></strong>.</p>
+    <input type="text" id="code" class="input input-otp" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+    <button id="btnConfirmer" class="btn btn-danger">Supprimer définitivement</button>
+    <button id="btnRenvoyer" class="btn-link">Renvoyer le code</button>
+    <button id="btnAnnuler" class="btn-link">Annuler</button>
+    <div class="error" id="err2"></div>
+  </div>
+
+  <div id="step3" class="hidden">
+    <div class="success-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <h1>Compte supprimé</h1>
+    <p>Ton compte et toutes tes données ont été supprimés définitivement.<br>Merci d'avoir utilisé VOKYVO.</p>
+    <a href="https://vokyvo.com" class="btn btn-primary" style="display:inline-block;text-decoration:none;text-align:center">Retour à VOKYVO</a>
+  </div>
+
+  <div class="footer">
+    Une question ? <a href="mailto:support@vokyvo.com">support@vokyvo.com</a><br>
+    © 2026 VOKYVO LABS
+  </div>
+</div>
+
+<script>
+(function() {
+  const API = 'https://api.vokyvo.com/api';
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  const emailInput = document.getElementById('email');
+  const codeInput = document.getElementById('code');
+  const emailAffiche = document.getElementById('emailAffiche');
+  const btnDemander = document.getElementById('btnDemander');
+  const btnConfirmer = document.getElementById('btnConfirmer');
+  const btnRenvoyer = document.getElementById('btnRenvoyer');
+  const btnAnnuler = document.getElementById('btnAnnuler');
+  const err1 = document.getElementById('err1');
+  const err2 = document.getElementById('err2');
+  let currentEmail = '';
+
+  function show(s) {
+    step1.classList.add('hidden');
+    step2.classList.add('hidden');
+    step3.classList.add('hidden');
+    s.classList.remove('hidden');
+  }
+
+  btnDemander.addEventListener('click', async () => {
+    err1.textContent = '';
+    const email = emailInput.value.trim();
+    if (!email || !email.includes('@')) {
+      err1.textContent = 'Email invalide';
+      return;
+    }
+    btnDemander.disabled = true;
+    btnDemander.innerHTML = '<span class="spinner"></span>Envoi…';
+    try {
+      const r = await fetch(`${API}/supprimer-compte-web/demander/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await r.json();
+      if (r.ok) {
+        currentEmail = email;
+        emailAffiche.textContent = email;
+        show(step2);
+        codeInput.focus();
+      } else {
+        err1.textContent = data.erreur || 'Erreur';
+      }
+    } catch (e) {
+      err1.textContent = 'Erreur de connexion';
+    } finally {
+      btnDemander.disabled = false;
+      btnDemander.textContent = 'Recevoir le code';
+    }
+  });
+
+  btnConfirmer.addEventListener('click', async () => {
+    err2.textContent = '';
+    const code = codeInput.value.trim();
+    if (code.length !== 6) {
+      err2.textContent = 'Code à 6 chiffres requis';
+      return;
+    }
+    btnConfirmer.disabled = true;
+    btnConfirmer.innerHTML = '<span class="spinner"></span>Suppression…';
+    try {
+      const r = await fetch(`${API}/supprimer-compte-web/confirmer/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentEmail, code }),
+      });
+      const data = await r.json();
+      if (r.ok) {
+        show(step3);
+      } else {
+        err2.textContent = data.erreur || 'Code invalide';
+        btnConfirmer.disabled = false;
+        btnConfirmer.textContent = 'Supprimer définitivement';
+      }
+    } catch (e) {
+      err2.textContent = 'Erreur de connexion';
+      btnConfirmer.disabled = false;
+      btnConfirmer.textContent = 'Supprimer définitivement';
+    }
+  });
+
+  btnRenvoyer.addEventListener('click', async () => {
+    err2.textContent = '';
+    btnRenvoyer.textContent = 'Envoi…';
+    try {
+      const r = await fetch(`${API}/supprimer-compte-web/demander/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentEmail }),
+      });
+      if (r.ok) {
+        err2.style.color = '#28a745';
+        err2.textContent = 'Nouveau code envoyé';
+        setTimeout(() => { err2.textContent = ''; err2.style.color = '#ff6b6b'; }, 3000);
+      }
+    } catch (e) {
+      err2.textContent = 'Erreur';
+    } finally {
+      btnRenvoyer.textContent = 'Renvoyer le code';
+    }
+  });
+
+  btnAnnuler.addEventListener('click', () => {
+    show(step1);
+    codeInput.value = '';
+    err2.textContent = '';
+  });
+})();
+</script>
+</body>
+</html>
