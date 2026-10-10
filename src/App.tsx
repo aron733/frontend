@@ -7,6 +7,7 @@ import { Network } from '@capacitor/network';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
+import ModalCompleterProfil from './ModalCompleterProfil';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
 
 function App() {
@@ -392,6 +393,7 @@ function App() {
   return user ? (
     <>
       <Profil user={user} onLogout={handleLogout} />
+      <ModalCompleterProfil />
     </>
   ) : (
     <Landing onLogin={handleLogin} />
