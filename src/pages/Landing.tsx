@@ -843,6 +843,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               <input type="email" name="email" placeholder="Email" onChange={handleChange} required style={styles.input} />
 
               <input type="password" name="password" placeholder="Mot de passe" onChange={handleChange} required style={styles.input} />
+
               <button type="submit" disabled={loading} style={styles.submitButton}>
                 {loading ? (
                   <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
