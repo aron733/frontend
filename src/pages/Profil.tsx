@@ -386,15 +386,19 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
             {etapeSuppression === 'otp' && (
               <>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '15px' }}>
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
-                </svg>
-                <h3 style={{ ...styles.modalTexte, color: '#dc3545', fontSize: '17px' }}>Supprimer mon compte</h3>
-                <p style={{ ...styles.modalTexte, fontSize: '13px', marginTop: '10px' }}>
-                  Un code à 6 chiffres a été envoyé à <strong>{userData.email}</strong>.
-                  Saisis-le pour confirmer la suppression définitive.
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </div>
+                <h3 style={{ color: '#dc3545', fontSize: '16px', fontWeight: 600, textAlign: 'center', margin: '0 0 10px 0' }}>
+                  Supprimer mon compte
+                </h3>
+                <p style={{ color: '#888', fontSize: '13px', lineHeight: 1.5, textAlign: 'center', margin: '0 0 18px 0' }}>
+                  Un code à 6 chiffres a été envoyé à<br />
+                  <strong style={{ color: '#ccc' }}>{userData.email}</strong>
                 </p>
                 <input
                   type="text"
@@ -405,26 +409,54 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                   placeholder="000000"
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: '10px',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1.5px solid rgba(102,126,234,0.5)',
+                    borderRadius: '12px',
                     padding: '14px',
                     color: '#fff',
-                    fontSize: '20px',
+                    fontSize: '22px',
                     textAlign: 'center',
-                    letterSpacing: '8px',
-                    marginTop: '15px',
+                    letterSpacing: '10px',
+                    marginTop: '4px',
                     outline: 'none',
+                    fontFamily: 'monospace',
+                    boxSizing: 'border-box',
                   }}
                 />
-                {erreurSuppression && <p style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '10px' }}>{erreurSuppression}</p>}
-                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                  <button onClick={fermerModalSuppression} style={styles.modalBtnAnnuler}>
+                {erreurSuppression && (
+                  <p style={{ color: '#ff6b6b', fontSize: '12px', textAlign: 'center', margin: '10px 0 0 0' }}>
+                    {erreurSuppression}
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: '8px', marginTop: '18px' }}>
+                  <button
+                    onClick={fermerModalSuppression}
+                    style={{
+                      flex: 1,
+                      background: 'transparent',
+                      color: '#888',
+                      border: '1px solid #2a2a3e',
+                      borderRadius: '10px',
+                      padding: '12px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                    }}
+                  >
                     Annuler
                   </button>
                   <button
                     onClick={validerOtpSuppression}
-                    style={{ ...styles.modalBtnAnnuler, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: '#fff', border: 'none' }}
+                    style={{
+                      flex: 1,
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '12px',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
                   >
                     Continuer
                   </button>
@@ -434,46 +466,81 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
             {etapeSuppression === 'raison' && (
               <>
-                <h3 style={{ ...styles.modalTexte, color: '#dc3545', fontSize: '17px' }}>Une dernière chose…</h3>
-                <p style={{ ...styles.modalTexte, fontSize: '13px', marginTop: '10px' }}>
-                  Peux-tu nous dire pourquoi tu pars ? (facultatif)<br />
+                <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: 600, textAlign: 'center', margin: '0 0 8px 0' }}>
+                  Une dernière chose…
+                </h3>
+                <p style={{ color: '#888', fontSize: '13px', lineHeight: 1.5, textAlign: 'center', margin: '0 0 16px 0' }}>
+                  Pourquoi tu pars ? (facultatif)<br />
                   Cela nous aide à améliorer VOKYVO.
                 </p>
                 <textarea
                   value={raisonSuppression}
                   onChange={(e) => setRaisonSuppression(e.target.value)}
-                  placeholder="Trop lent, trop buggé, pas utile…"
+                  placeholder="Trop lent, pas utile, autre…"
                   rows={3}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.15)',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: '10px',
                     padding: '12px',
                     color: '#fff',
-                    fontSize: '14px',
-                    marginTop: '15px',
+                    fontSize: '13px',
                     outline: 'none',
                     resize: 'none',
                     fontFamily: 'inherit',
+                    boxSizing: 'border-box',
                   }}
                 />
-                <div style={{ background: 'rgba(220,53,69,0.15)', border: '1px solid #dc3545', borderRadius: '8px', padding: '12px', marginTop: '15px' }}>
-                  <p style={{ color: '#ff6b6b', fontSize: '12px', margin: 0, lineHeight: 1.5 }}>
-                    ⚠️ Cette action est <strong>définitive</strong>. Tous tes messages, photos, conversations seront supprimés.
+                <div style={{
+                  background: 'rgba(220,53,69,0.1)',
+                  borderLeft: '3px solid #dc3545',
+                  borderRadius: '6px',
+                  padding: '10px 12px',
+                  marginTop: '14px',
+                }}>
+                  <p style={{ color: '#ff8a8a', fontSize: '12px', margin: 0, lineHeight: 1.5 }}>
+                    Cette action est <strong>définitive</strong>. Messages, photos et conversations seront effacés.
                   </p>
                 </div>
-                {erreurSuppression && <p style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '10px' }}>{erreurSuppression}</p>}
-                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                  <button onClick={fermerModalSuppression} style={styles.modalBtnAnnuler}>
+                {erreurSuppression && (
+                  <p style={{ color: '#ff6b6b', fontSize: '12px', textAlign: 'center', margin: '10px 0 0 0' }}>
+                    {erreurSuppression}
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: '8px', marginTop: '18px' }}>
+                  <button
+                    onClick={fermerModalSuppression}
+                    style={{
+                      flex: 1,
+                      background: 'transparent',
+                      color: '#888',
+                      border: '1px solid #2a2a3e',
+                      borderRadius: '10px',
+                      padding: '12px',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                    }}
+                  >
                     Annuler
                   </button>
                   <button
                     onClick={confirmerSuppressionFinale}
                     disabled={chargementSuppression}
-                    style={{ background: '#dc3545', color: '#fff', border: 'none', borderRadius: '10px', padding: '12px 20px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', flex: 1 }}
+                    style={{
+                      flex: 1,
+                      background: '#dc3545',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '12px',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      opacity: chargementSuppression ? 0.6 : 1,
+                    }}
                   >
-                    {chargementSuppression ? 'Suppression…' : 'Supprimer définitivement'}
+                    {chargementSuppression ? 'Suppression…' : 'Supprimer'}
                   </button>
                 </div>
               </>
@@ -484,19 +551,21 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
       {modalQuitter && (
         <div style={styles.overlayConfirmation} onClick={() => setModalQuitter(false)}>
-          <div style={styles.modalConfirmation} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.modalTexte}>Que veux-tu faire ?</h3>
+          <div style={{ ...styles.modalConfirmation, padding: '24px 20px', maxWidth: '320px' }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: 600, margin: '0 0 18px 0', textAlign: 'center' }}>
+              Que veux-tu faire ?
+            </h3>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 onClick={() => { setModalQuitter(false); confirmerDeconnexion(); }}
                 style={{
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   color: '#fff',
                   border: 'none',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  fontSize: '15px',
+                  borderRadius: '10px',
+                  padding: '12px',
+                  fontSize: '14px',
                   fontWeight: 600,
                   cursor: 'pointer',
                   display: 'flex',
@@ -505,7 +574,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                   gap: '8px',
                 }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                   <polyline points="16 17 21 12 16 7" />
                   <line x1="21" y1="12" x2="9" y2="12" />
@@ -516,13 +585,13 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               <button
                 onClick={() => { setModalQuitter(false); demanderSuppression(); }}
                 style={{
-                  background: 'rgba(220,53,69,0.15)',
+                  background: 'transparent',
                   color: '#dc3545',
-                  border: '1px solid #dc3545',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  fontSize: '15px',
-                  fontWeight: 600,
+                  border: '1px solid rgba(220,53,69,0.4)',
+                  borderRadius: '10px',
+                  padding: '12px',
+                  fontSize: '14px',
+                  fontWeight: 500,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -530,7 +599,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                   gap: '8px',
                 }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="3 6 5 6 21 6" />
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                 </svg>
@@ -541,12 +610,13 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                 onClick={() => setModalQuitter(false)}
                 style={{
                   background: 'transparent',
-                  color: '#888',
-                  border: '1px solid #2a2a3e',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  fontSize: '15px',
+                  color: '#666',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '10px',
+                  fontSize: '13px',
                   cursor: 'pointer',
+                  marginTop: '4px',
                 }}
               >
                 Annuler
