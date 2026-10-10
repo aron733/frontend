@@ -735,12 +735,23 @@ function Chat() {
   };
 
   return (
+    <>
+    <style>{`
+      .pull-to-refresh-wrapper {
+        background-color: transparent !important;
+        height: 100% !important;
+      }
+      .pull-to-refresh-wrapper > div {
+        background-color: transparent !important;
+      }
+    `}</style>
     <PullToRefresh
       onRefresh={rafraichir}
       pullingContent={<LoaderVokyvo size={30} />}
       refreshingContent={<LoaderVokyvo size={40} />}
       pullDownThreshold={70}
       maxPullDownDistance={100}
+      className="pull-to-refresh-wrapper"
     >
     <div style={styles.container}>
       <div style={styles.header}>
@@ -1566,6 +1577,7 @@ function Chat() {
       )}
     </div>
     </PullToRefresh>
+    </>
   );
 }
 
