@@ -295,7 +295,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               </div>
               <div style={styles.infoItem}>
                 <span style={styles.infoLabel}>Sexe</span>
-                <span style={styles.infoValue}>{userData.sexe}</span>
+                <span style={styles.infoValue}>{userData.sexe === 'M' ? 'Masculin' : userData.sexe === 'F' ? 'Féminin' : userData.sexe}</span>
               </div>
               <div style={styles.infoItem}>
                 <span style={styles.infoLabel}>Téléphone</span>
