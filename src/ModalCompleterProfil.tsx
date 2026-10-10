@@ -157,6 +157,13 @@ export default function ModalCompleterProfil() {
     } catch (e) {}
   }, []);
 
+  // Écoute un event pour forcer l'ouverture (depuis le bandeau)
+  useEffect(() => {
+    const ouvrir = () => setVisible(true);
+    window.addEventListener('ouvrir-modal-profil', ouvrir);
+    return () => window.removeEventListener('ouvrir-modal-profil', ouvrir);
+  }, []);
+
   const changerIndicatif = (code: string) => {
     setIndicatif(code);
     // Re-formate le numéro existant pour la nouvelle longueur

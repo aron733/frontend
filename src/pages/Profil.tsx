@@ -161,6 +161,40 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         </button>
       </header>
 
+      {/* Bandeau completer profil */}
+      {(() => {
+        const userStr = localStorage.getItem('user');
+        if (!userStr) return null;
+        try {
+          const u = JSON.parse(userStr);
+          if (u.a_complete_profil === true) return null;
+          const manque = !u.age || !u.sexe || !u.numero || !u.pays || u.pays === 'Inconnu';
+          if (!manque) return null;
+          return (
+            <div
+              onClick={() => window.dispatchEvent(new CustomEvent('ouvrir-modal-profil'))}
+              style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: '#fff',
+                padding: '12px 16px',
+                margin: '0 12px 12px',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 600,
+                boxShadow: '0 4px 12px rgba(102,126,234,0.3)',
+              }}
+            >
+              <span>📝 Complète ton profil pour être visible</span>
+              <span style={{ fontSize: '18px' }}>›</span>
+            </div>
+          );
+        } catch (e) { return null; }
+      })()}
+
         {menuOuvert && (
           <div onClick={() => setMenuOuvert(false)} style={styles.overlayMenu} />
         )}
