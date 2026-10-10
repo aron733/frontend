@@ -54,17 +54,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
 
   const ajouterMessage = (convId: string, msg: Message) => {
-    setMessagesParConv((prev) => {
-      const existing = prev[convId] || [];
-      // Déduplication : si un message identique existe (même user + même texte + même fichier)
-      const doublon = existing.some((m) => (
-        String(m.from_user_id) === String(msg.from_user_id) &&
-        m.message === msg.message &&
-        (m.fichier_url || null) === (msg.fichier_url || null)
-      ));
-      if (doublon) return prev;
-      return { ...prev, [convId]: [...existing, msg] };
-    });
+    setMessagesParConv((prev) => ({
+      ...prev,
+      [convId]: [...(prev[convId] || []), msg],
+    }));
   };
 
   const setMessagesConv = (convId: string, msgs: Message[]) => {
@@ -133,17 +126,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 convId = `user_${data.from_user_id}`;
               }
 
-              // Ajoute au state (avec déduplication)
-              setMessagesParConv((prev) => {
-                const existing = prev[convId] || [];
-                const doublon = existing.some((m) => (
-                  String(m.from_user_id) === String(msg.from_user_id) &&
-                  m.message === msg.message &&
-                  (m.fichier_url || null) === (msg.fichier_url || null)
-                ));
-                if (doublon) return prev;
-                return { ...prev, [convId]: [...existing, msg] };
-              });
+              // Ajoute au state (pas de dédup par contenu - garde l'id comme unique)
+              setMessagesParConv((prev) => ({
+                ...prev,
+                [convId]: [...(prev[convId] || []), msg],
+              }));
 
               // Notifie si la conv n'est PAS active
               if (convActiveRef.current !== convId) {
