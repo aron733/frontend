@@ -113,17 +113,16 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
 
 <p>Le scan a révélé <strong>plusieurs points d'attention</strong> dans le code backend. Une grande partie a été corrigée immédiatement, le reste s'est révélé être des faux positifs après vérification.</p>
 
-<h3>Ce qui a été corrigé</h3>
+<h3>Ce qui a été amélioré</h3>
 
 <ul>
-  <li><strong>Une route API publique non protégée</strong>, qui permettait d'accéder à certaines informations utilisateurs. Supprimée immédiatement.</li>
-  <li><strong>Un token Telegram</strong> codé en dur dans le code source. Retiré du code, lu désormais uniquement depuis le fichier d'environnement.</li>
-  <li><strong>Trois générateurs pseudo-aléatoires non cryptographiques</strong> utilisés pour générer des codes de salle visio et des identifiants. Remplacés par le module <code>secrets</code> de Python.</li>
-  <li><strong>Deux appels HTTP sans timeout</strong> vers Google OAuth (risque de blocage serveur). Timeout ajouté.</li>
-  <li><strong>Un secret Cloudinary</strong> codé en dur. Retiré du code, lu depuis le fichier d'environnement.</li>
+  <li><strong>Renforcement des accès API</strong> : les endpoints exposés ont été révisés et sécurisés.</li>
+  <li><strong>Retrait de valeurs sensibles du code source</strong> : certaines valeurs de configuration ont été déplacées vers des variables d'environnement.</li>
+  <li><strong>Amélioration des générateurs aléatoires</strong> utilisés pour les identifiants et codes internes.</li>
+  <li><strong>Ajout de timeouts</strong> sur les appels à des services externes, pour éviter tout risque de blocage.</li>
 </ul>
 
-<p>Les quatre faux positifs étaient : huit utilisations de <code>@csrf_exempt</code> (normal car l'authentification est basée sur JWT et non sur cookies), une alerte SSRF sur le proxy RSS (déjà protégé par une whitelist stricte sur <code>news.google.com</code>), une alerte XSS sur une vue administrative, et un générateur aléatoire non-crypto utilisé dans un contexte légitime.</p>
+<p>D'autres alertes se sont révélées être des faux positifs après vérification manuelle, et n'ont pas nécessité de changement.</p>
 
 <blockquote>« Sur un projet porté par une seule personne, ce type d'audit régulier est essentiel. La sécurité ne doit pas attendre qu'il y ait un incident pour être prise au sérieux. »</blockquote>
 
@@ -177,7 +176,7 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
 
 <h2>7. Mises à jour légales</h2>
 
-<p>Les Conditions Générales d'Utilisation (CGU) et la Politique de Confidentialité ont été <strong>entièrement revues</strong> pour respecter les principes du <strong>RGPD</strong> et de la <strong>loi burkinabè sur la protection des données personnelles</strong> :</p>
+<p>Les Conditions Générales d'Utilisation (CGU) et la Politique de Confidentialité ont été <strong>mises à jour</strong> pour respecter les principes du <strong>RGPD</strong> et de la <strong>loi burkinabè sur la protection des données personnelles</strong> :</p>
 
 <ul>
   <li>Mention explicite des trois façons de supprimer son compte</li>
@@ -185,7 +184,6 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
   <li>Liste complète des sous-traitants (InterServer, Cloudinary, Groq, Zoho, Brevo, Cloudflare, LiveKit, Telegram)</li>
   <li>Mention des transferts internationaux de données (États-Unis, Inde, France, Royaume-Uni)</li>
   <li>Clarification sur l'usage de l'IA (Groq) et les limites de l'assistant</li>
-  <li>Mention de l'âge minimum (15 ans) et de l'autorisation parentale (15-18 ans)</li>
   <li>Section dédiée aux comptes inactifs (suppression après 24 mois d'inactivité)</li>
   <li>Section newsletter (consentement lors de l'inscription, désabonnement en un clic)</li>
 </ul>
@@ -195,7 +193,7 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
 <h2>8. Chiffres clés d'octobre</h2>
 
 <ul>
-  <li><strong>12 780 pages vues</strong> sur vokyvo.com (mois d'octobre)</li>
+  <li><strong>Près de 13 000 pages vues</strong> sur les 30 derniers jours</li>
   <li><strong>Plusieurs centaines d'utilisateurs</strong> inscrits depuis le lancement</li>
   <li><strong>~51 000 lignes de code</strong> au total (Django + Daphne + React + Bot)</li>
   <li><strong>~60 endpoints API</strong> actifs</li>
@@ -208,7 +206,7 @@ hr{border:none;border-top:1px solid #1a1a2e;margin:40px 0}
 
 <ul>
   <li><strong>Publication sur Google Play</strong> — l'application est prête, la page de suppression web est en place. Reste la validation Google.</li>
-  <li><strong>Notifications push</strong> — pour améliorer la rétention (aujourd'hui à 5,9% en semaine 1)</li>
+  <li><strong>Notifications push</strong> — pour renforcer l'engagement des utilisateurs</li>
   <li><strong>Amélioration du chat de groupe</strong> — actuellement moins développé que le chat privé</li>
   <li><strong>Mobile Money</strong> — pour les paiements, en partenariat avec un opérateur local</li>
   <li><strong>Version anglaise</strong> — pour toucher les pays anglophones d'Afrique de l'Ouest</li>
