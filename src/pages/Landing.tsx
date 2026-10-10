@@ -37,6 +37,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [loading, setLoading] = useState(false);
   const [indicatif, setIndicatif] = useState('+226');
   const [cookiesAcceptes, setCookiesAcceptes] = useState(localStorage.getItem('cookies_acceptes') === 'true');
+  const [modalRefus, setModalRefus] = useState(false);
   const [showPolitique, setShowPolitique] = useState(false);
   const estDansAPK = navigator.userAgent.includes('wv') || navigator.userAgent.includes('Capacitor');
   const [showConditions, setShowConditions] = useState(false);
@@ -301,7 +302,12 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     setCookiesAcceptes(true);
   };
 
-  const refuserCookies = async () => {
+  const refuserCookies = () => {
+    setModalRefus(true);
+  };
+
+  const confirmerRefus = async () => {
+    setModalRefus(false);
     try {
       if (Capacitor.isNativePlatform()) {
         const { App: CapApp } = await import('@capacitor/app');
@@ -922,6 +928,85 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
                   Refuser
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmation de refus */}
+      {modalRefus && (
+        <div style={styles.cookieOverlay} onClick={() => setModalRefus(false)}>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#1a1a2e',
+              border: '1px solid #2a2a3e',
+              borderRadius: '16px',
+              padding: '24px',
+              maxWidth: '400px',
+              width: '100%',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+              margin: 'auto',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <div style={{
+                width: '56px', height: '56px', borderRadius: '50%',
+                background: 'rgba(220,53,69,0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              </div>
+            </div>
+
+            <h2 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, textAlign: 'center', margin: '0 0 12px 0' }}>
+              VOKYVO ne peut pas fonctionner
+            </h2>
+
+            <p style={{ color: '#a8a8c0', fontSize: '14px', lineHeight: 1.6, textAlign: 'center', margin: '0 0 8px 0' }}>
+              Les cookies essentiels permettent de vous garder connecté, de sécuriser votre compte et d'assurer le bon fonctionnement de la messagerie.
+            </p>
+
+            <p style={{ color: '#a8a8c0', fontSize: '14px', lineHeight: 1.6, textAlign: 'center', margin: '0 0 20px 0' }}>
+              Sans eux, VOKYVO ne peut pas s'ouvrir.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button
+                onClick={() => setModalRefus(false)}
+                style={{
+                  padding: '13px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: '#fff',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                J'accepte les cookies
+              </button>
+              <button
+                onClick={confirmerRefus}
+                style={{
+                  padding: '13px',
+                  borderRadius: '12px',
+                  border: '1px solid #2a2a3e',
+                  background: 'transparent',
+                  color: '#888',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Je refuse quand même
+              </button>
             </div>
           </div>
         </div>
