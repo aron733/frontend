@@ -75,6 +75,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let actif = true;
     let reconnectDelay = 0;
+    let localWs: WebSocket | null = null;
 
     const connecter = () => {
       if (!actif || STOP_RECONNECT) return;
@@ -87,6 +88,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       try {
         const ws = new WebSocket(`${WS_URL}?token=${token}`);
+        localWs = ws;
 
         ws.onopen = () => {
           console.log('🌐 WS Global connecté');
@@ -224,7 +226,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
     return () => {
       actif = false;
-      wsRef.current?.close();
+      localWs?.close();
     };
   }, []);
 
