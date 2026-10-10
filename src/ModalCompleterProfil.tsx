@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://api.vokyvo.com/api';
 
-// Liste identique à l'inscription Landing.tsx
 const INDICATIFS = [
   // Afrique de l'Ouest
   { code: '+226', pays: 'Burkina Faso', drapeau: '🇧🇫' },
@@ -82,7 +81,51 @@ const INDICATIFS = [
   { code: '+82', pays: 'Corée du Sud', drapeau: '🇰🇷' },
   { code: '+971', pays: 'Émirats arabes unis', drapeau: '🇦🇪' },
   { code: '+966', pays: 'Arabie saoudite', drapeau: '🇸🇦' },
+  { code: '+90', pays: 'Turquie', drapeau: '🇹🇷' },
+  // Océanie
+  { code: '+61', pays: 'Australie', drapeau: '🇦🇺' },
+  { code: '+64', pays: 'Nouvelle-Zélande', drapeau: '🇳🇿' },
 ];
+
+// Longueurs par indicatif (copié depuis Landing.tsx)
+const longueurParIndicatif = (code: string): number => {
+  const longueurs: Record<string, number> = {
+    '+226': 8, '+223': 8, '+227': 8, '+225': 10, '+221': 9,
+    '+229': 8, '+228': 8, '+224': 9, '+245': 9, '+220': 7,
+    '+222': 8, '+231': 8, '+232': 8, '+233': 9, '+234': 10,
+    '+235': 8, '+236': 8, '+237': 9, '+240': 9, '+241': 8,
+    '+242': 9, '+243': 9, '+244': 9,
+    '+212': 9, '+213': 9, '+216': 8, '+218': 9, '+20': 10,
+    '+249': 9, '+211': 9, '+251': 9, '+252': 8, '+253': 8,
+    '+254': 9, '+255': 9, '+256': 9, '+250': 9, '+257': 8,
+    '+258': 9, '+260': 9, '+261': 9, '+263': 9, '+264': 9,
+    '+265': 9, '+266': 8, '+267': 8, '+268': 8, '+27': 9,
+    '+33': 9, '+32': 9, '+41': 9, '+49': 11, '+39': 10,
+    '+34': 9, '+351': 9, '+44': 10, '+31': 9, '+48': 9, '+7': 10,
+    '+1': 10, '+52': 10, '+55': 11, '+54': 10, '+56': 9, '+57': 10,
+    '+86': 11, '+91': 10, '+81': 10, '+82': 10,
+    '+971': 9, '+966': 9, '+90': 10,
+    '+61': 9, '+64': 9,
+  };
+  return longueurs[code] || 15;
+};
+
+const formaterNumero = (valeur: string, code: string) => {
+  const max = longueurParIndicatif(code);
+  const chiffres = valeur.replace(/\D/g, '').slice(0, max);
+  return chiffres.replace(/(\d{2})(?=\d)/g, '$1 ');
+};
+
+const genererPlaceholder = (code: string): string => {
+  const max = longueurParIndicatif(code);
+  const blocs: string[] = [];
+  let reste = max;
+  while (reste > 0) {
+    blocs.push('XX');
+    reste -= 2;
+  }
+  return blocs.join(' ');
+};
 
 export default function ModalCompleterProfil() {
   const [visible, setVisible] = useState(false);
@@ -93,7 +136,6 @@ export default function ModalCompleterProfil() {
   const [numero, setNumero] = useState('');
   const [indicatif, setIndicatif] = useState('+226');
 
-  // Pays dérivé de l'indicatif (sauf si plusieurs pays partagent le même indicatif)
   const paysSelectionne = INDICATIFS.find((p) => p.code === indicatif)?.pays || 'Burkina Faso';
 
   useEffect(() => {
@@ -102,7 +144,6 @@ export default function ModalCompleterProfil() {
     try {
       const user = JSON.parse(userStr);
       if (user.a_complete_profil === true) return;
-      // Ne pas ré-afficher si l'utilisateur a déjà vu le modal aujourd'hui
       const reportDate = localStorage.getItem('modal_profil_reporte_date');
       const today = new Date().toISOString().slice(0, 10);
       if (reportDate === today) return;
@@ -112,11 +153,16 @@ export default function ModalCompleterProfil() {
       if (!user.sexe) manquants.push('sexe');
       if (!user.numero) manquants.push('numero');
       if (!user.pays || user.pays === 'Inconnu') manquants.push('pays');
-      if (manquants.length > 0) {
-        setVisible(true);
-      }
+      if (manquants.length > 0) setVisible(true);
     } catch (e) {}
   }, []);
+
+  const changerIndicatif = (code: string) => {
+    setIndicatif(code);
+    // Re-formate le numéro existant pour la nouvelle longueur
+    const nouveauNumero = formaterNumero(numero, code);
+    setNumero(nouveauNumero);
+  };
 
   const enregistrer = async () => {
     setErreur('');
@@ -125,11 +171,14 @@ export default function ModalCompleterProfil() {
       setErreur('Âge requis (15 ans minimum)');
       return;
     }
+    if (!numero || numero.replace(/\D/g, '').length < 6) {
+      setErreur('Numéro de téléphone requis');
+      return;
+    }
     setLoading(true);
     try {
       const token = localStorage.getItem('access_token');
-      // Numéro complet avec indicatif
-      const numeroComplet = numero ? `${indicatif}${numero.replace(/^0+/, '')}` : '';
+      const numeroComplet = `${indicatif}${numero.replace(/\D/g, '')}`;
       await axios.patch(`${API_URL}/user/profil/`, {
         age: ageInt,
         sexe,
@@ -202,24 +251,24 @@ export default function ModalCompleterProfil() {
         <label style={styles.label}>Pays</label>
         <select
           value={indicatif}
-          onChange={(e) => setIndicatif(e.target.value)}
+          onChange={(e) => changerIndicatif(e.target.value)}
           style={styles.input}
         >
           {INDICATIFS.map((p, i) => (
-            <option key={`${p.code}-${i}`} value={p.code}>
+            <option key={`${p.code}-${p.pays}-${i}`} value={p.code}>
               {p.drapeau} {p.pays} ({p.code})
             </option>
           ))}
         </select>
 
-        <label style={styles.label}>Numéro de téléphone</label>
+        <label style={styles.label}>Numéro de téléphone *</label>
         <div style={styles.numeroRow}>
           <span style={styles.indicatifLabel}>{indicatif}</span>
           <input
             type="tel"
             value={numero}
-            onChange={(e) => setNumero(e.target.value.replace(/[^0-9]/g, ''))}
-            placeholder="06 96 54 41"
+            onChange={(e) => setNumero(formaterNumero(e.target.value, indicatif))}
+            placeholder={genererPlaceholder(indicatif)}
             style={styles.numeroInput}
           />
         </div>
@@ -260,24 +309,9 @@ const styles: Record<string, React.CSSProperties> = {
     maxHeight: '90vh',
     overflowY: 'auto',
   },
-  title: {
-    color: '#fff',
-    fontSize: '20px',
-    marginBottom: '8px',
-    marginTop: 0,
-  },
-  subtitle: {
-    color: '#888',
-    fontSize: '14px',
-    marginBottom: '20px',
-  },
-  label: {
-    display: 'block',
-    color: '#aaa',
-    fontSize: '13px',
-    marginBottom: '6px',
-    marginTop: '14px',
-  },
+  title: { color: '#fff', fontSize: '20px', marginBottom: '8px', marginTop: 0 },
+  subtitle: { color: '#888', fontSize: '14px', marginBottom: '20px' },
+  label: { display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px', marginTop: '14px' },
   input: {
     width: '100%',
     background: 'rgba(255,255,255,0.05)',
@@ -289,10 +323,7 @@ const styles: Record<string, React.CSSProperties> = {
     outline: 'none',
     boxSizing: 'border-box',
   },
-  sexeRow: {
-    display: 'flex',
-    gap: '10px',
-  },
+  sexeRow: { display: 'flex', gap: '10px' },
   sexeBtn: {
     flex: 1,
     background: 'rgba(255,255,255,0.05)',
@@ -338,16 +369,8 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '15px',
     outline: 'none',
   },
-  erreur: {
-    color: '#ff6b6b',
-    fontSize: '13px',
-    marginTop: '12px',
-  },
-  buttons: {
-    display: 'flex',
-    gap: '10px',
-    marginTop: '22px',
-  },
+  erreur: { color: '#ff6b6b', fontSize: '13px', marginTop: '12px' },
+  buttons: { display: 'flex', gap: '10px', marginTop: '22px' },
   btnPrimaire: {
     flex: 1,
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
