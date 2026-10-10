@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { chargerMessages, sauvegarderMessages, chargerConversations as chargerConversationsCache, sauvegarderConversations as sauvegarderConversationsCache } from '../db';
 import { useChat } from '../ChatContext';
+import PullToRefresh from 'react-simple-pull-to-refresh';
+import LoaderVokyvo from '../LoaderVokyvo';
 import axios from 'axios';
 import { API_URL } from '../config';
 import CreerGroupe from './CreerGroupe';
@@ -690,7 +692,56 @@ function Chat() {
     }
   };
 
+  const rafraichir = async () => {
+    // Si dans une conv privée → recharge les messages de cette conv
+    if (selectedUser) {
+      try {
+        const userId = selectedUser.id || selectedUser.user_id;
+        const convId = `user_${userId}`;
+        const res = await axios.get(`${API_URL}/conversations/${convId.replace('user_', '')}/messages/`, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        if (res.data) {
+          // API messages : la réponse contient les messages
+          const msgs = res.data.messages || res.data;
+          if (Array.isArray(msgs)) {
+            setMessagesConv(convId, msgs);
+          }
+        }
+      } catch (e) {
+        console.warn('Erreur refresh conv privée', e);
+      }
+      return;
+    }
+
+    // Si dans un groupe → recharge les messages du groupe
+    if (groupeActif) {
+      try {
+        const res = await axios.get(`${API_URL}/groupes/${groupeActif.id}/messages/`, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        if (res.data && Array.isArray(res.data)) {
+          setMessagesConv(`groupe_${groupeActif.id}`, res.data);
+        }
+      } catch (e) {
+        console.warn('Erreur refresh groupe', e);
+      }
+      return;
+    }
+
+    // Sinon (liste convs) → recharger la liste (via reload de la page)
+    // On ne peut pas recharger juste les convs pour l'instant sans endpoint dédié
+    await new Promise(resolve => setTimeout(resolve, 500));
+  };
+
   return (
+    <PullToRefresh
+      onRefresh={rafraichir}
+      pullingContent={<LoaderVokyvo size={30} />}
+      refreshingContent={<LoaderVokyvo size={40} />}
+      pullDownThreshold={70}
+      maxPullDownDistance={100}
+    >
     <div style={styles.container}>
       <div style={styles.header}>
         <button onClick={() => { if (selectedUser || groupeActif) { setSelectedUser(null); setGroupeActif(null); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} style={styles.backButton}>
@@ -1514,6 +1565,7 @@ function Chat() {
         </>
       )}
     </div>
+    </PullToRefresh>
   );
 }
 
