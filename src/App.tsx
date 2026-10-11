@@ -10,6 +10,7 @@ import ModalCompleterProfil from './ModalCompleterProfil';
 import NotFound from './pages/NotFound';
 import BandeauOffline from './BandeauOffline';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
+import { API_URL } from './config';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -47,7 +48,7 @@ function App() {
           }));
           try {
             const { default: ax } = await import('axios');
-            const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+            const API = API_URL;
             const rep = await ax.get(`${API}/verifier-acces/`, {
               headers: { Authorization: `Bearer ${token}` }
             });
@@ -104,7 +105,7 @@ function App() {
       (async () => {
         try {
           const { default: ax } = await import('axios');
-          const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+          const API = API_URL;
           const rep = await ax.get(`${API}/verifier-acces/`, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
@@ -332,7 +333,7 @@ function App() {
             onClick={async () => {
               try {
                 const { default: ax } = await import('axios');
-                const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+                const API = API_URL;
                 const token = localStorage.getItem('access_token');
                 const rep = await ax.get(`${API}/verifier-acces/`, {
                   headers: { Authorization: `Bearer ${token}` }
