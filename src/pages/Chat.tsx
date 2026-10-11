@@ -208,25 +208,6 @@ function Chat() {
     return () => setConvActive(null);
   }, []);
 
-  // Restaure la conv active au mount
-  useEffect(() => {
-    const savedGroupe = localStorage.getItem('conv_active_groupe');
-    const savedUser = localStorage.getItem('conv_active_user');
-    if (savedGroupe) {
-      try {
-        const g = JSON.parse(savedGroupe);
-        setGroupeActif(g);
-        setConvActive(`groupe_${g.id}`);
-      } catch (e) {}
-    } else if (savedUser) {
-      try {
-        const u = JSON.parse(savedUser);
-        setSelectedUser(u);
-        setConvActive(`user_${u.id || u.user_id}`);
-      } catch (e) {}
-    }
-  }, []);
-
   const selectUser = async (user: any) => {
     setSelectedUser(user);
 
@@ -285,6 +266,24 @@ function Chat() {
       console.error('Erreur chargement historique:', err);
     }
   };
+
+  // Restaure la conv active au mount (après selectUser)
+  useEffect(() => {
+    const savedGroupe = localStorage.getItem('conv_active_groupe');
+    const savedUser = localStorage.getItem('conv_active_user');
+    if (savedGroupe) {
+      try {
+        const g = JSON.parse(savedGroupe);
+        setGroupeActif(g);
+        setConvActive(`groupe_${g.id}`);
+      } catch (e) {}
+    } else if (savedUser) {
+      try {
+        const u = JSON.parse(savedUser);
+        selectUser(u);
+      } catch (e) {}
+    }
+  }, []);
 
   // Refresh auto toutes les 1s de la conv active (anti-coupure WS)
   useEffect(() => {
