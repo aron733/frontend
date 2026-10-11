@@ -12,7 +12,7 @@ import { Browser } from '@capacitor/browser';
 
 
 function Chat() {
-  const { convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -729,7 +729,14 @@ function Chat() {
           </svg>
           Messages
         </h2>
-        {/* Point de connexion retiré — géré par <BandeauWS /> */}
+        {!connecte && (
+          <span style={styles.wsReconnect}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+            Reconnexion…
+          </span>
+        )}
       </div>
 
       <div style={styles.body}>
@@ -1592,6 +1599,20 @@ const styles = {
     width: '100vw',
     background: '#0a0a0f',
     zIndex: 1000,
+  },
+  wsReconnect: {
+    marginLeft: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
+    background: 'rgba(245, 158, 11, 0.15)',
+    color: '#f59e0b',
+    fontSize: '11px',
+    fontWeight: 600,
+    padding: '3px 9px',
+    borderRadius: '12px',
+    border: '1px solid rgba(245, 158, 11, 0.3)',
+    whiteSpace: 'nowrap' as const,
   },
   header: {
     display: 'flex',
