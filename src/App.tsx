@@ -3,12 +3,12 @@ import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
-import { Network } from '@capacitor/network';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
 import ModalCompleterProfil from './ModalCompleterProfil';
 import NotFound from './pages/NotFound';
+import BandeauOffline from './BandeauOffline';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
 
 function App() {
@@ -17,49 +17,7 @@ function App() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
-  useEffect(() => {
-    if (!Capacitor.isNativePlatform()) return;
-
-    // Ne rien faire si on est deja sur offline.html
-    if (window.location.pathname.includes('offline')) return;
-
-    let timerOffline: ReturnType<typeof setTimeout> | null = null;
-
-    const checkNetwork = async () => {
-      const status = await Network.getStatus();
-      if (!status.connected) {
-        if (timerOffline) clearTimeout(timerOffline);
-        timerOffline = setTimeout(() => {
-          if (!window.location.pathname.includes('offline')) {
-            window.location.href = '/offline.html';
-          }
-        }, 1000);
-      }
-    };
-
-    checkNetwork();
-
-    const listener = Network.addListener('networkStatusChange', (status) => {
-      if (!status.connected) {
-        if (timerOffline) clearTimeout(timerOffline);
-        timerOffline = setTimeout(() => {
-          if (!window.location.pathname.includes('offline')) {
-            window.location.href = '/offline.html';
-          }
-        }, 1000);
-      } else {
-        if (timerOffline) {
-          clearTimeout(timerOffline);
-          timerOffline = null;
-        }
-      }
-    });
-
-    return () => {
-      listener.then((l: any) => l.remove());
-      if (timerOffline) clearTimeout(timerOffline);
-    };
-  }, []);
+  // Le bandeau offline est géré par <BandeauOffline />
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
@@ -173,7 +131,7 @@ function App() {
     const routesValides = [
       '/', '/a-propos', '/blog', '/cgu', '/confidentialite',
       '/aron-vokouma', '/desabonnement', '/supprimer-compte',
-      '/offline', '/oauth-callback', '/oauth/google/callback'
+      '/oauth-callback', '/oauth/google/callback'
     ];
     // Le path est valide s'il est dans la liste OU s'il commence par /blog/
     const estValide = routesValides.includes(path) || path.startsWith('/blog/');
@@ -411,13 +369,18 @@ function App() {
     return <NotFound />;
   }
 
-  return user ? (
+  return (
     <>
-      <Profil user={user} onLogout={handleLogout} />
-      <ModalCompleterProfil />
+      <BandeauOffline />
+      {user ? (
+        <>
+          <Profil user={user} onLogout={handleLogout} />
+          <ModalCompleterProfil />
+        </>
+      ) : (
+        <Landing onLogin={handleLogin} />
+      )}
     </>
-  ) : (
-    <Landing onLogin={handleLogin} />
   );
 }
 
