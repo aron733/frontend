@@ -9,7 +9,6 @@ import Cours from './Cours';
 import VokyvoPlus from './VokyvoPlus';
 // import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 import BadgeVerifie from '../BadgeVerifie';
-import BadgeDynamique from '../BadgeDynamique';
 
 import { API_URL } from '../config';
 
@@ -343,11 +342,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             
             <h2 style={styles.nom}>
               {userData.prenom || userData.first_name} {userData.nom || userData.last_name}
-              {userData.badge_special ? (
-                <BadgeDynamique badge={userData.badge_special} size={22} />
-              ) : userData.badge_verifie ? (
-                <BadgeVerifie size={22} />
-              ) : null}
+              {userData.badge_verifie && <BadgeVerifie size={22} />}
             </h2>
             <p style={styles.pseudo}>{userData.email}</p>
             
