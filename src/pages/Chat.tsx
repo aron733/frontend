@@ -12,7 +12,7 @@ import { Browser } from '@capacitor/browser';
 
 
 function Chat() {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
+  const { convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -709,7 +709,7 @@ function Chat() {
           </svg>
           Messages
         </h2>
-        <span style={connecte ? styles.onlineDot : styles.offlineDot} />
+        {/* Point de connexion retiré — géré par <BandeauWS /> */}
       </div>
 
       <div style={styles.body}>

@@ -43,7 +43,7 @@ export default function BandeauOffline() {
 const styles: Record<string, React.CSSProperties> = {
   bandeau: {
     position: 'fixed',
-    top: 0,
+    top: 'env(safe-area-inset-top, 0px)',
     left: 0,
     right: 0,
     zIndex: 99999,
@@ -51,7 +51,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#fff',
     fontSize: '13px',
     fontWeight: 600,
-    paddingTop: 'calc(env(safe-area-inset-top, 0px) + 8px)',
     paddingBottom: '8px',
     paddingLeft: '12px',
     paddingRight: '12px',

@@ -9,6 +9,7 @@ import Profil from './pages/Profil';
 import ModalCompleterProfil from './ModalCompleterProfil';
 import NotFound from './pages/NotFound';
 import BandeauOffline from './BandeauOffline';
+import BandeauWS from './BandeauWS';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
 
 function App() {
@@ -372,6 +373,7 @@ function App() {
   return (
     <>
       <BandeauOffline />
+      <BandeauWS />
       {user ? (
         <>
           <Profil user={user} onLogout={handleLogout} />
