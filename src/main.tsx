@@ -8,6 +8,14 @@ import { NotificationProvider } from './NotificationContext'
 import ForceUpdateModal from './ForceUpdateModal'
 import { ChatProvider } from './ChatContext'
 // Intercepteur Axios : refresh auto + bannissement
+let isRefreshing = false;
+let refreshQueue: Array<(token: string | null) => void> = [];
+
+function processQueue(token: string | null) {
+  refreshQueue.forEach((cb) => cb(token));
+  refreshQueue = [];
+}
+
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -18,26 +26,52 @@ axios.interceptors.response.use(
       originalRequest._retry = true;
       
       const refreshToken = localStorage.getItem('refresh_token');
+      if (!refreshToken) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+        return Promise.reject(error);
+      }
       
-      if (refreshToken) {
-        try {
-          const response = await axios.post('https://api.vokyvo.com/api/token/refresh/', {
-            refresh: refreshToken,
+      // Si un refresh est déjà en cours, on met la requête en file d'attente
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          refreshQueue.push((newToken) => {
+            if (newToken) {
+              originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              resolve(axios(originalRequest));
+            } else {
+              resolve(Promise.reject(error));
+            }
           });
-          
-          const newAccessToken = response.data.access;
-          localStorage.setItem('access_token', newAccessToken);
-          
-          // Réessaie la requête avec le nouveau token
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return axios(originalRequest);
-        } catch (refreshError) {
-          // Refresh échoué → déconnexion
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          localStorage.removeItem('user');
-          window.location.href = '/';
-        }
+        });
+      }
+      
+      // Premier appel : on lance le refresh
+      isRefreshing = true;
+      try {
+        const response = await axios.post('https://api.vokyvo.com/api/token/refresh/', {
+          refresh: refreshToken,
+        });
+        
+        const newAccessToken = response.data.access;
+        localStorage.setItem('access_token', newAccessToken);
+        processQueue(newAccessToken);
+        
+        // Réessaie la requête d'origine avec le nouveau token
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return axios(originalRequest);
+      } catch (refreshError) {
+        // Refresh échoué → déconnexion
+        processQueue(null);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
