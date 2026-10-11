@@ -12,15 +12,19 @@ export default function PromptNotifications() {
   useEffect(() => {
     // Sur APK (Capacitor), Web Push ne marche pas → on skip (FCM à venir)
     if (Capacitor.isNativePlatform()) return;
+    // Vérifier que Notification est supporté
+    if (typeof Notification === 'undefined') return;
     // Vérifier si déjà activé
     if (Notification.permission === 'granted') return;
     if (localStorage.getItem('prompt_notifs_dismiss') === 'true') return;
 
     // Compter les messages totaux
     let total = 0;
-    Object.values(messagesParConv).forEach((msgs: any) => {
-      total += msgs.length;
-    });
+    if (messagesParConv && typeof messagesParConv === 'object') {
+      Object.values(messagesParConv).forEach((msgs: any) => {
+        if (Array.isArray(msgs)) total += msgs.length;
+      });
+    }
 
     // Si nouveau message reçu et prompt pas affiché
     if (total > dernierMessageVu && dernierMessageVu > 0) {
