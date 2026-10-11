@@ -41,9 +41,6 @@ importers:
       livekit-client:
         specifier: ^2.22.2
         version: 2.22.3(@types/dom-mediacapture-record@1.0.22)
-      onesignal-cordova-plugin:
-        specifier: ^5.5.5
-        version: 5.5.8
       react:
         specifier: ^19.2.8
         version: 19.3.0
@@ -2050,9 +2047,6 @@ packages:
   object.assign@4.1.7:
     resolution: {integrity: sha512-nK28WOo+QIjBkDduTINE4JkF/UJJKyf2EJxvJKfblDpyg0Q+pkOHNTL0Qwy6NP6FhE/EnzV73BxxqcJaXY9anw==}
     engines: {node: '>= 0.4'}
-
-  onesignal-cordova-plugin@5.5.8:
-    resolution: {integrity: sha512-DFoqclyxuZd5n+wgzPuOj/pm5E65Gp0hnFZumJNDgzH4fH1RISQRJSezLEms6xr8Cx64NWcNs8D1McYa98U5wg==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -4680,8 +4674,6 @@ snapshots:
       es-object-atoms: 1.1.2
       has-symbols: 1.1.0
       object-keys: 1.1.1
-
-  onesignal-cordova-plugin@5.5.8: {}
 
   optionator@0.9.4:
     dependencies:
