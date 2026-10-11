@@ -4,35 +4,40 @@ import { useChat } from './ChatContext';
 export default function BandeauWS() {
   const { connecte } = useChat();
   const [affiche, setAffiche] = useState(false);
+  const [secondes, setSecondes] = useState(0);
 
   useEffect(() => {
     if (connecte) {
-      // WS connecté → cacher immédiatement
       setAffiche(false);
+      setSecondes(0);
       return;
     }
-    // WS down → attendre 3 sec avant d'afficher
-    const timer = setTimeout(() => {
-      setAffiche(true);
-    }, 3000);
+    // Attendre 3 sec avant d'afficher (évite les faux positifs)
+    const timer = setTimeout(() => setAffiche(true), 3000);
     return () => clearTimeout(timer);
   }, [connecte]);
+
+  // Compteur de secondes quand affiché
+  useEffect(() => {
+    if (!affiche) return;
+    const interval = setInterval(() => {
+      setSecondes((s) => s + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [affiche]);
 
   if (!affiche || connecte) return null;
 
   return (
     <div style={styles.bandeau}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M23 4v6h-6" />
-        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-      </svg>
-      <span style={{ flex: 1 }}>Reconnexion en cours…</span>
-      <button
-        onClick={() => window.location.reload()}
-        style={styles.btn}
-      >
-        Recharger
-      </button>
+      <div style={styles.spinner}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+      </div>
+      <span style={styles.texte}>
+        Reconnexion… {secondes > 0 ? `(${secondes}s)` : ''}
+      </span>
     </div>
   );
 }
@@ -41,29 +46,30 @@ const styles: Record<string, React.CSSProperties> = {
   bandeau: {
     position: 'fixed',
     top: 'env(safe-area-inset-top, 0px)',
-    left: 0,
-    right: 0,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    marginTop: '8px',
     zIndex: 99998,
-    background: '#f59e0b',
+    background: 'rgba(245, 158, 11, 0.95)',
     color: '#fff',
     fontSize: '13px',
     fontWeight: 600,
-    padding: '8px 12px',
+    padding: '8px 16px',
+    borderRadius: '20px',
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+    boxShadow: '0 4px 20px rgba(245, 158, 11, 0.5)',
     animation: 'slideDown 0.3s ease-out',
+    backdropFilter: 'blur(10px)',
+    whiteSpace: 'nowrap' as const,
   },
-  btn: {
-    background: 'rgba(255, 255, 255, 0.25)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '6px',
-    padding: '4px 10px',
-    fontSize: '12px',
-    fontWeight: 700,
-    cursor: 'pointer',
-    fontFamily: 'inherit',
+  spinner: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  texte: {
+    fontSize: '13px',
   },
 };
