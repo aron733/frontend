@@ -89,10 +89,14 @@ export function ecouterNotifications() {
           border: 1px solid rgba(255,255,255,0.1);
           animation: slideIn 0.3s ease-out;
         `;
-        popup.innerHTML = `
-          <p style="margin:0;font-weight:bold;color:#667eea">${event.data.title}</p>
-          <p style="margin:5px 0 0;color:#aaa">${event.data.body}</p>
-        `;
+        const pTitle = document.createElement('p');
+        pTitle.style.cssText = 'margin:0;font-weight:bold;color:#667eea';
+        pTitle.textContent = event.data.title || '';
+        const pBody = document.createElement('p');
+        pBody.style.cssText = 'margin:5px 0 0;color:#aaa';
+        pBody.textContent = event.data.body || '';
+        popup.appendChild(pTitle);
+        popup.appendChild(pBody);
         document.body.appendChild(popup);
         
         setTimeout(() => {
@@ -125,10 +129,14 @@ export function afficherMessagesManques() {
         max-width: 300px;
         border: 1px solid rgba(255,255,255,0.1);
       `;
-      popup.innerHTML = `
-        <p style="margin:0;font-weight:bold;color:#667eea">${msg.titre}</p>
-        <p style="margin:5px 0 0;color:#aaa">${msg.corps}</p>
-      `;
+      const pTitle = document.createElement('p');
+      pTitle.style.cssText = 'margin:0;font-weight:bold;color:#667eea';
+      pTitle.textContent = msg.titre || '';
+      const pBody = document.createElement('p');
+      pBody.style.cssText = 'margin:5px 0 0;color:#aaa';
+      pBody.textContent = msg.corps || '';
+      popup.appendChild(pTitle);
+      popup.appendChild(pBody);
       document.body.appendChild(popup);
       setTimeout(() => popup.remove(), 5000);
     });
