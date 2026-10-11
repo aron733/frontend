@@ -26,8 +26,8 @@ export default function PromptNotifications() {
       });
     }
 
-    // Si nouveau message reçu et prompt pas affiché
-    if (total > dernierMessageVu && dernierMessageVu > 0) {
+    // Si nouveaux messages reçus (ou premier chargement avec messages)
+    if (total > dernierMessageVu && total > 0) {
       setAffiche(true);
     }
     setDernierMessageVu(total);
