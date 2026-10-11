@@ -1,0 +1,38 @@
+{
+  "name": "VOKYVO — Communication intelligente",
+  "short_name": "VOKYVO",
+  "description": "Plateforme de communication intelligente pour l'Afrique de l'Ouest : messagerie, visioconférence, assistant IA et cours.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#667eea",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["communication", "education", "social"],
+  "icons": [
+    {
+      "src": "/favicon-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
