@@ -52,7 +52,7 @@ axios.interceptors.response.use(
       }
 
       // Sinon (bannissement en cours de session)
-      if (data.erreur === 'Accès refusé' || data.raison) {
+      if (data.erreur === 'Accès refusé') {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
