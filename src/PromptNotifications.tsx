@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useChat } from './ChatContext';
 import { demanderPermissionNotifications } from './notifications';
+import { Capacitor } from '@capacitor/core';
 
 export default function PromptNotifications() {
   const { messagesParConv } = useChat();
@@ -9,6 +10,8 @@ export default function PromptNotifications() {
   const [dernierMessageVu, setDernierMessageVu] = useState<number>(0);
 
   useEffect(() => {
+    // Sur APK (Capacitor), Web Push ne marche pas → on skip (FCM à venir)
+    if (Capacitor.isNativePlatform()) return;
     // Vérifier si déjà activé
     if (Notification.permission === 'granted') return;
     if (localStorage.getItem('prompt_notifs_dismiss') === 'true') return;
