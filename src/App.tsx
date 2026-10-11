@@ -10,7 +10,7 @@ import ModalCompleterProfil from './ModalCompleterProfil';
 import NotFound from './pages/NotFound';
 import BandeauOffline from './BandeauOffline';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
-import { API_URL } from './config';
+import { API_URL, getUserSecurise } from './config';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -53,7 +53,7 @@ function App() {
               headers: { Authorization: `Bearer ${token}` }
             });
             if (rep.data) {
-              const stored = JSON.parse(localStorage.getItem('user') || '{}');
+              const stored = getUserSecurise() || {};
               if (rep.data.badge_verifie !== undefined) stored.badge_verifie = rep.data.badge_verifie;
               if (rep.data.photo_profil) stored.photo_profil = rep.data.photo_profil;
               if (rep.data.est_banni !== undefined) stored.est_banni = rep.data.est_banni;
@@ -110,7 +110,7 @@ function App() {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
           if (rep.data) {
-            const stored = JSON.parse(localStorage.getItem('user') || '{}');
+            const stored = getUserSecurise() || {};
             if (rep.data.badge_verifie !== undefined) stored.badge_verifie = rep.data.badge_verifie;
             if (rep.data.photo_profil) stored.photo_profil = rep.data.photo_profil;
             if (rep.data.est_banni !== undefined) stored.est_banni = rep.data.est_banni;
@@ -238,11 +238,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
+    const userData = getUserSecurise();
     const token = localStorage.getItem('access_token');
 
     if (userData && token) {
-      setUser(JSON.parse(userData));
+      setUser(userData);
     }
 
     // Écoute les mises à jour du user (via WS badge_update)
@@ -339,7 +339,7 @@ function App() {
                   headers: { Authorization: `Bearer ${token}` }
                 });
                 if (rep.data) {
-                  const stored = JSON.parse(localStorage.getItem('user') || '{}');
+                  const stored = getUserSecurise() || {};
                   Object.assign(stored, {
                     badge_verifie: rep.data.badge_verifie,
                     photo_profil: rep.data.photo_profil || stored.photo_profil,
