@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import { chargerMessages, sauvegarderMessages, chargerConversations as chargerConversationsCache, sauvegarderConversations as sauvegarderConversationsCache } from '../db';
 import { useChat } from '../ChatContext';
 import axios from 'axios';
@@ -13,6 +15,8 @@ function Chat() {
   const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -1364,11 +1368,15 @@ function Chat() {
                     src={msg.fichier_url}
                     style={styles.messageImage}
                     alt="fichier"
-                    onClick={async () => {
-                      const url = msg.fichier_url || '';
-                      if (!url) return;
-                      if (Capacitor.isNativePlatform()) await Browser.open({ url });
-                      else window.open(url, '_blank');
+                    onClick={() => {
+                      // Index de cette image dans la liste des images de la conv
+                      const convKey = `user_${selectedUser?.id || selectedUser?.user_id}`;
+                      const images = (messagesParConv[convKey] || [])
+                        .filter((m: any) => m.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(m.fichier_url) || (m.fichier_url.includes('cloudinary.com') && m.fichier_url.includes('/image/upload/'))))
+                        .map((m: any) => m.fichier_url);
+                      const idx = images.indexOf(msg.fichier_url);
+                      setLightboxIndex(idx >= 0 ? idx : 0);
+                      setLightboxOpen(true);
                     }}
                   />
                 )}
@@ -1513,6 +1521,18 @@ function Chat() {
           </div>
         </>
       )}
+
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={lightboxIndex}
+        slides={(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || [])
+          .filter((m: any) => m.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(m.fichier_url) || (m.fichier_url.includes('cloudinary.com') && m.fichier_url.includes('/image/upload/'))))
+          .map((m: any) => ({ src: m.fichier_url }))}
+        styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' } }}
+        carousel={{ finite: false }}
+        animation={{ fade: 250 }}
+      />
     </div>
   );
 }
