@@ -10,6 +10,7 @@ import ModalCompleterProfil from './ModalCompleterProfil';
 import NotFound from './pages/NotFound';
 import BandeauOffline from './BandeauOffline';
 import BandeauWS from './BandeauWS';
+import PromptNotifications from './PromptNotifications';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
 
 function App() {
@@ -374,6 +375,7 @@ function App() {
     <>
       <BandeauOffline />
       <BandeauWS />
+      <PromptNotifications />
       {user ? (
         <>
           <Profil user={user} onLogout={handleLogout} />

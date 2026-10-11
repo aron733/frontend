@@ -18,7 +18,7 @@ export async function demanderPermissionNotifications() {
   let subscription = await registration.pushManager.getSubscription();
   
   if (!subscription) {
-    const vapidPublicKey = 'BN54LRNE7NRh7xPFvyXVokAym82SHGMgyQpUI7liehucJjviK8qRWxwGs3rEq6WDJaKeOsuc7VQ_RlyIio5AaNw';
+    const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
     
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
