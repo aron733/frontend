@@ -208,6 +208,24 @@ function Chat() {
     return () => setConvActive(null);
   }, []);
 
+  // Restaure la conv active au mount
+  useEffect(() => {
+    const savedGroupe = localStorage.getItem('conv_active_groupe');
+    const savedUser = localStorage.getItem('conv_active_user');
+    if (savedGroupe) {
+      try {
+        const g = JSON.parse(savedGroupe);
+        setGroupeActif(g);
+        setConvActive(`groupe_${g.id}`);
+      } catch (e) {}
+    } else if (savedUser) {
+      try {
+        const u = JSON.parse(savedUser);
+        setSelectedUser(u);
+        setConvActive(`user_${u.id || u.user_id}`);
+      } catch (e) {}
+    }
+  }, []);
 
   const selectUser = async (user: any) => {
     setSelectedUser(user);
@@ -215,6 +233,8 @@ function Chat() {
     const userId = user.id || user.user_id;
     const convId = `user_${userId}`;
     setConvActive(convId);
+    localStorage.setItem('conv_active_user', JSON.stringify(user));
+    localStorage.removeItem('conv_active_groupe');
 
     // 1. Affiche le cache IMMEDIATEMENT (0ms)
     const cachedMsgs = await chargerMessages(convId);
@@ -697,7 +717,7 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button onClick={() => { if (selectedUser || groupeActif) { setSelectedUser(null); setGroupeActif(null); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} style={styles.backButton}>
+        <button onClick={() => { if (selectedUser || groupeActif) { setSelectedUser(null); setGroupeActif(null); localStorage.removeItem('conv_active_user'); localStorage.removeItem('conv_active_groupe'); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} style={styles.backButton}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
@@ -742,6 +762,8 @@ function Chat() {
       setGroupeActif(groupe);
       setSelectedUser(null);
       setConvActive(`groupe_${groupe.id}`);
+      localStorage.setItem('conv_active_groupe', JSON.stringify(groupe));
+      localStorage.removeItem('conv_active_user');
       
       // Charge l'historique du groupe depuis l'API
       try {
