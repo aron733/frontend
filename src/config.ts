@@ -6,7 +6,7 @@ export function getUserSecurise(): any | null {
     const raw = localStorage.getItem('user');
     if (!raw) return null;
     const user = JSON.parse(raw);
-    if (!user || typeof user !== 'object' || !user.id || !user.username) {
+    if (!user || typeof user !== 'object' || (!user.id && !user.user_id) || !user.username) {
       localStorage.removeItem('user');
       return null;
     }
