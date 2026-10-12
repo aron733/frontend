@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 
 import { API_URL } from '../config';
 import LoaderIA from '../LoaderIA';
+import CodeBlock from '../CodeBlock';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -277,7 +278,25 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                       {estUser ? (
                         msg.content
                       ) : (
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            code({ node, className, children, ...props }: any) {
+                              const match = /language-(\w+)/.exec(className || '');
+                              const isInline = !match && !className;
+                              if (isInline) {
+                                return <code className={className} {...props}>{children}</code>;
+                              }
+                              const codeStr = String(children).replace(/\n$/, '');
+                              return (
+                                <CodeBlock
+                                  code={codeStr}
+                                  language={match ? match[1] : ''}
+                                />
+                              );
+                            },
+                          }}
+                        >{msg.content}</ReactMarkdown>
                       )}
                     </div>
                   )}
