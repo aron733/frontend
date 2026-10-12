@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { API_URL } from '../config';
+import LoaderIA from '../LoaderIA';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -280,13 +281,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
             );
           })}
           
-          {loading && (
-            <div style={styles.typingRow}>
-              <span style={styles.typingDot}>●</span>
-              <span style={styles.typingDot}>●</span>
-              <span style={styles.typingDot}>●</span>
-            </div>
-          )}
+          {loading && <LoaderIA />}
           <div ref={messagesEndRef} />
         </div>
 
@@ -544,19 +539,6 @@ const styles = {
     lineHeight: '1.5',
     wordBreak: 'break-word' as const,
     marginTop: '5px',
-  },
-  typingRow: {
-    display: 'flex',
-    gap: '5px',
-    padding: '12px 16px',
-    background: '#2a2a3e',
-    borderRadius: '16px',
-    alignSelf: 'flex-start',
-  },
-  typingDot: {
-    color: '#aaa',
-    fontSize: '10px',
-    animation: 'pulse 1.5s infinite',
   },
   error: {
     color: '#dc3545',
