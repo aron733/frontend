@@ -237,3 +237,14 @@ input:focus {
   color: #a8b0ff;
   font-weight: 700;
 }
+
+
+/* ===== Sélection par bulle (pas toute la conv) ===== */
+.messages-area-nosel {
+  user-select: none;
+  -webkit-user-select: none;
+}
+.message-bubble-select {
+  user-select: text;
+  -webkit-user-select: text;
+}
