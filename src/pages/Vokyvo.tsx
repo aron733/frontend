@@ -19,6 +19,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [erreur, setErreur] = useState('');
+  const [loaderIndex, setLoaderIndex] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -78,6 +79,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     setInput('');
     setLoading(true);
     setErreur('');
+    setLoaderIndex(prev => prev + 1);
 
     // Ajoute le message avec aperçu
     setMessages(prev => [...prev, { 
@@ -281,7 +283,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
             );
           })}
           
-          {loading && <LoaderIA />}
+          {loading && <LoaderIA index={loaderIndex} />}
           <div ref={messagesEndRef} />
         </div>
 

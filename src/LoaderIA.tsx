@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-
 const TEXTES = [
   'Réflexion',
   'Une seconde',
@@ -9,15 +7,12 @@ const TEXTES = [
   'Je vérifie',
 ];
 
-export default function LoaderIA() {
-  const [index, setIndex] = useState(0);
+interface Props {
+  index: number;
+}
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((i) => (i + 1) % TEXTES.length);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+export default function LoaderIA({ index }: Props) {
+  const texte = TEXTES[index % TEXTES.length];
 
   return (
     <div style={styles.wrap}>
@@ -34,15 +29,11 @@ export default function LoaderIA() {
       >
         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>
-      <span style={styles.texte}>{TEXTES[index]}</span>
+      <span style={styles.texte}>{texte}</span>
       <style>{`
         @keyframes loaderSpin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
-        }
-        @keyframes loaderFade {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
         }
       `}</style>
     </div>
@@ -68,7 +59,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#c8c8e0',
     fontSize: '13.5px',
     fontWeight: 500,
-    animation: 'loaderFade 2s ease-in-out infinite',
     letterSpacing: '0.2px',
   },
 };
