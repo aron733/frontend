@@ -9,7 +9,6 @@ const TEXTES = [
   'Je vérifie',
 ];
 
-export default function LoaderIA() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
