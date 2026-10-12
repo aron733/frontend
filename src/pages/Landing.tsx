@@ -1141,7 +1141,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
             else window.location.href = url;
           }} style={styles.footerLink}>Fondateur</a>
         </div>
-        <a href="#" onClick={async (e) => { e.preventDefault(); const url = "https://stats.uptimerobot.com/0DXeqdPiLO"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.open(url, "_blank"); }} style={styles.uptime}>
+        <a href="#" onClick={async (e) => { e.preventDefault(); const url = "https://status.vokyvo.com/status/vokyvo"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.open(url, "_blank"); }} style={styles.uptime}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="#28a745">
             <circle cx="12" cy="12" r="10"/>
           </svg>
