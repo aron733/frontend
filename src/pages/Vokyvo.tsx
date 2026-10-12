@@ -109,12 +109,18 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
         formData.append('image', imageFile);
       }
 
+      const t0 = Date.now();
       const response = await axios.post(`${API_URL}/vokyvo/chat/`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'multipart/form-data',
         },
       });
+
+      // Attendre min 2.5s pour laisser voir le loader
+      const elapsed = Date.now() - t0;
+      const wait = Math.max(0, 2500 - elapsed);
+      if (wait > 0) await new Promise(r => setTimeout(r, wait));
 
       if (response.data.chat_id) setChatIdActif(response.data.chat_id);
       setMessages(prev => [...prev, { role: 'assistant', content: response.data.reponse }]);
