@@ -9,6 +9,7 @@ const TEXTES = [
   'Je vérifie',
 ];
 
+export default function LoaderIA() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -71,5 +72,3 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: '0.2px',
   },
 };
-
-export default LoaderIA;
