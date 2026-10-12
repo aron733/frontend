@@ -42,7 +42,8 @@ const styles: Record<string, React.CSSProperties> = {
   badge: {
     position: 'fixed',
     top: 'calc(env(safe-area-inset-top, 0px) + 8px)',
-    right: '12px',
+    left: '50%',
+    transform: 'translateX(-50%)',
     zIndex: 99999,
     background: 'rgba(220, 53, 69, 0.95)',
     color: '#fff',
