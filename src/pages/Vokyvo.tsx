@@ -7,6 +7,8 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
 import { API_URL } from '../config';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import LoaderIA from '../LoaderIA';
 import CodeBlock from '../CodeBlock';
 
@@ -297,6 +299,31 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                                   code={codeStr}
                                   language={match ? match[1] : ''}
                                 />
+                              );
+                            },
+                            a({ href, children }: any) {
+                              return (
+                                <a
+                                  href={href}
+                                  onClick={async (e: any) => {
+                                    e.preventDefault();
+                                    if (!href) return;
+                                    // Liens mailto / tel : laisse le navigateur gérer
+                                    if (href.startsWith('mailto:') || href.startsWith('tel:')) {
+                                      window.location.href = href;
+                                      return;
+                                    }
+                                    // Liens https : Custom Tab sur APK, nouvel onglet sur web
+                                    if (Capacitor.isNativePlatform()) {
+                                      await Browser.open({ url: href });
+                                    } else {
+                                      window.open(href, '_blank');
+                                    }
+                                  }}
+                                  style={{ color: '#667eea', textDecoration: 'underline', cursor: 'pointer' }}
+                                >
+                                  {children}
+                                </a>
                               );
                             },
                           }}
