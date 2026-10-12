@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import { API_URL } from '../config';
 
@@ -262,8 +264,12 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                 <div style={{ maxWidth: '75%' }}>
                   {msg.image && <img src={msg.image} className="image-message" alt="upload" />}
                   {msg.content && (
-                    <div style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
-                      {msg.content}
+                    <div className={estUser ? '' : 'markdown-content'} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
+                      {estUser ? (
+                        msg.content
+                      ) : (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                      )}
                     </div>
                   )}
                 </div>
