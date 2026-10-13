@@ -18,6 +18,20 @@ interface Message {
   image?: string;
 }
 
+function nettoyerPourTTS(texte: string): string {
+  return texte
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/#+\s/g, '')
+    .replace(/^[-•]\s/gm, '')
+    .replace(/>\s/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\n+/g, '. ')
+    .trim();
+}
+
 function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Salut ! Je suis VOKYVO, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.' }
@@ -30,6 +44,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modeExpert, setModeExpert] = useState(false);
+  const [lectureEnCours, setLectureEnCours] = useState<number | null>(null);
   const [chatsIA, setChatsIA] = useState<any[]>([]);
   const [chatIdActif, setChatIdActif] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -77,6 +92,38 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     setImageFile(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const lireMessage = (index: number, texte: string) => {
+    if (!('speechSynthesis' in window)) {
+      alert('La lecture audio n'est pas disponible sur ce navigateur');
+      return;
+    }
+
+    // Si on clique sur le message en cours → arrêter
+    if (lectureEnCours === index) {
+      window.speechSynthesis.cancel();
+      setLectureEnCours(null);
+      return;
+    }
+
+    // Sinon → arrêter l'actuel, puis lire le nouveau
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(nettoyerPourTTS(texte));
+    utterance.lang = 'fr-FR';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const voixFr = voices.find(v => v.lang.startsWith('fr'));
+    if (voixFr) utterance.voice = voixFr;
+
+    utterance.onend = () => setLectureEnCours(null);
+    utterance.onerror = () => setLectureEnCours(null);
+
+    window.speechSynthesis.speak(utterance);
+    setLectureEnCours(index);
   };
 
   const envoyerMessage = async () => {
@@ -351,19 +398,44 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                     </div>
                   )}
                   {!estUser && msg.content && (
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(msg.content);
-                      }}
-                      style={styles.copyBubbleBtn}
-                      title="Copier la réponse"
-                    >
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                      Copier
-                    </button>
+                    <div style={styles.bubbleActions}>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(msg.content);
+                        }}
+                        style={styles.copyBubbleBtn}
+                        title="Copier la réponse"
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                        Copier
+                      </button>
+                      <button
+                        onClick={() => lireMessage(index, msg.content)}
+                        style={lectureEnCours === index ? { ...styles.ttsBubbleBtn, ...styles.ttsBubbleBtnActif } : styles.ttsBubbleBtn}
+                        title={lectureEnCours === index ? 'Arrêter la lecture' : 'Écouter'}
+                      >
+                        {lectureEnCours === index ? (
+                          <>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                              <rect x="6" y="6" width="12" height="12" rx="2" />
+                            </svg>
+                            Arrêter
+                          </>
+                        ) : (
+                          <>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                            </svg>
+                            Écouter
+                          </>
+                        )}
+                      </button>
+                    </div>
                   )}
                 </div>
                 {estUser && userPhoto && (
@@ -632,6 +704,32 @@ const styles = {
     display: 'flex',
     alignItems: 'flex-end',
     gap: '8px',
+  },
+  bubbleActions: {
+    display: 'flex',
+    gap: '6px',
+    marginTop: '6px',
+    alignItems: 'center',
+  },
+  ttsBubbleBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
+    marginTop: '6px',
+    marginLeft: '6px',
+    padding: '4px 10px',
+    background: 'transparent',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '12px',
+    color: '#888',
+    fontSize: '11px',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+  },
+  ttsBubbleBtnActif: {
+    border: '1px solid #667eea',
+    color: '#667eea',
+    background: 'rgba(102,126,234,0.1)',
   },
   copyBubbleBtn: {
     display: 'flex',
