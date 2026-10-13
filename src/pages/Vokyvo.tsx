@@ -147,7 +147,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       } else if (!err.response) {
         msg = "Problème de connexion. Vérifie ton réseau et réessaie.";
       }
-      setErreur(msg);
+      // Ajoute le message d'erreur comme bulle de conversation (mieux UX)
+      setMessages(prev => [...prev, { role: 'assistant', content: msg }]);
     } finally {
       setLoading(false);
     }
