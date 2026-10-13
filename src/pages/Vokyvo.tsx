@@ -50,7 +50,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userData = JSON.parse(localStorage.getItem('user') || '{}');
-  const userPhoto = userData.photo_profil || null;
   const prenom = userData.prenom || userData.first_name || userData.username || 'User';
 
   const scrollToBottom = () => {
