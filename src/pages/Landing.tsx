@@ -288,7 +288,22 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       localStorage.setItem('user', JSON.stringify(response.data));
       setEcranSucces({ type: 'connexion', prenom: response.data.prenom || response.data.username, userData: response.data });
     } catch (err: any) {
-      setErreur(err.response?.data?.raison || err.response?.data?.erreur || 'Erreur de connexion');
+      const status = err.response?.status;
+      const raison = err.response?.data?.raison || '';
+      const erreurMsg = err.response?.data?.erreur || '';
+
+      // 403 = banni ou maintenance → on déclenche le modal
+      if (status === 403) {
+        if (raison.toLowerCase().includes('maintenance') || erreurMsg.toLowerCase().includes('maintenance')) {
+          setBanType('global_banned');
+          setBanRaison(raison || 'Maintenance en cours');
+        } else {
+          setBanType('user_banned');
+          setBanRaison(raison || 'Compte banni');
+        }
+      } else {
+        setErreur(raison || erreurMsg || 'Erreur de connexion');
+      }
     } finally {
       setLoading(false);
     }
