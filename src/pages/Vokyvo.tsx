@@ -783,11 +783,11 @@ const styles = {
   accueilVide: {
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column' as const,
     alignItems: 'center',
     justifyContent: 'center',
     padding: '40px 20px',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     gap: '20px',
   },
   accueilLogo: {
