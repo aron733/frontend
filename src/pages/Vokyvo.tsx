@@ -30,6 +30,7 @@ const MESSAGES_ACCUEIL = [
   { emoji: '🔥', texte: 'De retour ? Content de te revoir' },
 ];
 
+
 function nettoyerPourTTS(texte: string): string {
   return texte
     .replace(/```[\s\S]*?```/g, '')
