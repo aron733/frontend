@@ -331,18 +331,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
             const estUser = msg.role === 'user';
             return (
               <div key={index} style={{ ...styles.messageRow, justifyContent: estUser ? 'flex-end' : 'flex-start' }}>
-                {!estUser && (
-                  <div style={styles.avatarVokyvoMsg}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="4" y="8" width="16" height="12" rx="2" />
-                      <circle cx="9" cy="14" r="1.5" fill="#667eea" />
-                      <circle cx="15" cy="14" r="1.5" fill="#667eea" />
-                      <line x1="12" y1="4" x2="12" y2="8" />
-                      <circle cx="12" cy="3" r="1" fill="#667eea" />
-                    </svg>
-                  </div>
-                )}
-                <div style={{ maxWidth: '75%' }}>
+                <div style={{ maxWidth: '85%' }}>
                   {msg.image && <img src={msg.image} className="image-message" alt="upload" />}
                   {msg.content && (
                     <div className={`message-bubble-select ${estUser ? '' : 'markdown-content'}`} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
@@ -438,9 +427,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                     </div>
                   )}
                 </div>
-                {estUser && userPhoto && (
-                  <img src={userPhoto} className="avatar-conv" style={{ width: '30px', height: '30px' }} alt="" />
-                )}
               </div>
             );
           })}
