@@ -56,6 +56,22 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
     return null;
   });
 
+  // Lit les erreurs OAuth (maintenance / banni) passées en query params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get('error');
+    const raison = params.get('raison') || '';
+    if (error === 'maintenance') {
+      setBanType('global_banned');
+      setBanRaison(raison || 'Maintenance en cours');
+      window.history.replaceState({}, '', '/');
+    } else if (error === 'banned') {
+      setBanType('user_banned');
+      setBanRaison(raison || 'Compte banni');
+      window.history.replaceState({}, '', '/');
+    }
+  }, []);
+
   useEffect(() => {
     if (localStorage.getItem('show_politique') === 'true') {
       setShowPolitique(true);
