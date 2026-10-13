@@ -395,13 +395,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           {messages.length === 0 && (
             <div style={styles.accueilVide}>
               <div style={styles.accueilLogo}>
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="4" y="8" width="16" height="12" rx="2" />
-                  <circle cx="9" cy="14" r="1.5" fill="#667eea" />
-                  <circle cx="15" cy="14" r="1.5" fill="#667eea" />
-                  <line x1="12" y1="4" x2="12" y2="8" />
-                  <circle cx="12" cy="3" r="1" fill="#667eea" />
-                </svg>
+                <img src="/vokyvo-logo.png" alt="VOKYVO" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
               </div>
               <p style={styles.accueilTexte}>
                 {MESSAGES_ACCUEIL[accueilIndex].emoji} {MESSAGES_ACCUEIL[accueilIndex].texte}
