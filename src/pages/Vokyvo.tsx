@@ -96,7 +96,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
   const lireMessage = (index: number, texte: string) => {
     if (!('speechSynthesis' in window)) {
-      alert('La lecture audio n'est pas disponible sur ce navigateur');
+      alert("La lecture audio n'est pas disponible sur ce navigateur");
       return;
     }
 
