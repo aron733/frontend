@@ -5,7 +5,7 @@ import Vokyvo from './Vokyvo';
 // import Visio from './Visio'; // Caché temporairement
 import Chat from './Chat';
 import News from './News';
-import Cours from './Cours';
+// import Cours from './Cours';  // Désactivé - fusionné dans Vokyvo AI
 import VokyvoPlus from './VokyvoPlus';
 // import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 import BadgeVerifie from '../BadgeVerifie';
@@ -299,10 +299,12 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <button onClick={() => { setPageActive('news'); setMenuOuvert(false); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v16H4z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg> News
           </button>
+          {/* BOUTON COURS DÉSACTIVÉ - fusionné dans Vokyvo AI
           <button onClick={() => { setPageActive('cours'); setMenuOuvert(false); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Cours
           </button>
-          {/* BOUTON PROFIL CACHÉ - réactivable
+          */}
+          {/* BOUTON NOTIFICATIONS ACTIF
           <button onClick={async () => { await demanderPermissionNotifications(); envoyerNotificationTest(); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg> Notifications
           </button>
@@ -376,7 +378,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         {/* {pageActive === 'visio' && <Visio />} */}
         {pageActive === 'messages' && <Chat />}
         {/* Composant Confidentialite retire (remplace par page HTML statique) */}
-        {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />}
+        {/* {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />} Désactivé */}
         {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}
         {pageActive === 'news' && <News />}
       </main>
