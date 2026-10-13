@@ -183,11 +183,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
   const IconeRobot = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="8" width="16" height="12" rx="2" />
-      <circle cx="9" cy="14" r="1.5" fill="currentColor" />
-      <circle cx="15" cy="14" r="1.5" fill="currentColor" />
-      <line x1="12" y1="4" x2="12" y2="8" />
-      <circle cx="12" cy="3" r="1" fill="currentColor" />
+      <path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z" />
     </svg>
   );
 
