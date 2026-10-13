@@ -40,6 +40,24 @@ function App() {
         const prenom = url.searchParams.get('prenom');
         const nom = url.searchParams.get('nom');
         const photo = url.searchParams.get('photo');
+
+        // Gestion erreurs OAuth (maintenance / banni)
+        const oauthError = url.searchParams.get('error');
+        const oauthRaison = url.searchParams.get('raison') || '';
+        if (oauthError) {
+          // Stocke dans localStorage pour que Landing l'affiche
+          if (oauthError === 'maintenance') {
+            localStorage.setItem('ban_raison', oauthRaison || 'Maintenance en cours');
+            localStorage.setItem('ban_type', 'global_banned');
+          } else if (oauthError === 'banned') {
+            localStorage.setItem('ban_raison', oauthRaison || 'Compte banni');
+            localStorage.setItem('ban_type', 'user_banned');
+          }
+          // Force reload pour que Landing affiche le modal
+          window.location.href = '/';
+          return;
+        }
+
         if (token && userId) {
           localStorage.setItem('access_token', token);
           localStorage.setItem('refresh_token', refreshToken || '');
