@@ -93,6 +93,46 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const lireConversation = () => {
+    if (!('speechSynthesis' in window)) {
+      alert("La lecture audio n'est pas disponible sur ce navigateur");
+      return;
+    }
+
+    // Si déjà en lecture globale → arrêter
+    if (lectureEnCours === -1) {
+      window.speechSynthesis.cancel();
+      setLectureEnCours(null);
+      return;
+    }
+
+    // Récupère toutes les réponses IA
+    const reponsesIA = messages.filter(m => m.role === 'assistant' && m.content);
+    if (reponsesIA.length === 0) {
+      alert('Aucune réponse à lire pour le moment');
+      return;
+    }
+
+    // Concatène toutes les réponses IA
+    const texteComplet = reponsesIA.map(m => nettoyerPourTTS(m.content)).join('. ');
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(texteComplet);
+    utterance.lang = 'fr-FR';
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const voixFr = voices.find(v => v.lang.startsWith('fr'));
+    if (voixFr) utterance.voice = voixFr;
+
+    utterance.onend = () => setLectureEnCours(null);
+    utterance.onerror = () => setLectureEnCours(null);
+
+    window.speechSynthesis.speak(utterance);
+    setLectureEnCours(-1);
+  };
+
   const lireMessage = (index: number, texte: string) => {
     if (!('speechSynthesis' in window)) {
       alert("La lecture audio n'est pas disponible sur ce navigateur");
@@ -273,6 +313,34 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           <div style={styles.headerInfo}>
             <h1 style={styles.title}>VOKYVO</h1>
           </div>
+          <button
+            onClick={lireConversation}
+            style={lectureEnCours === -1 ? { ...styles.headerBtn, ...styles.headerBtnActif } : styles.headerBtn}
+            title={lectureEnCours === -1 ? 'Arrêter la lecture' : 'Relire toutes les réponses'}
+          >
+            {lectureEnCours === -1 ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="6" width="12" height="12" rx="2" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+              </svg>
+            )}
+          </button>
+          <button
+            onClick={nouvelleConversation}
+            style={styles.headerBtn}
+            title="Nouvelle conversation"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              <line x1="12" y1="9" x2="12" y2="15" />
+              <line x1="9" y1="12" x2="15" y2="12" />
+            </svg>
+          </button>
           <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburgerRight}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
               <line x1="3" y1="6" x2="21" y2="6" />
@@ -534,6 +602,25 @@ const styles = {
     bottom: 0,
     background: 'rgba(10, 10, 15, 0.4)',
     zIndex: 1000,
+  },
+  headerBtn: {
+    width: '38px',
+    height: '38px',
+    borderRadius: '50%',
+    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'transparent',
+    color: '#ccc',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s',
+    flexShrink: 0,
+  },
+  headerBtnActif: {
+    border: '1px solid #667eea',
+    background: 'rgba(102,126,234,0.15)',
+    color: '#667eea',
   },
   hamburgerRight: {
     background: 'rgba(255,255,255,0.06)',
