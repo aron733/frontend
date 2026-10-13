@@ -29,6 +29,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [modeExpert, setModeExpert] = useState(false);
   const [chatsIA, setChatsIA] = useState<any[]>([]);
   const [chatIdActif, setChatIdActif] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -110,6 +111,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       const formData = new FormData();
       formData.append('message', userMessage);
       if (chatIdActif) formData.append('chat_id', String(chatIdActif));
+      formData.append('mode', modeExpert ? 'expert_maths' : 'normal');
       
       if (imageFile) {
         formData.append('image', imageFile);
@@ -390,6 +392,16 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
         {/* Input */}
         <div style={styles.inputArea}>
           <input type="file" ref={fileInputRef} onChange={choisirImage} accept="image/*" style={{ display: 'none' }} />
+          <button
+            onClick={() => setModeExpert(!modeExpert)}
+            style={modeExpert ? { ...styles.modeToggle, ...styles.modeToggleActif } : styles.modeToggle}
+            title="Mode éducatif"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </button>
           <button onClick={() => fileInputRef.current?.click()} style={styles.imageBtn}>
             <IconeImage />
           </button>
@@ -693,6 +705,25 @@ const styles = {
     maxWidth: '500px',
     margin: '0 auto',
     minHeight: '70px',
+  },
+  modeToggle: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    border: 'none',
+    background: 'rgba(255,255,255,0.1)',
+    color: '#aaa',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    transition: 'all 0.2s',
+  },
+  modeToggleActif: {
+    background: 'rgba(102,126,234,0.2)',
+    color: '#667eea',
+    boxShadow: '0 0 0 1.5px #667eea',
   },
   imageBtn: {
     width: '50px',
