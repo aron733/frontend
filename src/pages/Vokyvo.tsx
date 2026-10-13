@@ -270,18 +270,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
               <polyline points="12 19 5 12 12 5" />
             </svg>
           </button>
-          <div style={styles.avatarVokyvo}>
-            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="4" y="8" width="16" height="12" rx="2" />
-                <circle cx="9" cy="14" r="1.5" fill="#667eea" />
-                <circle cx="15" cy="14" r="1.5" fill="#667eea" />
-                <line x1="12" y1="4" x2="12" y2="8" />
-                <circle cx="12" cy="3" r="1" fill="#667eea" />
-              </svg>
-          </div>
           <div style={styles.headerInfo}>
             <h1 style={styles.title}>VOKYVO</h1>
-            <p style={styles.subtitle}>Assistant IA • VOKYVO</p>
           </div>
           <button onClick={() => setMenuOuvert(!menuOuvert)} style={styles.hamburgerRight}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
@@ -626,13 +616,14 @@ const styles = {
     height: '38px',
     flexShrink: 0,
   },
-  header: { borderRadius: '25px 25px 0 0',
+  header: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
-    padding: '15px 20px',
-    background: 'rgba(0,0,0,0.4)',
-    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    gap: '10px',
+    padding: '12px 16px',
+    paddingTop: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+    background: '#0a0a0f',
+    borderBottom: '1px solid rgba(255,255,255,0.06)',
     flexShrink: 0,
   },
   avatarVokyvo: {
@@ -660,9 +651,10 @@ const styles = {
   },
   title: {
     color: 'white',
-    fontSize: '20px',
+    fontSize: '17px',
     margin: 0,
-    fontWeight: 'bold',
+    fontWeight: 600,
+    letterSpacing: '0.3px',
   },
   subtitle: {
     color: '#aaa',
