@@ -18,6 +18,17 @@ interface Message {
   image?: string;
 }
 
+const MESSAGES_ACCUEIL = [
+  { emoji: '🌟', texte: 'VOKYVO est toujours là pour toi' },
+  { emoji: '🎓', texte: 'Que veux-tu apprendre aujourd\'hui ?' },
+  { emoji: '💡', texte: 'Pose-moi une question, je suis prêt' },
+  { emoji: '✨', texte: 'De quoi veux-tu parler ?' },
+  { emoji: '🤝', texte: 'Salut, je suis là pour t\'aider' },
+  { emoji: '🚀', texte: 'Prêt à explorer ?' },
+  { emoji: '📌', texte: 'Par quoi on commence ?' },
+  { emoji: '🔥', texte: 'De retour ? Content de te revoir' },
+];
+
 function nettoyerPourTTS(texte: string): string {
   return texte
     .replace(/```[\s\S]*?```/g, '')
@@ -33,9 +44,7 @@ function nettoyerPourTTS(texte: string): string {
 }
 
 function Vokyvo({ onRetour }: { onRetour?: () => void }) {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: 'Salut ! Je suis VOKYVO, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.' }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [erreur, setErreur] = useState('');
@@ -45,6 +54,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modeExpert, setModeExpert] = useState(false);
   const [lectureEnCours, setLectureEnCours] = useState<number | null>(null);
+  const [accueilIndex, setAccueilIndex] = useState(() => Math.floor(Math.random() * MESSAGES_ACCUEIL.length));
   const [chatsIA, setChatsIA] = useState<any[]>([]);
   const [chatIdActif, setChatIdActif] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -272,10 +282,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
   const nouvelleConversation = () => {
     setChatIdActif(null);
-    setMessages([{
-      role: 'assistant',
-      content: 'Salut ! Je suis VOKYVO, ton assistant IA. Pose-moi une question ou envoie une photo à analyser.',
-    }]);
+    setMessages([]);
+    setAccueilIndex(Math.floor(Math.random() * MESSAGES_ACCUEIL.length));
     setMenuOuvert(false);
   };
 
@@ -384,6 +392,22 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
         {/* Messages */}
         <div className="messages-area-nosel" style={styles.messagesArea}>
+          {messages.length === 0 && (
+            <div style={styles.accueilVide}>
+              <div style={styles.accueilLogo}>
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="8" width="16" height="12" rx="2" />
+                  <circle cx="9" cy="14" r="1.5" fill="#667eea" />
+                  <circle cx="15" cy="14" r="1.5" fill="#667eea" />
+                  <line x1="12" y1="4" x2="12" y2="8" />
+                  <circle cx="12" cy="3" r="1" fill="#667eea" />
+                </svg>
+              </div>
+              <p style={styles.accueilTexte}>
+                {MESSAGES_ACCUEIL[accueilIndex].emoji} {MESSAGES_ACCUEIL[accueilIndex].texte}
+              </p>
+            </div>
+          )}
           {messages.map((msg, index) => {
             const estUser = msg.role === 'user';
             return (
@@ -755,6 +779,33 @@ const styles = {
     background: '#28a745',
     boxShadow: '0 0 8px #28a745',
     flexShrink: 0,
+  },
+  accueilVide: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '40px 20px',
+    textAlign: 'center',
+    gap: '20px',
+  },
+  accueilLogo: {
+    width: '90px',
+    height: '90px',
+    borderRadius: '50%',
+    background: 'rgba(102,126,234,0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  accueilTexte: {
+    color: '#ccc',
+    fontSize: '17px',
+    fontWeight: 500,
+    margin: 0,
+    lineHeight: 1.5,
+    maxWidth: '300px',
   },
   messagesArea: {
     flex: 1,
