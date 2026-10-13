@@ -5,6 +5,7 @@ import { chargerMessages, sauvegarderMessages, chargerConversations as chargerCo
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
+import BoutonRetour from '../BoutonRetour';
 import CreerGroupe from './CreerGroupe';
 import BadgeVerifie from '../BadgeVerifie';
 import { Capacitor } from '@capacitor/core';
@@ -716,12 +717,7 @@ function Chat() {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <button onClick={() => { if (selectedUser || groupeActif) { setSelectedUser(null); setGroupeActif(null); localStorage.removeItem('conv_active_user'); localStorage.removeItem('conv_active_groupe'); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} style={styles.backButton}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-        </button>
+        <BoutonRetour onClick={() => { if (selectedUser || groupeActif) { setSelectedUser(null); setGroupeActif(null); localStorage.removeItem('conv_active_user'); localStorage.removeItem('conv_active_groupe'); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} />
         <h2 style={styles.title}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: 'middle', marginRight: '8px' }}>
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />

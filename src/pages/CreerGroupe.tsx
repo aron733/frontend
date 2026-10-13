@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
+import BoutonRetour from '../BoutonRetour';
 
 function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroupeCree: () => void }) {
   const [nomGroupe, setNomGroupe] = useState('');
@@ -77,12 +78,7 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
       <div style={styles.panel}>
         {/* Header */}
         <div style={styles.header}>
-          <button onClick={onFermer} style={styles.backButton}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-          </button>
+          <BoutonRetour onClick={onFermer} />
           <h2 style={styles.title}>Nouveau groupe</h2>
         </div>
 

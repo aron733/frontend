@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
+import BoutonRetour from '../BoutonRetour';
 
 const SECTIONS = [
   { id: 'flash', nom: 'Flash', url: 'https://news.google.com/rss?hl=fr&gl=FR&ceid=FR:fr' },
@@ -80,12 +81,7 @@ function News() {
     <div style={styles.container}>
       {/* Header fixe */}
       <div style={styles.header}>
-        <button onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} style={styles.backButton}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-        </button>
+        <BoutonRetour onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} />
         <span style={styles.logo}>VOKYVO<span style={{ color: '#667eea' }}>NEWS</span></span>
         <input
           type="text"

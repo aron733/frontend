@@ -10,6 +10,7 @@ import { API_URL } from '../config';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import LoaderIA from '../LoaderIA';
+import BoutonRetour from '../BoutonRetour';
 import CodeBlock from '../CodeBlock';
 
 interface Message {
@@ -312,12 +313,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       <div style={styles.chatCard}>
         {/* Header */}
         <div style={styles.header}>
-          <button onClick={() => onRetour ? onRetour() : (localStorage.setItem('vokyvo_page', 'profil'), window.location.reload())} style={styles.backButton}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-          </button>
+          <BoutonRetour onClick={() => onRetour ? onRetour() : (localStorage.setItem('vokyvo_page', 'profil'), window.location.reload())} />
           <div style={styles.headerInfo}>
             <h1 style={styles.title}>VOKYVO</h1>
           </div>
