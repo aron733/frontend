@@ -129,9 +129,25 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       if (wait > 0) await new Promise(r => setTimeout(r, wait));
 
       if (response.data.chat_id) setChatIdActif(response.data.chat_id);
-      setMessages(prev => [...prev, { role: 'assistant', content: response.data.reponse }]);
+      const reponse = response.data.reponse || '';
+      if (!reponse.trim()) {
+        setMessages(prev => [...prev, { role: 'assistant', content: "Je n'ai pas bien compris. Peux-tu reformuler ta question ?" }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'assistant', content: reponse }]);
+      }
     } catch (err: any) {
-      setErreur('Erreur : ' + (err.response?.data?.erreur || err.message));
+      const status = err.response?.status;
+      let msg = "Une erreur s'est produite. Réessaie dans un instant.";
+      if (status === 429) {
+        msg = "Trop de demandes. Patiente quelques secondes avant de réessayer.";
+      } else if (status === 500 || status === 502 || status === 503 || status === 504) {
+        msg = "L'IA est momentanément indisponible. Réessaie dans quelques instants.";
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        msg = "La réponse prend trop de temps. Réessaie.";
+      } else if (!err.response) {
+        msg = "Problème de connexion. Vérifie ton réseau et réessaie.";
+      }
+      setErreur(msg);
     } finally {
       setLoading(false);
     }
