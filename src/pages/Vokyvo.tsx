@@ -403,7 +403,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
             const estUser = msg.role === 'user';
             return (
               <div key={index} style={{ ...styles.messageRow, justifyContent: estUser ? 'flex-end' : 'flex-start' }}>
-                <div style={{ maxWidth: '85%' }}>
+                <div style={{ maxWidth: estUser ? '85%' : '90%' }}>
                   {msg.image && <img src={msg.image} className="image-message" alt="upload" />}
                   {msg.content && (
                     <div className={`message-bubble-select ${estUser ? '' : 'markdown-content'}`} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
