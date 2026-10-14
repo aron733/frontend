@@ -282,12 +282,17 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     setMessages(prev => [...prev, messageUser]);
 
     try {
-      const token = localStorage.getItem('token');
+      const accessToken = localStorage.getItem('access_token');
+      if (!accessToken) {
+        setErreur('Tu dois être connecté');
+        setLoading(false);
+        return;
+      }
       const res = await fetch(`${API_URL}/generer-image/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ prompt: promptActuel }),
       });
