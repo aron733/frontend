@@ -1225,7 +1225,7 @@ const styles = {
     minHeight: '100dvh',
     overflow: 'auto',
     background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
-    padding: '40px 8px',
+    padding: '40px 0px',
     gap: '15px',
   },
   successBox: {
@@ -1344,7 +1344,7 @@ const styles = {
     maxWidth: '200px',
   },
   card: {
-    padding: '25px 12px',
+    padding: '25px 0px',
     maxWidth: '400px',
     width: '100%',
     display: 'flex',
