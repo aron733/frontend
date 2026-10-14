@@ -48,7 +48,7 @@ Retour
 <ul>
   <li><strong>InterServer</strong> (hébergement serveur) : base de données, comptes, messages</li>
   <li><strong>Cloudinary</strong> (stockage média) : photos de profil, fichiers, images partagées</li>
-  <li><strong>Groq</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à Groq pour générer les réponses. <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Vos conversations IA sont stockées dans votre compte tant qu'il est actif, pour vous permettre de retrouver votre historique. VOKYVO ne les utilise pas pour entraîner de modèle d'IA. Dans le cadre de l'amélioration de ses services, VOKYVO peut analyser de manière <strong>agrégée et anonymisée</strong> les questions posées à l'assistant, afin d'identifier les tendances d'usage. Aucune analyse individuelle nominative n'est effectuée. Pour plus d'informations, consultez la politique de confidentialité de Groq.</li>
+  <li><strong>Partenaires IA</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à un ou plusieurs partenaires d'IA pour générer les réponses : <strong>Groq</strong> (USA), <strong>OpenRouter</strong> (USA), <strong>Mistral AI</strong> (France), <strong>Google Gemini</strong> (USA), <strong>SambaNova</strong> (USA), <strong>Cloudflare Workers AI</strong> (USA). Un seul partenaire traite votre message à la fois, selon disponibilité. <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Vos conversations IA sont stockées dans votre compte tant qu'il est actif, pour vous permettre de retrouver votre historique. VOKYVO ne les utilise pas pour entraîner de modèle d'IA. Dans le cadre de l'amélioration de ses services, VOKYVO peut analyser de manière <strong>agrégée et anonymisée</strong> les questions posées à l'assistant. Aucune analyse individuelle nominative n'est effectuée.</li>
   <li><strong>Zoho</strong> (email) : envoi des emails transactionnels (bienvenue, OTP)</li>
   <li><strong>Brevo</strong> (email) : envoi des notifications par email</li>
   <li><strong>Google</strong> : authentification OAuth (si vous utilisez « Se connecter avec Google »)</li>
@@ -112,14 +112,15 @@ Retour
 <p>L'assistant IA intégré à VOKYVO est un outil d'aide. Il peut se tromper, produire des informations inexactes ou incomplètes. <strong>Vérifiez toujours les réponses importantes auprès de sources fiables.</strong></p>
 <ul>
   <li>L'IA <strong>ne remplace pas</strong> un professionnel (médecin, avocat, enseignant, etc.).</li>
-  <li>Vos messages sont transmis à Groq pour générer la réponse. VOKYVO ne conserve pas de copie supplémentaire au-delà de votre historique dans l'application, et ne les utilise pas pour entraîner de modèle d'IA. Pour connaître la politique de conservation de Groq, consultez leur site officiel.</li>
+  <li>Vos messages sont transmis à un partenaire IA (Groq, OpenRouter, Mistral, Gemini, SambaNova ou Cloudflare) pour générer la réponse. VOKYVO ne conserve pas de copie supplémentaire au-delà de votre historique dans l'application, et ne les utilise pas pour entraîner de modèle d'IA. Pour connaître la politique de conservation de ces partenaires, consultez leur site officiel.</li>
   <li>Vous pouvez demander la suppression de vos conversations IA à tout moment (voir section 5).</li>
 </ul>
 
 <h3>10. Transfert international de données</h3>
 <p>Certaines de vos données sont transférées en dehors du Burkina Faso pour assurer le fonctionnement du service :</p>
 <ul>
-  <li><strong>États-Unis</strong> : hébergement serveur (InterServer), stockage média (Cloudinary), intelligence artificielle (Groq), authentification OAuth (Google), mesure d'audience (Cloudflare)</li>
+  <li><strong>États-Unis</strong> : hébergement serveur (InterServer), stockage média (Cloudinary), intelligence artificielle (Groq, OpenRouter, Google Gemini, SambaNova, Cloudflare Workers AI), authentification OAuth (Google), mesure d'audience (Cloudflare)</li>
+  <li><strong>France</strong> : intelligence artificielle (Mistral AI)</li>
   <li><strong>Inde</strong> : envoi d'emails transactionnels (Zoho)</li>
   <li><strong>France</strong> : envoi de notifications email (Brevo)</li>
   <li><strong>Réseau mondial</strong> : Cloudflare (protection, cache, distribution)</li>
