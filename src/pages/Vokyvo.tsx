@@ -267,6 +267,50 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     }
   };
 
+  const genererImage = async () => {
+    if (!input.trim() || loading) return;
+
+    const promptActuel = input.trim();
+    setInput('');
+    setErreur('');
+    setLoading(true);
+
+    const messageUser: Message = {
+      role: 'user',
+      content: `🎨 Génère une image : ${promptActuel}`,
+    };
+    setMessages(prev => [...prev, messageUser]);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/generer-image/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ prompt: promptActuel }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.erreur || 'Erreur génération');
+      }
+
+      const messageIA: Message = {
+        role: 'assistant',
+        content: `Voici l'image générée pour : "${promptActuel}"`,
+        image: data.url,
+      };
+      setMessages(prev => [...prev, messageIA]);
+    } catch (e: any) {
+      setErreur(e.message || 'Erreur lors de la génération');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -547,6 +591,15 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           </button>
           <button onClick={() => fileInputRef.current?.click()} style={styles.imageBtn}>
             <IconeImage />
+          </button>
+          <button onClick={genererImage} style={styles.imageBtn} title="Générer une image">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+            </svg>
           </button>
           <textarea
             value={input}
