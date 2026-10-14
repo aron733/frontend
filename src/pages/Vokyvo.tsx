@@ -8,6 +8,7 @@ import 'katex/dist/katex.min.css';
 
 import { API_URL } from '../config';
 import { Capacitor } from '@capacitor/core';
+import { Clipboard } from '@capacitor/clipboard';
 import { Browser } from '@capacitor/browser';
 import LoaderIA from '../LoaderIA';
 import BoutonRetour from '../BoutonRetour';
@@ -143,6 +144,18 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
     window.speechSynthesis.speak(utterance);
     setLectureEnCours(-1);
+  };
+
+  const copierTexte = async (texte: string) => {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await Clipboard.write({ string: texte });
+      } else {
+        await navigator.clipboard.writeText(texte);
+      }
+    } catch (e) {
+      console.warn('Copie échouée', e);
+    }
   };
 
   const lireMessage = (index: number, texte: string) => {
@@ -462,7 +475,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                     <div style={styles.bubbleActions}>
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText(msg.content);
+                          copierTexte(msg.content);
                         }}
                         style={styles.copyBubbleBtn}
                         title="Copier la réponse"
