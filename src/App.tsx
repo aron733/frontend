@@ -6,7 +6,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import Landing from './pages/Landing';
 import Profil from './pages/Profil';
-import ModalCompleterProfil from './ModalCompleterProfil';
+// import ModalCompleterProfil from './ModalCompleterProfil';  // Désactivé - remplacé par modal Modifier profil
 import NotFound from './pages/NotFound';
 import BandeauOffline from './BandeauOffline';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
@@ -298,7 +298,7 @@ function App() {
       {user ? (
         <>
           <Profil user={user} onLogout={handleLogout} />
-          <ModalCompleterProfil />
+          {/* <ModalCompleterProfil /> */}
         </>
       ) : (
         <Landing onLogin={handleLogin} />
