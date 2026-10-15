@@ -942,9 +942,9 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
             <p style={styles.cookieText}>
               VOKYVO utilise des cookies essentiels au fonctionnement du service.<br />
               L'utilisation de VOKYVO est réservée aux personnes de <strong>15 ans ou plus</strong>. Entre 15 et 18 ans, l'autorisation d'un parent ou tuteur légal est obligatoire.<br />
-              <a href="#" onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/confidentialite'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Politique de confidentialité</a>
+              <a onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/confidentialite'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Politique de confidentialité</a>
               {' · '}
-              <a href="#" onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/cgu'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Conditions d'utilisation</a>
+              <a onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/cgu'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Conditions d'utilisation</a>
             </p>
             <div style={{ marginTop: '10px' }}>
               <label style={styles.checkboxLabel}>
@@ -1153,40 +1153,45 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           Télécharger l'APK
         </a>
         )}
-        <p style={styles.footerText}>© 2026 VOKYVO LABS — propulsé par <a href="#" onClick={async (e) => { e.preventDefault(); const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/aron-vokouma?from=app' : 'https://vokyvo.com/aron-vokouma'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={{ color: '#667eea', textDecoration: 'none' }}>Aron VOKOUMA</a> · Tous droits réservés</p>
+        <p style={styles.footerText}>© 2026 VOKYVO LABS — propulsé par <a onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/aron-vokouma?from=app' : 'https://vokyvo.com/aron-vokouma'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={{ color: '#667eea', textDecoration: 'none' }}>Aron VOKOUMA</a> · Tous droits réservés</p>
         <div style={styles.footerLinks}>
-          <a href="#" onClick={async (e) => {
+          <a onClick={async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/a-propos?from=app' : 'https://vokyvo.com/a-propos';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>À propos</a>
-          <a href="#" onClick={async (e) => {
+          <a onClick={async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/blog?from=app' : 'https://vokyvo.com/blog';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>Blog</a>
-          <a href="#" onClick={async (e) => {
+          <a onClick={async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/confidentialite?from=app' : 'https://vokyvo.com/confidentialite';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>Confidentialité</a>
-          <a href="#" onClick={async (e) => {
+          <a onClick={async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/cgu?from=app' : 'https://vokyvo.com/cgu';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>Conditions</a>
-          <a href="#" onClick={async (e) => {
+          <a onClick={async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/aron-vokouma?from=app' : 'https://vokyvo.com/aron-vokouma';
             if (Capacitor.isNativePlatform()) await Browser.open({ url });
             else window.location.href = url;
           }} style={styles.footerLink}>Fondateur</a>
         </div>
-        <a href="#" onClick={async (e) => { e.preventDefault(); const url = "https://status.vokyvo.com/status/vokyvo"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.open(url, "_blank"); }} style={styles.uptime}>
+        <a onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = "https://status.vokyvo.com/status/vokyvo"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.open(url, "_blank"); }} style={styles.uptime}>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="#28a745">
             <circle cx="12" cy="12" r="10"/>
           </svg>
@@ -1583,7 +1588,7 @@ const styles = {
     border: '1px solid rgba(255,255,255,0.15)',
   },
   footerLinks: { display: 'flex', justifyContent: 'center', gap: '20px' },
-  footerLink: { color: '#667eea', fontSize: '10px', textDecoration: 'none' },
+  footerLink: { cursor: 'pointer' as const, color: '#667eea', fontSize: '10px', textDecoration: 'none' },
   supportLink: {
     color: '#667eea',
     fontSize: '11px',
