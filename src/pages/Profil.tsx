@@ -16,6 +16,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
   const [userData, setUserData] = useState(user);
+  const [stats, setStats] = useState({ nb_messages: 0, nb_conversations: 0, nb_mois: 0, date_inscription: '' });
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
     const stored = localStorage.getItem('user');
@@ -27,6 +28,21 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   });
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
+
+  useEffect(() => {
+    const chargerStats = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await axios.get(`${API_URL}/user/stats/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setStats(res.data);
+      } catch (e) {
+        console.warn('Erreur chargement stats', e);
+      }
+    };
+    chargerStats();
+  }, []);
   const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
   const [modalQuitter, setModalQuitter] = useState(false);
   const [modalSuppression, setModalSuppression] = useState(false);
@@ -326,25 +342,43 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       <main style={styles.main}>
         {pageActive === 'profil' && (
           <div style={styles.profilCard}>
-            <div style={styles.avatarContainer}>
+            <div style={styles.coverPhoto}>
               {photoUrl ? (
-                <img src={photoUrl} className="avatar-photo" />
+                <img src={photoUrl} style={styles.coverImg} alt="photo" />
               ) : (
-                <div style={styles.avatar}>{userData.prenom?.charAt(0) || userData.first_name?.charAt(0) || '?'}</div>
+                <div style={styles.coverPlaceholder}>{userData.prenom?.charAt(0) || userData.first_name?.charAt(0) || '?'}</div>
               )}
+              <div style={styles.coverOverlay} />
               <button onClick={() => photoInputRef.current?.click()} style={styles.cameraBtn} disabled={uploading}>
                 <IconeCamera />
               </button>
               <input type="file" ref={photoInputRef} onChange={uploadPhoto} accept="image/*" style={{ display: 'none' }} />
+              <div style={styles.coverInfo}>
+                <h2 style={styles.coverNom}>
+                  {userData.prenom || userData.first_name} {userData.nom || userData.last_name}
+                  {userData.badge_verifie && <BadgeVerifie size={22} />}
+                </h2>
+                <p style={styles.coverPseudo}>{userData.email}</p>
+              </div>
             </div>
-            
-            {uploading && <p style={{ color: '#aaa' }}>Upload en cours...</p>}
-            
-            <h2 style={styles.nom}>
-              {userData.prenom || userData.first_name} {userData.nom || userData.last_name}
-              {userData.badge_verifie && <BadgeVerifie size={22} />}
-            </h2>
-            <p style={styles.pseudo}>{userData.email}</p>
+
+            <div style={styles.statsGrid}>
+              <div style={styles.statItem}>
+                <span style={styles.statValue}>{stats.nb_messages}</span>
+                <span style={styles.statLabel}>Messages</span>
+              </div>
+              <div style={styles.statItem}>
+                <span style={styles.statValue}>{stats.nb_conversations}</span>
+                <span style={styles.statLabel}>Conversations</span>
+              </div>
+              <div style={styles.statItem}>
+                <span style={styles.statValue}>{stats.nb_mois}</span>
+                <span style={styles.statLabel}>Mois</span>
+              </div>
+            </div>
+
+            {uploading && <p style={{ color: '#aaa', textAlign: 'center' }}>Upload en cours...</p>}
+
             
             <div style={styles.infoGrid}>
               <div style={styles.infoItem}>
@@ -758,6 +792,17 @@ const styles = {
     fontWeight: 'bold' as const,
     cursor: 'pointer',
   },
+  coverPhoto: { position: 'relative' as const, width: '100%', height: '320px', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+  coverImg: { width: '100%', height: '100%', objectFit: 'cover' as const, display: 'block' },
+  coverPlaceholder: { width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '120px', fontWeight: 'bold', color: 'white' },
+  coverOverlay: { position: 'absolute' as const, top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.85) 100%)', pointerEvents: 'none' as const },
+  coverInfo: { position: 'absolute' as const, bottom: '20px', left: '20px', right: '20px', zIndex: 2 },
+  coverNom: { color: 'white', fontSize: '24px', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '8px' },
+  coverPseudo: { color: 'rgba(255,255,255,0.75)', margin: 0, fontSize: '14px' },
+  statsGrid: { display: 'flex', justifyContent: 'space-around', padding: '16px 0', marginBottom: '20px', borderTop: '1px solid #2a2a3e', borderBottom: '1px solid #2a2a3e' },
+  statItem: { display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' },
+  statValue: { color: 'white', fontSize: '22px', fontWeight: 'bold' },
+  statLabel: { color: '#aaa', fontSize: '12px' },
   infoGrid: { display: 'flex', flexDirection: 'column' as const, gap: '12px' },
   infoItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' },
   infoLabel: { color: '#aaa', fontSize: '14px' },
