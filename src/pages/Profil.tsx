@@ -16,7 +16,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
   const [userData, setUserData] = useState(user);
-  const [stats, setStats] = useState({ nb_messages: 0, nb_conversations: 0, nb_mois: 0, date_inscription: '' });
+  const [stats, setStats] = useState({ nb_messages: 0, nb_conversations: 0, anciennete: 0, unite: 'jours', date_inscription: '' });
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(() => {
     const stored = localStorage.getItem('user');
@@ -372,8 +372,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                 <span style={styles.statLabel}>Conversations</span>
               </div>
               <div style={styles.statItem}>
-                <span style={styles.statValue}>{stats.nb_mois}</span>
-                <span style={styles.statLabel}>Mois</span>
+                <span style={styles.statValue}>{stats.anciennete}</span>
+                <span style={styles.statLabel}>{stats.unite}</span>
               </div>
             </div>
 
