@@ -345,9 +345,13 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
         });
 
         alert('Image enregistrée dans la galerie VOKYVO !');
-      } catch (e) {
+      } catch (e: any) {
         console.error('Erreur sauvegarde galerie', e);
-        alert("Erreur lors de l'enregistrement dans la galerie");
+        console.error('Message:', e?.message);
+        console.error('Code:', e?.code);
+        // Fallback : téléchargement classique
+        window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
+        alert(`Erreur galerie : ${e?.message || 'inconnue'}\n\nFallback : téléchargement classique lancé.`);
       }
     } else {
       window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
