@@ -21,7 +21,8 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   image?: string;
-  fichierNom?: string;
+  estFichier?: boolean;
+  nomFichier?: string;
 }
 
 const MESSAGES_ACCUEIL = [
@@ -234,7 +235,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       role: 'user', 
       content: userMessage,
       image: imagePreview || undefined,
-      fichierNom: fichierNom,
+      estFichier: !!fichierNom,
+      nomFichier: fichierNom,
     }]);
     
     setImagePreview(null);
@@ -254,6 +256,10 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       formData.append('message', userMessage);
       if (chatIdActif) formData.append('chat_id', String(chatIdActif));
       formData.append('mode', modeExpert ? 'expert_maths' : 'normal');
+      if (fichierNom) {
+        formData.append('est_fichier', 'true');
+        formData.append('nom_fichier', fichierNom);
+      }
       
       if (imageFile) {
         formData.append('image', imageFile);
@@ -444,6 +450,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
         role: m.role,
         content: m.contenu,
         image: m.image_url || undefined,
+        estFichier: m.est_fichier || false,
+        nomFichier: m.nom_fichier || undefined,
       }));
 
       setMessages(msgs);
@@ -593,7 +601,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                   {msg.content && (
                     <div className={`message-bubble-select ${estUser ? '' : 'markdown-content'}`} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
                       {estUser ? (
-                        msg.fichierNom ? (
+                        msg.estFichier ? (
                           <div style={{
                             background: 'rgba(255,255,255,0.05)',
                             border: '1px solid rgba(255,255,255,0.12)',
