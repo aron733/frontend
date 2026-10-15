@@ -10,6 +10,9 @@ export default defineConfig({
       includeAssets: ['favicon.png', 'apple-touch-icon.png', 'favicon-96.png'],
       manifest: false, // On a déjà notre manifest.json custom
       workbox: {
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB max
         navigateFallback: '/index.html',
