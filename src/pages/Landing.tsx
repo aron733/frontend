@@ -829,12 +829,13 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           style={{ ...styles.googleBtn, opacity: googleLoading ? 0.6 : 1, cursor: googleLoading ? 'wait' : 'pointer' }}
         >
           {googleLoading ? (
-            <>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }} />
+            <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
+                <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
               </svg>
               Connexion...
-            </>
+            </span>
           ) : (
             <>
               <svg width="20" height="20" viewBox="0 0 24 24">
