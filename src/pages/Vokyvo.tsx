@@ -594,12 +594,34 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                     <div className={`message-bubble-select ${estUser ? '' : 'markdown-content'}`} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
                       {estUser ? (
                         msg.fichierNom ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                              <polyline points="14 2 14 8 20 8" />
-                            </svg>
-                            <span style={{ fontSize: '13px' }}>{msg.fichierNom}</span>
+                          <div style={{
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.12)',
+                            borderRadius: '10px',
+                            padding: '10px 12px',
+                            textAlign: 'left' as const,
+                          }}>
+                            <div style={{
+                              color: 'rgba(255,255,255,0.75)',
+                              fontSize: '12px',
+                              lineHeight: 1.4,
+                              maxHeight: '60px',
+                              overflow: 'hidden' as const,
+                              marginBottom: '8px',
+                              whiteSpace: 'pre-wrap' as const,
+                            }}>
+                              {msg.content.slice(0, 150)}{msg.content.length > 150 ? '...' : ''}
+                            </div>
+                            <span style={{
+                              color: 'rgba(255,255,255,0.6)',
+                              fontSize: '10px',
+                              border: '1px solid rgba(255,255,255,0.3)',
+                              borderRadius: '4px',
+                              padding: '2px 6px',
+                              letterSpacing: '0.5px',
+                            }}>
+                              PASTED
+                            </span>
                           </div>
                         ) : (
                           msg.content
