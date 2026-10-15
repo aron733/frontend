@@ -61,7 +61,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modeExpert, setModeExpert] = useState(false);
-  const [modeImage, setModeImage] = useState(false);
   const [menuActionsOuvert, setMenuActionsOuvert] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -215,11 +214,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   };
 
   const envoyerMessage = async () => {
-    if (modeImage) {
-      genererImage();
-      return;
-    }
-
     if ((!input.trim() && !imageFile && !pastedText) || loading) return;
 
     const fichierNom = pastedText ? `message-${new Date().toISOString().slice(0,10)}.txt` : undefined;
@@ -279,11 +273,22 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       if (wait > 0) await new Promise(r => setTimeout(r, wait));
 
       if (response.data.chat_id) setChatIdActif(response.data.chat_id);
-      const reponse = response.data.reponse || '';
-      if (!reponse.trim()) {
-        setMessages(prev => [...prev, { role: 'assistant', content: "Je n'ai pas bien compris. Peux-tu reformuler ta question ?" }]);
+
+      // Cas 1 : image générée
+      if (response.data.image_url) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: '',
+          image: response.data.image_url,
+        }]);
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: reponse }]);
+        // Cas 2 : réponse texte
+        const reponse = response.data.reponse || '';
+        if (!reponse.trim()) {
+          setMessages(prev => [...prev, { role: 'assistant', content: "Je n'ai pas bien compris. Peux-tu reformuler ta question ?" }]);
+        } else {
+          setMessages(prev => [...prev, { role: 'assistant', content: reponse }]);
+        }
       }
     } catch (err: any) {
       const status = err.response?.status;
@@ -299,56 +304,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       }
       // Ajoute le message d'erreur comme bulle de conversation (mieux UX)
       setMessages(prev => [...prev, { role: 'assistant', content: msg }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const genererImage = async () => {
-    if (!input.trim() || loading) return;
-
-    const promptActuel = input.trim();
-    setInput('');
-    setErreur('');
-    setLoading(true);
-
-    const messageUser: Message = {
-      role: 'user',
-      content: promptActuel,
-    };
-    setMessages(prev => [...prev, messageUser]);
-
-    try {
-      const accessToken = localStorage.getItem('access_token');
-      if (!accessToken) {
-        setErreur('Tu dois être connecté');
-        setLoading(false);
-        return;
-      }
-      const res = await fetch(`${API_URL}/generer-image/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ prompt: promptActuel }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.erreur || 'Erreur génération');
-      }
-
-      const messageIA: Message = {
-        role: 'assistant',
-        content: data.commentaire || '',
-        image: data.url,
-      };
-      setMessages(prev => [...prev, messageIA]);
-      setModeImage(false);
-    } catch (e: any) {
-      setErreur(e.message || 'Erreur lors de la génération');
     } finally {
       setLoading(false);
     }
@@ -817,31 +772,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                   <IconeImage />
                   Envoyer une image
                 </button>
-                <button
-                  onClick={() => { setModeImage(!modeImage); setMenuActionsOuvert(false); }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '10px 12px',
-                    background: modeImage ? 'rgba(102,126,234,0.2)' : 'transparent',
-                    color: modeImage ? '#667eea' : '#ccc',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    textAlign: 'left' as const,
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
-                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
-                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
-                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
-                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
-                  </svg>
-                  Générer une image {modeImage ? '✓' : ''}
-                </button>
               </div>
             )}
             <button
@@ -851,8 +781,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                 height: '50px',
                 borderRadius: '50%',
                 border: 'none',
-                background: (modeExpert || modeImage) ? 'rgba(102,126,234,0.2)' : 'rgba(255,255,255,0.1)',
-                color: (modeExpert || modeImage) ? '#667eea' : '#aaa',
+                background: modeExpert ? 'rgba(102,126,234,0.2)' : 'rgba(255,255,255,0.1)',
+                color: modeExpert ? '#667eea' : '#aaa',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
