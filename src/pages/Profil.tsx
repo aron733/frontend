@@ -803,10 +803,10 @@ const styles = {
   statItem: { display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' },
   statValue: { color: 'white', fontSize: '26px', fontWeight: 'bold' },
   statLabel: { color: '#aaa', fontSize: '12px' },
-  infoGrid: { display: 'flex', flexDirection: 'column' as const, gap: '12px', padding: '20px' },
-  infoItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' },
-  infoLabel: { color: '#aaa', fontSize: '14px' },
-  infoValue: { color: 'white', fontSize: '14px', fontWeight: 'bold' },
+  infoGrid: { display: 'flex', flexDirection: 'column' as const, padding: '8px 24px 24px 24px' },
+  infoItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' },
+  infoLabel: { color: '#888', fontSize: '14px' },
+  infoValue: { color: 'white', fontSize: '14px', fontWeight: '500' as const, textAlign: 'right' as const, maxWidth: '60%', overflow: 'hidden' as const, textOverflow: 'ellipsis' as const, whiteSpace: 'nowrap' as const },
 };
 
 export default Profil;
