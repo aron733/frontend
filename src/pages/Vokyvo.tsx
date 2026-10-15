@@ -7,6 +7,8 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
 import { API_URL } from '../config';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import { Capacitor } from '@capacitor/core';
 import { Clipboard } from '@capacitor/clipboard';
 import { Browser } from '@capacitor/browser';
@@ -57,6 +59,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modeExpert, setModeExpert] = useState(false);
   const [modeImage, setModeImage] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lectureEnCours, setLectureEnCours] = useState<number | null>(null);
   const [accueilIndex, setAccueilIndex] = useState(() => Math.floor(Math.random() * MESSAGES_ACCUEIL.length));
   const [chatsIA, setChatsIA] = useState<any[]>([]);
@@ -368,6 +372,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       const msgs = (response.data.messages || []).map((m: any) => ({
         role: m.role,
         content: m.contenu,
+        image: m.image_url || undefined,
       }));
 
       setMessages(msgs);
@@ -473,7 +478,50 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
             return (
               <div key={index} style={{ ...styles.messageRow, justifyContent: estUser ? 'flex-end' : 'flex-start' }}>
                 <div style={{ maxWidth: estUser ? '85%' : '90%' }}>
-                  {msg.image && <img src={msg.image} className="image-message" alt="upload" />}
+                  {msg.image && (
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <img
+                        src={msg.image}
+                        className="image-message"
+                        alt="image IA"
+                        style={{ maxWidth: '100%', maxHeight: '500px', borderRadius: '12px', cursor: 'zoom-in', display: 'block' }}
+                        onClick={() => {
+                          const images = messages.filter(m => m.image).map(m => m.image!);
+                          const idx = images.indexOf(msg.image!);
+                          setLightboxIndex(idx >= 0 ? idx : 0);
+                          setLightboxOpen(true);
+                        }}
+                      />
+                      <a
+                        href={msg.image}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          background: 'rgba(0,0,0,0.6)',
+                          borderRadius: '50%',
+                          width: '36px',
+                          height: '36px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          textDecoration: 'none',
+                          cursor: 'pointer',
+                        }}
+                        title="Télécharger l'image"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/>
+                          <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                      </a>
+                    </div>
+                  )}
                   {msg.content && (
                     <div className={`message-bubble-select ${estUser ? '' : 'markdown-content'}`} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
                       {estUser ? (
@@ -631,6 +679,15 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           </button>
         </div>
       </div>
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={lightboxIndex}
+        slides={messages.filter(m => m.image).map(m => ({ src: m.image! }))}
+        styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' } }}
+        carousel={{ finite: false }}
+        animation={{ fade: 250 }}
+      />
     </div>
   );
 }
