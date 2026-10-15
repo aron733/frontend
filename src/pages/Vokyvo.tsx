@@ -840,48 +840,73 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           </div>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' as const, position: 'relative' as const }}>
             {pastedText && (
-              <div style={{
-                background: '#1a1a2e',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '10px',
-                padding: '8px 12px',
-                marginBottom: '6px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-              }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: '#ddd', fontSize: '13px', overflow: 'hidden' as const, textOverflow: 'ellipsis' as const, whiteSpace: 'nowrap' as const }}>
-                    message-{new Date().toISOString().slice(0,10)}.txt
-                  </div>
-                  <div style={{ color: '#666', fontSize: '11px' }}>
-                    {pastedText.length} caractères
-                  </div>
-                </div>
-                <button
-                  onClick={() => { setInput(pastedText); setPastedText(''); }}
-                  style={{ background: 'transparent', border: 'none', color: '#888', cursor: 'pointer', padding: '4px', flexShrink: 0 }}
-                  title="Éditer"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
-                </button>
+              <div style={{ position: 'relative' as const, marginBottom: '8px' }}>
                 <button
                   onClick={() => setPastedText('')}
-                  style={{ background: 'transparent', border: 'none', color: '#888', cursor: 'pointer', padding: '4px', flexShrink: 0 }}
+                  style={{
+                    position: 'absolute' as const,
+                    top: '-8px',
+                    right: '-6px',
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    background: '#2a2a3e',
+                    border: '1px solid #444',
+                    color: '#ccc',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 2,
+                    padding: 0,
+                  }}
                   title="Supprimer"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
+                <div style={{
+                  background: '#1a1a2e',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '12px 14px',
+                }}>
+                  <div style={{
+                    color: '#aaa',
+                    fontSize: '12px',
+                    lineHeight: 1.5,
+                    maxHeight: '80px',
+                    overflow: 'hidden' as const,
+                    marginBottom: '10px',
+                    whiteSpace: 'pre-wrap' as const,
+                  }}>
+                    {pastedText.slice(0, 200)}{pastedText.length > 200 ? '...' : ''}
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{
+                      color: '#888',
+                      fontSize: '10px',
+                      border: '1px solid #444',
+                      borderRadius: '4px',
+                      padding: '2px 6px',
+                      letterSpacing: '0.5px',
+                    }}>
+                      PASTED
+                    </span>
+                    <button
+                      onClick={() => { setInput(pastedText); setPastedText(''); }}
+                      style={{ background: 'transparent', border: 'none', color: '#aaa', cursor: 'pointer', padding: '2px' }}
+                      title="Éditer"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
             <textarea
