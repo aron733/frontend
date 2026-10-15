@@ -823,15 +823,29 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
               </svg>
             </button>
           </div>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={imagePreview ? 'Ajoute une question sur cette image...' : `Écris ton message ${prenom}...`}
-            style={styles.input}
-            rows={2}
-            disabled={loading}
-          />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' as const, position: 'relative' as const }}>
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder={imagePreview ? 'Ajoute une question sur cette image...' : `Écris ton message ${prenom}...`}
+              style={styles.input}
+              rows={2}
+              disabled={loading}
+              maxLength={4000}
+            />
+            {input.length > 3000 && (
+              <span style={{
+                position: 'absolute' as const,
+                bottom: '4px',
+                right: '8px',
+                fontSize: '11px',
+                color: input.length >= 3900 ? '#dc3545' : '#888',
+              }}>
+                {input.length} / 4000
+              </span>
+            )}
+          </div>
           <button onClick={envoyerMessage} style={styles.sendButton} disabled={loading || (!input.trim() && !imageFile)}>
             <IconeEnvoyer />
           </button>
