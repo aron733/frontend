@@ -21,6 +21,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   image?: string;
+  fichierNom?: string;
 }
 
 const MESSAGES_ACCUEIL = [
@@ -65,6 +66,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lectureEnCours, setLectureEnCours] = useState<number | null>(null);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [pastedText, setPastedText] = useState<string>('');
   const [accueilIndex, setAccueilIndex] = useState(() => Math.floor(Math.random() * MESSAGES_ACCUEIL.length));
   const [chatsIA, setChatsIA] = useState<any[]>([]);
   const [chatIdActif, setChatIdActif] = useState<number | null>(null);
@@ -217,10 +219,12 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       return;
     }
 
-    if ((!input.trim() && !imageFile) || loading) return;
+    if ((!input.trim() && !imageFile && !pastedText) || loading) return;
 
-    const userMessage = input.trim() || 'Analyse cette image';
+    const fichierNom = pastedText ? `message-${new Date().toISOString().slice(0,10)}.txt` : undefined;
+    const userMessage = pastedText || input.trim() || 'Analyse cette image';
     setInput('');
+    setPastedText('');
     setLoading(true);
     setErreur('');
     setLoaderIndex(prev => prev + 1);
@@ -229,7 +233,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     setMessages(prev => [...prev, { 
       role: 'user', 
       content: userMessage,
-      image: imagePreview || undefined
+      image: imagePreview || undefined,
+      fichierNom: fichierNom,
     }]);
     
     setImagePreview(null);
@@ -588,7 +593,17 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                   {msg.content && (
                     <div className={`message-bubble-select ${estUser ? '' : 'markdown-content'}`} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
                       {estUser ? (
-                        msg.content
+                        msg.fichierNom ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                              <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                            <span style={{ fontSize: '13px' }}>{msg.fichierNom}</span>
+                          </div>
+                        ) : (
+                          msg.content
+                        )
                       ) : (
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm, remarkMath]}
@@ -824,27 +839,69 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
             </button>
           </div>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' as const, position: 'relative' as const }}>
+            {pastedText && (
+              <div style={{
+                background: '#1e1e2e',
+                border: '1px solid rgba(102,126,234,0.3)',
+                borderRadius: '10px',
+                padding: '10px 12px',
+                marginBottom: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+              }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a8b0ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ color: '#ccc', fontSize: '13px', overflow: 'hidden' as const, textOverflow: 'ellipsis' as const, whiteSpace: 'nowrap' as const }}>
+                    message-{new Date().toISOString().slice(0,10)}.txt
+                  </div>
+                  <div style={{ color: '#666', fontSize: '11px' }}>
+                    {pastedText.length} caractères
+                  </div>
+                </div>
+                <button
+                  onClick={() => { setInput(pastedText); setPastedText(''); }}
+                  style={{ background: 'transparent', border: 'none', color: '#a8b0ff', cursor: 'pointer', padding: '4px', flexShrink: 0 }}
+                  title="Éditer"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setPastedText('')}
+                  style={{ background: 'transparent', border: 'none', color: '#dc3545', cursor: 'pointer', padding: '4px', flexShrink: 0 }}
+                  title="Supprimer"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            )}
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={imagePreview ? 'Ajoute une question sur cette image...' : `Écris ton message ${prenom}...`}
+              onPaste={(e) => {
+                const texte = e.clipboardData.getData('text');
+                if (texte.length > 4000) {
+                  e.preventDefault();
+                  setPastedText(texte);
+                  setInput('');
+                }
+              }}
+              placeholder={imagePreview ? 'Ajoute une question sur cette image...' : (pastedText ? `Pose une question sur le texte collé...` : `Écris ton message ${prenom}...`)}
               style={styles.input}
               rows={2}
               disabled={loading}
               maxLength={4000}
             />
-            {input.length > 3000 && (
-              <span style={{
-                position: 'absolute' as const,
-                bottom: '4px',
-                right: '8px',
-                fontSize: '11px',
-                color: input.length >= 3900 ? '#dc3545' : '#888',
-              }}>
-                {input.length} / 4000
-              </span>
-            )}
           </div>
           <button onClick={envoyerMessage} style={styles.sendButton} disabled={loading || (!input.trim() && !imageFile)}>
             <IconeEnvoyer />
