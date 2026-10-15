@@ -620,7 +620,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                               padding: '2px 6px',
                               letterSpacing: '0.5px',
                             }}>
-                              PASTED
+                              VOKYVO TXT
                             </span>
                           </div>
                         ) : (
@@ -915,7 +915,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                       padding: '2px 6px',
                       letterSpacing: '0.5px',
                     }}>
-                      PASTED
+                      VOKYVO TXT
                     </span>
                     <button
                       onClick={() => { setInput(pastedText); setPastedText(''); }}
