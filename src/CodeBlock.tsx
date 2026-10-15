@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { Clipboard } from '@capacitor/clipboard';
 
 interface Props {
   code: string;
@@ -10,7 +12,11 @@ export default function CodeBlock({ code, language }: Props) {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(code);
+      if (Capacitor.isNativePlatform()) {
+        await Clipboard.write({ string: code });
+      } else {
+        await navigator.clipboard.writeText(code);
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (e) {
