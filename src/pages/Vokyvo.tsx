@@ -56,6 +56,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modeExpert, setModeExpert] = useState(false);
+  const [modeImage, setModeImage] = useState(false);
   const [lectureEnCours, setLectureEnCours] = useState<number | null>(null);
   const [accueilIndex, setAccueilIndex] = useState(() => Math.floor(Math.random() * MESSAGES_ACCUEIL.length));
   const [chatsIA, setChatsIA] = useState<any[]>([]);
@@ -191,6 +192,11 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   };
 
   const envoyerMessage = async () => {
+    if (modeImage) {
+      genererImage();
+      return;
+    }
+
     if ((!input.trim() && !imageFile) || loading) return;
 
     const userMessage = input.trim() || 'Analyse cette image';
@@ -277,7 +283,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
     const messageUser: Message = {
       role: 'user',
-      content: `🎨 Génère une image : ${promptActuel}`,
+      content: promptActuel,
     };
     setMessages(prev => [...prev, messageUser]);
 
@@ -305,10 +311,11 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
       const messageIA: Message = {
         role: 'assistant',
-        content: `Voici l'image générée pour : "${promptActuel}"`,
+        content: data.commentaire || '',
         image: data.url,
       };
       setMessages(prev => [...prev, messageIA]);
+      setModeImage(false);
     } catch (e: any) {
       setErreur(e.message || 'Erreur lors de la génération');
     } finally {
@@ -597,7 +604,11 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           <button onClick={() => fileInputRef.current?.click()} style={styles.imageBtn}>
             <IconeImage />
           </button>
-          <button onClick={genererImage} style={styles.imageBtn} title="Générer une image">
+          <button
+            onClick={() => setModeImage(!modeImage)}
+            style={modeImage ? { ...styles.modeToggle, ...styles.modeToggleActif } : styles.modeToggle}
+            title="Générer une image"
+          >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
               <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
