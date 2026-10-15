@@ -493,7 +493,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                         }}
                       />
                       <a
-                        href={msg.image}
+                        href={msg.image.replace('/image/upload/', '/image/upload/fl_attachment/')}
                         download
                         target="_blank"
                         rel="noopener noreferrer"
