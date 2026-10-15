@@ -28,6 +28,12 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   });
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
+  const [modalProfilOuvert, setModalProfilOuvert] = useState(false);
+  const [editAge, setEditAge] = useState('');
+  const [editSexe, setEditSexe] = useState('');
+  const [editNumero, setEditNumero] = useState('');
+  const [editPays, setEditPays] = useState('');
+  const [saveEnCours, setSaveEnCours] = useState(false);
 
   useEffect(() => {
     const chargerStats = async () => {
@@ -188,14 +194,39 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     }
   };
 
-/*
-  const IconeProfil = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-*/
+  const ouvrirModalProfil = () => {
+    setEditAge(userData.age ? String(userData.age) : '');
+    setEditSexe(userData.sexe || '');
+    setEditNumero(userData.numero || '');
+    setEditPays(userData.pays || '');
+    setModalProfilOuvert(true);
+  };
+
+  const sauvegarderProfil = async () => {
+    setSaveEnCours(true);
+    try {
+      await axios.patch(`${API_URL}/user/profil/`, {
+        age: editAge,
+        sexe: editSexe,
+        numero: editNumero,
+        pays: editPays,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Met à jour userData
+      const updated = { ...userData, age: editAge, sexe: editSexe, numero: editNumero, pays: editPays };
+      setUserData(updated);
+      localStorage.setItem('user', JSON.stringify(updated));
+
+      setModalProfilOuvert(false);
+      alert('Profil mis à jour !');
+    } catch (err: any) {
+      alert('Erreur : ' + (err.response?.data?.erreur || err.message));
+    } finally {
+      setSaveEnCours(false);
+    }
+  };
 
   const IconeRobot = () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -386,9 +417,9 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             </div>
 
             <div style={styles.actionSection}>
-              <button style={styles.modifierBtn} onClick={() => photoInputRef.current?.click()}>
+              <button style={styles.modifierBtn} onClick={ouvrirModalProfil}>
                 <IconeCamera />
-                Modifier la photo
+                Modifier le profil
               </button>
             </div>
           </div>
@@ -404,6 +435,49 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}
         {pageActive === 'news' && <News />}
       </main>
+
+      {/* Modal Modifier le profil */}
+      {modalProfilOuvert && (
+        <div style={styles.overlayConfirmation} onClick={() => setModalProfilOuvert(false)}>
+          <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
+            <h3 style={styles.modalTitre}>Modifier le profil</h3>
+
+            <div style={styles.fieldGroup}>
+              <label style={styles.fieldLabel}>Email</label>
+              <input type="text" value={userData.email || ''} disabled style={styles.inputDisabled} />
+            </div>
+
+            <div style={styles.fieldGroup}>
+              <label style={styles.fieldLabel}>Téléphone</label>
+              <input type="text" value={editNumero} onChange={(e) => setEditNumero(e.target.value)} placeholder="06 96 54 41" style={styles.input} />
+            </div>
+
+            <div style={styles.fieldGroup}>
+              <label style={styles.fieldLabel}>Pays</label>
+              <input type="text" value={editPays} onChange={(e) => setEditPays(e.target.value)} placeholder="Burkina Faso" style={styles.input} />
+            </div>
+
+            <div style={styles.fieldGroup}>
+              <label style={styles.fieldLabel}>Âge</label>
+              <input type="number" value={editAge} onChange={(e) => setEditAge(e.target.value)} placeholder="17" min="15" max="120" style={styles.input} />
+            </div>
+
+            <div style={styles.fieldGroup}>
+              <label style={styles.fieldLabel}>Sexe</label>
+              <select value={editSexe} onChange={(e) => setEditSexe(e.target.value)} style={styles.input}>
+                <option value="M">Masculin</option>
+                <option value="F">Féminin</option>
+                <option value="A">Autre</option>
+              </select>
+            </div>
+
+            <button onClick={sauvegarderProfil} disabled={saveEnCours} style={styles.saveBtn}>
+              {saveEnCours ? 'Enregistrement...' : 'Enregistrer'}
+            </button>
+          </div>
+        </div>
+      )}
+
 
       {/* Modal de confirmation déconnexion */}
       {modalSuppression && (
@@ -760,6 +834,23 @@ const styles = {
     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
   },
   modalTexte: { color: 'white', fontSize: '18px', fontWeight: 'bold' as const, margin: '0 0 10px' },
+  modalProfil: {
+    background: '#1a1a2e',
+    border: '1px solid #2a2a3e',
+    borderRadius: '20px',
+    padding: '25px',
+    maxWidth: '400px',
+    width: '100%',
+    maxHeight: '90vh',
+    overflowY: 'auto' as const,
+    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+  },
+  modalTitre: { color: 'white', fontSize: '20px', fontWeight: 'bold' as const, margin: '0 0 20px', textAlign: 'left' as const },
+  fieldGroup: { marginBottom: '16px' },
+  fieldLabel: { color: '#aaa', fontSize: '13px', display: 'block', marginBottom: '6px' },
+  input: { width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0f0f1a', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box' as const },
+  inputDisabled: { width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#666', fontSize: '14px', outline: 'none', boxSizing: 'border-box' as const, cursor: 'not-allowed' as const },
+  saveBtn: { width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontSize: '15px', fontWeight: 'bold' as const, cursor: 'pointer', marginTop: '10px' },
   modalIconWrap: { width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(220, 53, 69, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' },
   modalSousTexte: { color: '#888', fontSize: '14px', margin: '0 0 0', lineHeight: 1.4 },
   modalCompteRebours: { color: '#666', fontSize: '13px', margin: '0 0 20px' },
