@@ -380,30 +380,20 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             {uploading && <p style={{ color: '#aaa', textAlign: 'center' }}>Upload en cours...</p>}
 
             
-            <div style={styles.infoGrid}>
-              <div style={styles.infoItem}>
-                <span style={styles.infoLabel}>Email</span>
-                <span style={styles.infoValue}>{userData.email || 'N/A'}</span>
-              </div>
-              <div style={styles.infoItem}>
-                <span style={styles.infoLabel}>Pays</span>
-                <span style={styles.infoValue}>{userData.pays}</span>
-              </div>
-              <div style={styles.infoItem}>
-                <span style={styles.infoLabel}>Âge</span>
-                <span style={styles.infoValue}>{userData.age} ans</span>
-              </div>
-              <div style={styles.infoItem}>
-                <span style={styles.infoLabel}>Sexe</span>
-                <span style={styles.infoValue}>{userData.sexe === 'M' ? 'Masculin' : userData.sexe === 'F' ? 'Féminin' : userData.sexe}</span>
-              </div>
-              <div style={styles.infoItem}>
-                <span style={styles.infoLabel}>Téléphone</span>
-                <span style={styles.infoValue}>{userData.numero || 'Non renseigné'}</span>
-              </div>
+
+            <div style={styles.bioSection}>
+              <p style={styles.bioText}>Membre VOKYVO depuis le {stats.date_inscription || 'aujourd\'hui'}</p>
+            </div>
+
+            <div style={styles.actionSection}>
+              <button style={styles.modifierBtn} onClick={() => photoInputRef.current?.click()}>
+                <IconeCamera />
+                Modifier la photo
+              </button>
             </div>
           </div>
         )}
+
 
         
         {pageActive === 'chat' && <Vokyvo onRetour={() => setPageActive('profil')} />}
@@ -799,7 +789,11 @@ const styles = {
   coverInfo: { position: 'absolute' as const, bottom: '24px', left: '24px', right: '24px', zIndex: 2, textAlign: 'left' as const },
   coverNom: { color: 'white', fontSize: '28px', fontWeight: 'bold', margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: '8px' },
   coverPseudo: { color: 'rgba(255,255,255,0.75)', margin: 0, fontSize: '14px' },
-  statsGrid: { display: 'flex', justifyContent: 'space-around', padding: '20px 0', background: '#0f0f1a' },
+  statsGrid: { display: 'flex', justifyContent: 'space-around', padding: '20px 0', background: '#0a0a0f', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' },
+  bioSection: { padding: '16px 24px 0', textAlign: 'left' as const },
+  bioText: { color: '#aaa', fontSize: '14px', margin: 0, lineHeight: 1.5 },
+  actionSection: { padding: '16px 24px 24px' },
+  modifierBtn: { width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'white', color: '#0a0a0f', fontSize: '15px', fontWeight: 'bold' as const, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' },
   statItem: { display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' },
   statValue: { color: 'white', fontSize: '26px', fontWeight: 'bold' },
   statLabel: { color: '#aaa', fontSize: '12px' },

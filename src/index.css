@@ -248,3 +248,12 @@ input:focus {
   user-select: text;
   -webkit-user-select: text;
 }
+
+.cover-photo-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
