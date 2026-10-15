@@ -20,6 +20,13 @@ axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const urlRequete = error.config?.url || '';
+
+    // Endpoints publics : un 401 = identifiants invalides, PAS un token expiré
+    const endpointsPublics = ['/connexion/', '/inscription/', '/envoyer-otp/', '/verifier-otp/', '/mot-de-passe-oublie/', '/reinitialiser-mdp/', '/token/refresh/'];
+    if (endpointsPublics.some(p => urlRequete.includes(p))) {
+      return Promise.reject(error);
+    }
 
     // Si 401 (token expiré) et pas déjà tenté
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
