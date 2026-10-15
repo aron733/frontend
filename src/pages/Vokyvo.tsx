@@ -10,6 +10,7 @@ import { API_URL } from '../config';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import { Capacitor } from '@capacitor/core';
+import { Media } from '@capacitor-community/media';
 import { Clipboard } from '@capacitor/clipboard';
 import { Browser } from '@capacitor/browser';
 import LoaderIA from '../LoaderIA';
@@ -327,6 +328,33 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     }
   };
 
+  const telechargerImage = async (url: string) => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const response = await fetch(url.replace('/image/upload/', '/image/upload/fl_attachment/'));
+        const blob = await response.blob();
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+
+        await Media.savePhoto({
+          path: base64,
+        });
+
+        alert('Image enregistrée dans la galerie VOKYVO !');
+      } catch (e) {
+        console.error('Erreur sauvegarde galerie', e);
+        alert("Erreur lors de l'enregistrement dans la galerie");
+      }
+    } else {
+      window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
+    }
+  };
+
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -492,16 +520,14 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                           setLightboxOpen(true);
                         }}
                       />
-                      <a
-                        href={msg.image.replace('/image/upload/', '/image/upload/fl_attachment/')}
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => telechargerImage(msg.image!)}
                         style={{
                           position: 'absolute',
                           top: '8px',
                           right: '8px',
                           background: 'rgba(0,0,0,0.6)',
+                          border: 'none',
                           borderRadius: '50%',
                           width: '36px',
                           height: '36px',
@@ -509,7 +535,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                           alignItems: 'center',
                           justifyContent: 'center',
                           color: 'white',
-                          textDecoration: 'none',
                           cursor: 'pointer',
                         }}
                         title="Télécharger l'image"
@@ -519,7 +544,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                           <polyline points="7 10 12 15 17 10"/>
                           <line x1="12" y1="15" x2="12" y2="3"/>
                         </svg>
-                      </a>
+                      </button>
                     </div>
                   )}
                   {msg.content && (
