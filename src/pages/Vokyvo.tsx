@@ -60,6 +60,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [modeExpert, setModeExpert] = useState(false);
   const [modeImage, setModeImage] = useState(false);
+  const [menuActionsOuvert, setMenuActionsOuvert] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lectureEnCours, setLectureEnCours] = useState<number | null>(null);
@@ -93,6 +94,19 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   useEffect(() => {
     scrollToBottom();
   }, [messages, imagePreview]);
+
+  useEffect(() => {
+    if (!menuActionsOuvert) return;
+    const fermerMenu = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-menu-actions]')) {
+        setMenuActionsOuvert(false);
+      }
+    };
+    document.addEventListener('mousedown', fermerMenu);
+    return () => document.removeEventListener('mousedown', fermerMenu);
+  }, [menuActionsOuvert]);
+
 
   const choisirImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fichier = e.target.files?.[0];
@@ -687,32 +701,114 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
         {/* Input */}
         <div style={styles.inputArea}>
           <input type="file" ref={fileInputRef} onChange={choisirImage} accept="image/*" style={{ display: 'none' }} />
-          <button
-            onClick={() => setModeExpert(!modeExpert)}
-            style={modeExpert ? { ...styles.modeToggle, ...styles.modeToggleActif } : styles.modeToggle}
-            title="Mode éducatif"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-          </button>
-          <button onClick={() => fileInputRef.current?.click()} style={styles.imageBtn}>
-            <IconeImage />
-          </button>
-          <button
-            onClick={() => setModeImage(!modeImage)}
-            style={modeImage ? { ...styles.modeToggle, ...styles.modeToggleActif } : styles.modeToggle}
-            title="Générer une image"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
-              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
-              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
-              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
-              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
-            </svg>
-          </button>
+          <div data-menu-actions style={{ position: 'relative', flexShrink: 0 }}>
+            {menuActionsOuvert && (
+              <div style={{
+                position: 'absolute',
+                bottom: '60px',
+                left: '0',
+                background: '#1e1e2e',
+                borderRadius: '12px',
+                padding: '8px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                display: 'flex',
+                flexDirection: 'column' as const,
+                gap: '4px',
+                minWidth: '200px',
+                zIndex: 100,
+              }}>
+                <button
+                  onClick={() => { setModeExpert(!modeExpert); setMenuActionsOuvert(false); }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 12px',
+                    background: modeExpert ? 'rgba(102,126,234,0.2)' : 'transparent',
+                    color: modeExpert ? '#667eea' : '#ccc',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    textAlign: 'left' as const,
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                  </svg>
+                  Mode éducatif {modeExpert ? '✓' : ''}
+                </button>
+                <button
+                  onClick={() => { fileInputRef.current?.click(); setMenuActionsOuvert(false); }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 12px',
+                    background: 'transparent',
+                    color: '#ccc',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    textAlign: 'left' as const,
+                  }}
+                >
+                  <IconeImage />
+                  Envoyer une image
+                </button>
+                <button
+                  onClick={() => { setModeImage(!modeImage); setMenuActionsOuvert(false); }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 12px',
+                    background: modeImage ? 'rgba(102,126,234,0.2)' : 'transparent',
+                    color: modeImage ? '#667eea' : '#ccc',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    textAlign: 'left' as const,
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+                    <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+                    <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+                    <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                  </svg>
+                  Générer une image {modeImage ? '✓' : ''}
+                </button>
+              </div>
+            )}
+            <button
+              onClick={() => setMenuActionsOuvert(!menuActionsOuvert)}
+              style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                border: 'none',
+                background: (modeExpert || modeImage) ? 'rgba(102,126,234,0.2)' : 'rgba(255,255,255,0.1)',
+                color: (modeExpert || modeImage) ? '#667eea' : '#aaa',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                transition: 'all 0.2s',
+              }}
+              title="Plus d'options"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: menuActionsOuvert ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+          </div>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
