@@ -1153,7 +1153,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           Télécharger l'APK
         </a>
         )}
-        <p style={styles.footerText}>© 2026 VOKYVO LABS — propulsé par <a href="#" onClick={async (e) => { e.preventDefault(); const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/aron-vokouma?from=app' : 'https://vokyvo.com/aron-vokouma'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={{ color: '#667eea', textDecoration: 'underline' }}>Aron VOKOUMA</a> · Tous droits réservés</p>
+        <p style={styles.footerText}>© 2026 VOKYVO LABS — propulsé par <a href="#" onClick={async (e) => { e.preventDefault(); const url = Capacitor.isNativePlatform() ? 'https://vokyvo.com/aron-vokouma?from=app' : 'https://vokyvo.com/aron-vokouma'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={{ color: '#667eea', textDecoration: 'none' }}>Aron VOKOUMA</a> · Tous droits réservés</p>
         <div style={styles.footerLinks}>
           <a href="#" onClick={async (e) => {
             e.preventDefault();
