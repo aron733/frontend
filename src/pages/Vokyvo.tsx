@@ -340,8 +340,27 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           reader.readAsDataURL(blob);
         });
 
+        // 1. Cherche ou crée l'album VOKYVO
+        let albumIdentifier = 'VOKYVO';
+        try {
+          const { albums } = await Media.getAlbums();
+          const vokyvoAlbum = albums.find((a: any) => a.name === 'VOKYVO');
+          if (vokyvoAlbum) {
+            albumIdentifier = vokyvoAlbum.identifier;
+          } else {
+            await Media.createAlbum({ name: 'VOKYVO' });
+            const { albums: albums2 } = await Media.getAlbums();
+            const nouveau = albums2.find((a: any) => a.name === 'VOKYVO');
+            if (nouveau) albumIdentifier = nouveau.identifier;
+          }
+        } catch (albumErr) {
+          console.warn('Erreur gestion album, utilisation identifiant par défaut', albumErr);
+        }
+
+        // 2. Sauvegarde la photo dans l'album
         await Media.savePhoto({
           path: base64,
+          albumIdentifier: albumIdentifier,
         });
 
         alert('Image enregistrée dans la galerie VOKYVO !');
