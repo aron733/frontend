@@ -35,7 +35,7 @@ const SECTIONS = [
   { id: 'telecom', nom: 'Télécom', url: 'https://news.google.com/rss/search?q=t%C3%A9l%C3%A9com+internet+5G&hl=fr&gl=FR&ceid=FR:fr' },
 ];
 
-function News() {
+function News({ onRetour }: { onRetour?: () => void }) {
   const [articles, setArticles] = useState<any[]>([]);
   const [sectionActive, setSectionActive] = useState('flash');
   const [loading, setLoading] = useState(false);
@@ -81,7 +81,7 @@ function News() {
     <div style={styles.container}>
       {/* Header fixe */}
       <div style={styles.header}>
-        <BoutonRetour onClick={() => { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); }} />
+        <BoutonRetour onClick={() => { if (onRetour) { onRetour(); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} />
         <span style={styles.logo}>VOKYVO<span style={{ color: '#667eea' }}>NEWS</span></span>
         <input
           type="text"

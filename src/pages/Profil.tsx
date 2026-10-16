@@ -429,11 +429,11 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         
         {pageActive === 'chat' && <Vokyvo onRetour={() => setPageActive('profil')} />}
         {/* {pageActive === 'visio' && <Visio />} */}
-        {pageActive === 'messages' && <Chat />}
+        {pageActive === 'messages' && <Chat onRetour={() => setPageActive('profil')} />}
         {/* Composant Confidentialite retire (remplace par page HTML statique) */}
         {/* {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />} Désactivé */}
         {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}
-        {pageActive === 'news' && <News />}
+        {pageActive === 'news' && <News onRetour={() => setPageActive('profil')} />}
       </main>
 
       {/* Modal Modifier le profil */}

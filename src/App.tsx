@@ -65,7 +65,9 @@ function App() {
             localStorage.setItem('refresh_token', refreshToken);
           }
           localStorage.setItem('user', JSON.stringify({
-            user_id: userId, email, prenom, nom, photo_profil: photo,
+            user_id: userId,
+            username: email ? email.split('@')[0] : 'user',
+            email, prenom, nom, photo_profil: photo,
           }));
           try {
             const { default: ax } = await import('axios');
@@ -112,6 +114,7 @@ function App() {
       if (refreshToken && refreshToken.length > 10) localStorage.setItem('refresh_token', refreshToken);
       localStorage.setItem('user', JSON.stringify({
         user_id: userId,
+        username: email ? email.split('@')[0] : 'user',
         email: email,
         prenom: prenom,
         nom: nom,
