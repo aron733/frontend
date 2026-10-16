@@ -33,7 +33,7 @@ axios.interceptors.response.use(
       originalRequest._retry = true;
       
       const refreshToken = localStorage.getItem('refresh_token');
-      if (!refreshToken) {
+      if (!refreshToken || refreshToken.trim() === '') {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');

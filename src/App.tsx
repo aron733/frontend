@@ -60,7 +60,10 @@ function App() {
 
         if (token && userId) {
           localStorage.setItem('access_token', token);
-          localStorage.setItem('refresh_token', refreshToken || '');
+          // Stocke le refresh UNIQUEMENT s'il existe (sinon log out à chaque refresh)
+          if (refreshToken && refreshToken.length > 10) {
+            localStorage.setItem('refresh_token', refreshToken);
+          }
           localStorage.setItem('user', JSON.stringify({
             user_id: userId, email, prenom, nom, photo_profil: photo,
           }));
@@ -106,7 +109,7 @@ function App() {
     
     if (accessToken && userId) {
       localStorage.setItem('access_token', accessToken);
-      localStorage.setItem('refresh_token', refreshToken || '');
+      if (refreshToken && refreshToken.length > 10) localStorage.setItem('refresh_token', refreshToken);
       localStorage.setItem('user', JSON.stringify({
         user_id: userId,
         email: email,
