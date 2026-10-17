@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
@@ -21,6 +22,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [profilDrawer, setProfilDrawer] = useState<any>(null);
+  const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
 
   const telechargerImage = async (url: string) => {
     if (!url) return;
@@ -1675,8 +1677,12 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             {profilDrawer.photo_profil || profilDrawer.photo ? (
               <img
                 src={profilDrawer.photo_profil || profilDrawer.photo}
-                style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover' as const, margin: '0 auto 15px', display: 'block' }}
+                style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover' as const, margin: '0 auto 15px', display: 'block', cursor: 'pointer' }}
                 alt=""
+                onClick={() => {
+                  setProfilDrawer(null);
+                  setPhotoLightbox(profilDrawer.photo_profil || profilDrawer.photo);
+                }}
               />
             ) : (
               <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#667eea', color: 'white', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px' }}>
@@ -1716,9 +1722,41 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         plugins={[Zoom]}
         zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
         styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' } }}
-        carousel={{ finite: false }}
+        carousel={{ finite: true }}
         animation={{ fade: 250 }}
       />
+
+      {photoLightbox && (
+        <div
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000 }}
+        >
+          <TransformWrapper
+            initialScale={1}
+            minScale={1}
+            maxScale={4}
+            centerOnInit={true}
+            doubleClick={{ mode: 'toggle' }}
+            wheel={{ step: 0.1 }}
+          >
+            <TransformComponent
+              wrapperStyle={{ width: '100%', height: '100%' }}
+              contentStyle={{ width: '100%', height: '100%' }}
+            >
+              <img
+                src={photoLightbox}
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' as const }}
+                alt="photo plein écran"
+              />
+            </TransformComponent>
+          </TransformWrapper>
+          <button
+            onClick={() => setPhotoLightbox(null)}
+            style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '40px', height: '40px', borderRadius: '50%', fontSize: '20px', cursor: 'pointer', zIndex: 3001 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }

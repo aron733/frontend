@@ -905,7 +905,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' },
           button: { filter: 'none' },
         }}
-        carousel={{ finite: false }}
+        carousel={{ finite: true }}
         animation={{ fade: 250 }}
       />
     </div>
