@@ -20,6 +20,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [profilDrawer, setProfilDrawer] = useState<any>(null);
 
   const telechargerImage = async (url: string) => {
     if (!url) return;
@@ -861,7 +862,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               >
                 <div style={{ position: 'relative', flexShrink: 0 }}>
                   {user.photo_profil || user.photo ? (
-                    <img src={user.photo_profil || user.photo} style={styles.userPhoto} alt="" />
+                    <img src={user.photo_profil || user.photo} style={{ ...styles.userPhoto, cursor: 'pointer' }} alt="" onClick={(e) => { e.stopPropagation(); setProfilDrawer(user); }} />
                   ) : (
                     <span style={styles.userAvatar}>{((user.first_name || user.prenom || user.username || '?')[0] || '?').toUpperCase()}</span>
                   )}
@@ -1042,7 +1043,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   }}
                 >
                   {u.photo_profil ? (
-                    <img src={u.photo_profil} style={styles.fsAvatar} alt="" />
+                    <img src={u.photo_profil} style={{ ...styles.fsAvatar, cursor: 'pointer' }} alt="" onClick={(e) => { e.stopPropagation(); setProfilDrawer(u); }} />
                   ) : (
                     <span style={styles.fsAvatarText}>{((u.first_name || u.prenom || u.username || '?')[0] || '?').toUpperCase()}</span>
                   )}
@@ -1404,7 +1405,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             <>
               <div style={styles.chatHeader}>
                 {selectedUser.photo_profil || selectedUser.photo ? (
-                  <img src={selectedUser.photo_profil || selectedUser.photo} style={styles.chatPhoto} alt="" />
+                  <img src={selectedUser.photo_profil || selectedUser.photo} style={{ ...styles.chatPhoto, cursor: 'pointer' }} alt="" onClick={(e) => { e.stopPropagation(); setProfilDrawer(selectedUser); }} />
                 ) : (
                   <span style={styles.chatAvatar}>👤</span>
                 )}
@@ -1660,6 +1661,54 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             </button>
           </div>
         </>
+      )}
+
+      {profilDrawer && (
+        <div
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000 }}
+          onClick={() => setProfilDrawer(null)}
+        >
+          <div
+            style={{
+              position: 'absolute', top: 0, right: 0, bottom: 0, width: '80%', maxWidth: '350px',
+              background: '#1a1a2e', padding: '20px', overflowY: 'auto' as const,
+              borderLeft: '1px solid #2a2a3e',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setProfilDrawer(null)}
+              style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '32px', height: '32px', borderRadius: '50%', fontSize: '16px', cursor: 'pointer' }}
+            >
+              ✕
+            </button>
+            <div style={{ textAlign: 'center' as const, marginTop: '20px' }}>
+              {profilDrawer.photo_profil || profilDrawer.photo ? (
+                <img
+                  src={profilDrawer.photo_profil || profilDrawer.photo}
+                  style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover' as const, margin: '0 auto 15px', display: 'block' }}
+                  alt=""
+                />
+              ) : (
+                <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: '#667eea', color: 'white', fontSize: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px' }}>
+                  {(profilDrawer.prenom || profilDrawer.first_name || profilDrawer.username || '?').charAt(0).toUpperCase()}
+                </div>
+              )}
+              <h2 style={{ color: 'white', fontSize: '20px', margin: '0 0 5px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                {profilDrawer.prenom || profilDrawer.first_name} {profilDrawer.nom || profilDrawer.last_name || profilDrawer.username}
+                {profilDrawer.badge_verifie && <span style={{ color: '#667eea' }}>✓</span>}
+              </h2>
+              <p style={{ color: '#888', fontSize: '13px', margin: '0 0 20px' }}>
+                {profilDrawer.email}
+              </p>
+              {profilDrawer.est_en_ligne && (
+                <span style={{ display: 'inline-block', background: 'rgba(40,167,69,0.2)', color: '#28a745', padding: '4px 12px', borderRadius: '12px', fontSize: '12px' }}>
+                  ● En ligne
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
       )}
 
       <Lightbox
