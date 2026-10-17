@@ -44,6 +44,20 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     const chargerStats = async () => {
       try {
         const token = localStorage.getItem('access_token');
+        const res = await axios.get(`${API_URL}/user/stats/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setStats(res.data);
+      } catch (e) {
+        console.warn('Erreur chargement stats', e);
+      }
+    };
+    chargerStats();
+  }, []);
+
+  const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
+  const [modalQuitter, setModalQuitter] = useState(false);
+  const [modalSuppression, setModalSuppression] = useState(false);
 
   // Ref pour garder l'état à jour dans le listener natif
   const etatActuelRef = useRef({ pageActive, menuOuvert, modalProfilOuvert, confirmDeconnexion, modalQuitter, modalSuppression, lightboxOuverte });
@@ -57,34 +71,18 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     let listener: any = null;
     CapacitorApp.addListener('backButton', () => {
       const etat = etatActuelRef.current;
-      // 1. Fermer les modales (même ordre que l'UI)
       if (etat.modalProfilOuvert) { setModalProfilOuvert(false); return; }
       if (etat.modalQuitter) { setModalQuitter(false); return; }
       if (etat.modalSuppression) { setModalSuppression(false); return; }
       if (etat.confirmDeconnexion) { setConfirmDeconnexion(false); return; }
       if (etat.lightboxOuverte) { setLightboxOuverte(false); return; }
       if (etat.menuOuvert) { setMenuOuvert(false); return; }
-      // 2. Retour au profil (équivalent du bouton Retour)
       if (etat.pageActive !== 'profil') { setPageActive('profil'); return; }
-      // 3. Quitter l'app (équivalent de fermer à la racine)
       CapacitorApp.exitApp();
     }).then((l: any) => { listener = l; });
     return () => { if (listener) listener.remove(); };
   }, []);
 
-        const res = await axios.get(`${API_URL}/user/stats/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setStats(res.data);
-      } catch (e) {
-        console.warn('Erreur chargement stats', e);
-      }
-    };
-    chargerStats();
-  }, []);
-  const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
-  const [modalQuitter, setModalQuitter] = useState(false);
-  const [modalSuppression, setModalSuppression] = useState(false);
   const [etapeSuppression, setEtapeSuppression] = useState<'otp' | 'raison'>('otp');
   const [otpSuppression, setOtpSuppression] = useState('');
   const [raisonSuppression, setRaisonSuppression] = useState('');
