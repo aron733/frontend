@@ -386,14 +386,14 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             panning={{ velocityDisabled: true, lockAxisX: false, lockAxisY: false }}
           >
             <TransformComponent
-              wrapperStyle={{ width: '100%', height: '100%' }}
-              contentStyle={{ width: '100%', height: '100%' }}
+              wrapperStyle={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <img 
                 src={photoUrl} 
                 style={{ 
-                  maxWidth: '100%', 
-                  maxHeight: '100%', 
+                  maxWidth: '100vw', 
+                  maxHeight: '100vh', 
                   objectFit: 'contain' as const,
                 }} 
                 alt="photo plein écran"

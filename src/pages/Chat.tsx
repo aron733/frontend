@@ -1739,8 +1739,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             wheel={{ step: 0.1 }}
           >
             <TransformComponent
-              wrapperStyle={{ width: '100%', height: '100%' }}
-              contentStyle={{ width: '100%', height: '100%' }}
+              wrapperStyle={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <img
                 src={photoLightbox}
