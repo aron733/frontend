@@ -540,7 +540,14 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       setDureeEnregistrement(0);
 
       timerRef.current = setInterval(() => {
-        setDureeEnregistrement((d) => d + 1);
+        setDureeEnregistrement((d) => {
+          if (d + 1 >= 600) {
+            setTimeout(() => arreterEnregistrement(), 0);
+            toast.error('Limite de 10 minutes atteinte');
+            return 600;
+          }
+          return d + 1;
+        });
       }, 1000);
     } catch (err) {
       toast.error('Micro non autorisé ou erreur');
@@ -1500,7 +1507,16 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 multiple
                 style={{ display: 'none' }}
                 onChange={(e) => {
-                  const files = Array.from(e.target.files || []);
+                  let files = Array.from(e.target.files || []);
+                  if (files.length > 10) {
+                    toast.error('Maximum 10 fichiers par envoi');
+                    files = files.slice(0, 10);
+                  }
+                  const valides = files.filter(f => f.size <= 50 * 1024 * 1024);
+                  if (valides.length < files.length) {
+                    toast.error('Certains fichiers depassent 50 Mo');
+                  }
+                  files = valides;
                   setFichiersSelectionnes(files);
                   const apercus: {url: string, type: string}[] = [];
                   files.forEach((f) => {
@@ -1715,7 +1731,16 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   multiple
                   style={{ display: 'none' }}
                   onChange={(e) => {
-                  const files = Array.from(e.target.files || []);
+                  let files = Array.from(e.target.files || []);
+                  if (files.length > 10) {
+                    toast.error('Maximum 10 fichiers par envoi');
+                    files = files.slice(0, 10);
+                  }
+                  const valides = files.filter(f => f.size <= 50 * 1024 * 1024);
+                  if (valides.length < files.length) {
+                    toast.error('Certains fichiers depassent 50 Mo');
+                  }
+                  files = valides;
                   setFichiersSelectionnes(files);
                   const apercus: {url: string, type: string}[] = [];
                   files.forEach((f) => {
