@@ -62,7 +62,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [modeExpert, setModeExpert] = useState(false);
   const [menuActionsOuvert, setMenuActionsOuvert] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -251,7 +250,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
       const formData = new FormData();
       formData.append('message', userMessage);
       if (chatIdActif) formData.append('chat_id', String(chatIdActif));
-      formData.append('mode', modeExpert ? 'expert_maths' : 'normal');
       if (fichierNom) {
         formData.append('est_fichier', 'true');
         formData.append('nom_fichier', fichierNom);
@@ -734,28 +732,6 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                 zIndex: 100,
               }}>
                 <button
-                  onClick={() => { setModeExpert(!modeExpert); setMenuActionsOuvert(false); }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '10px 12px',
-                    background: modeExpert ? 'rgba(102,126,234,0.2)' : 'transparent',
-                    color: modeExpert ? '#667eea' : '#ccc',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    textAlign: 'left' as const,
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                  </svg>
-                  Mode éducatif {modeExpert ? '✓' : ''}
-                </button>
-                <button
                   onClick={() => { fileInputRef.current?.click(); setMenuActionsOuvert(false); }}
                   style={{
                     display: 'flex',
@@ -783,8 +759,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                 height: '50px',
                 borderRadius: '50%',
                 border: 'none',
-                background: modeExpert ? 'rgba(102,126,234,0.2)' : 'rgba(255,255,255,0.1)',
-                color: modeExpert ? '#667eea' : '#aaa',
+                background: 'rgba(255,255,255,0.1)',
+                color: '#aaa',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
