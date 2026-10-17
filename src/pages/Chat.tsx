@@ -961,7 +961,15 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       localStorage.setItem('conv_active_groupe', JSON.stringify(groupe));
       localStorage.removeItem('conv_active_user');
       
-      // Charge l'historique du groupe depuis l'API
+      const convId = `groupe_${groupe.id}`;
+
+      // 1. Affiche le cache IMMEDIATEMENT (0ms)
+      const cachedMsgs = await chargerMessages(convId);
+      if (cachedMsgs && cachedMsgs.length > 0) {
+        setMessagesConv(convId, cachedMsgs);
+      }
+
+      // 2. Puis fetch les nouveaux messages depuis le backend
       try {
         const response = await axios.get(`${API_URL}/groupes/${groupe.id}/messages/`, {
           headers: { Authorization: `Bearer ${getToken()}` }
@@ -979,7 +987,6 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             nom: pj.nom,
           })),
         }));
-        const convId = `groupe_${groupe.id}`;
         setMessagesConv(convId, msgs);
       } catch (err) {
         console.error('Erreur chargement messages groupe');
