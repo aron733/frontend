@@ -39,7 +39,6 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   const [modalRefus, setModalRefus] = useState(false);
   const [showPolitique, setShowPolitique] = useState(false);
   const estDansAPK = navigator.userAgent.includes('wv') || navigator.userAgent.includes('Capacitor');
-  const [showConditions, setShowConditions] = useState(false);
   const [banRaison, setBanRaison] = useState<string | null>(() => {
     const r = localStorage.getItem('ban_raison');
     if (r) {
@@ -1056,28 +1055,6 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
       )}
 
       {/* Modal Conditions d'utilisation */}
-      {showConditions && (
-        <div style={styles.overlay} onClick={() => setShowConditions(false)}>
-          <div style={styles.politiquePanel} onClick={(e) => e.stopPropagation()}>
-            <h2 style={styles.politiqueTitle}>Conditions d'utilisation</h2>
-            <div style={styles.politiqueContent}>
-              <h3>1. Acceptation</h3>
-              <p>En créant un compte VOKYVO, vous acceptez ces conditions d'utilisation.</p>
-              <h3>2. Service</h3>
-              <p>VOKYVO fournit une messagerie, visioconférence, assistant IA et actualités.</p>
-              <h3>3. Âge minimum</h3>
-              <p>Vous devez avoir <strong>16 ans ou plus</strong>. Entre 16 et 18 ans, l'autorisation parentale est obligatoire.</p>
-              <h3>4. Comportement</h3>
-              <p>Le harcèlement, les discours haineux et tout contenu illégal sont interdits.</p>
-              <h3>5. Bannissement</h3>
-              <p>VOKYVO se réserve le droit de bannir tout utilisateur ne respectant pas ces règles.</p>
-              <h3>6. Contact</h3>
-              <p>Telegram : @vokyvo_bot · WhatsApp : +226 06 96 54 41</p>
-            </div>
-            <button onClick={() => setShowConditions(false)} style={styles.cookieBtn}>Fermer</button>
-          </div>
-        </div>
-      )}
 
       {/* Modal politique de confidentialité */}
       {showPolitique && (
