@@ -304,6 +304,7 @@ function App() {
       <BandeauOffline />
       <Toaster
         position="top-center"
+        containerStyle={{ top: '60px' }}
         toastOptions={{
           style: {
             background: '#1a1a2e',

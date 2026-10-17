@@ -7,6 +7,7 @@ import { chargerMessages, sauvegarderMessages, chargerConversations as chargerCo
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
+import toast from 'react-hot-toast';
 import BoutonRetour from '../BoutonRetour';
 import CreerGroupe from './CreerGroupe';
 import BadgeVerifie from '../BadgeVerifie';
@@ -60,11 +61,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           albumIdentifier: albumIdentifier,
         });
 
-        alert('Image enregistrée dans la galerie VOKYVO !');
+        toast.success('Image enregistrée dans la galerie VOKYVO !');
       } catch (e: any) {
         console.error('Erreur sauvegarde galerie', e);
         window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
-        alert(`Erreur galerie : ${e?.message || 'inconnue'}\nFallback : téléchargement lancé.`);
+        toast.error(`Erreur galerie : ${e?.message || 'inconnue'}`);
       }
     } else {
       window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
@@ -440,7 +441,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         setDureeEnregistrement((d) => d + 1);
       }, 1000);
     } catch (err) {
-      alert('Micro non autorisé ou erreur');
+      toast.error('Micro non autorisé ou erreur');
       console.error(err);
     }
   };
@@ -535,7 +536,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       });
     } catch (err) {
       console.error('Erreur envoi audio:', err);
-      alert('Erreur envoi vocal');
+      toast.error('Erreur envoi vocal');
     }
   };
 
@@ -663,7 +664,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       // Déjà ajouté au state - ne rien faire ici
     } catch (err: any) {
       console.error('Erreur envoi message:', err);
-      alert('Erreur envoi : ' + (err.response?.data?.erreur || err.message || 'inconnu'));
+      toast.error('Erreur envoi : ' + (err.response?.data?.erreur || err.message || 'inconnu'));
     } finally {
       // Garde le spinner au moins 1.5s pour un retour visuel propre
       if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
@@ -706,7 +707,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       setShowRenommer(false);
       window.location.reload();
     } catch (err) {
-      alert('Erreur renommage');
+      toast.error('Erreur renommage');
     }
   };
 
@@ -736,7 +737,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
       window.location.reload();
     } catch (err) {
-      alert('Erreur nomination');
+      toast.error('Erreur nomination');
     }
   };
 
@@ -750,7 +751,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       setGroupeActif(null);
       window.location.reload();
     } catch (err) {
-      alert('Erreur suppression');
+      toast.error('Erreur suppression');
     }
   };
 
@@ -1039,7 +1040,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       setContactEnCours(null);
                       window.location.reload();
                     } catch (err) {
-                      alert('Erreur lors de la création de la conversation');
+                      toast.error('Erreur lors de la création de la conversation');
                       setContactEnCours(null);
                     }
                   }}
