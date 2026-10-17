@@ -42,12 +42,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       setLightboxOpen(true);
     };
 
-    // Calcul des spans selon N
-    const gridStyle: any = {
+    // Layout selon N
+    let gridStyle: any = {
       display: 'grid',
       gap: '4px',
       marginTop: '5px',
-      maxWidth: '300px',
+      maxWidth: '400px',
+      width: '100%',
       borderRadius: '12px',
       overflow: 'hidden',
     };
@@ -57,13 +58,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       gridStyle.gridTemplateRows = 'auto';
     } else if (n === 2) {
       gridStyle.gridTemplateColumns = '1fr 1fr';
-      gridStyle.gridTemplateRows = 'auto';
+      gridStyle.gridTemplateRows = '200px';
     } else if (n === 3) {
       gridStyle.gridTemplateColumns = '2fr 1fr';
-      gridStyle.gridTemplateRows = '1fr 1fr';
+      gridStyle.gridTemplateRows = '100px 100px';
     } else {
       gridStyle.gridTemplateColumns = '1fr 1fr';
-      gridStyle.gridTemplateRows = '1fr 1fr';
+      gridStyle.gridTemplateRows = '100px 100px';
     }
 
     return (
@@ -71,17 +72,15 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         {images.slice(0, max).map((p: any, i: number) => {
           const cellStyle: any = {
             position: 'relative',
-            aspectRatio: n === 1 ? 'auto' : '1',
             borderRadius: '8px',
             overflow: 'hidden',
             background: '#000',
           };
 
-          // Layout spécial pour N=3
+          // Layout spécial pour N=3 : 1 grande à gauche, 2 empilées à droite
           if (n === 3) {
             if (i === 0) {
               cellStyle.gridRow = 'span 2';
-              cellStyle.aspectRatio = 'auto';
             }
           }
 
@@ -101,7 +100,10 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               </button>
               {i === 3 && n > max && (
-                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px', fontWeight: 'bold' }}>+{n - max}</div>
+                <div
+                  onClick={(e) => { e.stopPropagation(); handleClick(p.url); }}
+                  style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '24px', fontWeight: 'bold', cursor: 'pointer' }}
+                >+{n - max}</div>
               )}
             </div>
           );
