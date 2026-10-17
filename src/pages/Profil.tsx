@@ -11,6 +11,8 @@ import VokyvoPlus from './VokyvoPlus';
 import BadgeVerifie from '../BadgeVerifie';
 import toast from 'react-hot-toast';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 
 import { API_URL } from '../config';
 
@@ -42,6 +44,34 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     const chargerStats = async () => {
       try {
         const token = localStorage.getItem('access_token');
+
+  // Ref pour garder l'état à jour dans le listener natif
+  const etatActuelRef = useRef({ pageActive, menuOuvert, modalProfilOuvert, confirmDeconnexion, modalQuitter, modalSuppression, lightboxOuverte });
+  useEffect(() => {
+    etatActuelRef.current = { pageActive, menuOuvert, modalProfilOuvert, confirmDeconnexion, modalQuitter, modalSuppression, lightboxOuverte };
+  }, [pageActive, menuOuvert, modalProfilOuvert, confirmDeconnexion, modalQuitter, modalSuppression, lightboxOuverte]);
+
+  // Swipe / bouton retour natif Android (réplique exacte des boutons UI)
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    let listener: any = null;
+    CapacitorApp.addListener('backButton', () => {
+      const etat = etatActuelRef.current;
+      // 1. Fermer les modales (même ordre que l'UI)
+      if (etat.modalProfilOuvert) { setModalProfilOuvert(false); return; }
+      if (etat.modalQuitter) { setModalQuitter(false); return; }
+      if (etat.modalSuppression) { setModalSuppression(false); return; }
+      if (etat.confirmDeconnexion) { setConfirmDeconnexion(false); return; }
+      if (etat.lightboxOuverte) { setLightboxOuverte(false); return; }
+      if (etat.menuOuvert) { setMenuOuvert(false); return; }
+      // 2. Retour au profil (équivalent du bouton Retour)
+      if (etat.pageActive !== 'profil') { setPageActive('profil'); return; }
+      // 3. Quitter l'app (équivalent de fermer à la racine)
+      CapacitorApp.exitApp();
+    }).then((l: any) => { listener = l; });
+    return () => { if (listener) listener.remove(); };
+  }, []);
+
         const res = await axios.get(`${API_URL}/user/stats/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
