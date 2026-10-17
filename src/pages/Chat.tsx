@@ -570,6 +570,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           groupe_id: groupeActif.id,
           message: nouveauMessage,
           fichier_url: saveResponse.data.fichier_url || null,
+          pieces_jointes: saveResponse.data.pieces_jointes || [],
         });
       } catch (err) {
         console.error('Erreur sauvegarde message groupe:', err);
@@ -618,6 +619,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           user_id: destUserId,
           message: nouveauMessage,
           fichier_url: sendRes.data.fichier_url || null,
+          pieces_jointes: sendRes.data.pieces_jointes || [],
         });
       }
     } catch (err) {
