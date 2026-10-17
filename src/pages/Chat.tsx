@@ -625,12 +625,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     } catch (err) {
       console.error('Erreur envoi message:', err);
       toast.error('Erreur envoi message');
-    } finally {
-      setNouveauMessage('');
-      setFichiersSelectionnes([]);
-      setApercusMultiples([]);
       if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
+      return;
     }
+    setNouveauMessage('');
+    setFichiersSelectionnes([]);
+    setApercusMultiples([]);
+    if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
   };
 
   const usersFiltres = allUsers.filter((user) => {
@@ -1305,24 +1306,32 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               <div ref={messagesEndRef} />
             </div>
             {fichiersSelectionnes.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 60px)', gap: '4px' }}>
-                  {apercusMultiples.slice(0, 4).map((a, i) => (
-                    <div key={i} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' as const, flex: 1, paddingBottom: '4px' }}>
+                  {apercusMultiples.map((a, i) => (
+                    <div key={i} style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
                       {a.type === 'video' ? (
                         <video src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} muted playsInline preload="metadata" />
                       ) : (
                         <img src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="" />
                       )}
-                      {i === 3 && apercusMultiples.length > 4 && (
-                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '18px', fontWeight: 'bold' }}>
-                          +{apercusMultiples.length - 4}
-                        </div>
-                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const nouveauxFichiers = fichiersSelectionnes.filter((_, idx) => idx !== i);
+                          const nouveauxApercus = apercusMultiples.filter((_, idx) => idx !== i);
+                          setFichiersSelectionnes(nouveauxFichiers);
+                          setApercusMultiples(nouveauxApercus);
+                        }}
+                        style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(220,53,69,0.9)', border: 'none', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '11px', cursor: 'pointer', padding: 0, lineHeight: 1 }}
+                        title="Supprimer"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
-                <button onClick={() => { setFichiersSelectionnes([]); setApercusMultiples([]); }} style={styles.fichierRetirer}>✕</button>
+                <button onClick={() => { setFichiersSelectionnes([]); setApercusMultiples([]); }} style={{ ...styles.fichierRetirer, flexShrink: 0 }} title="Tout supprimer">✕</button>
               </div>
             )}
 
@@ -1550,24 +1559,32 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               </div>
 
               {fichiersSelectionnes.length > 0 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 60px)', gap: '4px' }}>
-                    {apercusMultiples.slice(0, 4).map((a, i) => (
-                      <div key={i} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' as const, flex: 1, paddingBottom: '4px' }}>
+                    {apercusMultiples.map((a, i) => (
+                      <div key={i} style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
                         {a.type === 'video' ? (
                           <video src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} muted playsInline preload="metadata" />
                         ) : (
                           <img src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="" />
                         )}
-                        {i === 3 && apercusMultiples.length > 4 && (
-                          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '18px', fontWeight: 'bold' }}>
-                            +{apercusMultiples.length - 4}
-                          </div>
-                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const nouveauxFichiers = fichiersSelectionnes.filter((_, idx) => idx !== i);
+                            const nouveauxApercus = apercusMultiples.filter((_, idx) => idx !== i);
+                            setFichiersSelectionnes(nouveauxFichiers);
+                            setApercusMultiples(nouveauxApercus);
+                          }}
+                          style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(220,53,69,0.9)', border: 'none', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '11px', cursor: 'pointer', padding: 0, lineHeight: 1 }}
+                          title="Supprimer"
+                        >
+                          ✕
+                        </button>
                       </div>
                     ))}
                   </div>
-                  <button onClick={() => { setFichiersSelectionnes([]); setApercusMultiples([]); }} style={styles.fichierRetirer}>✕</button>
+                  <button onClick={() => { setFichiersSelectionnes([]); setApercusMultiples([]); }} style={{ ...styles.fichierRetirer, flexShrink: 0 }} title="Tout supprimer">✕</button>
                 </div>
               )}
               {audioEnAttente && apercuAudioUrl && (
