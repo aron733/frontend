@@ -5,6 +5,9 @@ import { chargerMessages, sauvegarderMessages, chargerConversations as chargerCo
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
+import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import 'yet-another-react-lightbox/styles.css';
 import toast from 'react-hot-toast';
 import BoutonRetour from '../BoutonRetour';
 import CreerGroupe from './CreerGroupe';
@@ -20,6 +23,92 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
 
   const [profilDrawer, setProfilDrawer] = useState<any>(null);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Calcule et affiche la grille média selon le nombre d'images (standard WhatsApp)
+  const renderMediaGrid = (images: {url: string, type: string}[], convKey: string) => {
+    if (images.length === 0) return null;
+    const n = images.length;
+    const max = 4;
+
+    const handleClick = (url: string) => {
+      const allImages = (messagesParConv[convKey] || [])
+        .flatMap((mm: any) => (mm.pieces_jointes && mm.pieces_jointes.length > 0) ? mm.pieces_jointes : (mm.fichier_url ? [{ url: mm.fichier_url, type: 'image' }] : []))
+        .filter((pp: any) => pp.type !== 'video')
+        .map((pp: any) => pp.url);
+      const idx = allImages.indexOf(url);
+      setLightboxIndex(idx >= 0 ? idx : 0);
+      setLightboxOpen(true);
+    };
+
+    // Calcul des spans selon N
+    const gridStyle: any = {
+      display: 'grid',
+      gap: '4px',
+      marginTop: '5px',
+      maxWidth: '300px',
+      borderRadius: '12px',
+      overflow: 'hidden',
+    };
+
+    if (n === 1) {
+      gridStyle.gridTemplateColumns = '1fr';
+      gridStyle.gridTemplateRows = 'auto';
+    } else if (n === 2) {
+      gridStyle.gridTemplateColumns = '1fr 1fr';
+      gridStyle.gridTemplateRows = 'auto';
+    } else if (n === 3) {
+      gridStyle.gridTemplateColumns = '2fr 1fr';
+      gridStyle.gridTemplateRows = '1fr 1fr';
+    } else {
+      gridStyle.gridTemplateColumns = '1fr 1fr';
+      gridStyle.gridTemplateRows = '1fr 1fr';
+    }
+
+    return (
+      <div style={gridStyle}>
+        {images.slice(0, max).map((p: any, i: number) => {
+          const cellStyle: any = {
+            position: 'relative',
+            aspectRatio: n === 1 ? 'auto' : '1',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            background: '#000',
+          };
+
+          // Layout spécial pour N=3
+          if (n === 3) {
+            if (i === 0) {
+              cellStyle.gridRow = 'span 2';
+              cellStyle.aspectRatio = 'auto';
+            }
+          }
+
+          return (
+            <div key={i} style={cellStyle}>
+              <img
+                src={p.url}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in' }}
+                alt="fichier"
+                onClick={() => handleClick(p.url)}
+              />
+              <button
+                onClick={(e) => { e.stopPropagation(); telechargerImage(p.url); }}
+                style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }}
+                title="Télécharger"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </button>
+              {i === 3 && n > max && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px', fontWeight: 'bold' }}>+{n - max}</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   const telechargerImage = async (url: string) => {
     if (!url) return;
@@ -1293,21 +1382,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     const videos = pieces.filter((p: any) => p.type === 'video');
                     return (
                       <>
-                        {images.length > 0 && (
-                          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(images.length, 2)}, 1fr)`, gap: '4px', marginTop: '5px', maxWidth: '300px' }}>
-                            {images.slice(0, 4).map((p: any, i: number) => (
-                              <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
-                                <img src={p.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in' }} alt="fichier" onClick={() => { setPhotoLightbox(p.url); }} />
-                                <button onClick={(e) => { e.stopPropagation(); telechargerImage(p.url); }} style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }} title="Télécharger">
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                </button>
-                                {i === 3 && images.length > 4 && (
-                                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px', fontWeight: 'bold' }}>+{images.length - 4}</div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        {images.length > 0 && renderMediaGrid(images, `groupe_${groupeActif?.id}`)}
                         {videos.map((p: any, i: number) => (
                           <div key={`v-${i}`} style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
                             <video src={p.url.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
@@ -1533,21 +1608,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   const videos = pieces.filter((p: any) => p.type === 'video');
                   return (
                     <>
-                      {images.length > 0 && (
-                        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(images.length, 2)}, 1fr)`, gap: '4px', marginTop: '5px', maxWidth: '300px' }}>
-                          {images.slice(0, 4).map((p: any, i: number) => (
-                            <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
-                              <img src={p.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in' }} alt="fichier" onClick={() => { setPhotoLightbox(p.url); }} />
-                              <button onClick={(e) => { e.stopPropagation(); telechargerImage(p.url); }} style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }} title="Télécharger">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                              </button>
-                              {i === 3 && images.length > 4 && (
-                                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px', fontWeight: 'bold' }}>+{images.length - 4}</div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {images.length > 0 && renderMediaGrid(images, `user_${selectedUser?.id || selectedUser?.user_id}`)}
                       {videos.map((p: any, i: number) => (
                         <div key={`v-${i}`} style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
                           <video src={p.url.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
@@ -1776,6 +1837,21 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           </div>
         </div>
       )}
+      <Lightbox
+        open={lightboxOpen}
+        close={() => setLightboxOpen(false)}
+        index={lightboxIndex}
+        slides={(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || [])
+          .flatMap((m: any) => (m.pieces_jointes && m.pieces_jointes.length > 0) ? m.pieces_jointes : (m.fichier_url ? [{ url: m.fichier_url, type: 'image' }] : []))
+          .filter((p: any) => p.type !== 'video')
+          .map((p: any) => ({ src: p.url }))}
+        plugins={[Zoom]}
+        zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
+        styles={{ container: { backgroundColor: '#000' }, button: {} }}
+        carousel={{ finite: true }}
+        animation={{ fade: 250 }}
+      />
+
       {photoLightbox && (
         <div
           style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#000', zIndex: 3000, overflow: 'hidden' }}
