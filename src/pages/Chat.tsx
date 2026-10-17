@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
 import { chargerMessages, sauvegarderMessages, chargerConversations as chargerConversationsCache, sauvegarderConversations as sauvegarderConversationsCache } from '../db';
 import { useChat } from '../ChatContext';
@@ -9,6 +10,7 @@ import BoutonRetour from '../BoutonRetour';
 import CreerGroupe from './CreerGroupe';
 import BadgeVerifie from '../BadgeVerifie';
 import { Capacitor } from '@capacitor/core';
+import { Media } from '@capacitor-community/media';
 import { Browser } from '@capacitor/browser';
 
 
@@ -18,6 +20,53 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const telechargerImage = async (url: string) => {
+    if (!url) return;
+    
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const response = await fetch(url.replace('/image/upload/', '/image/upload/fl_attachment/'));
+        const blob = await response.blob();
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+
+        // Récupère ou crée l'album
+        let albumIdentifier = 'VOKYVO';
+        try {
+          const { albums } = await Media.getAlbums();
+          const vokyvoAlbum = albums.find((a: any) => a.name === 'VOKYVO');
+          if (vokyvoAlbum) {
+            albumIdentifier = vokyvoAlbum.identifier;
+          } else {
+            await Media.createAlbum({ name: 'VOKYVO' });
+            const { albums: albums2 } = await Media.getAlbums();
+            const nouveau = albums2.find((a: any) => a.name === 'VOKYVO');
+            if (nouveau) albumIdentifier = nouveau.identifier;
+          }
+        } catch (e) {
+          console.warn('Album error', e);
+        }
+
+        await Media.savePhoto({
+          path: base64,
+          albumIdentifier: albumIdentifier,
+        });
+
+        alert('Image enregistrée dans la galerie VOKYVO !');
+      } catch (e: any) {
+        console.error('Erreur sauvegarde galerie', e);
+        window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
+        alert(`Erreur galerie : ${e?.message || 'inconnue'}\nFallback : téléchargement lancé.`);
+      }
+    } else {
+      window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
+    }
+  };
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
@@ -1228,7 +1277,25 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   <span style={styles.messageUsername}>{msg.from_username}</span>
                   <span style={styles.messageText}>{msg.message}</span>
                   {msg.fichier_url && (
-                    <img src={msg.fichier_url} style={styles.messageImage} alt="fichier" />
+                    <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
+                      <img src={msg.fichier_url} style={{ ...styles.messageImage, marginTop: 0 }} alt="fichier" />
+                      <button
+                        onClick={() => telechargerImage(msg.fichier_url!)}
+                        style={{
+                          position: 'absolute', top: '8px', right: '8px',
+                          background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
+                          width: '32px', height: '32px', display: 'flex', alignItems: 'center',
+                          justifyContent: 'center', color: 'white', cursor: 'pointer',
+                        }}
+                        title="Télécharger"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/>
+                          <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                      </button>
+                    </div>
                   )}
                   {msg.audio_url && (
                     <audio
@@ -1239,7 +1306,20 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     />
                   )}
                   {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
-                    <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={styles.messageVideo} controls preload="metadata" controlsList="nodownload" />
+                    <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
+                      <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
+                      <button
+                        onClick={(e) => { e.stopPropagation(); telechargerImage(msg.fichier_url!); }}
+                        style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', zIndex: 10 }}
+                        title="Télécharger la vidéo"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/>
+                          <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}
@@ -1388,24 +1468,60 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   >
                     <span style={styles.messageText}>{msg.message}</span>
                 {msg.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(msg.fichier_url) || (msg.fichier_url.includes('cloudinary.com') && msg.fichier_url.includes('/image/upload/'))) && (
-                  <img
-                    src={msg.fichier_url}
-                    style={styles.messageImage}
-                    alt="fichier"
-                    onClick={() => {
-                      // Index de cette image dans la liste des images de la conv
-                      const convKey = `user_${selectedUser?.id || selectedUser?.user_id}`;
-                      const images = (messagesParConv[convKey] || [])
-                        .filter((m: any) => m.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(m.fichier_url) || (m.fichier_url.includes('cloudinary.com') && m.fichier_url.includes('/image/upload/'))))
-                        .map((m: any) => m.fichier_url);
-                      const idx = images.indexOf(msg.fichier_url);
-                      setLightboxIndex(idx >= 0 ? idx : 0);
-                      setLightboxOpen(true);
-                    }}
-                  />
+                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
+                    <img
+                      src={msg.fichier_url}
+                      style={{ ...styles.messageImage, marginTop: 0 }}
+                      alt="fichier"
+                      onClick={() => {
+                        // Index de cette image dans la liste des images de la conv
+                        const convKey = `user_${selectedUser?.id || selectedUser?.user_id}`;
+                        const images = (messagesParConv[convKey] || [])
+                          .filter((m: any) => m.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(m.fichier_url) || (m.fichier_url.includes('cloudinary.com') && m.fichier_url.includes('/image/upload/'))))
+                          .map((m: any) => m.fichier_url);
+                        const idx = images.indexOf(msg.fichier_url);
+                        setLightboxIndex(idx >= 0 ? idx : 0);
+                        setLightboxOpen(true);
+                      }}
+                    />
+                    <button
+                      onClick={(e) => { e.stopPropagation(); telechargerImage(msg.fichier_url!); }}
+                      style={{
+                        position: 'absolute', top: '8px', right: '8px',
+                        background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
+                        width: '32px', height: '32px', display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', color: 'white', cursor: 'pointer',
+                      }}
+                      title="Télécharger"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                      </svg>
+                    </button>
+                  </div>
                 )}
                 {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
-                  <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={styles.messageVideo} controls preload="metadata" />
+                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
+                    <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
+                    <button
+                      onClick={(e) => { e.stopPropagation(); telechargerImage(msg.fichier_url!); }}
+                      style={{
+                        position: 'absolute', top: '8px', right: '8px',
+                        background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
+                        width: '32px', height: '32px', display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', color: 'white', cursor: 'pointer', zIndex: 10,
+                      }}
+                      title="Télécharger la vidéo"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                      </svg>
+                    </button>
+                  </div>
                 )}
                 {msg.fichier_url && !/\.(jpg|jpeg|png|gif|webp|bmp|mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && !(msg.fichier_url.includes('cloudinary.com') && msg.fichier_url.includes('/image/upload/')) && !(msg.fichier_url.includes('cloudinary.com') && msg.fichier_url.includes('/video/upload/')) && (
                   <a href={msg.fichier_url} target="_blank" onClick={async (e) => { if (Capacitor.isNativePlatform()) { e.preventDefault(); await Browser.open({ url: msg.fichier_url || '' }); } }} style={styles.messageFichier}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', verticalAlign: 'middle' }}><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>Télécharger le fichier</a>
@@ -1553,6 +1669,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         slides={(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || [])
           .filter((m: any) => m.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(m.fichier_url) || (m.fichier_url.includes('cloudinary.com') && m.fichier_url.includes('/image/upload/'))))
           .map((m: any) => ({ src: m.fichier_url }))}
+        plugins={[Zoom]}
+        zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
         styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' } }}
         carousel={{ finite: false }}
         animation={{ fade: 250 }}
