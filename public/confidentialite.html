@@ -48,6 +48,7 @@ Retour
 <ul>
   <li><strong>InterServer</strong> (hébergement serveur) : base de données, comptes, messages</li>
   <li><strong>Cloudinary</strong> (stockage média) : photos de profil, fichiers, images partagées</li>
+  <li><strong>Backblaze</strong> (sauvegarde) : stockage chiffré de nos sauvegardes de base de données (Backblaze B2, États-Unis)</li>
   <li><strong>Partenaires IA</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à un ou plusieurs partenaires d'IA pour générer les réponses : <strong>Groq</strong> (USA), <strong>OpenRouter</strong> (USA), <strong>Mistral AI</strong> (France), <strong>Google Gemini</strong> (USA), <strong>SambaNova</strong> (USA), <strong>Cloudflare Workers AI</strong> (USA), <strong>NVIDIA NIM</strong> (USA). Un seul partenaire traite votre message à la fois, selon disponibilité. <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Vos conversations IA sont stockées dans votre compte tant qu'il est actif, pour vous permettre de retrouver votre historique. VOKYVO ne les utilise pas pour entraîner de modèle d'IA. Dans le cadre de l'amélioration de ses services, VOKYVO peut analyser de manière <strong>agrégée et anonymisée</strong> les questions posées à l'assistant. Aucune analyse individuelle nominative n'est effectuée.</li>
   <li><strong>Zoho</strong> (email) : envoi des emails transactionnels (bienvenue, OTP)</li>
   <li><strong>Brevo</strong> (email) : envoi des notifications par email</li>
@@ -119,7 +120,7 @@ Retour
 <h3>10. Transfert international de données</h3>
 <p>Certaines de vos données sont transférées en dehors du Burkina Faso pour assurer le fonctionnement du service :</p>
 <ul>
-  <li><strong>États-Unis</strong> : hébergement serveur (InterServer), stockage média (Cloudinary), intelligence artificielle (Groq, OpenRouter, Google Gemini, SambaNova, Cloudflare Workers AI, NVIDIA NIM), authentification OAuth (Google), mesure d'audience (Cloudflare)</li>
+  <li><strong>États-Unis</strong> : hébergement serveur (InterServer), stockage média (Cloudinary), intelligence artificielle (Groq, OpenRouter, Google Gemini, SambaNova, Cloudflare Workers AI, NVIDIA NIM), authentification OAuth (Google), mesure d'audience (Cloudflare), sauvegarde de base de données (Backblaze)</li>
   <li><strong>France</strong> : intelligence artificielle (Mistral AI)</li>
   <li><strong>Inde</strong> : envoi d'emails transactionnels (Zoho)</li>
   <li><strong>France</strong> : envoi de notifications email (Brevo)</li>
