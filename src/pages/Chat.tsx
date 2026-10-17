@@ -1331,7 +1331,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             </div>
             {fichierSelectionne && (
               <div style={styles.fichierApercu}>
-                {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <video src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} muted playsInline preload="metadata" /> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
+                {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "60px", height: "60px", borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}><video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} muted playsInline preload="metadata" /></div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
                 <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
               </div>
             )}
@@ -1548,7 +1548,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
 
               {fichierSelectionne && (
                 <div style={styles.fichierApercu}>
-                  {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <video src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} muted playsInline preload="metadata" /> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
+                  {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "60px", height: "60px", borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}><video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} muted playsInline preload="metadata" /></div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
                   <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
                 </div>
               )}
