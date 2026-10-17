@@ -1665,51 +1665,46 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
 
       {profilDrawer && (
         <div
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000 }}
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
           onClick={() => setProfilDrawer(null)}
         >
           <div
-            style={{
-              position: 'absolute', top: 0, right: 0, bottom: 0, width: '80%', maxWidth: '350px',
-              background: '#1a1a2e', padding: '20px', overflowY: 'auto' as const,
-              borderLeft: '1px solid #2a2a3e',
-            }}
+            style={{ background: '#1a1a2e', borderRadius: '16px', padding: '24px', width: '100%', maxWidth: '300px', textAlign: 'center' as const, border: '1px solid #2a2a3e' }}
             onClick={(e) => e.stopPropagation()}
           >
+            {profilDrawer.photo_profil || profilDrawer.photo ? (
+              <img
+                src={profilDrawer.photo_profil || profilDrawer.photo}
+                style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover' as const, margin: '0 auto 15px', display: 'block' }}
+                alt=""
+              />
+            ) : (
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#667eea', color: 'white', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px' }}>
+                {(profilDrawer.prenom || profilDrawer.first_name || profilDrawer.username || '?').charAt(0).toUpperCase()}
+              </div>
+            )}
+            <h2 style={{ color: 'white', fontSize: '18px', margin: '0 0 5px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              {profilDrawer.prenom || profilDrawer.first_name} {profilDrawer.nom || profilDrawer.last_name || profilDrawer.username}
+              {profilDrawer.badge_verifie && <span style={{ color: '#667eea' }}>✓</span>}
+            </h2>
+            <p style={{ color: '#888', fontSize: '13px', margin: '0 0 15px' }}>
+              {profilDrawer.email}
+            </p>
+            {profilDrawer.est_en_ligne && (
+              <span style={{ display: 'inline-block', background: 'rgba(40,167,69,0.2)', color: '#28a745', padding: '4px 12px', borderRadius: '12px', fontSize: '12px' }}>
+                ● En ligne
+              </span>
+            )}
             <button
               onClick={() => setProfilDrawer(null)}
-              style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', width: '32px', height: '32px', borderRadius: '50%', fontSize: '16px', cursor: 'pointer' }}
+              style={{ marginTop: '20px', width: '100%', padding: '10px', borderRadius: '8px', border: 'none', background: '#2a2a3e', color: 'white', fontSize: '14px', cursor: 'pointer' }}
             >
-              ✕
+              Fermer
             </button>
-            <div style={{ textAlign: 'center' as const, marginTop: '20px' }}>
-              {profilDrawer.photo_profil || profilDrawer.photo ? (
-                <img
-                  src={profilDrawer.photo_profil || profilDrawer.photo}
-                  style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover' as const, margin: '0 auto 15px', display: 'block' }}
-                  alt=""
-                />
-              ) : (
-                <div style={{ width: '120px', height: '120px', borderRadius: '50%', background: '#667eea', color: 'white', fontSize: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px' }}>
-                  {(profilDrawer.prenom || profilDrawer.first_name || profilDrawer.username || '?').charAt(0).toUpperCase()}
-                </div>
-              )}
-              <h2 style={{ color: 'white', fontSize: '20px', margin: '0 0 5px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                {profilDrawer.prenom || profilDrawer.first_name} {profilDrawer.nom || profilDrawer.last_name || profilDrawer.username}
-                {profilDrawer.badge_verifie && <span style={{ color: '#667eea' }}>✓</span>}
-              </h2>
-              <p style={{ color: '#888', fontSize: '13px', margin: '0 0 20px' }}>
-                {profilDrawer.email}
-              </p>
-              {profilDrawer.est_en_ligne && (
-                <span style={{ display: 'inline-block', background: 'rgba(40,167,69,0.2)', color: '#28a745', padding: '4px 12px', borderRadius: '12px', fontSize: '12px' }}>
-                  ● En ligne
-                </span>
-              )}
-            </div>
           </div>
         </div>
       )}
+
 
       <Lightbox
         open={lightboxOpen}
