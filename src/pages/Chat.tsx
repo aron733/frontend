@@ -76,6 +76,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
   const [apercuUrl, setApercuUrl] = useState<string | null>(null);
+  const [videoErreur, setVideoErreur] = useState(false);
   const [groupes, setGroupes] = useState<any[]>([]);
   const [groupeActif, setGroupeActif] = useState<any>(null);
   const [showCreerGroupe, setShowCreerGroupe] = useState(false);
@@ -1331,7 +1332,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             </div>
             {fichierSelectionne && (
               <div style={styles.fichierApercu}>
-                {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "120px", height: "120px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, background: "#000" }}><video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} controls playsInline preload="metadata" /></div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
+                {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "120px", height: "120px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {videoErreur ? (
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    ) : (
+                      <video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} controls playsInline preload="metadata" onError={() => setVideoErreur(true)} />
+                    )}
+                  </div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
                 <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
               </div>
             )}
@@ -1380,7 +1387,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 type="file"
                 accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
                 style={{ display: 'none' }}
-                onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); if (f && (f.type.startsWith("image/") || f.type.startsWith("video/"))) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
+                onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && (f.type.startsWith("image/") || f.type.startsWith("video/"))) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
               />
               <input
                 type="text"
@@ -1548,7 +1555,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
 
               {fichierSelectionne && (
                 <div style={styles.fichierApercu}>
-                  {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "120px", height: "120px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, background: "#000" }}><video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} controls playsInline preload="metadata" /></div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
+                  {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "120px", height: "120px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {videoErreur ? (
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    ) : (
+                      <video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} controls playsInline preload="metadata" onError={() => setVideoErreur(true)} />
+                    )}
+                  </div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
                   <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
                 </div>
               )}
@@ -1598,7 +1611,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   type="file"
                   accept="image/*,video/*"
                   style={{ display: 'none' }}
-                  onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); if (f && (f.type.startsWith("image/") || f.type.startsWith("video/"))) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
+                  onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && (f.type.startsWith("image/") || f.type.startsWith("video/"))) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
                 />
                 <input
                   type="text"
