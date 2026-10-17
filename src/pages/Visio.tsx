@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState } from 'react';
 import { useTracks } from '@livekit/components-react';
 import axios from 'axios';
@@ -100,7 +101,7 @@ function Visio() {
   const copierCode = () => {
     if (codeCree) {
       navigator.clipboard.writeText(codeCree);
-      alert('Code copié !');
+      toast.success('Code copié !');
     }
   };
 

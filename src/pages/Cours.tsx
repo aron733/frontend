@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
+import toast from 'react-hot-toast';
 
 interface CoursProps {
   onRetour?: () => void;
@@ -142,7 +143,7 @@ function Cours({ onRetour }: CoursProps) {
       setTexteExtrait(texte);
     } catch (err) {
       console.error('Erreur extraction:', err);
-      alert('Erreur lors de l\'extraction du texte');
+      toast.error('Erreur lors de l\'extraction du texte');
     } finally {
       setLoading(false);
     }
@@ -158,7 +159,7 @@ function Cours({ onRetour }: CoursProps) {
 
     // Vérifier que speechSynthesis est dispo
     if (!('speechSynthesis' in window)) {
-      alert('La lecture audio n\'est pas disponible sur ce navigateur');
+      toast.error('La lecture audio n\'est pas disponible sur ce navigateur');
       return;
     }
 

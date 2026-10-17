@@ -7,6 +7,7 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
 import { API_URL } from '../config';
+import toast from 'react-hot-toast';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
@@ -132,7 +133,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
   const lireConversation = () => {
     if (!('speechSynthesis' in window)) {
-      alert("La lecture audio n'est pas disponible sur ce navigateur");
+      toast.error("La lecture audio n'est pas disponible sur ce navigateur");
       return;
     }
 
@@ -146,7 +147,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     // Récupère toutes les réponses IA
     const reponsesIA = messages.filter(m => m.role === 'assistant' && m.content);
     if (reponsesIA.length === 0) {
-      alert('Aucune réponse à lire pour le moment');
+      toast.error('Aucune réponse à lire pour le moment');
       return;
     }
 
@@ -184,7 +185,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
   const lireMessage = (index: number, texte: string) => {
     if (!('speechSynthesis' in window)) {
-      alert("La lecture audio n'est pas disponible sur ce navigateur");
+      toast.error("La lecture audio n'est pas disponible sur ce navigateur");
       return;
     }
 
@@ -345,14 +346,14 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
           albumIdentifier: albumIdentifier,
         });
 
-        alert('Image enregistrée dans la galerie VOKYVO !');
+        toast.success('Image enregistrée dans la galerie VOKYVO !');
       } catch (e: any) {
         console.error('Erreur sauvegarde galerie', e);
         console.error('Message:', e?.message);
         console.error('Code:', e?.code);
         // Fallback : téléchargement classique
         window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
-        alert(`Erreur galerie : ${e?.message || 'inconnue'}\n\nFallback : téléchargement classique lancé.`);
+        toast.error(`Erreur galerie : ${e?.message || 'inconnue'}`);
       }
     } else {
       window.open(url.replace('/image/upload/', '/image/upload/fl_attachment/'), '_blank');
