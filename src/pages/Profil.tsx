@@ -35,6 +35,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [editPays, setEditPays] = useState('');
   const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
+  const [zoomActif, setZoomActif] = useState(false);
 
   useEffect(() => {
     const chargerStats = async () => {
@@ -373,14 +374,22 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
       {lightboxOuverte && photoUrl && (
         <div 
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
-          onClick={() => setLightboxOuverte(false)}
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflow: 'hidden' as const }}
+          onClick={() => { setLightboxOuverte(false); setZoomActif(false); }}
         >
           <img 
             src={photoUrl} 
-            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '12px' }} 
+            style={{ 
+              maxWidth: '100%', 
+              maxHeight: '100%', 
+              objectFit: 'contain' as const, 
+              borderRadius: '12px',
+              cursor: zoomActif ? 'zoom-out' : 'zoom-in',
+              transform: zoomActif ? 'scale(2)' : 'scale(1)',
+              transition: 'transform 0.3s ease',
+            }} 
             alt="photo plein écran"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); setZoomActif(!zoomActif); }}
           />
           <button 
             onClick={() => setLightboxOuverte(false)}
@@ -419,7 +428,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               </div>
             </div>
             <p style={{ textAlign: 'center' as const, color: '#666', fontSize: '12px', margin: '8px 0 0' }}>
-              📷 Touche 📷 pour changer ta photo · Touche la photo pour l'agrandir
+              📷 Changer · 🔍 Agrandir
             </p>
 
             <div style={styles.statsGrid}>
