@@ -8,6 +8,7 @@ import 'katex/dist/katex.min.css';
 
 import { API_URL } from '../config';
 import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
 import { Capacitor } from '@capacitor/core';
 import { Media } from '@capacitor-community/media';
@@ -898,7 +899,12 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
         close={() => setLightboxOpen(false)}
         index={lightboxIndex}
         slides={messages.filter(m => m.image).map(m => ({ src: m.image! }))}
-        styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' } }}
+        plugins={[Zoom]}
+        zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
+        styles={{ 
+          container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' },
+          button: { filter: 'none' },
+        }}
         carousel={{ finite: false }}
         animation={{ fade: 250 }}
       />
