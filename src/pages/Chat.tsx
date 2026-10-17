@@ -162,6 +162,19 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [fichiersSelectionnes, setFichiersSelectionnes] = useState<File[]>([]);
+  const [menuFichiersOuvert, setMenuFichiersOuvert] = useState(false);
+
+  useEffect(() => {
+    if (!menuFichiersOuvert) return;
+    const fermerMenu = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-menu-fichiers]')) {
+        setMenuFichiersOuvert(false);
+      }
+    };
+    document.addEventListener('mousedown', fermerMenu);
+    return () => document.removeEventListener('mousedown', fermerMenu);
+  }, [menuFichiersOuvert]);
   const [apercusMultiples, setApercusMultiples] = useState<{url: string, type: string}[]>([]);
   const [groupes, setGroupes] = useState<any[]>([]);
   const [groupeActif, setGroupeActif] = useState<any>(null);
@@ -1481,7 +1494,72 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 </div>
               )}
             <div style={styles.inputArea}>
-              <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>📎</button>
+              <div data-menu-fichiers style={{ position: 'relative', flexShrink: 0 }}>
+                {menuFichiersOuvert && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '60px',
+                    left: '0',
+                    background: '#1e1e2e',
+                    borderRadius: '12px',
+                    padding: '8px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    flexDirection: 'column' as const,
+                    gap: '4px',
+                    minWidth: '200px',
+                    zIndex: 100,
+                  }}>
+                    <button
+                      onClick={() => { fichierInputRef.current?.click(); setMenuFichiersOuvert(false); }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        padding: '10px 12px',
+                        background: 'transparent',
+                        color: '#ccc',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        textAlign: 'left' as const,
+                      }}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                      </svg>
+                      Envoyer une image / vidéo
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setMenuFichiersOuvert(!menuFichiersOuvert)}
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: '#aaa',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all 0.2s',
+                  }}
+                  title="Plus d'options"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: menuFichiersOuvert ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={enregistrement ? arreterEnregistrement : demarrerEnregistrement}
@@ -1703,9 +1781,72 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 </div>
               )}
               <div style={styles.inputArea}>
-                <button type="button" onClick={() => fichierInputRef.current?.click()} style={styles.uploadBtn}>
-                  📎
-                </button>
+                <div data-menu-fichiers style={{ position: 'relative', flexShrink: 0 }}>
+                  {menuFichiersOuvert && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '60px',
+                      left: '0',
+                      background: '#1e1e2e',
+                      borderRadius: '12px',
+                      padding: '8px',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                      display: 'flex',
+                      flexDirection: 'column' as const,
+                      gap: '4px',
+                      minWidth: '200px',
+                      zIndex: 100,
+                    }}>
+                      <button
+                        onClick={() => { fichierInputRef.current?.click(); setMenuFichiersOuvert(false); }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '10px 12px',
+                          background: 'transparent',
+                          color: '#ccc',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          textAlign: 'left' as const,
+                        }}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <circle cx="8.5" cy="8.5" r="1.5" />
+                          <polyline points="21 15 16 10 5 21" />
+                        </svg>
+                        Envoyer une image / vidéo
+                      </button>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setMenuFichiersOuvert(!menuFichiersOuvert)}
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50%',
+                      border: 'none',
+                      background: 'rgba(255,255,255,0.1)',
+                      color: '#aaa',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transition: 'all 0.2s',
+                    }}
+                    title="Plus d'options"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: menuFichiersOuvert ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={enregistrement ? arreterEnregistrement : demarrerEnregistrement}
