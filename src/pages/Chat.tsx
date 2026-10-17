@@ -74,9 +74,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
-  const [fichierSelectionne, setFichierSelectionne] = useState<File | null>(null);
-  const [apercuUrl, setApercuUrl] = useState<string | null>(null);
-  const [videoErreur, setVideoErreur] = useState(false);
+  const [fichiersSelectionnes, setFichiersSelectionnes] = useState<File[]>([]);
+  const [apercusMultiples, setApercusMultiples] = useState<{url: string, type: string}[]>([]);
   const [groupes, setGroupes] = useState<any[]>([]);
   const [groupeActif, setGroupeActif] = useState<any>(null);
   const [showCreerGroupe, setShowCreerGroupe] = useState(false);
@@ -542,83 +541,58 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   };
 
   const envoyerMessage = async () => {
-    if (!nouveauMessage.trim() && !fichierSelectionne) return;
+    if (!nouveauMessage.trim() && fichiersSelectionnes.length === 0) return;
     if (!groupeActif && !selectedUser) return;
 
-    const uploadNecessaire = !!fichierSelectionne;
+    const uploadNecessaire = fichiersSelectionnes.length > 0;
     if (uploadNecessaire) setUploadEnCours(true);
 
     const destUserId = selectedUser?.id || selectedUser?.user_id;
-    
+
     // Envoi vers un groupe
     if (groupeActif && !selectedUser) {
-      // Sauvegarde en DB via l'API REST
       try {
         const formData = new FormData();
         if (nouveauMessage.trim()) {
           formData.append('texte', nouveauMessage);
         }
-        if (fichierSelectionne) {
-          formData.append('fichier', fichierSelectionne);
-        }
+        fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
         formData.append('groupe_id', String(groupeActif.id));
-        
+
         const saveResponse = await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
         });
         console.log('Message groupe sauvegardé:', saveResponse.data);
-      } catch (err) {
-        console.error('Erreur sauvegarde message groupe:', err);
-      }
 
-      // Notification via WebSocket au groupe (instantané)
+        // Notifie via WebSocket
         envoyer({
           action: 'groupe',
           groupe_id: groupeActif.id,
           message: nouveauMessage,
-          fichier_url: fichierSelectionne ? URL.createObjectURL(fichierSelectionne) : null,
+          fichier_url: saveResponse.data.fichier_url || null,
         });
+      } catch (err) {
+        console.error('Erreur sauvegarde message groupe:', err);
+        toast.error('Erreur envoi message groupe');
+      }
+
       setNouveauMessage('');
-      setFichierSelectionne(null);
-      setApercuUrl(null);
-      // Garde le spinner au moins 1.5s pour un retour visuel propre
+      setFichiersSelectionnes([]);
+      setApercusMultiples([]);
       if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
       return;
     }
-    
-    // Capture AVANT reset (sinon perdu)
-    const msgTexte = nouveauMessage || (fichierSelectionne ? fichierSelectionne.name : '');
 
-    // Ajout local UNIQUEMENT pour les textos (pas les fichiers)
-    // Les fichiers apparaîtront après upload Cloudinary (2-4s)
-    if (!fichierSelectionne && nouveauMessage.trim()) {
-      ajouterMessage(`user_${destUserId}`, {
-        type: 'message',
-        message: nouveauMessage,
-        from_user_id: getMyId(),
-        from_username: (() => {
-          const u = JSON.parse(localStorage.getItem('user') || '{}');
-          return (u.prenom || u.first_name || u.username || 'Moi');
-        })(),
-        fichier_url: null,
-      });
-    }
-
-    // Reset states
-    setNouveauMessage('');
-    setFichierSelectionne(null);
-
-    // Envoie via l'API REST du backend principal (sauvegarde en PostgreSQL)
+    // Envoi vers un user (chat privé)
     try {
       const convResponse = await axios.get(`${API_URL}/conversations/`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
-      
+
       const conversations = convResponse.data.conversations || [];
       let conv = conversations.find((c: any) => c.autre_user.id === destUserId);
-      
+
       if (!conv) {
-        // Créer la conversation
         const createRes = await axios.post(`${API_URL}/conversations/creer/`, {
           user2_id: destUserId,
         }, {
@@ -626,48 +600,33 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         });
         conv = { id: createRes.data.conversation_id };
       }
-      
-      // Ne PAS ajouter au state ici - l'API va renvoyer la réponse
-      // avec le message sauvegardé (ID unique de la DB)
 
       if (conv) {
         const formData = new FormData();
         if (nouveauMessage.trim()) {
           formData.append('texte', nouveauMessage);
         }
-        if (fichierSelectionne) {
-          formData.append('fichier', fichierSelectionne);
-        }
-        
+        fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
+
         const sendRes = await axios.post('' + API_URL + '/conversations/' + conv.id + '/envoyer/', formData, {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
 
-        // Remplace le blob par la vraie URL Cloudinary
-        if (sendRes.data.fichier_url) {
-          const vraieUrl = sendRes.data.fichier_url;
-          setMessagesConv(`user_${destUserId}`, (messagesParConv[`user_${destUserId}`] || []).map((m) =>
-            m.fichier_url && m.fichier_url.startsWith("blob:")
-              ? { ...m, fichier_url: vraieUrl }
-              : m
-          ));
-        }
-
-        // WS APRÈS REST (avec la vraie URL Cloudinary)
+        // Notifie via WebSocket
         envoyer({
           action: 'message',
-          dest_user_id: destUserId,
-          message: msgTexte,
+          user_id: destUserId,
+          message: nouveauMessage,
           fichier_url: sendRes.data.fichier_url || null,
         });
       }
-
-      // Déjà ajouté au state - ne rien faire ici
-    } catch (err: any) {
+    } catch (err) {
       console.error('Erreur envoi message:', err);
-      toast.error('Erreur envoi : ' + (err.response?.data?.erreur || err.message || 'inconnu'));
+      toast.error('Erreur envoi message');
     } finally {
-      // Garde le spinner au moins 1.5s pour un retour visuel propre
+      setNouveauMessage('');
+      setFichiersSelectionnes([]);
+      setApercusMultiples([]);
       if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
     }
   };
@@ -1330,16 +1289,25 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               ))}
               <div ref={messagesEndRef} />
             </div>
-            {fichierSelectionne && (
-              <div style={styles.fichierApercu}>
-                {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "120px", height: "120px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {videoErreur ? (
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                    ) : (
-                      <video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} controls playsInline preload="metadata" onError={() => setVideoErreur(true)} />
-                    )}
-                  </div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
-                <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
+            {fichiersSelectionnes.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 60px)', gap: '4px' }}>
+                  {apercusMultiples.slice(0, 4).map((a, i) => (
+                    <div key={i} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+                      {a.type === 'video' ? (
+                        <video src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} muted playsInline preload="metadata" />
+                      ) : (
+                        <img src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="" />
+                      )}
+                      {i === 3 && apercusMultiples.length > 4 && (
+                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '18px', fontWeight: 'bold' }}>
+                          +{apercusMultiples.length - 4}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => { setFichiersSelectionnes([]); setApercusMultiples([]); }} style={styles.fichierRetirer}>✕</button>
               </div>
             )}
 
@@ -1386,8 +1354,21 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 ref={fichierInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
+                multiple
                 style={{ display: 'none' }}
-                onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && f.type.startsWith("image/")) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else if (f && f.type.startsWith("video/")) { setApercuUrl(URL.createObjectURL(f)); } else { setApercuUrl(null); } }}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  setFichiersSelectionnes(files);
+                  const apercus: {url: string, type: string}[] = [];
+                  files.forEach((f) => {
+                    if (f.type.startsWith("image/")) {
+                      apercus.push({ url: URL.createObjectURL(f), type: 'image' });
+                    } else if (f.type.startsWith("video/")) {
+                      apercus.push({ url: URL.createObjectURL(f), type: 'video' });
+                    }
+                  });
+                  setApercusMultiples(apercus);
+                }}
               />
               <input
                 type="text"
@@ -1553,16 +1534,25 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               <div ref={messagesEndRef} />
               </div>
 
-              {fichierSelectionne && (
-                <div style={styles.fichierApercu}>
-                  {apercuUrl && (fichierSelectionne?.type.startsWith("video/") ? <div style={{ width: "120px", height: "120px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {videoErreur ? (
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                    ) : (
-                      <video src={apercuUrl} style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} controls playsInline preload="metadata" onError={() => setVideoErreur(true)} />
-                    )}
-                  </div> : <img src={apercuUrl} style={{ width: "60px", height: "60px", borderRadius: "8px", objectFit: "cover" }} alt="" />)}
-                  <button onClick={() => { setFichierSelectionne(null); setApercuUrl(null); }} style={styles.fichierRetirer}>✕</button>
+              {fichiersSelectionnes.length > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 60px)', gap: '4px' }}>
+                    {apercusMultiples.slice(0, 4).map((a, i) => (
+                      <div key={i} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+                        {a.type === 'video' ? (
+                          <video src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} muted playsInline preload="metadata" />
+                        ) : (
+                          <img src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} alt="" />
+                        )}
+                        {i === 3 && apercusMultiples.length > 4 && (
+                          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '18px', fontWeight: 'bold' }}>
+                            +{apercusMultiples.length - 4}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => { setFichiersSelectionnes([]); setApercusMultiples([]); }} style={styles.fichierRetirer}>✕</button>
                 </div>
               )}
               {audioEnAttente && apercuAudioUrl && (
@@ -1610,8 +1600,21 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   ref={fichierInputRef}
                   type="file"
                   accept="image/*,video/*"
+                  multiple
                   style={{ display: 'none' }}
-                  onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && f.type.startsWith("image/")) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else if (f && f.type.startsWith("video/")) { setApercuUrl(URL.createObjectURL(f)); } else { setApercuUrl(null); } }}
+                  onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  setFichiersSelectionnes(files);
+                  const apercus: {url: string, type: string}[] = [];
+                  files.forEach((f) => {
+                    if (f.type.startsWith("image/")) {
+                      apercus.push({ url: URL.createObjectURL(f), type: 'image' });
+                    } else if (f.type.startsWith("video/")) {
+                      apercus.push({ url: URL.createObjectURL(f), type: 'video' });
+                    }
+                  });
+                  setApercusMultiples(apercus);
+                }}
                 />
                 <input
                   type="text"
