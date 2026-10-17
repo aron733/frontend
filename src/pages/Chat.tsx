@@ -1507,7 +1507,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     display: 'flex',
                     flexDirection: 'column' as const,
                     gap: '4px',
-                    minWidth: '200px',
+                    width: 'max-content',
                     zIndex: 100,
                   }}>
                     <button
@@ -1524,6 +1524,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                         cursor: 'pointer',
                         fontSize: '14px',
                         textAlign: 'left' as const,
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1794,7 +1795,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       display: 'flex',
                       flexDirection: 'column' as const,
                       gap: '4px',
-                      minWidth: '200px',
+                      width: 'max-content',
                       zIndex: 100,
                     }}>
                       <button
@@ -1811,6 +1812,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                           cursor: 'pointer',
                           fontSize: '14px',
                           textAlign: 'left' as const,
+                          whiteSpace: 'nowrap',
                         }}
                       >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
