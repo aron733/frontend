@@ -1387,7 +1387,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 type="file"
                 accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
                 style={{ display: 'none' }}
-                onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && (f.type.startsWith("image/") || f.type.startsWith("video/"))) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
+                onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && f.type.startsWith("image/")) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else if (f && f.type.startsWith("video/")) { setApercuUrl(URL.createObjectURL(f)); } else { setApercuUrl(null); } }}
               />
               <input
                 type="text"
@@ -1611,7 +1611,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   type="file"
                   accept="image/*,video/*"
                   style={{ display: 'none' }}
-                  onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && (f.type.startsWith("image/") || f.type.startsWith("video/"))) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else { setApercuUrl(null); } }}
+                  onChange={(e) => { const f = e.target.files?.[0] || null; setFichierSelectionne(f); setVideoErreur(false); if (f && f.type.startsWith("image/")) { const r = new FileReader(); r.onloadend = () => setApercuUrl(r.result as string); r.readAsDataURL(f); } else if (f && f.type.startsWith("video/")) { setApercuUrl(URL.createObjectURL(f)); } else { setApercuUrl(null); } }}
                 />
                 <input
                   type="text"
