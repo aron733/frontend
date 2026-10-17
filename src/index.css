@@ -42,8 +42,9 @@ input, textarea {
   width: 144px !important;
   height: 144px !important;
   border-radius: 50% !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   object-position: center !important;
+  background: #0a0a0f !important;
   display: block !important;
 }
 
