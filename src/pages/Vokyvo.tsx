@@ -903,7 +903,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
         zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
         styles={{ 
           container: { backgroundColor: '#000' },
-          button: { display: 'none' },
+          button: {},
         }}
         carousel={{ finite: true }}
         animation={{ fade: 250 }}

@@ -1721,7 +1721,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           .map((m: any) => ({ src: m.fichier_url }))}
         plugins={[Zoom]}
         zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
-        styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' }, button: { display: 'none' } }}
+        styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' }, button: {} }}
         carousel={{ finite: true }}
         animation={{ fade: 250 }}
       />

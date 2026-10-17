@@ -258,3 +258,9 @@ input:focus {
   border-radius: 0 !important;
   display: block !important;
 }
+
+/* Lightbox : cacher les flèches de navigation */
+.yarl__navigation_prev,
+.yarl__navigation_next {
+  display: none !important;
+}
