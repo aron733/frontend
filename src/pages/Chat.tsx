@@ -444,6 +444,36 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     }
   }, []);
 
+  // Chargement immédiat des messages du groupe (au clic ou au refresh)
+  useEffect(() => {
+    if (!groupeActif || selectedUser) return;
+    const convId = `groupe_${groupeActif.id}`;
+    const chargerMessagesGroupe = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/groupes/${groupeActif.id}/messages/`, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        const msgs = (response.data.messages || []).map((m: any) => ({
+          id: m.id,
+          type: 'message',
+          message: m.texte || '',
+          from_user_id: m.expediteur_id,
+          from_username: m.expediteur_username,
+          fichier_url: m.fichier_url,
+          pieces_jointes: (m.pieces_jointes || []).map((pj: any) => ({
+            url: pj.url.startsWith('http') ? pj.url : `https://api.vokyvo.com${pj.url}`,
+            type: pj.type,
+            nom: pj.nom,
+          })),
+        }));
+        setMessagesConv(convId, msgs);
+      } catch (e) {
+        console.warn('Erreur chargement messages groupe', e);
+      }
+    };
+    chargerMessagesGroupe();
+  }, [groupeActif?.id, selectedUser?.id]);
+
   // Refresh auto toutes les 1s de la conv active (anti-coupure WS)
   useEffect(() => {
     if (!selectedUser && !groupeActif) return;
