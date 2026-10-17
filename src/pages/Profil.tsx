@@ -34,6 +34,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [editNumero, setEditNumero] = useState('');
   const [editPays, setEditPays] = useState('');
   const [saveEnCours, setSaveEnCours] = useState(false);
+  const [lightboxOuverte, setLightboxOuverte] = useState(false);
 
   useEffect(() => {
     const chargerStats = async () => {
@@ -370,17 +371,42 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </button>
         </div>
 
+      {lightboxOuverte && photoUrl && (
+        <div 
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+          onClick={() => setLightboxOuverte(false)}
+        >
+          <img 
+            src={photoUrl} 
+            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '12px' }} 
+            alt="photo plein écran"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button 
+            onClick={() => setLightboxOuverte(false)}
+            style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '40px', height: '40px', borderRadius: '50%', fontSize: '20px', cursor: 'pointer' }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <main style={styles.main}>
         {pageActive === 'profil' && (
           <div style={styles.profilCard}>
             <div style={styles.coverPhoto}>
               {photoUrl ? (
-                <img src={photoUrl} style={styles.coverImg} alt="photo" />
+                <img 
+                  src={photoUrl} 
+                  style={{ ...styles.coverImg, cursor: 'zoom-in' }} 
+                  alt="photo" 
+                  onClick={() => setLightboxOuverte(true)}
+                />
               ) : (
                 <div style={styles.coverPlaceholder}>{userData.prenom?.charAt(0) || userData.first_name?.charAt(0) || '?'}</div>
               )}
               <div style={styles.coverOverlay} />
-              <button onClick={() => photoInputRef.current?.click()} style={styles.cameraBtn} disabled={uploading}>
+              <button onClick={(e) => { e.stopPropagation(); photoInputRef.current?.click(); }} style={styles.cameraBtn} disabled={uploading}>
                 <IconeCamera />
               </button>
               <input type="file" ref={photoInputRef} onChange={uploadPhoto} accept="image/*" style={{ display: 'none' }} />
@@ -392,6 +418,9 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                 <p style={styles.coverPseudo}>{userData.email}</p>
               </div>
             </div>
+            <p style={{ textAlign: 'center' as const, color: '#666', fontSize: '12px', margin: '8px 0 0' }}>
+              📷 Touche 📷 pour changer ta photo · Touche la photo pour l'agrandir
+            </p>
 
             <div style={styles.statsGrid}>
               <div style={styles.statItem}>
