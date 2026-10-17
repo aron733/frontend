@@ -11,6 +11,7 @@ import NotFound from './pages/NotFound';
 import BandeauOffline from './BandeauOffline';
 import { ecouterNotifications, afficherMessagesManques } from './notifications';
 import { API_URL, getUserSecurise } from './config';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const [user, setUser] = useState<any>(null);
@@ -301,6 +302,23 @@ function App() {
   return (
     <>
       <BandeauOffline />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#1a1a2e',
+            color: 'white',
+            border: '1px solid #2a2a3e',
+            fontSize: '14px',
+          },
+          success: {
+            iconTheme: { primary: '#28a745', secondary: 'white' },
+          },
+          error: {
+            iconTheme: { primary: '#dc3545', secondary: 'white' },
+          },
+        }}
+      />
       {user ? (
         <>
           <Profil user={user} onLogout={handleLogout} />

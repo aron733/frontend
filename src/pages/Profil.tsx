@@ -9,6 +9,7 @@ import News from './News';
 import VokyvoPlus from './VokyvoPlus';
 // import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 import BadgeVerifie from '../BadgeVerifie';
+import toast from 'react-hot-toast';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 import { API_URL } from '../config';
@@ -185,10 +186,10 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       localStorage.setItem('user', JSON.stringify(userLocal));
       setUserData(userLocal);
       
-      alert('Photo de profil mise à jour !');
+      toast.success('Photo de profil mise à jour !');
     } catch (err: any) {
       console.error('Erreur upload :', err);
-      alert('Erreur upload : ' + (err.response?.data?.erreur || err.message));
+      toast.error('Erreur upload : ' + (err.response?.data?.erreur || err.message));
       setPhotoUrl(userData.photo_profil || null);
     } finally {
       setUploading(false);
@@ -222,9 +223,9 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       localStorage.setItem('user', JSON.stringify(updated));
 
       setModalProfilOuvert(false);
-      alert('Profil mis à jour !');
+      toast.success('Profil mis à jour !');
     } catch (err: any) {
-      alert('Erreur : ' + (err.response?.data?.erreur || err.message));
+      toast.error('Erreur : ' + (err.response?.data?.erreur || err.message));
     } finally {
       setSaveEnCours(false);
     }
