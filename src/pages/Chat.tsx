@@ -311,6 +311,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           lu: m.lu || false,
           fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://api.vokyvo.com${m.fichier_url}`) : null,
           audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://api.vokyvo.com${m.audio_url}`) : null,
+          pieces_jointes: (m.pieces_jointes || []).map((pj: any) => ({
+            url: pj.url.startsWith('http') ? pj.url : `https://api.vokyvo.com${pj.url}`,
+            type: pj.type,
+            nom: pj.nom,
+          })),
         }));
 
         setMessagesConv(convId, msgs);
@@ -361,6 +366,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             from_user_id: m.expediteur_id,
             from_username: m.expediteur_username,
             fichier_url: m.fichier_url,
+            pieces_jointes: (m.pieces_jointes || []).map((pj: any) => ({
+              url: pj.url.startsWith('http') ? pj.url : `https://api.vokyvo.com${pj.url}`,
+              type: pj.type,
+              nom: pj.nom,
+            })),
           }));
           setMessagesConv(convId, msgs);
         } else if (selectedUser) {
@@ -396,6 +406,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               lu: m.lu || false,
               fichier_url: m.fichier_url ? (m.fichier_url.startsWith('http') ? m.fichier_url : `https://api.vokyvo.com${m.fichier_url}`) : null,
               audio_url: m.audio_url ? (m.audio_url.startsWith('http') ? m.audio_url : `https://api.vokyvo.com${m.audio_url}`) : null,
+              pieces_jointes: (m.pieces_jointes || []).map((pj: any) => ({
+                url: pj.url.startsWith('http') ? pj.url : `https://api.vokyvo.com${pj.url}`,
+                type: pj.type,
+                nom: pj.nom,
+              })),
             }));
             setMessagesConv(convId, msgs);
             sauvegarderMessages(convId, msgs);
@@ -795,6 +810,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           from_user_id: m.expediteur_id,
           from_username: m.expediteur_username,
           fichier_url: m.fichier_url,
+          pieces_jointes: (m.pieces_jointes || []).map((pj: any) => ({
+            url: pj.url.startsWith('http') ? pj.url : `https://api.vokyvo.com${pj.url}`,
+            type: pj.type,
+            nom: pj.nom,
+          })),
         }));
         const convId = `groupe_${groupe.id}`;
         setMessagesConv(convId, msgs);
