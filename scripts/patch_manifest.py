@@ -27,6 +27,18 @@ if not match:
 remplacement = match.group(1) + "\n" + INTENT + match.group(2) + "</activity>"
 nouveau = content[:match.start()] + remplacement + content[match.end():]
 
+
+# --- Active le Predictive Back (swipe Android 13+) ---
+if 'android:enableOnBackInvokedCallback' not in nouveau:
+    nouveau = nouveau.replace(
+        '<application',
+        '<application\n        android:enableOnBackInvokedCallback="true"',
+        1
+    )
+    print("OK: enableOnBackInvokedCallback ajoute")
+else:
+    print("OK: enableOnBackInvokedCallback deja present")
+
 with open(MANIFEST, "w") as f:
     f.write(nouveau)
 
