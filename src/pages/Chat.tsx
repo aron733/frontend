@@ -1240,27 +1240,40 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 >
                   <span style={styles.messageUsername}>{msg.from_username}</span>
                   <span style={styles.messageText}>{msg.message}</span>
-                  {msg.fichier_url && (
-                    <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
-                      <img src={msg.fichier_url} style={{ ...styles.messageImage, marginTop: 0 }} alt="fichier" />
-                      <button
-                        onClick={() => telechargerImage(msg.fichier_url!)}
-                        style={{
-                          position: 'absolute', top: '8px', right: '8px',
-                          background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
-                          width: '32px', height: '32px', display: 'flex', alignItems: 'center',
-                          justifyContent: 'center', color: 'white', cursor: 'pointer',
-                        }}
-                        title="Télécharger"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                          <polyline points="7 10 12 15 17 10"/>
-                          <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                      </button>
-                    </div>
-                  )}
+                  {msg.fichier_url && (() => {
+                    const pieces = (msg.pieces_jointes && msg.pieces_jointes.length > 0)
+                      ? msg.pieces_jointes
+                      : [{ url: msg.fichier_url, type: msg.fichier_url.match(/\.(mp4|webm|mov|avi)(\?|$)/i) ? 'video' : 'image' }];
+                    const images = pieces.filter((p: any) => p.type !== 'video');
+                    const videos = pieces.filter((p: any) => p.type === 'video');
+                    return (
+                      <>
+                        {images.length > 0 && (
+                          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(images.length, 2)}, 1fr)`, gap: '4px', marginTop: '5px', maxWidth: '300px' }}>
+                            {images.slice(0, 4).map((p: any, i: number) => (
+                              <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+                                <img src={p.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in' }} alt="fichier" onClick={() => { setPhotoLightbox(p.url); }} />
+                                <button onClick={(e) => { e.stopPropagation(); telechargerImage(p.url); }} style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }} title="Télécharger">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                </button>
+                                {i === 3 && images.length > 4 && (
+                                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px', fontWeight: 'bold' }}>+{images.length - 4}</div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {videos.map((p: any, i: number) => (
+                          <div key={`v-${i}`} style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
+                            <video src={p.url.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
+                            <button onClick={(e) => { e.stopPropagation(); telechargerImage(p.url); }} style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', zIndex: 10 }} title="Télécharger la vidéo">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            </button>
+                          </div>
+                        ))}
+                      </>
+                    );
+                  })()}
                   {msg.audio_url && (
                     <audio
                       src={msg.audio_url ? msg.audio_url.replace('/video/upload/', '/video/upload/f_mp3/') : ''}

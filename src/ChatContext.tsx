@@ -14,6 +14,7 @@ type Message = {
   from_user_id: number | string;
   from_username: string;
   fichier_url: string | null;
+  pieces_jointes?: any[];
   audio_url?: string | null;
   lu?: boolean;
 };
