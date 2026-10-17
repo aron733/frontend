@@ -1561,24 +1561,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   </svg>
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={enregistrement ? arreterEnregistrement : demarrerEnregistrement}
-                style={enregistrement ? styles.micBtnActif : styles.micBtn}
-              >
-                {enregistrement ? (
-                  <span style={{ fontSize: '12px', fontWeight: 'bold' }}>
-                    {dureeEnregistrement}s
-                  </span>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                    <line x1="12" y1="19" x2="12" y2="23" />
-                    <line x1="8" y1="23" x2="16" y2="23" />
-                  </svg>
-                )}
-              </button>
+
               <input
                 ref={fichierInputRef}
                 type="file"
@@ -1616,11 +1599,34 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 placeholder={`Message dans ${groupeActif.nom}...`}
                 style={styles.input}
               />
-              <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} disabled={uploadEnCours} style={styles.sendButton}>
+              <button
+                type="button"
+                onClick={
+                  enregistrement ? arreterEnregistrement :
+                  audioEnAttente ? envoyerAudioDepuisApercu :
+                  (nouveauMessage.trim() || fichiersSelectionnes.length > 0) ? envoyerMessage :
+                  demarrerEnregistrement
+                }
+                disabled={uploadEnCours}
+                style={
+                  enregistrement ? styles.micBtnActif :
+                  (!nouveauMessage.trim() && fichiersSelectionnes.length === 0 && !audioEnAttente) ? styles.micBtn :
+                  styles.sendButton
+                }
+              >
                 {uploadEnCours ? (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                     <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
                     <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
+                  </svg>
+                ) : enregistrement ? (
+                  <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{dureeEnregistrement}s</span>
+                ) : (!nouveauMessage.trim() && fichiersSelectionnes.length === 0 && !audioEnAttente) ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
                   </svg>
                 ) : '➤'}
               </button>
@@ -1847,24 +1853,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     </svg>
                   </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={enregistrement ? arreterEnregistrement : demarrerEnregistrement}
-                  style={enregistrement ? styles.micBtnActif : styles.micBtn}
-                >
-                  {enregistrement ? (
-                    <span style={{ fontSize: '12px', fontWeight: 'bold' }}>
-                      {dureeEnregistrement}s
-                    </span>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                      <line x1="12" y1="19" x2="12" y2="23" />
-                      <line x1="8" y1="23" x2="16" y2="23" />
-                    </svg>
-                  )}
-                </button>
+
                 <input
                   ref={fichierInputRef}
                   type="file"
@@ -1902,11 +1891,34 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   placeholder="Écris un message..."
                   style={styles.input}
                 />
-                <button onClick={audioEnAttente ? envoyerAudioDepuisApercu : envoyerMessage} disabled={uploadEnCours} style={styles.sendButton}>
+                <button
+                type="button"
+                onClick={
+                  enregistrement ? arreterEnregistrement :
+                  audioEnAttente ? envoyerAudioDepuisApercu :
+                  (nouveauMessage.trim() || fichiersSelectionnes.length > 0) ? envoyerMessage :
+                  demarrerEnregistrement
+                }
+                disabled={uploadEnCours}
+                style={
+                  enregistrement ? styles.micBtnActif :
+                  (!nouveauMessage.trim() && fichiersSelectionnes.length === 0 && !audioEnAttente) ? styles.micBtn :
+                  styles.sendButton
+                }
+              >
                 {uploadEnCours ? (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                     <circle cx="12" cy="12" r="10" strokeOpacity="0.3"/>
                     <path d="M12 2a10 10 0 0 1 10 10" style={{ animation: 'spin 0.8s linear infinite', transformOrigin: 'center' }}/>
+                  </svg>
+                ) : enregistrement ? (
+                  <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{dureeEnregistrement}s</span>
+                ) : (!nouveauMessage.trim() && fichiersSelectionnes.length === 0 && !audioEnAttente) ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="23" />
+                    <line x1="8" y1="23" x2="16" y2="23" />
                   </svg>
                 ) : '➤'}
               </button>
