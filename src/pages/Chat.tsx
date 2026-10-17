@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import Lightbox from 'yet-another-react-lightbox';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
-import 'yet-another-react-lightbox/styles.css';
+
 import { chargerMessages, sauvegarderMessages, chargerConversations as chargerConversationsCache, sauvegarderConversations as sauvegarderConversationsCache } from '../db';
 import { useChat } from '../ChatContext';
 import axios from 'axios';
@@ -20,8 +18,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
+
   const [profilDrawer, setProfilDrawer] = useState<any>(null);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
 
@@ -579,6 +576,19 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         });
         console.log('Message groupe sauvegardé:', saveResponse.data);
 
+        // Ajoute localement avec les vraies URLs Cloudinary
+        const convId = `groupe_${groupeActif.id}`;
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        ajouterMessage(convId, {
+          type: 'message',
+          message: nouveauMessage,
+          from_user_id: getMyId(),
+          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
+          fichier_url: saveResponse.data.fichier_url || null,
+          pieces_jointes: saveResponse.data.pieces_jointes || [],
+          lu: false,
+        });
+
         // Notifie via WebSocket
         envoyer({
           action: 'groupe',
@@ -626,6 +636,19 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
 
         const sendRes = await axios.post('' + API_URL + '/conversations/' + conv.id + '/envoyer/', formData, {
           headers: { Authorization: `Bearer ${getToken()}` }
+        });
+
+        // Ajoute localement avec les vraies URLs Cloudinary
+        const convId = `user_${destUserId}`;
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        ajouterMessage(convId, {
+          type: 'message',
+          message: nouveauMessage,
+          from_user_id: getMyId(),
+          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
+          fichier_url: sendRes.data.fichier_url || null,
+          pieces_jointes: sendRes.data.pieces_jointes || [],
+          lu: false,
         });
 
         // Notifie via WebSocket
@@ -1503,41 +1526,40 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     }}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
-                {msg.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(msg.fichier_url) || (msg.fichier_url.includes('cloudinary.com') && msg.fichier_url.includes('/image/upload/'))) && (
-                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
-                    <img
-                      src={msg.fichier_url}
-                      style={{ ...styles.messageImage, marginTop: 0 }}
-                      alt="fichier"
-                      onClick={() => {
-                        // Index de cette image dans la liste des images de la conv
-                        const convKey = `user_${selectedUser?.id || selectedUser?.user_id}`;
-                        const images = (messagesParConv[convKey] || [])
-                          .filter((m: any) => m.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(m.fichier_url) || (m.fichier_url.includes('cloudinary.com') && m.fichier_url.includes('/image/upload/'))))
-                          .map((m: any) => m.fichier_url);
-                        const idx = images.indexOf(msg.fichier_url);
-                        setLightboxIndex(idx >= 0 ? idx : 0);
-                        setLightboxOpen(true);
-                      }}
-                    />
-                    <button
-                      onClick={(e) => { e.stopPropagation(); telechargerImage(msg.fichier_url!); }}
-                      style={{
-                        position: 'absolute', top: '8px', right: '8px',
-                        background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
-                        width: '32px', height: '32px', display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', color: 'white', cursor: 'pointer',
-                      }}
-                      title="Télécharger"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                      </svg>
-                    </button>
-                  </div>
-                )}
+                {msg.fichier_url && (() => {
+                  const pieces = (msg.pieces_jointes && msg.pieces_jointes.length > 0)
+                    ? msg.pieces_jointes
+                    : [{ url: msg.fichier_url, type: msg.fichier_url.match(/\.(mp4|webm|mov|avi)(\?|$)/i) ? 'video' : 'image' }];
+                  const images = pieces.filter((p: any) => p.type !== 'video');
+                  const videos = pieces.filter((p: any) => p.type === 'video');
+                  return (
+                    <>
+                      {images.length > 0 && (
+                        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(images.length, 2)}, 1fr)`, gap: '4px', marginTop: '5px', maxWidth: '300px' }}>
+                          {images.slice(0, 4).map((p: any, i: number) => (
+                            <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: '8px', overflow: 'hidden', background: '#000' }}>
+                              <img src={p.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'zoom-in' }} alt="fichier" onClick={() => { setPhotoLightbox(p.url); }} />
+                              <button onClick={(e) => { e.stopPropagation(); telechargerImage(p.url); }} style={{ position: 'absolute', top: '6px', right: '6px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer' }} title="Télécharger">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                              </button>
+                              {i === 3 && images.length > 4 && (
+                                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '20px', fontWeight: 'bold' }}>+{images.length - 4}</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {videos.map((p: any, i: number) => (
+                        <div key={`v-${i}`} style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
+                          <video src={p.url.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
+                          <button onClick={(e) => { e.stopPropagation(); telechargerImage(p.url); }} style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', zIndex: 10 }} title="Télécharger la vidéo">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                          </button>
+                        </div>
+                      ))}
+                    </>
+                  );
+                })()}
                 {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
                   <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
                     <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
@@ -1779,22 +1801,6 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           </div>
         </div>
       )}
-
-
-      <Lightbox
-        open={lightboxOpen}
-        close={() => setLightboxOpen(false)}
-        index={lightboxIndex}
-        slides={(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || [])
-          .filter((m: any) => m.fichier_url && (/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(m.fichier_url) || (m.fichier_url.includes('cloudinary.com') && m.fichier_url.includes('/image/upload/'))))
-          .map((m: any) => ({ src: m.fichier_url }))}
-        plugins={[Zoom]}
-        zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
-        styles={{ container: { backgroundColor: '#000' }, button: {} }}
-        carousel={{ finite: true }}
-        animation={{ fade: 250 }}
-      />
-
       {photoLightbox && (
         <div
           style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#000', zIndex: 3000, overflow: 'hidden' }}
