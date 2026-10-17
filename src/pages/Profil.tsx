@@ -383,6 +383,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             centerOnInit={true}
             doubleClick={{ mode: 'toggle' }}
             wheel={{ step: 0.1 }}
+            panning={{ velocityDisabled: true, lockAxisX: false, lockAxisY: false }}
           >
             <TransformComponent
               wrapperStyle={{ width: '100%', height: '100%' }}

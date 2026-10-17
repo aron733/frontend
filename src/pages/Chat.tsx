@@ -1744,7 +1744,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             >
               <img
                 src={photoLightbox}
-                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' as const }}
+                style={{ maxWidth: '100vw', maxHeight: '100vh', objectFit: 'contain' as const }}
                 alt="photo plein écran"
               />
             </TransformComponent>
