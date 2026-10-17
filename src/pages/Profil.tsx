@@ -436,28 +436,17 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               </div>
             </div>
 
-            <div style={styles.statsGrid}>
-              <div style={styles.statItem}>
-                <span style={styles.statValue}>{stats.nb_messages}</span>
-                <span style={styles.statLabel}>Messages</span>
-              </div>
-              <div style={styles.statItem}>
-                <span style={styles.statValue}>{stats.nb_conversations}</span>
-                <span style={styles.statLabel}>Conversations</span>
-              </div>
-              <div style={styles.statItem}>
-                <span style={styles.statValue}>{stats.anciennete}</span>
-                <span style={styles.statLabel}>{stats.unite}</span>
-              </div>
+            <div style={{ padding: '16px 24px', textAlign: 'center' as const, color: '#aaa', fontSize: '13px', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <strong style={{ color: 'white' }}>{stats.nb_messages}</strong> messages
+              {' · '}
+              <strong style={{ color: 'white' }}>{stats.nb_conversations}</strong> conversations
+              {' · '}
+              Membre depuis <strong style={{ color: 'white' }}>{stats.date_inscription?.split('/').slice(1).join('/') || 'aujourd\'hui'}</strong>
             </div>
 
             {uploading && <p style={{ color: '#aaa', textAlign: 'center' }}>Upload en cours...</p>}
 
             
-
-            <div style={styles.bioSection}>
-              <p style={styles.bioText}>Membre VOKYVO depuis le {stats.date_inscription || 'aujourd\'hui'}</p>
-            </div>
 
             <div style={styles.actionSection}>
               <button style={styles.modifierBtn} onClick={ouvrirModalProfil}>
