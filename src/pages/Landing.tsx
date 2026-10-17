@@ -941,7 +941,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
           <div style={styles.cookieBanner}>
             <p style={styles.cookieText}>
               VOKYVO utilise des cookies essentiels au fonctionnement du service.<br />
-              L'utilisation de VOKYVO est réservée aux personnes de <strong>15 ans ou plus</strong>. Entre 15 et 18 ans, l'autorisation d'un parent ou tuteur légal est obligatoire.<br />
+              L'utilisation de VOKYVO est réservée aux personnes de <strong>16 ans ou plus</strong>. Entre 16 et 18 ans, l'autorisation d'un parent ou tuteur légal est obligatoire.<br />
               <a onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/confidentialite'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Politique de confidentialité</a>
               {' · '}
               <a onClick={async (e) => { e.preventDefault(); e.stopPropagation(); const url = 'https://vokyvo.com/cgu'; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.cookieLink}>Conditions d'utilisation</a>
@@ -954,7 +954,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
                   onChange={(e) => setApprouveLecture(e.target.checked)}
                   style={styles.checkbox}
                 />
-                Je certifie avoir 15 ans ou plus (autorisation parentale si 15-18 ans) et j'accepte la politique et les conditions
+                Je certifie avoir 16 ans ou plus (autorisation parentale si 16-18 ans) et j'accepte la politique et les conditions
               </label>
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                 <button
@@ -1065,11 +1065,13 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
               <p>En créant un compte VOKYVO, vous acceptez ces conditions d'utilisation.</p>
               <h3>2. Service</h3>
               <p>VOKYVO fournit une messagerie, visioconférence, assistant IA et actualités.</p>
-              <h3>3. Comportement</h3>
+              <h3>3. Âge minimum</h3>
+              <p>Vous devez avoir <strong>16 ans ou plus</strong>. Entre 16 et 18 ans, l'autorisation parentale est obligatoire.</p>
+              <h3>4. Comportement</h3>
               <p>Le harcèlement, les discours haineux et tout contenu illégal sont interdits.</p>
-              <h3>4. Bannissement</h3>
+              <h3>5. Bannissement</h3>
               <p>VOKYVO se réserve le droit de bannir tout utilisateur ne respectant pas ces règles.</p>
-              <h3>5. Contact</h3>
+              <h3>6. Contact</h3>
               <p>Telegram : @vokyvo_bot · WhatsApp : +226 06 96 54 41</p>
             </div>
             <button onClick={() => setShowConditions(false)} style={styles.cookieBtn}>Fermer</button>
