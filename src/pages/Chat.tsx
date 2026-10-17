@@ -2596,7 +2596,7 @@ const styles = {
   tick: { color: '#4fc3f7', fontSize: '10px', marginLeft: '5px' },
   messageImage: {
     maxWidth: '100%',
-    maxHeight: '350px',
+    maxHeight: '70vh',
     borderRadius: '12px',
     marginTop: '5px',
     cursor: 'zoom-in',
