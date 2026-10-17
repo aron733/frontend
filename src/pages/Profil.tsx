@@ -9,6 +9,7 @@ import News from './News';
 import VokyvoPlus from './VokyvoPlus';
 // import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 import BadgeVerifie from '../BadgeVerifie';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 import { API_URL } from '../config';
 
@@ -35,7 +36,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [editPays, setEditPays] = useState('');
   const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
-  const [zoomActif, setZoomActif] = useState(false);
 
   useEffect(() => {
     const chargerStats = async () => {
@@ -374,26 +374,34 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
       {lightboxOuverte && photoUrl && (
         <div 
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflow: 'hidden' as const }}
-          onClick={() => { setLightboxOuverte(false); setZoomActif(false); }}
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000 }}
         >
-          <img 
-            src={photoUrl} 
-            style={{ 
-              maxWidth: '100%', 
-              maxHeight: '100%', 
-              objectFit: 'contain' as const, 
-              borderRadius: '12px',
-              cursor: zoomActif ? 'zoom-out' : 'zoom-in',
-              transform: zoomActif ? 'scale(2)' : 'scale(1)',
-              transition: 'transform 0.3s ease',
-            }} 
-            alt="photo plein écran"
-            onClick={(e) => { e.stopPropagation(); setZoomActif(!zoomActif); }}
-          />
+          <TransformWrapper
+            initialScale={1}
+            minScale={1}
+            maxScale={4}
+            centerOnInit={true}
+            doubleClick={{ mode: 'toggle' }}
+            wheel={{ step: 0.1 }}
+          >
+            <TransformComponent
+              wrapperStyle={{ width: '100%', height: '100%' }}
+              contentStyle={{ width: '100%', height: '100%' }}
+            >
+              <img 
+                src={photoUrl} 
+                style={{ 
+                  maxWidth: '100%', 
+                  maxHeight: '100%', 
+                  objectFit: 'contain' as const,
+                }} 
+                alt="photo plein écran"
+              />
+            </TransformComponent>
+          </TransformWrapper>
           <button 
             onClick={() => setLightboxOuverte(false)}
-            style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '40px', height: '40px', borderRadius: '50%', fontSize: '20px', cursor: 'pointer' }}
+            style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '40px', height: '40px', borderRadius: '50%', fontSize: '20px', cursor: 'pointer', zIndex: 3001 }}
           >
             ✕
           </button>
@@ -427,9 +435,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
                 <p style={styles.coverPseudo}>{userData.email}</p>
               </div>
             </div>
-            <p style={{ textAlign: 'center' as const, color: '#666', fontSize: '12px', margin: '8px 0 0' }}>
-              📷 Changer · 🔍 Agrandir
-            </p>
 
             <div style={styles.statsGrid}>
               <div style={styles.statItem}>

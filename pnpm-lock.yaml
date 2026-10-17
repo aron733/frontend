@@ -68,6 +68,9 @@ importers:
       react-swipeable:
         specifier: ^7.0.2
         version: 7.0.2(react@19.3.0)
+      react-zoom-pan-pinch:
+        specifier: ^4.2.0
+        version: 4.2.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       rehype-katex:
         specifier: ^7.0.1
         version: 7.0.1
@@ -2653,6 +2656,13 @@ packages:
     resolution: {integrity: sha512-v1Qx1l+aC2fdxKa9aKJiaU/ZxmJ5o98RMoFwUqAAzVWUcxgfHFXDDruCKXhw6zIYXm6V64JiHgP9f6mlME5l8w==}
     peerDependencies:
       react: ^16.8.3 || ^17 || ^18 || ^19.0.0 || ^19.0.0-rc
+
+  react-zoom-pan-pinch@4.2.0:
+    resolution: {integrity: sha512-QSw1dvr6QGv5zHCUY7SEIY7EWRDbx1y6plylrWf2Nko9KOMW1MEoPC6oJ+Y/qOSeQjhvbkMV0m5bFF7pBxCH4A==}
+    engines: {node: '>=8', npm: '>=5'}
+    peerDependencies:
+      react: '*'
+      react-dom: '*'
 
   react@19.3.0:
     resolution: {integrity: sha512-E8LUcbtBWt20bbl2YoHfx4ZDBdxVTfOKtCZn9cDSJ4l6/nuoApcpIBcj47t2wZoVX8g2ZHuMHbiShgCR1T5Sog==}
@@ -6226,6 +6236,11 @@ snapshots:
   react-swipeable@7.0.2(react@19.3.0):
     dependencies:
       react: 19.3.0
+
+  react-zoom-pan-pinch@4.2.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+    dependencies:
+      react: 19.3.0
+      react-dom: 19.3.0(react@19.3.0)
 
   react@19.3.0: {}
 
