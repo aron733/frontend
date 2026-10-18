@@ -30,3 +30,5 @@ vokyvo-release.keystore
 *.keystore
 *_base64.txt
 *.before_*
+scripts/__pycache__/
+__pycache__/
