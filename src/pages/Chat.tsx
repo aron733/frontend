@@ -19,6 +19,7 @@ import { Media } from '@capacitor-community/media';
 function Chat({ onRetour }: { onRetour?: () => void }) {
   const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
+  const [, setForceRender] = useState(0);
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
   const [profilDrawer, setProfilDrawer] = useState<any>(null);
@@ -231,6 +232,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messagesParConv, selectedUser, groupeActif]);
   const getToken = () => localStorage.getItem('access_token') || '';
+
+  // Force le re-render quand les messages changent (pour le temps réel)
+  useEffect(() => {
+    setForceRender((r) => r + 1);
+  }, [messagesParConv]);
   const [, setTick] = useState(0);
   // Force re-render toutes les 30s pour rafraîchir "il y a X min"
   useEffect(() => {
