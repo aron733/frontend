@@ -1424,12 +1424,6 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 </div>
                 <div>
                   <h3 style={styles.chatTitle}>{groupeActif.nom}</h3>
-                  <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
-                  {groupeActif.description && (
-                    <p style={{ color: '#aaa', fontSize: '12px', margin: '2px 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
-                      {groupeActif.description}
-                    </p>
-                  )}
                 </div>
               </div>
               <button onClick={() => setShowInfosGroupe(true)} style={styles.chevronBtn} title="Infos du groupe">
@@ -1452,22 +1446,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             {showGestion && groupeActif && (String(groupeActif.createur_id) === String(getMyId())) && (
               <div style={styles.gestionPanel}>
                 <p style={styles.membresTitle}>Gestion du groupe</p>
-                <div style={styles.membreItem}>
-                  <span style={styles.membreNom}>{(() => { const u = JSON.parse(localStorage.getItem('user') || '{}'); return (u.prenom || u.first_name || '') + ' ' + (u.nom || u.last_name || ''); })()}</span>
-                  <span style={styles.badgeAdmin}>ADMIN</span>
-                </div>
-                <p style={styles.sectionSousTitre}>Participants ({groupeActif.participants?.length || 0})</p>
-                {(groupeActif.participants || []).map((membre: any) => {
-                  const estAdmin = membre.username === groupeActif.createur;
-                  const estModo = groupeActif.moderateurs?.some((m: any) => m.id === membre.id);
-                  return (
-                    <div key={membre.id} style={styles.membreItem}>
-                      <span style={styles.membreNom}>{membre.first_name || ''} {membre.last_name || membre.username}</span>
-                      {membre.username !== groupeActif.createur && <span style={styles.badgeMembre}>MEMBRE</span>}
-                      {estAdmin ? <span style={styles.badgeAdmin}>ADMIN</span> : estModo ? <span style={styles.badgeModo}>MODO</span> : <span style={styles.badgeMembre}>MEMBRE</span>}
-                    </div>
-                  );
-                })}
+                <p style={{ color: '#888', fontSize: '12px', margin: '10px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>Paramètres</p>
                 <button onClick={() => setShowRenommer(!showRenommer)} style={styles.gestionItem}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -1509,6 +1488,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   </div>
                 )}
 
+                <div style={{ height: '1px', background: '#2a2a3e', margin: '15px 0' }} />
+                <p style={{ color: '#dc3545', fontSize: '12px', margin: '0 0 10px', textTransform: 'uppercase', fontWeight: 'bold' }}>Zone de danger</p>
                 <button onClick={supprimerGroupe} style={styles.gestionItemDanger}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="3 6 5 6 21 6" />
@@ -2592,14 +2573,14 @@ const styles = {
   gestionPanel: {
     background: '#111120',
     borderBottom: '1px solid #2a2a3e',
-    padding: '10px',
+    padding: '15px 20px',
   },
   gestionItem: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '10px',
     width: '100%',
-    padding: '10px',
+    padding: '12px 15px',
     background: 'rgba(102,126,234,0.1)',
     border: 'none',
     color: '#667eea',
