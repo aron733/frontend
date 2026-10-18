@@ -58,8 +58,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
 
   const ajouterMessage = (convId: string, msg: Message) => {
-    setMessagesParConv((prev) => {
-      const msgs = prev[convId] || [];
+    // On utilise setTimeout pour forcer React à voir le changement (batching)
+    setTimeout(() => {
+      setMessagesParConv((prev) => {
+        const msgs = prev[convId] || [];
       
       // 1. Vérifie si le client_msg_id existe déjà (déduplication)
       if (msg.client_msg_id) {
@@ -73,8 +75,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         if (existe) return prev;
       }
       
-      return { ...prev, [convId]: [...msgs, msg] };
-    });
+        return { ...prev, [convId]: [...msgs, msg] };
+      });
+    }, 0);
   };
 
   const setMessagesConv = (convId: string, msgs: Message[]) => {
