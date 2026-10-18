@@ -5,6 +5,7 @@ import BoutonRetour from '../BoutonRetour';
 
 function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroupeCree: () => void }) {
   const [nomGroupe, setNomGroupe] = useState('');
+  const [photoGroupe, setPhotoGroupe] = useState<File | null>(null);
   const [recherche, setRecherche] = useState('');
   const [resultats, setResultats] = useState<any[]>([]);
   const [membresSelectionnes, setMembresSelectionnes] = useState<any[]>([]);
@@ -54,11 +55,13 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
 
     try {
       const participantsIds = membresSelectionnes.map((m) => m.id);
-      await axios.post(`${API_URL}/groupes/creer/`, {
-        nom: nomGroupe,
-        participants_ids: participantsIds,
-      }, {
-        headers: { Authorization: `Bearer ${getToken()}` }
+      const formData = new FormData();
+      formData.append('nom', nomGroupe);
+      participantsIds.forEach((id) => formData.append('participants_ids[]', String(id)));
+      if (photoGroupe) formData.append('photo', photoGroupe);
+
+      await axios.post(`${API_URL}/groupes/creer/`, formData, {
+        headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
       });
 
       setSuccess('Groupe créé avec succès !');
@@ -89,6 +92,15 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
           value={nomGroupe}
           onChange={(e) => setNomGroupe(e.target.value)}
           placeholder="Ex: Les amis du quartier"
+          style={styles.input}
+        />
+
+        {/* Photo du groupe */}
+        <label style={styles.label}>Photo du groupe (optionnel)</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setPhotoGroupe(e.target.files?.[0] || null)}
           style={styles.input}
         />
 

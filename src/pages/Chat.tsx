@@ -186,6 +186,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [showDemandes, setShowDemandes] = useState(false);
   const [showGestion, setShowGestion] = useState(false);
   const [renommer, setRenommer] = useState('');
+  const [showModifierGroupe, setShowModifierGroupe] = useState(false);
+  const [nouvellePhotoGroupe, setNouvellePhotoGroupe] = useState<File | null>(null);
+  const [nouvelleDescriptionGroupe, setNouvelleDescriptionGroupe] = useState('');
   const [rechercheUser, setRechercheUser] = useState('');
   const [showNouveauContact, setShowNouveauContact] = useState(false);
   const [showDecouvrirGroupes, setShowDecouvrirGroupes] = useState(false);
@@ -873,6 +876,28 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     }
   };
 
+  const modifierGroupe = async () => {
+    if (!groupeActif) return;
+    try {
+      const formData = new FormData();
+      formData.append('groupe_id', String(groupeActif.id));
+      formData.append('description', nouvelleDescriptionGroupe);
+      if (nouvellePhotoGroupe) {
+        formData.append('photo', nouvellePhotoGroupe);
+      }
+      const res = await axios.post(`${API_URL}/groupes/modifier/`, formData, {
+        headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
+      });
+      toast.success('Groupe modifié !');
+      setShowModifierGroupe(false);
+      // Met à jour l'état local
+      setGroupeActif({ ...groupeActif, photo_profil: res.data.photo_profil, description: res.data.description });
+      setNouvellePhotoGroupe(null);
+    } catch (err) {
+      toast.error('Erreur modification groupe');
+    }
+  };
+
   const renommerGroupe = async () => {
     if (!groupeActif || !renommer.trim()) return;
     try {
@@ -1028,12 +1053,16 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       }
     }}>
               <div style={styles.groupeAvatar}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
+                {groupe.photo_profil ? (
+                  <img src={groupe.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} alt="" />
+                ) : (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                )}
               </div>
               <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
                 <span style={styles.groupeNom}>{groupe.nom}</span>
@@ -1334,7 +1363,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               {!rechercheEnCours && resultatsGlobaux.map((g) => (
                 <div key={g.id} style={styles.fsResultItem}>
                   <div style={styles.fsAvatar}>
-                    <span style={styles.fsAvatarText}>{(g.nom || '?')[0].toUpperCase()}</span>
+                    {g.photo_profil ? (
+                      <img src={g.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} alt="" />
+                    ) : (
+                      <span style={styles.fsAvatarText}>{(g.nom || '?')[0].toUpperCase()}</span>
+                    )}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={styles.fsUserName}>{g.nom}</p>
@@ -1377,12 +1410,16 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             <div style={styles.chatHeader}>
               <div style={styles.groupeHeaderInfo}>
                 <div style={styles.groupeAvatarSmall}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
+                  {groupeActif.photo_profil ? (
+                    <img src={groupeActif.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} alt="" />
+                  ) : (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  )}
                 </div>
                 <div>
                   <h3 style={styles.chatTitle}>{groupeActif.nom}</h3>
@@ -1441,6 +1478,28 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     <button onClick={renommerGroupe} style={styles.gestionValider}>OK</button>
                   </div>
                 )}
+                
+                <button onClick={() => setShowModifierGroupe(!showModifierGroupe)} style={styles.gestionItem}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  Modifier (Photo / Description)
+                </button>
+                {showModifierGroupe && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '5px', padding: '10px', background: '#1a1a2e', borderRadius: '8px' }}>
+                    <input type="file" accept="image/*" onChange={(e) => setNouvellePhotoGroupe(e.target.files?.[0] || null)} style={{ color: 'white', fontSize: '12px' }} />
+                    <textarea
+                      value={nouvelleDescriptionGroupe}
+                      onChange={(e) => setNouvelleDescriptionGroupe(e.target.value)}
+                      placeholder="Description du groupe..."
+                      style={{ ...styles.gestionInput, minHeight: '60px', resize: 'vertical' }}
+                    />
+                    <button onClick={modifierGroupe} style={styles.gestionValider}>Enregistrer</button>
+                  </div>
+                )}
+
                 <button onClick={supprimerGroupe} style={styles.gestionItemDanger}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="3 6 5 6 21 6" />
