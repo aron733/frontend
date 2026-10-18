@@ -17,7 +17,7 @@ import { Media } from '@capacitor-community/media';
 
 
 function Chat({ onRetour }: { onRetour?: () => void }) {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [, setForceRender] = useState(0);
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -233,10 +233,10 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   }, [messagesParConv, selectedUser, groupeActif]);
   const getToken = () => localStorage.getItem('access_token') || '';
 
-  // Force le re-render quand les messages changent (pour le temps réel)
+  // Force le re-render quand un nouveau message arrive (temps réel)
   useEffect(() => {
     setForceRender((r) => r + 1);
-  }, [messagesParConv]);
+  }, [lastMessageAt]);
 
   // Écoute l'événement du WebSocket pour forcer le re-render
   useEffect(() => {

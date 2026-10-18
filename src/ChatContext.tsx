@@ -26,6 +26,7 @@ type ChatCtx = {
   convActive: string | null;
   setConvActive: (convId: string | null) => void;
   messagesParConv: Record<string, Message[]>;
+  lastMessageAt: number;
   ajouterMessage: (convId: string, msg: Message) => void;
   setMessagesConv: (convId: string, msgs: Message[]) => void;
   presence: Record<string, string>;
@@ -45,6 +46,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [connecte, setConnecte] = useState(false);
   const [convActive, setConvActive] = useState<string | null>(null);
   const [messagesParConv, setMessagesParConv] = useState<Record<string, Message[]>>({});
+  const [lastMessageAt, setLastMessageAt] = useState(0);
   const [presence, setPresence] = useState<Record<string, string>>({});
   const [presenceTime, setPresenceTime] = useState<Record<string, string>>({});
   const wsRef = useRef<WebSocket | null>(null);
@@ -149,6 +151,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
               // Ajoute au state (avec déduplication via client_msg_id)
               ajouterMessage(convId, msg);
+              setLastMessageAt(Date.now());
               // Force le re-render des composants qui écoutent
               window.dispatchEvent(new CustomEvent('message-updated'));
 
@@ -312,6 +315,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setConvActive,
         messagesParConv,
         ajouterMessage,
+        lastMessageAt,
         setMessagesConv,
         presence,
         presenceTime,
