@@ -67,10 +67,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setMessagesParConv((prev) => {
         const msgs = prev[convId] || [];
       
-      // 1. Vérifie si le client_msg_id existe déjà (déduplication)
+      // 1. Si le client_msg_id existe déjà, on met à jour le message (statut, URLs)
       if (msg.client_msg_id) {
-        const existe = msgs.some((m) => m.client_msg_id === msg.client_msg_id);
-        if (existe) return prev;
+        const index = msgs.findIndex((m) => m.client_msg_id === msg.client_msg_id);
+        if (index !== -1) {
+          const nouveau = [...msgs];
+          nouveau[index] = { ...nouveau[index], ...msg, statut: 'envoye' };
+          return { ...prev, [convId]: nouveau };
+        }
       }
       
       // 2. Vérifie si l'ID (base de données) existe déjà
@@ -128,13 +132,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
-            const myId = userData.user_id;
-
             if (data.type === 'message') {
-              // Ignore ses propres messages
-              if (String(data.from_user_id) === String(myId)) return;
-
               // Son de notification (message reçu)
               try {
                 const audio = new Audio('/ping.mp3');
