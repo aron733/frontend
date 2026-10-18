@@ -38,6 +38,7 @@ const SECTIONS = [
 function News({ onRetour }: { onRetour?: () => void }) {
   const [articles, setArticles] = useState<any[]>([]);
   const [sectionActive, setSectionActive] = useState(() => localStorage.getItem('vokyvo_news_section') || 'flash');
+  const [articlePartage, setArticlePartage] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [recherche, setRecherche] = useState('');
 
@@ -150,22 +151,10 @@ function News({ onRetour }: { onRetour?: () => void }) {
                       </span>
                     )}
                     <button
-                      onClick={async (e) => {
+                      onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        try {
-                          if (Capacitor.isNativePlatform()) {
-                            const { Share } = await import('@capacitor/share');
-                            await Share.share({ title: article.title, url: article.link });
-                          } else if (navigator.share) {
-                            await navigator.share({ title: article.title, url: article.link });
-                          } else {
-                            await navigator.clipboard.writeText(article.link);
-                            alert('Lien copié !');
-                          }
-                        } catch (err) {
-                          console.warn('Partage annulé ou erreur', err);
-                        }
+                        setArticlePartage(article);
                       }}
                       style={styles.shareBtn}
                     >
@@ -184,6 +173,48 @@ function News({ onRetour }: { onRetour?: () => void }) {
           </div>
         )}
       </div>
+
+      {/* Menu de partage */}
+      {articlePartage && (
+        <div
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'flex-end' }}
+          onClick={() => setArticlePartage(null)}
+        >
+          <div
+            style={{ background: '#1a1a2e', width: '100%', borderTopLeftRadius: '20px', borderTopRightRadius: '20px', padding: '20px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p style={{ color: 'white', fontWeight: 600, marginBottom: '15px', textAlign: 'center' }}>Partager</p>
+            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <a href={`https://wa.me/?text=${encodeURIComponent(articlePartage.title + ' ' + articlePartage.link)}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>W</div>
+                <span style={{ color: '#aaa', fontSize: '12px' }}>WhatsApp</span>
+              </a>
+              <a href={`https://t.me/share/url?url=${encodeURIComponent(articlePartage.link)}&text=${encodeURIComponent(articlePartage.title)}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#0088cc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>T</div>
+                <span style={{ color: '#aaa', fontSize: '12px' }}>Telegram</span>
+              </a>
+              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(articlePartage.title)}&url=${encodeURIComponent(articlePartage.link)}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>X</div>
+                <span style={{ color: '#aaa', fontSize: '12px' }}>X</span>
+              </a>
+              <button
+                onClick={() => { navigator.clipboard.writeText(articlePartage.link); setArticlePartage(null); }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                </div>
+                <span style={{ color: '#aaa', fontSize: '12px' }}>Copier</span>
+              </button>
+            </div>
+            <button onClick={() => setArticlePartage(null)} style={{ marginTop: '20px', width: '100%', padding: '12px', background: '#333', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 600 }}>Annuler</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
