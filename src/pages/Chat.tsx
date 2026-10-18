@@ -1339,22 +1339,31 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     <p style={styles.fsUserName}>{g.nom}</p>
                     <p style={styles.fsUserInfo}>{g.nb_participants} membres</p>
                   </div>
-                  <button
-                    onClick={async () => {
-                      try {
-                        await axios.post(`${API_URL}/groupes/demander-acces/`, { groupe_id: g.id }, {
-                          headers: { Authorization: `Bearer ${getToken()}` }
-                        });
-                        toast.success('Demande envoyée !');
-                        setResultatsGlobaux(resultatsGlobaux.filter((x: any) => x.id !== g.id));
-                      } catch (err) {
-                        toast.error('Erreur lors de la demande');
-                      }
-                    }}
-                    style={{ padding: '6px 12px', borderRadius: '8px', background: '#667eea', color: 'white', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
-                  >
-                    Rejoindre
-                  </button>
+                  {g.en_attente ? (
+                    <span style={{ padding: '6px 12px', borderRadius: '8px', background: 'rgba(255,255,255,0.1)', color: '#aaa', fontSize: '12px', fontWeight: 'bold' }}>
+                      En attente
+                    </span>
+                  ) : (
+                    <button
+                      onClick={async (e) => {
+                        const btn = e.currentTarget;
+                        btn.disabled = true;
+                        try {
+                          await axios.post(`${API_URL}/groupes/demander-acces/`, { groupe_id: g.id }, {
+                            headers: { Authorization: `Bearer ${getToken()}` }
+                          });
+                          toast.success('Demande envoyée !');
+                          setResultatsGlobaux(resultatsGlobaux.map((x: any) => x.id === g.id ? { ...x, en_attente: true } : x));
+                        } catch (err) {
+                          toast.error('Erreur lors de la demande');
+                          btn.disabled = false;
+                        }
+                      }}
+                      style={{ padding: '6px 12px', borderRadius: '8px', background: '#667eea', color: 'white', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
+                    >
+                      Rejoindre
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
