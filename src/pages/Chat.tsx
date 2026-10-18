@@ -237,6 +237,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   useEffect(() => {
     setForceRender((r) => r + 1);
   }, [messagesParConv]);
+
+  // Écoute l'événement du WebSocket pour forcer le re-render
+  useEffect(() => {
+    const handler = () => setForceRender((r) => r + 1);
+    window.addEventListener('message-updated', handler);
+    return () => window.removeEventListener('message-updated', handler);
+  }, []);
   const [, setTick] = useState(0);
   // Force re-render toutes les 30s pour rafraîchir "il y a X min"
   useEffect(() => {

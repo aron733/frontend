@@ -149,6 +149,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
               // Ajoute au state (avec déduplication via client_msg_id)
               ajouterMessage(convId, msg);
+              // Force le re-render des composants qui écoutent
+              window.dispatchEvent(new CustomEvent('message-updated'));
 
               // Notifie si la conv n'est PAS active
               if (convActiveRef.current !== convId) {
