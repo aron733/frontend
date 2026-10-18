@@ -19,6 +19,51 @@ strong{color:#fff}
 .footer{margin-top:50px;padding-top:20px;border-top:1px solid #2a2a3e;font-size:13px;color:#666;text-align:center}
 a{color:#667eea;text-decoration:none}
     .hidden-in-app { display: none !important; }
+    
+    /* Grille de fonctionnalités */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 30px 0;
+    }
+    .feature-card {
+      background: #111120;
+      border: 1px solid #2a2a3e;
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+    .feature-card:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(102,126,234,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .feature-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: #667eea;
+    }
+    .feature-title {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .feature-desc {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.5;
+    }
   </style>
 <script type="application/ld+json">
 {
@@ -69,6 +114,52 @@ Retour
 <p><strong>VOKYVO</strong> est une application de communication et de productivité conçue pour les utilisateurs d'Afrique de l'Ouest francophone. Développée par <strong>VOKYVO LABS</strong>, elle rassemble dans une seule application tout ce dont vous avez besoin pour communiquer, apprendre et rester informé.</p>
 
 <p>Pensez-y comme à une <strong>super-app</strong> : un seul endroit pour discuter avec vos proches, passer des appels vidéo, poser vos questions à une intelligence artificielle, réviser vos cours et suivre l'actualité. Tout ce que vous faites habituellement dans cinq applications différentes, VOKYVO le réunit dans une seule — <strong>gratuite, sécurisée et pensée pour l'Afrique de l'Ouest</strong>.</p>
+
+<h2>Ce que VOKYVO fait pour toi</h2>
+<div class="features-grid">
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <div class="feature-title">Messagerie temps réel</div>
+    <div class="feature-desc">Discute en privé ou en groupe, envoie photos, vidéos et vocaux instantanément.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+    </div>
+    <div class="feature-title">Assistant IA VOKYVO</div>
+    <div class="feature-desc">Pose tes questions en maths, français, sciences ou programmation. Réponses instantanées.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    </div>
+    <div class="feature-title">Appels vidéo</div>
+    <div class="feature-desc">Appels vidéo haute qualité jusqu'à 5 participants. Un clic pour créer, un code pour rejoindre.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2z"/><path d="M18 14h-8"/><path d="M15 18h-5"/></svg>
+    </div>
+    <div class="feature-title">Actualités</div>
+    <div class="feature-desc">Suis l'essentiel de l'actualité africaine et internationale dans 30+ rubriques thématiques.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    </div>
+    <div class="feature-title">Cours intelligent (OCR)</div>
+    <div class="feature-desc">Prends une photo de ton cours, VOKYVO extrait le texte, le lit à voix haute et répond à tes questions.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div class="feature-title">Sécurisé & gratuit</div>
+    <div class="feature-desc">Chiffrement TLS, mots de passe hachés (PBKDF2), zéro publicité, zéro revente de données.</div>
+  </div>
+</div>
 
 <h2>Notre histoire</h2>
 <p>VOKYVO est né à <strong>Ouagadougou</strong>, au Burkina Faso, d'un constat simple : les outils numériques que nous utilisons chaque jour ne sont pas pensés pour nous. Ils sont conçus ailleurs, pour d'autres usages, puis adaptés tant bien que mal.</p>
