@@ -32,6 +32,7 @@ type ChatCtx = {
   presenceTime: Record<string, string>;
   setPresenceFromRest: (userId: number | string, estEnLigne: boolean, derniereActivite: string | null) => void;
   envoyer: (payload: any) => boolean;
+  rejoindreGroupe: (groupeId: number) => void;
 };
 
 const ChatContext = createContext<ChatCtx>({} as ChatCtx);
@@ -274,6 +275,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return false;
   };
 
+  const rejoindreGroupe = (groupeId: number) => {
+    envoyer({ action: 'join_groupe', groupe_id: groupeId });
+  };
+
   // Initialise la presence depuis les donnees REST (pour les users deja hors ligne)
   const setPresenceFromRest = (userId: number | string, estEnLigne: boolean, derniereActivite: string | null) => {
     setPresence((prev) => ({ ...prev, [userId]: estEnLigne ? 'online' : 'offline' }));
@@ -306,6 +311,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         presenceTime,
         setPresenceFromRest,
         envoyer,
+        rejoindreGroupe,
       }}
     >
       {children}

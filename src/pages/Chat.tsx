@@ -17,7 +17,7 @@ import { Media } from '@capacitor-community/media';
 
 
 function Chat({ onRetour }: { onRetour?: () => void }) {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, presence, presenceTime, setPresenceFromRest } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
@@ -952,6 +952,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       setGroupeActif(groupe);
       setSelectedUser(null);
       setConvActive(`groupe_${groupe.id}`);
+      rejoindreGroupe(groupe.id);
       localStorage.setItem('conv_active_groupe', JSON.stringify(groupe));
       localStorage.removeItem('conv_active_user');
       
