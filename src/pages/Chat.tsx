@@ -737,9 +737,10 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           fichier_url: saveResponse.data.fichier_url || null,
           pieces_jointes: saveResponse.data.pieces_jointes || [],
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error('Erreur sauvegarde message groupe:', err);
-        toast.error('Erreur envoi message groupe');
+        console.error('Détail:', err?.response?.data || err?.message || err);
+        toast.error('Erreur envoi message groupe: ' + (err?.message || 'inconnue'));
       }
 
       setNouveauMessage('');
