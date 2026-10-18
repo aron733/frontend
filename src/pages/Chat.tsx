@@ -1424,6 +1424,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 <div>
                   <h3 style={styles.chatTitle}>{groupeActif.nom}</h3>
                   <span style={styles.groupeInfo}>{groupeActif.participants?.length || 0} membres</span>
+                  {groupeActif.description && (
+                    <p style={{ color: '#aaa', fontSize: '12px', margin: '2px 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
+                      {groupeActif.description}
+                    </p>
+                  )}
                 </div>
               </div>
               <button onClick={() => setShowMembres(!showMembres)} style={styles.chevronBtn} title={showMembres ? 'Masquer les membres' : 'Voir les membres'}>
