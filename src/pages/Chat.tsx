@@ -194,6 +194,14 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   useEffect(() => {
     localStorage.setItem('vokyvo_tab', tabActif);
   }, [tabActif]);
+
+  // Force la lecture du localStorage au montage (si le state a été réinitialisé)
+  useEffect(() => {
+    const savedTab = localStorage.getItem('vokyvo_tab');
+    if (savedTab === 'groupes' && tabActif !== 'groupes') {
+      setTabActif('groupes');
+    }
+  }, []);
   const [rechercheGlobale, setRechercheGlobale] = useState('');
   const [resultatsGlobaux, setResultatsGlobaux] = useState<any[]>([]);
   const [rechercheEnCours, setRechercheEnCours] = useState(false);
