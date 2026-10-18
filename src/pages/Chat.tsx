@@ -1304,7 +1304,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   }
                 }}
                 placeholder="Rechercher un groupe..."
-                style={styles.searchInput}
+                style={styles.fsInput}
+                autoFocus
               />
             </div>
 
