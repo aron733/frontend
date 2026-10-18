@@ -265,10 +265,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const envoyer = (payload: any): boolean => {
+    console.log('📤 Envoi WS:', payload, '| WS readyState:', wsRef.current?.readyState);
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(payload));
       return true;
     }
+    console.warn('⚠️ WS non ouvert, message non envoyé');
     return false;
   };
 
