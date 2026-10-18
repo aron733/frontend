@@ -1816,10 +1816,10 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       {new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   )}
-                  {msg.fichier_url && (() => {
+                  {((msg.pieces_jointes?.length ?? 0) > 0 || msg.fichier_url) && (() => {
                     const pieces = (msg.pieces_jointes && msg.pieces_jointes.length > 0)
                       ? msg.pieces_jointes
-                      : [{ url: msg.fichier_url, type: msg.fichier_url.match(/\.(mp4|webm|mov|avi)(\?|$)/i) ? 'video' : 'image' }];
+                      : [{ url: msg.fichier_url!, type: msg.fichier_url?.match(/\.(mp4|webm|mov|avi)(\?|$)/i) ? 'video' : 'image' }];
                     const images = pieces.filter((p: any) => p.type !== 'video');
                     const videos = pieces.filter((p: any) => p.type === 'video');
                     return (
@@ -2106,10 +2106,10 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     }}
                   >
                     <span style={styles.messageText}>{msg.message}</span>
-                {msg.fichier_url && (() => {
+                {((msg.pieces_jointes?.length ?? 0) > 0 || msg.fichier_url) && (() => {
                   const pieces = (msg.pieces_jointes && msg.pieces_jointes.length > 0)
                     ? msg.pieces_jointes
-                    : [{ url: msg.fichier_url, type: msg.fichier_url.match(/\.(mp4|webm|mov|avi)(\?|$)/i) ? 'video' : 'image' }];
+                    : [{ url: msg.fichier_url!, type: msg.fichier_url?.match(/\.(mp4|webm|mov|avi)(\?|$)/i) ? 'video' : 'image' }];
                   const images = pieces.filter((p: any) => p.type !== 'video');
                   const videos = pieces.filter((p: any) => p.type === 'video');
                   return (
