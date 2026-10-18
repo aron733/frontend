@@ -673,6 +673,12 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     if (!groupeActif && !selectedUser) return;
 
     const clientMsgId = crypto.randomUUID();
+    
+    // Vide l'input IMMÉDIATEMENT (optimistic UI)
+    const texteEnvoi = nouveauMessage;
+    setNouveauMessage('');
+    setFichiersSelectionnes([]);
+    setApercusMultiples([]);
 
     const uploadNecessaire = fichiersSelectionnes.length > 0;
     if (uploadNecessaire) setUploadEnCours(true);
@@ -683,8 +689,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     if (groupeActif && !selectedUser) {
       try {
         const formData = new FormData();
-        if (nouveauMessage.trim()) {
-          formData.append('texte', nouveauMessage);
+        if (texteEnvoi.trim()) {
+          formData.append('texte', texteEnvoi);
         }
         fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
         formData.append('groupe_id', String(groupeActif.id));
@@ -700,7 +706,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         const userData = JSON.parse(localStorage.getItem('user') || '{}');
         ajouterMessage(convId, {
           type: 'message',
-          message: nouveauMessage,
+          message: texteEnvoi,
           from_user_id: getMyId(),
           from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
           fichier_url: saveResponse.data.fichier_url || null,
@@ -713,7 +719,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         envoyer({
           action: 'groupe',
           groupe_id: groupeActif.id,
-          message: nouveauMessage,
+          message: texteEnvoi,
           fichier_url: saveResponse.data.fichier_url || null,
           pieces_jointes: saveResponse.data.pieces_jointes || [],
           client_msg_id: clientMsgId,
@@ -751,8 +757,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
 
       if (conv) {
         const formData = new FormData();
-        if (nouveauMessage.trim()) {
-          formData.append('texte', nouveauMessage);
+        if (texteEnvoi.trim()) {
+          formData.append('texte', texteEnvoi);
         }
         formData.append('client_msg_id', clientMsgId);
         fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
@@ -766,7 +772,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         const userData = JSON.parse(localStorage.getItem('user') || '{}');
         ajouterMessage(convId, {
           type: 'message',
-          message: nouveauMessage,
+          message: texteEnvoi,
           from_user_id: getMyId(),
           from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
           fichier_url: sendRes.data.fichier_url || null,
@@ -779,7 +785,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         envoyer({
           action: 'message',
           dest_user_id: destUserId,
-          message: nouveauMessage,
+          message: texteEnvoi,
           fichier_url: sendRes.data.fichier_url || null,
           pieces_jointes: sendRes.data.pieces_jointes || [],
           client_msg_id: clientMsgId,
@@ -791,9 +797,6 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
       return;
     }
-    setNouveauMessage('');
-    setFichiersSelectionnes([]);
-    setApercusMultiples([]);
     if (uploadNecessaire) setTimeout(() => setUploadEnCours(false), 3000);
   };
 
