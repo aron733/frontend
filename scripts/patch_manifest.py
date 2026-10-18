@@ -28,6 +28,25 @@ remplacement = match.group(1) + "\n" + INTENT + match.group(2) + "</activity>"
 nouveau = content[:match.start()] + remplacement + content[match.end():]
 
 
+# --- Intent Filter pour le partage (ACTION_SEND) ---
+INTENT_SEND = '''                <intent-filter>
+                    <action android:name="android.intent.action.SEND" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <data android:mimeType="text/plain" />
+                </intent-filter>
+'''
+
+if 'android.intent.action.SEND' not in nouveau:
+    # On insère juste après l'intent-filter de l'OAuth (ou après le LAUNCHER)
+    # On cherche la fermeture du dernier intent-filter ajouté
+    idx = nouveau.rfind('</intent-filter>')
+    if idx != -1:
+        idx = nouveau.find('</intent-filter>', idx)
+        nouveau = nouveau[:idx+len('</intent-filter>')] + '\n' + INTENT_SEND + nouveau[idx+len('</intent-filter>'):]
+        print("OK: intent-filter SEND ajoute")
+    else:
+        print("ERREUR: intent-filter non trouve")
+
 # --- Active le Predictive Back (swipe Android 13+) ---
 if 'android:enableOnBackInvokedCallback' not in nouveau:
     nouveau = nouveau.replace(
