@@ -1442,8 +1442,15 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   key={index}
                   style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}
                 >
-                  <span style={styles.messageUsername}>{msg.from_username}</span>
+                  {String(msg.from_user_id) !== String(getMyId()) && (
+                    <span style={styles.messageUsername}>{msg.from_username}</span>
+                  )}
                   <span style={styles.messageText}>{msg.message}</span>
+                  {msg.date_envoi && (
+                    <div style={{ fontSize: '10px', color: String(msg.from_user_id) === String(getMyId()) ? 'rgba(255,255,255,0.7)' : '#888', textAlign: 'right', marginTop: '4px' }}>
+                      {new Date(msg.date_envoi).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  )}
                   {msg.fichier_url && (() => {
                     const pieces = (msg.pieces_jointes && msg.pieces_jointes.length > 0)
                       ? msg.pieces_jointes
@@ -1472,22 +1479,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       controlsList="nodownload"
                     />
                   )}
-                  {msg.fichier_url && /\.(mp4|webm|mov|avi)(\?|$)/i.test(msg.fichier_url) && (
-                    <div style={{ position: 'relative', display: 'inline-block', marginTop: '5px' }}>
-                      <video src={msg.fichier_url?.replace('/video/upload/', '/video/upload/f_mp4/')} style={{ ...styles.messageVideo, marginTop: 0 }} controls preload="metadata" controlsList="nodownload" />
-                      <button
-                        onClick={(e) => { e.stopPropagation(); telechargerImage(msg.fichier_url!); }}
-                        style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', cursor: 'pointer', zIndex: 10 }}
-                        title="Télécharger la vidéo"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                          <polyline points="7 10 12 15 17 10"/>
-                          <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                      </button>
-                    </div>
-                  )}
+
                 </div>
               ))}
               <div ref={messagesEndRef} />

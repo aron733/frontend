@@ -17,6 +17,7 @@ type Message = {
   pieces_jointes?: any[];
   audio_url?: string | null;
   lu?: boolean;
+  date_envoi?: string;
 };
 
 type ChatCtx = {
