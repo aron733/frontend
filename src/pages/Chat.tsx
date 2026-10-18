@@ -188,6 +188,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [renommer, setRenommer] = useState('');
   const [rechercheUser, setRechercheUser] = useState('');
   const [showNouveauContact, setShowNouveauContact] = useState(false);
+  const [showDecouvrirGroupes, setShowDecouvrirGroupes] = useState(false);
   const [tabActif, setTabActif] = useState<'discussions' | 'groupes'>(() => (localStorage.getItem('vokyvo_tab') as any) || 'discussions');
 
   // Sauvegarde l'onglet actif pour le restaurer au refresh
@@ -1116,7 +1117,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         {/* Bouton + flottant (surélevé, à droite) */}
         {!selectedUser && !groupeActif && (
           <button
-            onClick={() => setShowNouveauContact(true)}
+            onClick={() => {
+              if (tabActif === 'groupes') {
+                setShowDecouvrirGroupes(true);
+              } else {
+                setShowNouveauContact(true);
+              }
+            }}
             style={styles.bottomNavBtnPlus}
           >
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
@@ -1249,6 +1256,105 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                   )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Modal Découvrir des groupes */}
+        {showDecouvrirGroupes && (
+          <div style={styles.fullscreenModal}>
+            <div style={styles.fsHeader}>
+              <button onClick={() => { setShowDecouvrirGroupes(false); setRechercheGlobale(''); setResultatsGlobaux([]); setRechercheEnCours(false); }} style={styles.fsCloseBtn}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                  <line x1="19" y1="12" x2="5" y2="12" />
+                  <polyline points="12 19 5 12 12 5" />
+                </svg>
+              </button>
+              <h2 style={styles.fsTitle}>Découvrir des groupes</h2>
+            </div>
+
+            <div style={styles.fsSearchWrap}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '35px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                value={rechercheGlobale}
+                onChange={async (e) => {
+                  const q = e.target.value;
+                  setRechercheGlobale(q);
+                  if (q.trim().length < 2) {
+                    setResultatsGlobaux([]);
+                    setRechercheEnCours(false);
+                    return;
+                  }
+                  setRechercheEnCours(true);
+                  try {
+                    const r = await axios.get(`${API_URL}/groupes/decouvrir/?q=${encodeURIComponent(q)}`, {
+                      headers: { Authorization: `Bearer ${getToken()}` }
+                    });
+                    setResultatsGlobaux(r.data.groupes || []);
+                  } catch (err) {
+                    setResultatsGlobaux([]);
+                  } finally {
+                    setRechercheEnCours(false);
+                  }
+                }}
+                placeholder="Rechercher un groupe..."
+                style={styles.searchInput}
+              />
+            </div>
+
+            <div style={styles.fsResults}>
+              {rechercheEnCours && (
+                <div style={styles.modalEmptyWrap}>
+                  <div style={styles.spinnerSmall}></div>
+                  <p style={styles.modalEmptyHint}>Recherche en cours...</p>
+                </div>
+              )}
+
+              {!rechercheEnCours && rechercheGlobale.length < 2 && (
+                <div style={styles.modalEmptyWrap}>
+                  <p style={styles.modalEmptyText}>Découvre des groupes</p>
+                  <p style={styles.modalEmptyHint}>Tape au moins 2 caractères pour rechercher</p>
+                </div>
+              )}
+
+              {!rechercheEnCours && rechercheGlobale.length >= 2 && resultatsGlobaux.length === 0 && (
+                <div style={styles.modalEmptyWrap}>
+                  <p style={styles.modalEmptyText}>Aucun groupe trouvé</p>
+                  <p style={styles.modalEmptyHint}>Essaie avec un autre nom</p>
+                </div>
+              )}
+
+              {!rechercheEnCours && resultatsGlobaux.map((g) => (
+                <div key={g.id} style={styles.fsResultItem}>
+                  <div style={styles.fsAvatar}>
+                    <span style={styles.fsAvatarText}>{(g.nom || '?')[0].toUpperCase()}</span>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={styles.fsUserName}>{g.nom}</p>
+                    <p style={styles.fsUserInfo}>{g.nb_participants} membres</p>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await axios.post(`${API_URL}/groupes/demander-acces/`, { groupe_id: g.id }, {
+                          headers: { Authorization: `Bearer ${getToken()}` }
+                        });
+                        toast.success('Demande envoyée !');
+                        setResultatsGlobaux(resultatsGlobaux.filter((x: any) => x.id !== g.id));
+                      } catch (err) {
+                        toast.error('Erreur lors de la demande');
+                      }
+                    }}
+                    style={{ padding: '6px 12px', borderRadius: '8px', background: '#667eea', color: 'white', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
+                  >
+                    Rejoindre
+                  </button>
                 </div>
               ))}
             </div>
