@@ -37,7 +37,7 @@ const SECTIONS = [
 
 function News({ onRetour }: { onRetour?: () => void }) {
   const [articles, setArticles] = useState<any[]>([]);
-  const [sectionActive, setSectionActive] = useState('flash');
+  const [sectionActive, setSectionActive] = useState(() => localStorage.getItem('vokyvo_news_section') || 'flash');
   const [loading, setLoading] = useState(false);
   const [recherche, setRecherche] = useState('');
 
@@ -69,6 +69,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
   };
 
   useEffect(() => {
+    localStorage.setItem('vokyvo_news_section', sectionActive);
     chargerSection(sectionActive);
   }, [sectionActive]);
 
