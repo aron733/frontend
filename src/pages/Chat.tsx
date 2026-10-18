@@ -1771,7 +1771,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             <div style={styles.messagesArea}>
               {(messagesParConv[`groupe_${groupeActif?.id}`] || []).map((msg, index) => (
                 <div
-                  key={index}
+                  key={msg.client_msg_id || msg.id || index}
                   style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}
                   onContextMenu={(e) => {
                     if (String(msg.from_user_id) === String(getMyId()) && msg.id) {
@@ -2069,7 +2069,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             <div style={styles.messagesArea}>
                 {(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || []).map((msg, index) => (
                   <div
-                    key={index}
+                    key={msg.client_msg_id || msg.id || index}
                     style={msg.from_user_id === getMyId() ? styles.messageMoi : styles.messageAutre}
                     onContextMenu={(e) => {
                       if (msg.from_user_id === getMyId() && msg.id) {
