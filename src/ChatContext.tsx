@@ -133,21 +133,17 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               };
 
               // Détermine dans quelle conv ajouter
-              const active = convActiveRef.current;
               let convId: string;
-              if (active && active.startsWith('groupe_')) {
-                // Message de groupe → met dans la conv groupe active
-                convId = active;
+              if (data.groupe_id) {
+                // Message de groupe
+                convId = `groupe_${data.groupe_id}`;
               } else {
-                // Message privé → conv avec l'émetteur
+                // Message privé
                 convId = `user_${data.from_user_id}`;
               }
 
-              // Ajoute au state
-              setMessagesParConv((prev) => ({
-                ...prev,
-                [convId]: [...(prev[convId] || []), msg],
-              }));
+              // Ajoute au state (avec déduplication via client_msg_id)
+              ajouterMessage(convId, msg);
 
               // Notifie si la conv n'est PAS active
               if (convActiveRef.current !== convId) {
