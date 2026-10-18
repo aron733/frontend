@@ -2105,7 +2105,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         open={lightboxOpen}
         close={() => setLightboxOpen(false)}
         index={lightboxIndex}
-        slides={(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || [])
+        slides={(
+          groupeActif && !selectedUser
+            ? (messagesParConv[`groupe_${groupeActif.id}`] || [])
+            : (messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || [])
+        )
           .flatMap((m: any) => (m.pieces_jointes && m.pieces_jointes.length > 0) ? m.pieces_jointes : (m.fichier_url ? [{ url: m.fichier_url, type: 'image' }] : []))
           .filter((p: any) => p.type !== 'video')
           .map((p: any) => ({ src: p.url }))}
