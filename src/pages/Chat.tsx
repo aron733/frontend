@@ -188,7 +188,12 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [renommer, setRenommer] = useState('');
   const [rechercheUser, setRechercheUser] = useState('');
   const [showNouveauContact, setShowNouveauContact] = useState(false);
-  const [tabActif, setTabActif] = useState<'discussions' | 'groupes'>('discussions');
+  const [tabActif, setTabActif] = useState<'discussions' | 'groupes'>(() => (localStorage.getItem('vokyvo_tab') as any) || 'discussions');
+
+  // Sauvegarde l'onglet actif pour le restaurer au refresh
+  useEffect(() => {
+    localStorage.setItem('vokyvo_tab', tabActif);
+  }, [tabActif]);
   const [rechercheGlobale, setRechercheGlobale] = useState('');
   const [resultatsGlobaux, setResultatsGlobaux] = useState<any[]>([]);
   const [rechercheEnCours, setRechercheEnCours] = useState(false);
