@@ -733,6 +733,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     if (!nouveauMessage.trim() && fichiersSelectionnes.length === 0) return;
     if (!groupeActif && !selectedUser) return;
 
+    const clientMsgId = crypto.randomUUID();
+
     const uploadNecessaire = fichiersSelectionnes.length > 0;
     if (uploadNecessaire) setUploadEnCours(true);
 
@@ -747,6 +749,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         }
         fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
         formData.append('groupe_id', String(groupeActif.id));
+        formData.append('client_msg_id', clientMsgId);
 
         const saveResponse = await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
@@ -764,7 +767,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           fichier_url: saveResponse.data.fichier_url || null,
           pieces_jointes: saveResponse.data.pieces_jointes || [],
           lu: false,
-        });
+          client_msg_id: clientMsgId,
+        } as any);
 
         // Notifie via WebSocket
         envoyer({
@@ -773,6 +777,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           message: nouveauMessage,
           fichier_url: saveResponse.data.fichier_url || null,
           pieces_jointes: saveResponse.data.pieces_jointes || [],
+          client_msg_id: clientMsgId,
         });
       } catch (err: any) {
         console.error('Erreur sauvegarde message groupe:', err);
@@ -810,6 +815,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         if (nouveauMessage.trim()) {
           formData.append('texte', nouveauMessage);
         }
+        formData.append('client_msg_id', clientMsgId);
         fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
 
         const sendRes = await axios.post('' + API_URL + '/conversations/' + conv.id + '/envoyer/', formData, {
@@ -827,7 +833,8 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           fichier_url: sendRes.data.fichier_url || null,
           pieces_jointes: sendRes.data.pieces_jointes || [],
           lu: false,
-        });
+          client_msg_id: clientMsgId,
+        } as any);
 
         // Notifie via WebSocket
         envoyer({
@@ -836,6 +843,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           message: nouveauMessage,
           fichier_url: sendRes.data.fichier_url || null,
           pieces_jointes: sendRes.data.pieces_jointes || [],
+          client_msg_id: clientMsgId,
         });
       }
     } catch (err) {

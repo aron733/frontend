@@ -18,6 +18,7 @@ type Message = {
   audio_url?: string | null;
   lu?: boolean;
   date_envoi?: string;
+  client_msg_id?: string;
 };
 
 type ChatCtx = {
@@ -56,10 +57,23 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
 
   const ajouterMessage = (convId: string, msg: Message) => {
-    setMessagesParConv((prev) => ({
-      ...prev,
-      [convId]: [...(prev[convId] || []), msg],
-    }));
+    setMessagesParConv((prev) => {
+      const msgs = prev[convId] || [];
+      
+      // 1. Vérifie si le client_msg_id existe déjà (déduplication)
+      if (msg.client_msg_id) {
+        const existe = msgs.some((m) => m.client_msg_id === msg.client_msg_id);
+        if (existe) return prev;
+      }
+      
+      // 2. Vérifie si l'ID (base de données) existe déjà
+      if (msg.id) {
+        const existe = msgs.some((m) => m.id === msg.id);
+        if (existe) return prev;
+      }
+      
+      return { ...prev, [convId]: [...msgs, msg] };
+    });
   };
 
   const setMessagesConv = (convId: string, msgs: Message[]) => {
@@ -115,6 +129,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 from_username: data.from_username,
                 fichier_url: data.fichier_url || null,
                 pieces_jointes: data.pieces_jointes || [],
+                client_msg_id: data.client_msg_id || undefined,
               };
 
               // Détermine dans quelle conv ajouter
