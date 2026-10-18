@@ -40,7 +40,6 @@ function News({ onRetour }: { onRetour?: () => void }) {
   const [sectionActive, setSectionActive] = useState('flash');
   const [loading, setLoading] = useState(false);
   const [recherche, setRecherche] = useState('');
-  const [menuCategories, setMenuCategories] = useState(false);
 
   const chargerSection = async (sectionId: string) => {
     setLoading(true);
@@ -92,38 +91,24 @@ function News({ onRetour }: { onRetour?: () => void }) {
         />
       </div>
 
-      {/* Header avec catégorie active et hamburger */}
-      <div style={styles.nav}>
-        <span style={styles.sectionActive}>
-          {SECTIONS.find(s => s.id === sectionActive)?.nom.toUpperCase()}
-        </span>
-        <button onClick={() => setMenuCategories(!menuCategories)} style={styles.hamburgerBtn}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
+      {/* Onglets horizontaux scrollables */}
+      <div style={styles.tabsContainer}>
+        {SECTIONS.map((section) => (
+          <button
+            key={section.id}
+            onClick={() => setSectionActive(section.id)}
+            style={{
+              ...styles.tab,
+              background: sectionActive === section.id ? '#667eea' : 'transparent',
+              color: sectionActive === section.id ? 'white' : '#888',
+            }}
+          >
+            {section.nom}
+          </button>
+        ))}
       </div>
 
-      {/* Menu hamburger des catégories */}
-      {menuCategories && (
-        <div style={styles.categoriesMenu}>
-          {SECTIONS.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => { setSectionActive(section.id); setMenuCategories(false); }}
-              style={{
-                ...styles.categorieBtn,
-                background: sectionActive === section.id ? '#667eea' : 'transparent',
-                color: sectionActive === section.id ? 'white' : '#aaa',
-              }}
-            >
-              {section.nom}
-            </button>
-          ))}
-        </div>
-      )}
+
 
       {/* Articles */}
       <div style={styles.content}>
@@ -150,14 +135,41 @@ function News({ onRetour }: { onRetour?: () => void }) {
                     window.open(article.link, '_blank');
                   }
                 }}
-                style={styles.item}
+                style={styles.card}
               >
-                <span style={styles.itemTitle}>{article.title}</span>
-                {article.pubDate && (
-                  <span style={styles.itemDate}>
-                    {new Date(article.pubDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                  </span>
+                {article.image && (
+                  <img src={article.image} style={styles.cardImage} alt="" loading="lazy" />
                 )}
+                <div style={styles.cardContent}>
+                  <span style={styles.cardTitle}>{article.title}</span>
+                  <div style={styles.cardFooter}>
+                    {article.pubDate && (
+                      <span style={styles.cardDate}>
+                        {new Date(article.pubDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (navigator.share) {
+                          navigator.share({ title: article.title, url: article.link });
+                        } else {
+                          navigator.clipboard.writeText(article.link);
+                        }
+                      }}
+                      style={styles.shareBtn}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="18" cy="5" r="3" />
+                        <circle cx="6" cy="12" r="3" />
+                        <circle cx="18" cy="19" r="3" />
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </a>
             ))}
           </div>
@@ -340,6 +352,72 @@ const styles = {
     flexDirection: 'column' as const,
     gap: '8px',
     transition: 'border-color 0.2s',
+  },
+  tabsContainer: {
+    display: 'flex',
+    gap: '8px',
+    overflowX: 'auto' as const,
+    padding: '10px 15px',
+    borderBottom: '1px solid #2a2a3e',
+    scrollbarWidth: 'none' as const,
+  },
+  tab: {
+    padding: '8px 14px',
+    borderRadius: '20px',
+    border: '1px solid #2a2a3e',
+    fontSize: '13px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap' as const,
+    flexShrink: 0,
+  },
+  card: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    background: '#15152a',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    marginBottom: '12px',
+    textDecoration: 'none',
+    border: '1px solid #2a2a3e',
+  },
+  cardImage: {
+    width: '100%',
+    height: '180px',
+    objectFit: 'cover' as const,
+    display: 'block',
+  },
+  cardContent: {
+    padding: '12px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '8px',
+  },
+  cardTitle: {
+    color: 'white',
+    fontSize: '15px',
+    fontWeight: 600,
+    lineHeight: 1.4,
+  },
+  cardFooter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cardDate: {
+    color: '#888',
+    fontSize: '12px',
+  },
+  shareBtn: {
+    background: 'rgba(102,126,234,0.1)',
+    border: 'none',
+    borderRadius: '50%',
+    width: '32px',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
   },
   itemTitle: {
     color: '#e0e0e0',
