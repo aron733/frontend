@@ -1376,6 +1376,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 {(groupeActif.participants || []).map((membre: any) => {
                   const estAdmin = groupeActif.createur === membre.username;
                   const estModo = groupeActif.moderateurs?.some((m: any) => m.id === membre.id);
+                  const estMoi = String(membre.id) === String(getMyId());
+                  const jeSuisAdmin = String(groupeActif.createur) === String(getMyId()) || groupeActif.createur === JSON.parse(localStorage.getItem('user') || '{}').username;
+                  
                   return (
                     <div key={membre.id} style={styles.membreItem}>
                       {membre.photo_profil ? (
@@ -1387,23 +1390,35 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       )}
                       <span style={styles.membreNom}>
                         {membre.first_name || ''} {membre.last_name || membre.username}
+                        {estMoi && <span style={{ color: '#888', fontSize: '11px', marginLeft: '5px' }}>(Vous)</span>}
                       </span>
+                      
                       {estAdmin && <span style={styles.badgeAdmin}>ADMIN</span>}
                       {estModo && <span style={styles.badgeModo}>MODO</span>}
-                      {!estAdmin && (
-                        <button onClick={() => nommerModerateur(membre.id)} style={styles.modoBtn} title="Nommer modérateur">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f0ad4e" strokeWidth="2">
-                            <path d="M12 15l-3 3 1-4-3-3h4l1-3 1 3h4l-3 3 1 4-3-3z" />
-                          </svg>
-                        </button>
-                      )}
-                      {!estAdmin && (
-                        <button onClick={() => bannirMembre(membre.id)} style={styles.bannirBtn} title="Bannir">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10" />
-                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                          </svg>
-                        </button>
+                      
+                      {/* Boutons de modération : visibles uniquement pour l'admin, et pas sur soi-même */}
+                      {jeSuisAdmin && !estMoi && !estAdmin && (
+                        <>
+                          {estModo ? (
+                            <button onClick={() => { if(confirm('Retirer le rôle de modérateur à ' + (membre.first_name || membre.username) + ' ?')) nommerModerateur(membre.id); }} style={styles.modoBtn} title="Retirer modérateur">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f0ad4e" strokeWidth="2">
+                                <path d="M12 15l-3 3 1-4-3-3h4l1-3 1 3h4l-3 3 1 4-3-3z" />
+                              </svg>
+                            </button>
+                          ) : (
+                            <button onClick={() => nommerModerateur(membre.id)} style={styles.modoBtn} title="Nommer modérateur">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f0ad4e" strokeWidth="2">
+                                <path d="M12 15l-3 3 1-4-3-3h4l1-3 1 3h4l-3 3 1 4-3-3z" />
+                              </svg>
+                            </button>
+                          )}
+                          <button onClick={() => { if(confirm('Bannir ' + (membre.first_name || membre.username) + ' du groupe ?')) bannirMembre(membre.id); }} style={styles.bannirBtn} title="Bannir">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2">
+                              <circle cx="12" cy="12" r="10" />
+                              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                            </svg>
+                          </button>
+                        </>
                       )}
                     </div>
                   );
