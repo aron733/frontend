@@ -207,7 +207,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
                 <span style={{ color: '#aaa', fontSize: '12px' }}>Facebook</span>
               </a>
               <a href="https://vokyvo.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', textDecoration: 'none' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(135deg, #667eea, #764ba2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src="/vokyvo-logo.png" style={{ width: '30px', height: '30px', objectFit: 'contain' }} alt="VOKYVO" /></div>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'linear-gradient(135deg, #667eea, #764ba2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src="/vokyvo-logo.svg" style={{ width: '30px', height: '30px', objectFit: 'contain' }} alt="VOKYVO" /></div>
                 <span style={{ color: '#aaa', fontSize: '12px' }}>VOKYVO</span>
               </a>
               <button
