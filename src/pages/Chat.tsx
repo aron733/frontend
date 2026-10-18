@@ -1410,9 +1410,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           <div style={styles.chatArea}>
             <div style={styles.chatHeader}>
               <div style={styles.groupeHeaderInfo}>
-                <div style={styles.groupeAvatarSmall}>
+                <div style={styles.groupeAvatarSmall} onClick={() => groupeActif.photo_profil && setPhotoLightbox(groupeActif.photo_profil)}>
                   {groupeActif.photo_profil ? (
-                    <img src={groupeActif.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} alt="" />
+                    <img src={groupeActif.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', cursor: 'pointer' }} alt="" />
                   ) : (
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -1678,7 +1678,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '1px solid #2a2a3e' }}>
                   <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: '15px' }}>
                     {groupeActif.photo_profil ? (
-                      <img src={groupeActif.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                      <img src={groupeActif.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} onClick={() => setPhotoLightbox(groupeActif.photo_profil!)} alt="" />
                     ) : (
                       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -1691,7 +1691,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   <h2 style={{ color: 'white', fontSize: '22px', margin: '0 0 5px 0' }}>{groupeActif.nom}</h2>
                   <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>{groupeActif.participants?.length || 0} membres</p>
                   {groupeActif.description && (
-                    <p style={{ color: '#ccc', fontSize: '14px', marginTop: '15px', textAlign: 'center', fontStyle: 'italic' }}>
+                    <p style={{ color: '#ccc', fontSize: '14px', marginTop: '15px', textAlign: 'center', fontStyle: 'italic', padding: '0 20px' }}>
                       "{groupeActif.description}"
                     </p>
                   )}
