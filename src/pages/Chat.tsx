@@ -246,7 +246,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const supprimerMessage = async (messageId: number) => {
     setMessageMenu(null);
     try {
-      await axios.post(`${API_URL}/messages/${messageId}/supprimer/`, {}, {
+      // Détecte si on est dans un groupe ou en privé
+      const estGroupe = groupeActif && !selectedUser;
+      const url = estGroupe 
+        ? `${API_URL}/groupes/messages/${messageId}/supprimer/` 
+        : `${API_URL}/messages/${messageId}/supprimer/`;
+      
+      await axios.post(url, {}, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       // Retire le message de l'UI
@@ -1456,6 +1462,29 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 <div
                   key={index}
                   style={String(msg.from_user_id) === String(getMyId()) ? styles.messageMoi : styles.messageAutre}
+                  onContextMenu={(e) => {
+                    if (String(msg.from_user_id) === String(getMyId()) && msg.id) {
+                      e.preventDefault();
+                      setMessageMenu({ id: msg.id, x: e.clientX, y: e.clientY });
+                    }
+                  }}
+                  onTouchStart={(e) => {
+                    if (String(msg.from_user_id) === String(getMyId()) && msg.id) {
+                      const touch = e.touches[0];
+                      const timer = setTimeout(() => {
+                        setMessageMenu({ id: msg.id!, x: touch.clientX, y: touch.clientY });
+                      }, 500);
+                      (e.currentTarget as any)._longPressTimer = timer;
+                    }
+                  }}
+                  onTouchEnd={(e) => {
+                    const timer = (e.currentTarget as any)._longPressTimer;
+                    if (timer) clearTimeout(timer);
+                  }}
+                  onTouchMove={(e) => {
+                    const timer = (e.currentTarget as any)._longPressTimer;
+                    if (timer) clearTimeout(timer);
+                  }}
                 >
                   {String(msg.from_user_id) !== String(getMyId()) && (
                     <span style={styles.messageUsername}>{msg.from_username}</span>
