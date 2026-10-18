@@ -16,6 +16,18 @@ import { Capacitor } from '@capacitor/core';
 import { Media } from '@capacitor-community/media';
 
 
+function StatutMessage({ statut, lu }: { statut?: string; lu?: boolean }) {
+  if (statut === 'envoi') {
+    return (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginLeft: '5px', opacity: 0.7 }}>
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    );
+  }
+  return <span style={{ marginLeft: '5px' }}>{lu ? '✓✓' : '✓'}</span>;
+}
+
 function Chat({ onRetour }: { onRetour?: () => void }) {
   const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
@@ -682,6 +694,22 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     // Envoi vers un groupe
     if (groupeActif && !selectedUser) {
       try {
+        // 1. Ajout local IMMÉDIAT (optimistic UI)
+        const convId = `groupe_${groupeActif.id}`;
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        ajouterMessage(convId, {
+          type: 'message',
+          message: nouveauMessage,
+          from_user_id: getMyId(),
+          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
+          fichier_url: null,
+          pieces_jointes: [],
+          lu: false,
+          client_msg_id: clientMsgId,
+          statut: 'envoi',
+        } as any);
+
+        // 2. Envoi à l'API
         const formData = new FormData();
         if (nouveauMessage.trim()) {
           formData.append('texte', nouveauMessage);
@@ -693,21 +721,13 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         const saveResponse = await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
         });
-        console.log('Message groupe sauvegardé:', saveResponse.data);
 
-        // Ajoute localement avec les vraies URLs Cloudinary
-        const convId = `groupe_${groupeActif.id}`;
-        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        ajouterMessage(convId, {
-          type: 'message',
-          message: nouveauMessage,
-          from_user_id: getMyId(),
-          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
-          fichier_url: saveResponse.data.fichier_url || null,
-          pieces_jointes: saveResponse.data.pieces_jointes || [],
-          lu: false,
-          client_msg_id: clientMsgId,
-        } as any);
+        // 3. Met à jour le message local avec les vraies URLs
+        setMessagesConv(convId, (messagesParConv[convId] || []).map((m: any) => 
+          m.client_msg_id === clientMsgId 
+            ? { ...m, fichier_url: saveResponse.data.fichier_url, pieces_jointes: saveResponse.data.pieces_jointes, statut: 'envoye' }
+            : m
+        ));
 
         // Notifie via WebSocket
         envoyer({
@@ -750,6 +770,22 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       }
 
       if (conv) {
+        // 1. Ajout local IMMÉDIAT (optimistic UI) avec statut "envoi"
+        const convId = `user_${destUserId}`;
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        ajouterMessage(convId, {
+          type: 'message',
+          message: nouveauMessage,
+          from_user_id: getMyId(),
+          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
+          fichier_url: null,
+          pieces_jointes: [],
+          lu: false,
+          client_msg_id: clientMsgId,
+          statut: 'envoi',
+        } as any);
+
+        // 2. Envoi à l'API
         const formData = new FormData();
         if (nouveauMessage.trim()) {
           formData.append('texte', nouveauMessage);
@@ -761,19 +797,12 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
 
-        // Ajoute localement avec les vraies URLs Cloudinary
-        const convId = `user_${destUserId}`;
-        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        ajouterMessage(convId, {
-          type: 'message',
-          message: nouveauMessage,
-          from_user_id: getMyId(),
-          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
-          fichier_url: sendRes.data.fichier_url || null,
-          pieces_jointes: sendRes.data.pieces_jointes || [],
-          lu: false,
-          client_msg_id: clientMsgId,
-        } as any);
+        // 3. Met à jour le message local avec les vraies URLs et le statut "envoye"
+        setMessagesConv(convId, (messagesParConv[convId] || []).map((m: any) => 
+          m.client_msg_id === clientMsgId 
+            ? { ...m, fichier_url: sendRes.data.fichier_url, pieces_jointes: sendRes.data.pieces_jointes, statut: 'envoye' }
+            : m
+        ));
 
         // Notifie via WebSocket
         envoyer({
@@ -1851,6 +1880,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       controlsList="nodownload"
                     />
                   )}
+                  {String(msg.from_user_id) === String(getMyId()) && (
+                    <StatutMessage statut={(msg as any).statut} lu={msg.lu} />
+                  )}
 
                 </div>
               ))}
@@ -2142,7 +2174,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   />
                 )}
                 {msg.from_user_id === getMyId() && (
-                  <span style={styles.tick}>{msg.lu ? '✓✓' : '✓'}</span>
+                  <StatutMessage statut={(msg as any).statut} lu={msg.lu} />
                 )}
                   </div>
                 ))}
