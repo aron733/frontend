@@ -130,6 +130,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
                 from_username: data.from_username,
                 fichier_url: data.fichier_url || null,
                 pieces_jointes: data.pieces_jointes || [],
+                audio_url: data.audio_url || null,
                 client_msg_id: data.client_msg_id || undefined,
               };
 

@@ -614,14 +614,16 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       // Cas groupe
       if (groupeActif && !selectedUser) {
         formData.append('groupe_id', String(groupeActif.id));
-        await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
+        const audioResGroupe = await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
         });
         envoyer({
           action: 'groupe',
           groupe_id: groupeActif.id,
           message: 'Message vocal',
+          audio_url: audioResGroupe.data.audio_url || null,
           fichier_url: null,
+          client_msg_id: crypto.randomUUID(),
         });
         setDureeEnregistrement(0);
         return;
@@ -641,7 +643,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         conv = { id: createRes.data.conversation_id };
       }
 
-      await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
+      const audioRes = await axios.post(`${API_URL}/conversations/${conv.id}/envoyer/`, formData, {
         headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
       });
 
@@ -649,7 +651,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         action: 'message',
         dest_user_id: destUserId,
         message: 'Message vocal',
+        audio_url: audioRes.data.audio_url || null,
         fichier_url: null,
+        client_msg_id: crypto.randomUUID(),
       });
     } catch (err) {
       console.error('Erreur envoi audio:', err);
