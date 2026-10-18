@@ -3,13 +3,13 @@ import { Capacitor } from '@capacitor/core';
 import BoutonRetour from '../BoutonRetour';
 
 const SECTIONS = [
-  { id: 'flash', nom: 'Flash', url: 'https://news.google.com/rss?hl=fr&gl=FR&ceid=FR:fr' },
-  { id: 'finance', nom: 'Finance', url: 'https://news.google.com/rss/search?q=finance+crypto+trading+bourse&hl=fr&gl=FR&ceid=FR:fr' },
-  { id: 'dev', nom: 'Dev', url: 'https://news.google.com/rss/search?q=d%C3%A9veloppeur+programmation+IA+hacking&hl=fr&gl=FR&ceid=FR:fr' },
+  { id: 'flash', nom: 'Flash', url: 'https://www.francetvinfo.fr/titres.rss' },
+  { id: 'finance', nom: 'Finance', url: 'https://www.lemonde.fr/economie/rss_full.xml' },
+  { id: 'dev', nom: 'Dev', url: 'https://www.lemonde.fr/pixels/rss_full.xml' },
   { id: 'us', nom: 'US', url: 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en' },
   { id: 'guerre', nom: 'Guerre', url: 'https://news.google.com/rss/search?q=guerre+conflit+ukraine+israel&hl=fr&gl=FR&ceid=FR:fr' },
-  { id: 'afrique', nom: 'Afrique', url: 'https://news.google.com/rss/search?q=Afrique+actualit%C3%A9s&hl=fr&gl=CI&ceid=CI:fr' },
-  { id: 'burkina', nom: 'Burkina', url: 'https://news.google.com/rss/search?q=Burkina+Faso+Ouagadougou&hl=fr&gl=BF&ceid=BF:fr' },
+  { id: 'afrique', nom: 'Afrique', url: 'https://www.francetvinfo.fr/monde/afrique.rss' },
+  { id: 'burkina', nom: 'Burkina', url: 'burkina-fusion' },
   { id: 'aes', nom: 'AES', url: 'https://news.google.com/rss/search?q=AES+Sahel+Mali+Niger+Burkina&hl=fr&gl=BF&ceid=BF:fr' },
   { id: 'education', nom: 'Éducation', url: 'https://news.google.com/rss/search?q=%C3%A9ducation+%C3%A9cole+universit%C3%A9&hl=fr&gl=FR&ceid=FR:fr' },
   { id: 'sport', nom: 'Sport', url: 'https://news.google.com/rss/search?q=sport+football+basketball&hl=fr&gl=FR&ceid=FR:fr' },
