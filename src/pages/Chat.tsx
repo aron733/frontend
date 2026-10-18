@@ -16,20 +16,8 @@ import { Capacitor } from '@capacitor/core';
 import { Media } from '@capacitor-community/media';
 
 
-function StatutMessage({ statut, lu }: { statut?: string; lu?: boolean }) {
-  if (statut === 'envoi') {
-    return (
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginLeft: '5px', opacity: 0.7 }}>
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
-    );
-  }
-  return <span style={{ marginLeft: '5px' }}>{lu ? '✓✓' : '✓'}</span>;
-}
-
 function Chat({ onRetour }: { onRetour?: () => void }) {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, mettreAJourMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [, setForceRender] = useState(0);
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -685,10 +673,6 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     if (!groupeActif && !selectedUser) return;
 
     const clientMsgId = crypto.randomUUID();
-    
-    // Vide l'input IMMÉDIATEMENT (optimistic UI)
-    const texteEnvoi = nouveauMessage;
-    setNouveauMessage('');
 
     const uploadNecessaire = fichiersSelectionnes.length > 0;
     if (uploadNecessaire) setUploadEnCours(true);
@@ -698,25 +682,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     // Envoi vers un groupe
     if (groupeActif && !selectedUser) {
       try {
-        // 1. Ajout local IMMÉDIAT (optimistic UI)
-        const convId = `groupe_${groupeActif.id}`;
-        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        ajouterMessage(convId, {
-          type: 'message',
-          message: texteEnvoi,
-          from_user_id: getMyId(),
-          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
-          fichier_url: null,
-          pieces_jointes: fichiersSelectionnes.map((f) => ({ url: URL.createObjectURL(f), type: f.type.startsWith('video/') ? 'video' : 'image', nom: f.name })),
-          lu: false,
-          client_msg_id: clientMsgId,
-          statut: 'envoi',
-        } as any);
-
-        // 2. Envoi à l'API
         const formData = new FormData();
-        if (texteEnvoi.trim()) {
-          formData.append('texte', texteEnvoi);
+        if (nouveauMessage.trim()) {
+          formData.append('texte', nouveauMessage);
         }
         fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
         formData.append('groupe_id', String(groupeActif.id));
@@ -725,19 +693,27 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         const saveResponse = await axios.post(`${API_URL}/groupes/envoyer-message/`, formData, {
           headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'multipart/form-data' }
         });
+        console.log('Message groupe sauvegardé:', saveResponse.data);
 
-        // 3. Met à jour le message local avec les vraies URLs
-        mettreAJourMessage(convId, clientMsgId, {
-          fichier_url: saveResponse.data.fichier_url,
-          pieces_jointes: saveResponse.data.pieces_jointes,
-          statut: 'envoye',
-        });
+        // Ajoute localement avec les vraies URLs Cloudinary
+        const convId = `groupe_${groupeActif.id}`;
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        ajouterMessage(convId, {
+          type: 'message',
+          message: nouveauMessage,
+          from_user_id: getMyId(),
+          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
+          fichier_url: saveResponse.data.fichier_url || null,
+          pieces_jointes: saveResponse.data.pieces_jointes || [],
+          lu: false,
+          client_msg_id: clientMsgId,
+        } as any);
 
         // Notifie via WebSocket
         envoyer({
           action: 'groupe',
           groupe_id: groupeActif.id,
-          message: texteEnvoi,
+          message: nouveauMessage,
           fichier_url: saveResponse.data.fichier_url || null,
           pieces_jointes: saveResponse.data.pieces_jointes || [],
           client_msg_id: clientMsgId,
@@ -774,25 +750,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
       }
 
       if (conv) {
-        // 1. Ajout local IMMÉDIAT (optimistic UI) avec statut "envoi"
-        const convId = `user_${destUserId}`;
-        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        ajouterMessage(convId, {
-          type: 'message',
-          message: texteEnvoi,
-          from_user_id: getMyId(),
-          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
-          fichier_url: null,
-          pieces_jointes: fichiersSelectionnes.map((f) => ({ url: URL.createObjectURL(f), type: f.type.startsWith('video/') ? 'video' : 'image', nom: f.name })),
-          lu: false,
-          client_msg_id: clientMsgId,
-          statut: 'envoi',
-        } as any);
-
-        // 2. Envoi à l'API
         const formData = new FormData();
-        if (texteEnvoi.trim()) {
-          formData.append('texte', texteEnvoi);
+        if (nouveauMessage.trim()) {
+          formData.append('texte', nouveauMessage);
         }
         formData.append('client_msg_id', clientMsgId);
         fichiersSelectionnes.forEach((f) => formData.append('fichiers', f));
@@ -801,18 +761,25 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
           headers: { Authorization: `Bearer ${getToken()}` }
         });
 
-        // 3. Met à jour le message local avec les vraies URLs et le statut "envoye"
-        mettreAJourMessage(convId, clientMsgId, {
-          fichier_url: sendRes.data.fichier_url,
-          pieces_jointes: sendRes.data.pieces_jointes,
-          statut: 'envoye',
-        });
+        // Ajoute localement avec les vraies URLs Cloudinary
+        const convId = `user_${destUserId}`;
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        ajouterMessage(convId, {
+          type: 'message',
+          message: nouveauMessage,
+          from_user_id: getMyId(),
+          from_username: userData.prenom || userData.first_name || userData.username || 'Moi',
+          fichier_url: sendRes.data.fichier_url || null,
+          pieces_jointes: sendRes.data.pieces_jointes || [],
+          lu: false,
+          client_msg_id: clientMsgId,
+        } as any);
 
         // Notifie via WebSocket
         envoyer({
           action: 'message',
           dest_user_id: destUserId,
-          message: texteEnvoi,
+          message: nouveauMessage,
           fichier_url: sendRes.data.fichier_url || null,
           pieces_jointes: sendRes.data.pieces_jointes || [],
           client_msg_id: clientMsgId,
@@ -1884,9 +1851,6 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                       controlsList="nodownload"
                     />
                   )}
-                  {String(msg.from_user_id) === String(getMyId()) && (
-                    <StatutMessage statut={(msg as any).statut} lu={msg.lu} />
-                  )}
 
                 </div>
               ))}
@@ -2178,7 +2142,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   />
                 )}
                 {msg.from_user_id === getMyId() && (
-                  <StatutMessage statut={(msg as any).statut} lu={msg.lu} />
+                  <span style={styles.tick}>{msg.lu ? '✓✓' : '✓'}</span>
                 )}
                   </div>
                 ))}

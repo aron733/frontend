@@ -19,7 +19,6 @@ type Message = {
   lu?: boolean;
   date_envoi?: string;
   client_msg_id?: string;
-  statut?: string;
 };
 
 type ChatCtx = {
@@ -29,7 +28,6 @@ type ChatCtx = {
   messagesParConv: Record<string, Message[]>;
   lastMessageAt: number;
   ajouterMessage: (convId: string, msg: Message) => void;
-  mettreAJourMessage: (convId: string, clientMsgId: string, updates: Partial<Message>) => void;
   setMessagesConv: (convId: string, msgs: Message[]) => void;
   presence: Record<string, string>;
   presenceTime: Record<string, string>;
@@ -67,14 +65,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setMessagesParConv((prev) => {
         const msgs = prev[convId] || [];
       
-      // 1. Si le client_msg_id existe déjà, on met à jour le message (statut, URLs)
+      // 1. Vérifie si le client_msg_id existe déjà (déduplication)
       if (msg.client_msg_id) {
-        const index = msgs.findIndex((m) => m.client_msg_id === msg.client_msg_id);
-        if (index !== -1) {
-          const nouveau = [...msgs];
-          nouveau[index] = { ...nouveau[index], ...msg, statut: 'envoye' };
-          return { ...prev, [convId]: nouveau };
-        }
+        const existe = msgs.some((m) => m.client_msg_id === msg.client_msg_id);
+        if (existe) return prev;
       }
       
       // 2. Vérifie si l'ID (base de données) existe déjà
@@ -86,18 +80,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         return { ...prev, [convId]: [...msgs, msg] };
       });
     }, 0);
-  };
-
-  const mettreAJourMessage = (convId: string, clientMsgId: string, updates: Partial<Message>) => {
-    setMessagesParConv((prev) => {
-      const msgs = prev[convId] || [];
-      return {
-        ...prev,
-        [convId]: msgs.map((m) =>
-          m.client_msg_id === clientMsgId ? { ...m, ...updates } : m
-        ),
-      };
-    });
   };
 
   const setMessagesConv = (convId: string, msgs: Message[]) => {
@@ -132,7 +114,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            const myId = userData.user_id;
+
             if (data.type === 'message') {
+              // Ignore ses propres messages
+              if (String(data.from_user_id) === String(myId)) return;
+
               // Son de notification (message reçu)
               try {
                 const audio = new Audio('/ping.mp3');
@@ -327,7 +315,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setConvActive,
         messagesParConv,
         ajouterMessage,
-        mettreAJourMessage,
         lastMessageAt,
         setMessagesConv,
         presence,
