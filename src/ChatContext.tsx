@@ -19,6 +19,7 @@ type Message = {
   lu?: boolean;
   date_envoi?: string;
   client_msg_id?: string;
+  statut?: string;
 };
 
 type ChatCtx = {
@@ -28,6 +29,7 @@ type ChatCtx = {
   messagesParConv: Record<string, Message[]>;
   lastMessageAt: number;
   ajouterMessage: (convId: string, msg: Message) => void;
+  mettreAJourMessage: (convId: string, clientMsgId: string, updates: Partial<Message>) => void;
   setMessagesConv: (convId: string, msgs: Message[]) => void;
   presence: Record<string, string>;
   presenceTime: Record<string, string>;
@@ -80,6 +82,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         return { ...prev, [convId]: [...msgs, msg] };
       });
     }, 0);
+  };
+
+  const mettreAJourMessage = (convId: string, clientMsgId: string, updates: Partial<Message>) => {
+    setMessagesParConv((prev) => {
+      const msgs = prev[convId] || [];
+      return {
+        ...prev,
+        [convId]: msgs.map((m) =>
+          m.client_msg_id === clientMsgId ? { ...m, ...updates } : m
+        ),
+      };
+    });
   };
 
   const setMessagesConv = (convId: string, msgs: Message[]) => {
@@ -315,6 +329,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setConvActive,
         messagesParConv,
         ajouterMessage,
+        mettreAJourMessage,
         lastMessageAt,
         setMessagesConv,
         presence,

@@ -29,7 +29,7 @@ function StatutMessage({ statut, lu }: { statut?: string; lu?: boolean }) {
 }
 
 function Chat({ onRetour }: { onRetour?: () => void }) {
-  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
+  const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, mettreAJourMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [, setForceRender] = useState(0);
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -723,11 +723,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         });
 
         // 3. Met à jour le message local avec les vraies URLs
-        setMessagesConv(convId, (messagesParConv[convId] || []).map((m: any) => 
-          m.client_msg_id === clientMsgId 
-            ? { ...m, fichier_url: saveResponse.data.fichier_url, pieces_jointes: saveResponse.data.pieces_jointes, statut: 'envoye' }
-            : m
-        ));
+        mettreAJourMessage(convId, clientMsgId, {
+          fichier_url: saveResponse.data.fichier_url,
+          pieces_jointes: saveResponse.data.pieces_jointes,
+          statut: 'envoye',
+        });
 
         // Notifie via WebSocket
         envoyer({
@@ -798,11 +798,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         });
 
         // 3. Met à jour le message local avec les vraies URLs et le statut "envoye"
-        setMessagesConv(convId, (messagesParConv[convId] || []).map((m: any) => 
-          m.client_msg_id === clientMsgId 
-            ? { ...m, fichier_url: sendRes.data.fichier_url, pieces_jointes: sendRes.data.pieces_jointes, statut: 'envoye' }
-            : m
-        ));
+        mettreAJourMessage(convId, clientMsgId, {
+          fichier_url: sendRes.data.fichier_url,
+          pieces_jointes: sendRes.data.pieces_jointes,
+          statut: 'envoye',
+        });
 
         // Notifie via WebSocket
         envoyer({
