@@ -41,6 +41,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
   const [articlePartage, setArticlePartage] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [recherche, setRecherche] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
 
   const chargerSection = async (sectionId: string) => {
     setLoading(true);
@@ -84,14 +85,27 @@ function News({ onRetour }: { onRetour?: () => void }) {
       <div style={styles.header}>
         <BoutonRetour onClick={() => { if (onRetour) { onRetour(); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} />
         <span style={styles.logo}>VOKYVO<span style={{ color: '#667eea' }}>NEWS</span></span>
-        <input
-          type="text"
-          placeholder="Rechercher"
-          value={recherche}
-          onChange={(e) => setRecherche(e.target.value)}
-          style={styles.search}
-        />
+        <button onClick={() => setShowSearch(!showSearch)} style={styles.searchIconBtn}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
       </div>
+
+      {/* Barre de recherche (si ouverte) */}
+      {showSearch && (
+        <div style={{ padding: '10px 15px', background: '#0a0a0f' }}>
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            value={recherche}
+            onChange={(e) => setRecherche(e.target.value)}
+            style={{ width: '100%', padding: '12px 15px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#1a1a2e', color: 'white', fontSize: '14px', outline: 'none' }}
+            autoFocus
+          />
+        </div>
+      )}
 
       {/* Onglets horizontaux scrollables */}
       <div style={styles.tabsContainer}>
@@ -422,6 +436,15 @@ const styles = {
     cursor: 'pointer',
     whiteSpace: 'nowrap' as const,
     flexShrink: 0,
+  },
+  searchIconBtn: {
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   card: {
     display: 'flex',
