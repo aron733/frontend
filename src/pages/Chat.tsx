@@ -180,6 +180,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [groupeActif, setGroupeActif] = useState<any>(null);
   const [showCreerGroupe, setShowCreerGroupe] = useState(false);
   const [showMembres, setShowMembres] = useState(false);
+  const [showInfosGroupe, setShowInfosGroupe] = useState(false);
   const [rechercheMembre, setRechercheMembre] = useState('');
   const [resultatsRecherche, setResultatsRecherche] = useState<any[]>([]);
   const [demandes, _setDemandes] = useState<any[]>([]);
@@ -1431,10 +1432,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   )}
                 </div>
               </div>
-              <button onClick={() => setShowMembres(!showMembres)} style={styles.chevronBtn} title={showMembres ? 'Masquer les membres' : 'Voir les membres'}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  style={{ transform: showMembres ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
-                  <polyline points="15 18 9 12 15 6" />
+              <button onClick={() => setShowInfosGroupe(true)} style={styles.chevronBtn} title="Infos du groupe">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
                 </svg>
               </button>
               {(String(groupeActif.createur_id) === String(getMyId())) && (
@@ -1630,7 +1632,11 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                 })}
                 
                 <button onClick={chargerDemandes} style={styles.demandesBtn}>
-                  📩 Demandes d'accès
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px', verticalAlign: 'middle' }}>
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                  Demandes d'accès
                 </button>
                 <button onClick={() => setShowMembres(false)} style={styles.fermerMembres}>Fermer</button>
               </div>
@@ -1653,6 +1659,69 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   ))
                 )}
                 <button onClick={() => setShowDemandes(false)} style={styles.fermerMembres}>Fermer</button>
+              </div>
+            )}
+
+            {/* Modal Infos Groupe - Plein écran */}
+            {showInfosGroupe && groupeActif && (
+              <div style={styles.fullscreenModal}>
+                <div style={styles.fsHeader}>
+                  <button onClick={() => setShowInfosGroupe(false)} style={styles.fsCloseBtn}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                      <line x1="19" y1="12" x2="5" y2="12" />
+                      <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                  </button>
+                  <h2 style={styles.fsTitle}>Infos du groupe</h2>
+                </div>
+                
+                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', borderBottom: '1px solid #2a2a3e' }}>
+                  <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#1a1a2e', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: '15px' }}>
+                    {groupeActif.photo_profil ? (
+                      <img src={groupeActif.photo_profil} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                    ) : (
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                    )}
+                  </div>
+                  <h2 style={{ color: 'white', fontSize: '22px', margin: '0 0 5px 0' }}>{groupeActif.nom}</h2>
+                  <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>{groupeActif.participants?.length || 0} membres</p>
+                  {groupeActif.description && (
+                    <p style={{ color: '#ccc', fontSize: '14px', marginTop: '15px', textAlign: 'center', fontStyle: 'italic' }}>
+                      "{groupeActif.description}"
+                    </p>
+                  )}
+                </div>
+
+                <div style={styles.fsResults}>
+                  <p style={{ ...styles.membresTitle, padding: '0 20px', marginTop: '15px' }}>Membres ({groupeActif.participants?.length || 0})</p>
+                  {(groupeActif.participants || []).map((membre: any) => {
+                    const estAdmin = groupeActif.createur === membre.username;
+                    const estModo = groupeActif.moderateurs?.some((m: any) => m.id === membre.id);
+                    const estMoi = String(membre.id) === String(getMyId());
+                    return (
+                      <div key={membre.id} style={{ ...styles.membreItem, padding: '12px 20px' }}>
+                        {membre.photo_profil ? (
+                          <img src={membre.photo_profil} style={styles.membrePhoto} alt="" />
+                        ) : (
+                          <span style={styles.membreAvatar}>
+                            {(membre.first_name || membre.username || '?')[0].toUpperCase()}
+                          </span>
+                        )}
+                        <span style={styles.membreNom}>
+                          {membre.first_name || ''} {membre.last_name || membre.username}
+                          {estMoi && <span style={{ color: '#888', fontSize: '11px', marginLeft: '5px' }}>(Vous)</span>}
+                        </span>
+                        {estAdmin && <span style={styles.badgeAdmin}>ADMIN</span>}
+                        {estModo && <span style={styles.badgeModo}>MODO</span>}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
