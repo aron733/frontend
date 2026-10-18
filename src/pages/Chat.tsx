@@ -767,7 +767,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
         // Notifie via WebSocket
         envoyer({
           action: 'message',
-          user_id: destUserId,
+          dest_user_id: destUserId,
           message: nouveauMessage,
           fichier_url: sendRes.data.fichier_url || null,
           pieces_jointes: sendRes.data.pieces_jointes || [],
