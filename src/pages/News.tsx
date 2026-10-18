@@ -149,13 +149,21 @@ function News({ onRetour }: { onRetour?: () => void }) {
                       </span>
                     )}
                     <button
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        if (navigator.share) {
-                          navigator.share({ title: article.title, url: article.link });
-                        } else {
-                          navigator.clipboard.writeText(article.link);
+                        try {
+                          if (Capacitor.isNativePlatform()) {
+                            const { Share } = await import('@capacitor/share');
+                            await Share.share({ title: article.title, url: article.link });
+                          } else if (navigator.share) {
+                            await navigator.share({ title: article.title, url: article.link });
+                          } else {
+                            await navigator.clipboard.writeText(article.link);
+                            alert('Lien copié !');
+                          }
+                        } catch (err) {
+                          console.warn('Partage annulé ou erreur', err);
                         }
                       }}
                       style={styles.shareBtn}
