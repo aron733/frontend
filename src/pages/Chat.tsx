@@ -186,6 +186,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [demandes, _setDemandes] = useState<any[]>([]);
   const [showDemandes, setShowDemandes] = useState(false);
   const [showAdminGroupe, setShowAdminGroupe] = useState(false);
+  const [modeModeration, setModeModeration] = useState<'nommer' | 'bannir' | null>(null);
+  const [rechercheModeration, setRechercheModeration] = useState('');
+  const [resultatsModeration, setResultatsModeration] = useState<any[]>([]);
   const [renommer, setRenommer] = useState('');
   const [showModifierGroupe, setShowModifierGroupe] = useState(false);
   const [nouvellePhotoGroupe, setNouvellePhotoGroupe] = useState<File | null>(null);
@@ -1509,7 +1512,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                   const estAdmin = groupeActif.createur === membre.username;
                   const estModo = groupeActif.moderateurs?.some((m: any) => m.id === membre.id);
                   const estMoi = String(membre.id) === String(getMyId());
-                  const jeSuisAdmin = String(groupeActif.createur) === String(getMyId()) || groupeActif.createur === JSON.parse(localStorage.getItem('user') || '{}').username;
+                  const jeSuisAdmin = String(groupeActif.createur_id) === String(getMyId());
                   
                   return (
                     <div key={membre.id} style={styles.membreItem}>
@@ -1694,15 +1697,130 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
                     Modifier (Photo / Description)
                   </button>
                   {showModifierGroupe && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px', padding: '10px', background: '#1a1a2e', borderRadius: '8px' }}>
-                      <input type="file" accept="image/*" onChange={(e) => setNouvellePhotoGroupe(e.target.files?.[0] || null)} style={{ color: 'white', fontSize: '12px' }} />
-                      <textarea
-                        value={nouvelleDescriptionGroupe}
-                        onChange={(e) => setNouvelleDescriptionGroupe(e.target.value)}
-                        placeholder="Description du groupe..."
-                        style={{ ...styles.gestionInput, minHeight: '60px', resize: 'vertical' }}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '10px', padding: '15px', background: '#1a1a2e', borderRadius: '8px' }}>
+                      
+                      <div>
+                        <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '5px' }}>Photo du groupe</label>
+                        <button
+                          onClick={() => document.getElementById('input-photo-groupe')?.click()}
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 15px', background: 'rgba(102,126,234,0.1)', border: '1px dashed #667eea', color: '#667eea', borderRadius: '8px', cursor: 'pointer', width: '100%', justifyContent: 'center' }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                          </svg>
+                          {nouvellePhotoGroupe ? nouvellePhotoGroupe.name : 'Choisir une photo'}
+                        </button>
+                        <input
+                          id="input-photo-groupe"
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => setNouvellePhotoGroupe(e.target.files?.[0] || null)}
+                          style={{ display: 'none' }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '5px' }}>Description</label>
+                        <textarea
+                          value={nouvelleDescriptionGroupe}
+                          onChange={(e) => setNouvelleDescriptionGroupe(e.target.value)}
+                          placeholder="Ajouter une description..."
+                          style={{ ...styles.gestionInput, width: '100%', minHeight: '80px', resize: 'vertical', boxSizing: 'border-box' }}
+                        />
+                      </div>
+
+                      <button onClick={modifierGroupe} style={{ ...styles.gestionValider, width: '100%', padding: '12px', fontSize: '14px', fontWeight: 'bold' }}>
+                        Enregistrer les modifications
+                      </button>
+                    </div>
+                  )}
+
+                  <div style={{ height: '1px', background: '#2a2a3e', margin: '20px 0' }} />
+                  <p style={{ color: '#888', fontSize: '12px', margin: '0 0 10px', textTransform: 'uppercase', fontWeight: 'bold' }}>Membres & Demandes</p>
+                  
+                  <button onClick={() => { chargerDemandes(); setShowDemandes(!showDemandes); }} style={styles.gestionItem}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    Voir les demandes d'accès
+                  </button>
+
+                  <button onClick={() => { setModeModeration('nommer'); setRechercheModeration(''); setResultatsModeration([]); }} style={styles.gestionItem}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 15l-3 3 1-4-3-3h4l1-3 1 3h4l-3 3 1 4-3-3z" />
+                    </svg>
+                    Nommer un modérateur
+                  </button>
+
+                  <button onClick={() => { setModeModeration('bannir'); setRechercheModeration(''); setResultatsModeration([]); }} style={styles.gestionItem}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                    </svg>
+                    Bannir un membre
+                  </button>
+
+                  {modeModeration && (
+                    <div style={{ margin: '10px 0', padding: '10px', background: '#1a1a2e', borderRadius: '8px' }}>
+                      <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '8px' }}>
+                        {modeModeration === 'nommer' ? 'Rechercher le membre à nommer :' : 'Rechercher le membre à bannir :'}
+                      </p>
+                      <input
+                        type="text"
+                        value={rechercheModeration}
+                        onChange={async (e) => {
+                          const q = e.target.value;
+                          setRechercheModeration(q);
+                          if (q.length < 2) { setResultatsModeration([]); return; }
+                          try {
+                            const r = await axios.get(`${API_URL}/rechercher-users/?q=${encodeURIComponent(q)}`, { headers: { Authorization: `Bearer ${getToken()}` } });
+                            // On filtre pour ne garder que les membres du groupe
+                            const idsParticipants = (groupeActif.participants || []).map((p: any) => p.id);
+                            setResultatsModeration((r.data.users || []).filter((u: any) => idsParticipants.includes(u.id)));
+                          } catch (e) {}
+                        }}
+                        placeholder="Nom du membre..."
+                        style={{ ...styles.gestionInput, width: '100%', marginBottom: '8px' }}
                       />
-                      <button onClick={modifierGroupe} style={styles.gestionValider}>Enregistrer</button>
+                      {resultatsModeration.map((u) => (
+                        <div key={u.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', borderBottom: '1px solid #2a2a3e' }}>
+                          <span style={{ color: 'white', fontSize: '14px' }}>{u.first_name || u.username}</span>
+                          <button
+                            onClick={() => {
+                              if (modeModeration === 'nommer') {
+                                nommerModerateur(u.id);
+                              } else {
+                                if (confirm('Bannir ' + (u.first_name || u.username) + ' ?')) bannirMembre(u.id);
+                              }
+                              setModeModeration(null);
+                            }}
+                            style={{ background: modeModeration === 'nommer' ? '#f0ad4e' : '#dc3545', border: 'none', color: 'white', padding: '5px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
+                          >
+                            {modeModeration === 'nommer' ? 'Nommer' : 'Bannir'}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {showDemandes && (
+                    <div style={{ margin: '10px 0' }}>
+                      {demandes.length === 0 ? (
+                        <p style={{ color: '#888', fontSize: '13px' }}>Aucune demande en attente</p>
+                      ) : (
+                        demandes.map((demande) => (
+                          <div key={demande.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: '#1a1a2e', borderRadius: '8px', marginBottom: '5px' }}>
+                            <span style={{ color: 'white', fontSize: '14px' }}>{demande.user}</span>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button onClick={() => validerDemande(demande.id, 'accepter')} style={{ background: '#28a745', border: 'none', color: 'white', padding: '5px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Accepter</button>
+                              <button onClick={() => validerDemande(demande.id, 'refuser')} style={{ background: '#dc3545', border: 'none', color: 'white', padding: '5px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Refuser</button>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   )}
 
