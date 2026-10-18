@@ -839,6 +839,10 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     return nomComplet.includes(rechercheUser.toLowerCase());
   });
 
+  const groupesFiltres = groupes.filter((groupe) => {
+    return (groupe.nom || '').toLowerCase().includes(rechercheUser.toLowerCase());
+  });
+
   if (showCreerGroupe) {
     return <CreerGroupe onFermer={() => setShowCreerGroupe(false)} onGroupeCree={() => {
       setShowCreerGroupe(false);
@@ -975,7 +979,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
             placeholder="Rechercher..."
             style={styles.searchInput}
           />
-          {tabActif === 'groupes' && groupes.map((groupe) => (
+          {tabActif === 'groupes' && groupesFiltres.map((groupe) => (
             <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
       setGroupeActif(groupe);
       setSelectedUser(null);
