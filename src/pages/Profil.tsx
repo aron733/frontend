@@ -353,47 +353,53 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           pointerEvents: menuOuvert ? 'auto' : 'none',
           transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
         }}>
-          {/* BOUTON PROFIL CACHÉ - réactivable
-          <button onClick={() => { setPageActive('profil'); setMenuOuvert(false); }} style={styles.menuItem}>
-            <IconeProfil /> Profil
+          {/* Compte */}
+          <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>Compte</p>
+          <button onClick={() => { setModalProfilOuvert(true); setMenuOuvert(false); }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Modifier le profil
           </button>
-          */}
-          {/* Liens VOKYVO AI, Messages, News retires (deja dans la BottomNav) */}
-          {/* BOUTON COURS DÉSACTIVÉ - fusionné dans Vokyvo AI
-          <button onClick={() => { setPageActive('cours'); setMenuOuvert(false); }} style={styles.menuItem}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Cours
+          <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#dc3545' }}>
+            <IconeDeconnexion /> Déconnexion
           </button>
-          */}
-          {/* BOUTON NOTIFICATIONS ACTIF
-          <button onClick={async () => { await demanderPermissionNotifications(); envoyerNotificationTest(); }} style={styles.menuItem}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg> Notifications
+
+          {/* Support */}
+          <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>Support</p>
+          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "https://vokyvo.com/help"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Centre d'aide
           </button>
-          */}
-          {/* BOUTON CONFIDENTIALITÉ DÉSACTIVÉ - réactiver quand 2FA ou vraies données sensibles
-          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = Capacitor.isNativePlatform() ? "https://vokyvo.com/confidentialite?from=app" : "https://vokyvo.com/confidentialite"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg> Confidentialité
+          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "https://vokyvo.com/cgu"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            CGU
           </button>
-          */}
+          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "https://vokyvo.com/confidentialite"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Confidentialité
+          </button>
+          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "mailto:support@vokyvo.com"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Contacter le support
+          </button>
+
+          {/* VOKYVO+ */}
+          <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>VOKYVO+</p>
           <button onClick={() => { setPageActive('vokyvo-plus'); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#f0ad4e' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f0ad4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
               <path d="M10 7V5h4v2" />
               <path d="M12 12v4" />
               <path d="M10 14h4" />
-            </svg> VOKYVO+
-          </button>
-          <button onClick={() => setModalQuitter(true)} style={{ ...styles.menuItem, color: '#dc3545' }}>
-            <IconeDeconnexion /> Quitter
+            </svg> Découvrir VOKYVO+
           </button>
         </div>
 
       {lightboxOuverte && (photoLightbox || photoUrl) && (
-        <div 
+        <div
           style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#000', zIndex: 3000, overflow: 'hidden' }}
         >
           <TransformWrapper
             initialScale={1}
-            minScale={1}
             maxScale={4}
             centerOnInit={true}
             doubleClick={{ mode: 'toggle' }}
