@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 import { chargerMessages, sauvegarderMessages, chargerConversations as chargerConversationsCache, sauvegarderConversations as sauvegarderConversationsCache } from '../db';
@@ -231,24 +231,21 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const convIdActuel = selectedUser ? `user_${selectedUser.id || selectedUser.user_id}` : groupeActif ? `groupe_${groupeActif.id}` : null;
 
   // Scroll instantané UNIQUEMENT quand on change de conversation
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!convIdActuel) return;
     if (convIdActuel === scrollDoneRef.current) return;
     
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
-      scrollDoneRef.current = convIdActuel;
-    }, 150);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    scrollDoneRef.current = convIdActuel;
   }, [convIdActuel]);
 
+
   // Scroll fluide quand un nouveau message arrive
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!convIdActuel) return;
     if (convIdActuel !== scrollDoneRef.current) return;
     
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messagesParConv]);
 
   const getToken = () => localStorage.getItem('access_token') || '';
