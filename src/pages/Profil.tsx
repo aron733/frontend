@@ -719,8 +719,8 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
       {/* Écran Sécurité (full screen) */}
       {modalSecuriteOuvert && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#0a0a0f', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#0a0a0f', zIndex: 2000, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
             <h2 style={{ color: 'white', fontSize: '20px', margin: 0 }}>Sécurité</h2>
             <button onClick={() => setModalSecuriteOuvert(false)} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -728,7 +728,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           </div>
 
           {!modalMdpOuvert ? (
-            <>
+            <div style={{ padding: '20px' }}>
               <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '20px' }}>
                 Voici tes dernières connexions. Si tu ne reconnais pas une connexion, change ton mot de passe.
               </p>
@@ -744,44 +744,64 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
               )}
               <button
                 onClick={() => { setMdpEmail(userData.email || ''); setModeMdp('email'); setModalMdpOuvert(true); }}
-                style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', marginTop: '20px' }}
+                style={{ ...styles.successBtn, marginTop: '20px' }}
               >
                 Changer mon mot de passe
               </button>
-            </>
+            </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, minHeight: '60vh' }}>
-              {modeMdp === 'email' && (
-                <>
-                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Changer mon mot de passe</h2>
-                  <p style={{ color: '#888', textAlign: 'center', marginBottom: '20px' }}>Un code te sera envoyé par email.</p>
-                  <input type="email" value={mdpEmail} onChange={(e) => setMdpEmail(e.target.value)} placeholder="Ton email" style={{ width: '100%', maxWidth: '400px', padding: '15px', borderRadius: '12px', border: '1px solid #2a2a3e', background: '#1a1a2e', color: 'white', marginBottom: '20px' }} />
-                  <button onClick={envoyerCodeMdp} disabled={mdpLoading || !mdpEmail} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>{mdpLoading ? 'Envoi...' : 'Envoyer le code'}</button>
-                </>
-              )}
-              {modeMdp === 'otp' && (
-                <>
-                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Code de vérification</h2>
-                  <p style={{ color: '#888', textAlign: 'center', marginBottom: '20px' }}>Saisis le code envoyé à {mdpEmail}</p>
-                  <input type="text" value={mdpCode} onChange={(e) => setMdpCode(e.target.value)} placeholder="123456" maxLength={6} style={{ width: '100%', maxWidth: '400px', padding: '15px', borderRadius: '12px', border: '1px solid #2a2a3e', background: '#1a1a2e', color: 'white', marginBottom: '20px', textAlign: 'center', fontSize: '24px', letterSpacing: '10px' }} />
-                  <button onClick={verifierCodeMdp} disabled={mdpLoading || mdpCode.length !== 6} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>{mdpLoading ? 'Vérification...' : 'Vérifier'}</button>
-                </>
-              )}
-              {modeMdp === 'nouveau' && (
-                <>
-                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Nouveau mot de passe</h2>
-                  <input type="password" value={mdpNouveau} onChange={(e) => setMdpNouveau(e.target.value)} placeholder="Nouveau mot de passe" style={{ width: '100%', maxWidth: '400px', padding: '15px', borderRadius: '12px', border: '1px solid #2a2a3e', background: '#1a1a2e', color: 'white', marginBottom: '20px' }} />
-                  <button onClick={reinitialiserMdp} disabled={mdpLoading || mdpNouveau.length < 6} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>{mdpLoading ? 'Enregistrement...' : 'Enregistrer'}</button>
-                </>
-              )}
-              {modeMdp === 'succes' && (
-                <>
-                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Mot de passe changé ! ✅</h2>
-                  <p style={{ color: '#888', textAlign: 'center', marginBottom: '20px' }}>Tu peux maintenant te connecter avec ton nouveau mot de passe.</p>
-                  <button onClick={() => { setModalMdpOuvert(false); setModalSecuriteOuvert(false); }} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>Fermer</button>
-                </>
-              )}
-              <button onClick={() => setModalMdpOuvert(false)} style={{ marginTop: '20px', background: 'transparent', border: 'none', color: '#888', cursor: 'pointer' }}>Annuler</button>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+              <div style={styles.successBox}>
+                {modeMdp === 'email' && (
+                  <>
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '20px' }}>
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    <h2 style={styles.successTitle}>Réinitialisation</h2>
+                    <p style={styles.successText}>Saisis ton email pour recevoir un code de vérification.</p>
+                    <input type="email" value={mdpEmail} onChange={(e) => setMdpEmail(e.target.value)} placeholder="ton@email.com" style={{ ...styles.input, marginBottom: '15px' }} />
+                    <button onClick={envoyerCodeMdp} disabled={mdpLoading || !mdpEmail} style={{ ...styles.successBtn, opacity: mdpLoading || !mdpEmail ? 0.5 : 1 }}>
+                      {mdpLoading ? 'Envoi...' : 'Envoyer le code'}
+                    </button>
+                  </>
+                )}
+                {modeMdp === 'otp' && (
+                  <>
+                    <h2 style={styles.successTitle}>Vérification</h2>
+                    <p style={styles.successText}>Saisis le code envoyé à <strong>{mdpEmail}</strong></p>
+                    <input type="text" value={mdpCode} onChange={(e) => setMdpCode(e.target.value)} placeholder="123456" maxLength={6} style={{ ...styles.input, textAlign: 'center', fontSize: '24px', letterSpacing: '10px', marginBottom: '15px' }} />
+                    <button onClick={verifierCodeMdp} disabled={mdpLoading || mdpCode.length !== 6} style={{ ...styles.successBtn, opacity: mdpLoading || mdpCode.length !== 6 ? 0.5 : 1 }}>
+                      {mdpLoading ? 'Vérification...' : 'Vérifier'}
+                    </button>
+                  </>
+                )}
+                {modeMdp === 'nouveau' && (
+                  <>
+                    <h2 style={styles.successTitle}>Nouveau mot de passe</h2>
+                    <input type="password" value={mdpNouveau} onChange={(e) => setMdpNouveau(e.target.value)} placeholder="Nouveau mot de passe" style={{ ...styles.input, marginBottom: '15px' }} />
+                    <button onClick={reinitialiserMdp} disabled={mdpLoading || mdpNouveau.length < 6} style={{ ...styles.successBtn, opacity: mdpLoading || mdpNouveau.length < 6 ? 0.5 : 1 }}>
+                      {mdpLoading ? 'Enregistrement...' : 'Enregistrer'}
+                    </button>
+                  </>
+                )}
+                {modeMdp === 'succes' && (
+                  <>
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '20px' }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="8 12 11 15 16 9" />
+                    </svg>
+                    <h2 style={styles.successTitle}>Mot de passe changé !</h2>
+                    <p style={styles.successText}>Tu peux maintenant te connecter avec ton nouveau mot de passe.</p>
+                    <button onClick={() => { setModalMdpOuvert(false); setModalSecuriteOuvert(false); }} style={styles.successBtn}>Fermer</button>
+                  </>
+                )}
+                {modeMdp !== 'succes' && (
+                  <button onClick={() => setModalMdpOuvert(false)} style={{ background: 'transparent', border: 'none', color: '#888', fontSize: '13px', marginTop: '15px', cursor: 'pointer' }}>
+                    Annuler
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -1159,6 +1179,37 @@ const styles = {
   fieldLabel: { color: '#aaa', fontSize: '13px', display: 'block', marginBottom: '6px' },
   input: { width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0f0f1a', color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box' as const },
   inputDisabled: { width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#666', fontSize: '14px', outline: 'none', boxSizing: 'border-box' as const, cursor: 'not-allowed' as const },
+  successBox: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    textAlign: 'center' as const,
+    padding: '20px',
+  },
+  successTitle: {
+    color: '#fff',
+    fontSize: '22px',
+    fontWeight: 600,
+    marginBottom: '10px',
+  },
+  successText: {
+    color: '#888',
+    fontSize: '14px',
+    lineHeight: 1.6,
+    marginBottom: '20px',
+  },
+  successBtn: {
+    padding: '14px 30px',
+    borderRadius: '12px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: 'white',
+    fontSize: '16px',
+    fontWeight: 'bold' as const,
+    cursor: 'pointer',
+    width: '100%',
+    maxWidth: '400px',
+  },
   saveBtn: { width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontSize: '15px', fontWeight: 'bold' as const, cursor: 'pointer', marginTop: '10px' },
   modalIconWrap: { width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(220, 53, 69, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' },
   modalSousTexte: { color: '#888', fontSize: '14px', margin: '0 0 0', lineHeight: 1.4 },
