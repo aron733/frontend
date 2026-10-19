@@ -53,7 +53,7 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
         </div>
         <div 
           style={styles.avatar} 
-          onClick={() => onNavigate('profil')}
+          onClick={() => { if (photoUrl) onPhotoClick(photoUrl); }}
         >
           {photoUrl ? (
             <img src={photoUrl} style={styles.avatarImg} alt="" />
