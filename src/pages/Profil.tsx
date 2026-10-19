@@ -695,74 +695,73 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       )}
 
 
-      {/* Modal Sécurité */}
+      {/* Écran Sécurité (full screen) */}
       {modalSecuriteOuvert && (
-        <div style={styles.overlayConfirmation} onClick={() => setModalSecuriteOuvert(false)}>
-          <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.modalTitre}>Sécurité</h3>
-            <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>
-              Voici tes dernières connexions. Si tu ne reconnais pas une connexion, change ton mot de passe.
-            </p>
-            {connexions.length === 0 ? (
-              <p style={{ color: '#888', textAlign: 'center' }}>Aucune connexion récente.</p>
-            ) : (
-              connexions.map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: '#1a1a2e', borderRadius: '8px', marginBottom: '8px' }}>
-                  <div>
-                    <p style={{ color: 'white', fontSize: '14px', margin: 0 }}>{c.device || 'Appareil inconnu'} · {c.navigateur || '?'}</p>
-                    <p style={{ color: '#888', fontSize: '12px', margin: '3px 0 0 0' }}>IP: {c.ip} · {new Date(c.date).toLocaleString('fr-FR')}</p>
-                  </div>
-                </div>
-              ))
-            )}
-            <button
-              onClick={() => { setMdpEmail(userData.email || ''); setModeMdp('email'); setModalMdpOuvert(true); setModalSecuriteOuvert(false); }}
-              style={{ ...styles.saveBtn, marginTop: '15px' }}
-            >
-              Changer mon mot de passe
-            </button>
-            <button onClick={() => setModalSecuriteOuvert(false)} style={{ ...styles.saveBtn, background: '#2a2a3e', color: '#aaa', marginTop: '10px' }}>
-              Fermer
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#0a0a0f', zIndex: 2000, overflowY: 'auto', padding: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 style={{ color: 'white', fontSize: '20px', margin: 0 }}>Sécurité</h2>
+            <button onClick={() => setModalSecuriteOuvert(false)} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
-        </div>
-      )}
 
-      {/* Modal Changer mot de passe */}
-      {modalMdpOuvert && (
-        <div style={styles.overlayConfirmation} onClick={() => setModalMdpOuvert(false)}>
-          <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
-            {modeMdp === 'email' && (
-              <>
-                <h3 style={styles.modalTitre}>Changer mon mot de passe</h3>
-                <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>Un code te sera envoyé par email.</p>
-                <input type="email" value={mdpEmail} onChange={(e) => setMdpEmail(e.target.value)} placeholder="Ton email" style={{ ...styles.input, marginBottom: '15px' }} />
-                <button onClick={envoyerCodeMdp} disabled={mdpLoading || !mdpEmail} style={styles.saveBtn}>{mdpLoading ? 'Envoi...' : 'Envoyer le code'}</button>
-              </>
-            )}
-            {modeMdp === 'otp' && (
-              <>
-                <h3 style={styles.modalTitre}>Code de vérification</h3>
-                <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>Saisis le code envoyé à {mdpEmail}</p>
-                <input type="text" value={mdpCode} onChange={(e) => setMdpCode(e.target.value)} placeholder="123456" maxLength={6} style={{ ...styles.input, marginBottom: '15px' }} />
-                <button onClick={verifierCodeMdp} disabled={mdpLoading || mdpCode.length !== 6} style={styles.saveBtn}>{mdpLoading ? 'Vérification...' : 'Vérifier'}</button>
-              </>
-            )}
-            {modeMdp === 'nouveau' && (
-              <>
-                <h3 style={styles.modalTitre}>Nouveau mot de passe</h3>
-                <input type="password" value={mdpNouveau} onChange={(e) => setMdpNouveau(e.target.value)} placeholder="Nouveau mot de passe" style={{ ...styles.input, marginBottom: '15px' }} />
-                <button onClick={reinitialiserMdp} disabled={mdpLoading || mdpNouveau.length < 6} style={styles.saveBtn}>{mdpLoading ? 'Enregistrement...' : 'Enregistrer'}</button>
-              </>
-            )}
-            {modeMdp === 'succes' && (
-              <>
-                <h3 style={styles.modalTitre}>Mot de passe changé ! ✅</h3>
-                <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>Tu peux maintenant te connecter avec ton nouveau mot de passe.</p>
-                <button onClick={() => setModalMdpOuvert(false)} style={styles.saveBtn}>Fermer</button>
-              </>
-            )}
-          </div>
+          {!modalMdpOuvert ? (
+            <>
+              <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '20px' }}>
+                Voici tes dernières connexions. Si tu ne reconnais pas une connexion, change ton mot de passe.
+              </p>
+              {connexions.length === 0 ? (
+                <p style={{ color: '#888', textAlign: 'center' }}>Aucune connexion récente.</p>
+              ) : (
+                connexions.map((c, i) => (
+                  <div key={i} style={{ background: '#111120', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '15px', marginBottom: '10px' }}>
+                    <p style={{ color: 'white', fontSize: '14px', margin: 0 }}>{c.device || 'Appareil inconnu'} · {c.navigateur || '?'}</p>
+                    <p style={{ color: '#888', fontSize: '12px', margin: '5px 0 0 0' }}>IP: {c.ip} · {new Date(c.date).toLocaleString('fr-FR')}</p>
+                  </div>
+                ))
+              )}
+              <button
+                onClick={() => { setMdpEmail(userData.email || ''); setModeMdp('email'); setModalMdpOuvert(true); }}
+                style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', marginTop: '20px' }}
+              >
+                Changer mon mot de passe
+              </button>
+            </>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, minHeight: '60vh' }}>
+              {modeMdp === 'email' && (
+                <>
+                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Changer mon mot de passe</h2>
+                  <p style={{ color: '#888', textAlign: 'center', marginBottom: '20px' }}>Un code te sera envoyé par email.</p>
+                  <input type="email" value={mdpEmail} onChange={(e) => setMdpEmail(e.target.value)} placeholder="Ton email" style={{ width: '100%', maxWidth: '400px', padding: '15px', borderRadius: '12px', border: '1px solid #2a2a3e', background: '#1a1a2e', color: 'white', marginBottom: '20px' }} />
+                  <button onClick={envoyerCodeMdp} disabled={mdpLoading || !mdpEmail} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>{mdpLoading ? 'Envoi...' : 'Envoyer le code'}</button>
+                </>
+              )}
+              {modeMdp === 'otp' && (
+                <>
+                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Code de vérification</h2>
+                  <p style={{ color: '#888', textAlign: 'center', marginBottom: '20px' }}>Saisis le code envoyé à {mdpEmail}</p>
+                  <input type="text" value={mdpCode} onChange={(e) => setMdpCode(e.target.value)} placeholder="123456" maxLength={6} style={{ width: '100%', maxWidth: '400px', padding: '15px', borderRadius: '12px', border: '1px solid #2a2a3e', background: '#1a1a2e', color: 'white', marginBottom: '20px', textAlign: 'center', fontSize: '24px', letterSpacing: '10px' }} />
+                  <button onClick={verifierCodeMdp} disabled={mdpLoading || mdpCode.length !== 6} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>{mdpLoading ? 'Vérification...' : 'Vérifier'}</button>
+                </>
+              )}
+              {modeMdp === 'nouveau' && (
+                <>
+                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Nouveau mot de passe</h2>
+                  <input type="password" value={mdpNouveau} onChange={(e) => setMdpNouveau(e.target.value)} placeholder="Nouveau mot de passe" style={{ width: '100%', maxWidth: '400px', padding: '15px', borderRadius: '12px', border: '1px solid #2a2a3e', background: '#1a1a2e', color: 'white', marginBottom: '20px' }} />
+                  <button onClick={reinitialiserMdp} disabled={mdpLoading || mdpNouveau.length < 6} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>{mdpLoading ? 'Enregistrement...' : 'Enregistrer'}</button>
+                </>
+              )}
+              {modeMdp === 'succes' && (
+                <>
+                  <h2 style={{ color: 'white', fontSize: '22px', textAlign: 'center' }}>Mot de passe changé ! ✅</h2>
+                  <p style={{ color: '#888', textAlign: 'center', marginBottom: '20px' }}>Tu peux maintenant te connecter avec ton nouveau mot de passe.</p>
+                  <button onClick={() => { setModalMdpOuvert(false); setModalSecuriteOuvert(false); }} style={{ width: '100%', maxWidth: '400px', padding: '15px', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>Fermer</button>
+                </>
+              )}
+              <button onClick={() => setModalMdpOuvert(false)} style={{ marginTop: '20px', background: 'transparent', border: 'none', color: '#888', cursor: 'pointer' }}>Annuler</button>
+            </div>
+          )}
         </div>
       )}
 
