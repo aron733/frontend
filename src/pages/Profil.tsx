@@ -16,6 +16,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 
 import { API_URL } from '../config';
 import BottomNav from '../BottomNav';
+import Dashboard from './Dashboard';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -441,11 +442,14 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
       <main style={styles.main}>
         {pageActive === 'profil' && (
+          <Dashboard user={userData} onNavigate={setPageActive} />
+        )}
+        {false && (
           <div style={styles.profilCard}>
             <div style={styles.coverPhoto}>
               {photoUrl ? (
                 <img 
-                  src={photoUrl} 
+                  src={photoUrl || ''} 
                   style={{ ...styles.coverImg, cursor: 'zoom-in' }} 
                   alt="photo" 
                   onClick={() => setLightboxOuverte(true)}
