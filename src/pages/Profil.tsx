@@ -527,48 +527,6 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
         </button>
       </header>
 
-      {/* Bandeau completer profil */}
-      {(() => {
-        const userStr = localStorage.getItem('user');
-        if (!userStr) return null;
-        try {
-          const u = JSON.parse(userStr);
-          if (u.a_complete_profil === true) return null;
-          const manque = !u.age || !u.sexe || !u.numero || !u.pays || u.pays === 'Inconnu';
-          if (!manque) return null;
-          return (
-            <div
-              onClick={() => window.dispatchEvent(new CustomEvent('ouvrir-modal-profil'))}
-              style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: '#fff',
-                padding: '12px 16px',
-                margin: '0 12px 12px',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 600,
-                boxShadow: '0 4px 12px rgba(102,126,234,0.3)',
-              }}
-            >
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                Complète ton profil pour être visible
-              </span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </div>
-          );
-        } catch (e) { return null; }
-      })()}
-
         {menuOuvert && (
           <div onClick={() => setMenuOuvert(false)} style={styles.overlayMenu} />
         )}
