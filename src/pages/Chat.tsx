@@ -218,6 +218,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [showRenommer, setShowRenommer] = useState(false);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesAreaRef = useRef<HTMLDivElement | null>(null);
   const scrollDoneRef = useRef<string | null>(null);
   const [enregistrement, setEnregistrement] = useState(false);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
@@ -235,7 +236,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     if (!convIdActuel) return;
     if (convIdActuel === scrollDoneRef.current) return;
     
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    if (messagesAreaRef.current) {
+      messagesAreaRef.current.scrollTop = messagesAreaRef.current.scrollHeight;
+    }
     scrollDoneRef.current = convIdActuel;
   }, [convIdActuel]);
 
@@ -245,7 +248,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
     if (!convIdActuel) return;
     if (convIdActuel !== scrollDoneRef.current) return;
     
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesAreaRef.current) {
+      messagesAreaRef.current.scrollTop = messagesAreaRef.current.scrollHeight;
+    }
   }, [messagesParConv]);
 
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -1805,7 +1810,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               </div>
             )}
 
-            <div style={styles.messagesArea}>
+            <div ref={messagesAreaRef} style={styles.messagesArea}>
               {(messagesParConv[`groupe_${groupeActif?.id}`] || []).map((msg, index) => (
                 <div
                   key={msg.client_msg_id || msg.id || index}
@@ -2103,7 +2108,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
               </div>
             )}
 
-            <div style={styles.messagesArea}>
+            <div ref={messagesAreaRef} style={styles.messagesArea}>
                 {(messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || []).map((msg, index) => (
                   <div
                     key={msg.client_msg_id || msg.id || index}
@@ -3392,7 +3397,7 @@ const styles = {
   },
   messagesArea: {
     flex: 1,
-    padding: '20px 12px',
+    padding: '20px 12px 100px 12px',
     display: 'flex',
     flexDirection: 'column' as const,
     overflowY: 'auto' as const,
