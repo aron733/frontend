@@ -8,7 +8,7 @@ interface BottomNavProps {
 export default function BottomNav({ pageActive, setPageActive }: BottomNavProps) {
   const tabs = [
     {
-      id: 'chat',
+      id: 'messages',
       label: 'Chat',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -17,8 +17,8 @@ export default function BottomNav({ pageActive, setPageActive }: BottomNavProps)
       ),
     },
     {
-      id: 'vokyvo',
-      label: 'Vokyvo AI',
+      id: 'messages',
+      label: 'Chat',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
