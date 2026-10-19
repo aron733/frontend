@@ -362,15 +362,15 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
           {/* Support */}
           <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>Support</p>
-          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "https://vokyvo.com/help?from=app"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = Capacitor.isNativePlatform() ? "https://vokyvo.com/help?from=app" : "https://vokyvo.com/help"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             Centre d'aide
           </button>
-          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "https://vokyvo.com/cgu?from=app"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = Capacitor.isNativePlatform() ? "https://vokyvo.com/cgu?from=app" : "https://vokyvo.com/cgu"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             CGU
           </button>
-          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "https://vokyvo.com/confidentialite?from=app"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = Capacitor.isNativePlatform() ? "https://vokyvo.com/confidentialite?from=app" : "https://vokyvo.com/confidentialite"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Confidentialité
           </button>
