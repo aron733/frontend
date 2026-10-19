@@ -8,11 +8,13 @@ interface BottomNavProps {
 export default function BottomNav({ pageActive, setPageActive }: BottomNavProps) {
   const tabs = [
     {
-      id: 'messages',
-      label: 'Chat',
+      id: 'vokyvo',
+      label: 'Vokyvo AI',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+          <path d="M8 12h8" />
+          <path d="M12 8v8" />
         </svg>
       ),
     },
@@ -21,9 +23,7 @@ export default function BottomNav({ pageActive, setPageActive }: BottomNavProps)
       label: 'Chat',
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
-          <path d="M8 12h8" />
-          <path d="M12 8v8" />
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       ),
     },
@@ -53,7 +53,6 @@ export default function BottomNav({ pageActive, setPageActive }: BottomNavProps)
   return (
     <div style={styles.nav}>
       {tabs.map((tab) => {
-        // On considère que "profil" est actif si on n'est pas sur chat/vokyvo/news
         const estActif = pageActive === tab.id;
         return (
           <button
