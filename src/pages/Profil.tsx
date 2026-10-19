@@ -506,7 +506,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <h3 style={styles.modalTitre}>Modifier le profil</h3>
 
             <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Email</label>
+              <label style={styles.fieldLabel}>Email (non modifiable)</label>
               <input type="text" value={userData.email || ''} disabled style={styles.inputDisabled} />
             </div>
 
@@ -522,7 +522,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Âge</label>
-              <input type="number" value={editAge} onChange={(e) => setEditAge(e.target.value)} placeholder="17" min="15" max="120" style={styles.input} />
+              <input type="number" value={editAge} onChange={(e) => setEditAge(e.target.value)} placeholder="17" min="16" max="120" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
@@ -534,9 +534,14 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               </select>
             </div>
 
-            <button onClick={sauvegarderProfil} disabled={saveEnCours} style={styles.saveBtn}>
-              {saveEnCours ? 'Enregistrement...' : 'Enregistrer'}
-            </button>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button onClick={() => setModalProfilOuvert(false)} style={{ ...styles.saveBtn, background: '#2a2a3e', color: '#aaa' }}>
+                Annuler
+              </button>
+              <button onClick={sauvegarderProfil} disabled={saveEnCours} style={styles.saveBtn}>
+                {saveEnCours ? 'Enregistrement...' : 'Enregistrer'}
+              </button>
+            </div>
           </div>
         </div>
       )}
