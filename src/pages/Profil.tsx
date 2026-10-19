@@ -476,8 +476,16 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Met à jour userData
-      const updated = { ...userData, age: editAge, sexe: editSexe, numero: editNumero, pays: editPays };
+      // Met à jour userData avec TOUTES les nouvelles valeurs
+      const updated = {
+        ...userData,
+        age: editAge,
+        sexe: editSexe,
+        numero: `${editIndicatif} ${editNumero}`.trim(),
+        pays: editPays,
+        prenom: editPrenom,
+        nom: editNom,
+      };
       setUserData(updated);
       localStorage.setItem('user', JSON.stringify(updated));
 
