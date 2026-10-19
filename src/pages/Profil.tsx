@@ -262,11 +262,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     }
   };
 
-  const IconeRobot = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z" />
-    </svg>
-  );
 
   // const IconeVideo = () => (
     // <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -362,20 +357,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <IconeProfil /> Profil
           </button>
           */}
-          <button onClick={() => { setPageActive('vokyvo'); setMenuOuvert(false); }} style={styles.menuItem}>
-            <IconeRobot /> VOKYVO AI
-          </button>
-          <button onClick={() => { setPageActive('messages'); setMenuOuvert(false); }} style={styles.menuItem}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg> Messages
-          </button>
-          {/* BOUTON VISIO CACHÉ - réactivable
-          <button onClick={() => { setPageActive('visio'); setMenuOuvert(false); }} style={styles.menuItem}>
-            <IconeVideo /> Appel vidéo
-          </button>
-          */}
-          <button onClick={() => { setPageActive('news'); setMenuOuvert(false); }} style={styles.menuItem}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v16H4z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg> News
-          </button>
+          {/* Liens VOKYVO AI, Messages, News retires (deja dans la BottomNav) */}
           {/* BOUTON COURS DÉSACTIVÉ - fusionné dans Vokyvo AI
           <button onClick={() => { setPageActive('cours'); setMenuOuvert(false); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Cours
