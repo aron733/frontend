@@ -204,11 +204,12 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   useEffect(() => {
     if (!convInitiale) return;
     if (convInitiale.startsWith('user_')) {
+      setTabActif('discussions');
       const userId = convInitiale.replace('user_', '');
-      // On cherche l'utilisateur dans allUsers (ou on le construit)
       const u = allUsers.find((x: any) => String(x.id) === String(userId));
       if (u) selectUser(u);
     } else if (convInitiale.startsWith('groupe_')) {
+      setTabActif('groupes');
       const groupeId = convInitiale.replace('groupe_', '');
       const g = groupes.find((x: any) => String(x.id) === String(groupeId));
       if (g) {
