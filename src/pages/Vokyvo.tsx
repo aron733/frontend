@@ -99,7 +99,14 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, imagePreview]);
+  }, [messages, imagePreview, loading]);
+
+  // Scroll spécifique quand le loader apparaît
+  useEffect(() => {
+    if (loading) {
+      setTimeout(scrollToBottom, 150);
+    }
+  }, [loading]);
 
   useEffect(() => {
     if (!menuActionsOuvert) return;
