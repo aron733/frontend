@@ -19,7 +19,7 @@ import BottomNav from '../BottomNav';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [pageActive, setPageActive] = useState<'profil' | 'chat' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'vokyvo' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
   const [userData, setUserData] = useState(user);
   const [stats, setStats] = useState({ nb_messages: 0, nb_conversations: 0, anciennete: 0, unite: 'jours', date_inscription: '' });
 
@@ -360,7 +360,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <IconeProfil /> Profil
           </button>
           */}
-          <button onClick={() => { setPageActive('chat'); setMenuOuvert(false); }} style={styles.menuItem}>
+          <button onClick={() => { setPageActive('vokyvo'); setMenuOuvert(false); }} style={styles.menuItem}>
             <IconeRobot /> VOKYVO AI
           </button>
           <button onClick={() => { setPageActive('messages'); setMenuOuvert(false); }} style={styles.menuItem}>
@@ -490,7 +490,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
 
         
-        {pageActive === 'chat' && <Vokyvo onRetour={() => setPageActive('profil')} />}
+        {pageActive === 'vokyvo' && <Vokyvo onRetour={() => setPageActive('profil')} />}
         {/* {pageActive === 'visio' && <Visio />} */}
         {pageActive === 'messages' && <Chat onRetour={() => setPageActive('profil')} />}
         {/* Composant Confidentialite retire (remplace par page HTML statique) */}
