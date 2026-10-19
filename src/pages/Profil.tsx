@@ -15,6 +15,7 @@ import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 
 import { API_URL } from '../config';
+import BottomNav from '../BottomNav';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -828,6 +829,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </div>
         </div>
       )}
+      <BottomNav pageActive={pageActive} setPageActive={setPageActive} />
     </div>
   );
 }
