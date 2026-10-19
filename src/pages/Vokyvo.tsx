@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -97,8 +97,8 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
     chargerChats();
   }, []);
 
-  useEffect(() => {
-    scrollToBottom();
+  useLayoutEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messages, imagePreview, loading]);
 
   // Scroll spécifique quand le loader apparaît
