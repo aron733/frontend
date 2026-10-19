@@ -394,6 +394,10 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#dc3545' }}>
             <IconeDeconnexion /> Déconnexion
           </button>
+
+          <p style={{ color: '#555', fontSize: '11px', textAlign: 'center', marginTop: '20px' }}>
+            VOKYVO v{(window as any).__APP_VERSION__ || '3.30.0'}
+          </p>
         </div>
 
       {lightboxOuverte && (photoLightbox || photoUrl) && (
