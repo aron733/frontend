@@ -870,7 +870,7 @@ const styles = {
     zIndex: 1000,
   },
   menuItem: { padding: '15px 20px', background: 'transparent', border: 'none', color: 'white', fontSize: '15px', cursor: 'pointer', textAlign: 'left' as const, borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px' },
-  main: { display: 'flex', justifyContent: 'center' },
+  main: { flex: 1, display: 'flex', flexDirection: 'column' as const, width: '100%' },
   profilCard: { maxWidth: '100%', width: '100%', textAlign: 'center' as const },
   avatarContainer: { position: 'relative' as const, width: '150px', height: '150px', margin: '0 auto 25px', borderRadius: '50%', padding: '3px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
   avatar: { width: '100%', height: '100%', borderRadius: '50%', background: '#1a1a2e', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '60px', fontWeight: 'bold' },
