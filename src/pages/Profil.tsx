@@ -674,16 +674,9 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               ))
             )}
             <button
-              onClick={async () => {
-                try {
-                  const token = localStorage.getItem('access_token');
-                  await axios.post(`${API_URL}/mot-de-passe-oublie/`, { email: userData.email }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                  });
-                  alert('Un code a été envoyé à ton email pour changer ton mot de passe.');
-                } catch (e) {
-                  alert('Erreur lors de l\'envoi.');
-                }
+              onClick={() => {
+                localStorage.setItem('forgot_email', userData.email);
+                window.location.href = '/?forgot=1';
               }}
               style={{ ...styles.saveBtn, marginTop: '15px' }}
             >

@@ -56,6 +56,18 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
   });
 
   // Lit les erreurs OAuth (maintenance / banni) passées en query params
+  // Ouvre le mode "Mot de passe oublié" si ?forgot=1 (depuis le profil)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('forgot') === '1') {
+      const email = localStorage.getItem('forgot_email');
+      if (email) {
+        setForgotEmail(email);
+        setModeForgot('email');
+      }
+    }
+  }, []);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const error = params.get('error');
