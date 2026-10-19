@@ -182,9 +182,10 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
 
-  // Ouvre le modal si des champs manquent (après OAuth Google)
+  // Ouvre le modal si des champs manquent (après OAuth Google) — UNE SEULE FOIS
   useEffect(() => {
-    if (champsManquants && champsManquants.length > 0) {
+    if (champsManquants && champsManquants.length > 0 && !localStorage.getItem('profil_force_ouvert')) {
+      localStorage.setItem('profil_force_ouvert', '1');
       setModalProfilOuvert(true);
     }
   }, [champsManquants]);
@@ -446,7 +447,8 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
       setEditPrenom(userData.prenom || userData.first_name || '');
       setEditNom(userData.nom || userData.last_name || '');
     }
-    setModalProfilOuvert(true);
+    // Ouvre le modal après un petit délai (laisse React appliquer les états)
+    setTimeout(() => setModalProfilOuvert(true), 50);
   };
 
   const sauvegarderProfil = async () => {
