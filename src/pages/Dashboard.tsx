@@ -4,7 +4,7 @@ import { API_URL } from '../config';
 
 interface DashboardProps {
   user: any;
-  onNavigate: (page: 'vokyvo' | 'messages' | 'news' | 'profil') => void;
+  onNavigate: (page: 'vokyvo' | 'messages' | 'news' | 'profil', convId?: string) => void;
   onPhotoClick: (url: string) => void;
 }
 
@@ -106,7 +106,7 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
       ) : (
         <div style={styles.liste}>
           {conversations.map((c) => (
-            <div key={`c-${c.id}`} style={styles.item} onClick={() => onNavigate('messages')}>
+            <div key={`c-${c.id}`} style={styles.item} onClick={() => onNavigate('messages', `user_${c.autre_user.id}`)}>
               <div 
                 style={styles.itemAvatar}
                 onClick={(e) => { e.stopPropagation(); if (c.autre_user?.photo) onPhotoClick(c.autre_user.photo); }}
@@ -124,7 +124,7 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
             </div>
           ))}
           {groupes.map((g) => (
-            <div key={`g-${g.id}`} style={styles.item} onClick={() => onNavigate('messages')}>
+            <div key={`g-${g.id}`} style={styles.item} onClick={() => onNavigate('messages', `groupe_${g.id}`)}>
               <div 
                 style={styles.itemAvatar}
                 onClick={(e) => { e.stopPropagation(); if (g.photo_profil) onPhotoClick(g.photo_profil); }}

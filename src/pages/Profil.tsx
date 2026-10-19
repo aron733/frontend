@@ -20,6 +20,7 @@ import Dashboard from './Dashboard';
 
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const [convInitiale, setConvInitiale] = useState<string | null>(null);
   const [pageActive, setPageActive] = useState<'profil' | 'vokyvo' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
   const [userData, setUserData] = useState(user);
   const [stats, setStats] = useState({ nb_messages: 0, nb_conversations: 0, anciennete: 0, unite: 'jours', date_inscription: '' });
@@ -425,7 +426,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
       <main style={styles.main}>
         {pageActive === 'profil' && (
-          <Dashboard user={userData} onNavigate={setPageActive} onPhotoClick={(url) => { setPhotoLightbox(url); setLightboxOuverte(true); }} />
+          <Dashboard user={userData} onNavigate={(page, convId) => { if (convId) setConvInitiale(convId); setPageActive(page); }} onPhotoClick={(url) => { setPhotoLightbox(url); setLightboxOuverte(true); }} />
         )}
         {false && (
           <div style={styles.profilCard}>
@@ -479,7 +480,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         
         {pageActive === 'vokyvo' && <Vokyvo onRetour={() => setPageActive('profil')} />}
         {/* {pageActive === 'visio' && <Visio />} */}
-        {pageActive === 'messages' && <Chat onRetour={() => setPageActive('profil')} />}
+        {pageActive === 'messages' && <Chat onRetour={() => setPageActive('profil')} convInitiale={convInitiale} />}
         {/* Composant Confidentialite retire (remplace par page HTML statique) */}
         {/* {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />} Désactivé */}
         {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}

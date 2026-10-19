@@ -16,7 +16,7 @@ import { Capacitor } from '@capacitor/core';
 import { Media } from '@capacitor-community/media';
 
 
-function Chat({ onRetour }: { onRetour?: () => void }) {
+function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?: string | null }) {
   const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
   const [messageMenu, setMessageMenu] = useState<{id: number, x: number, y: number} | null>(null);
   const [, setForceRender] = useState(0);
@@ -200,6 +200,25 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [tabActif, setTabActif] = useState<'discussions' | 'groupes'>(() => (localStorage.getItem('vokyvo_tab') as any) || 'discussions');
 
   // Sauvegarde l'onglet actif pour le restaurer au refresh
+  // Ouvre la conversation initiale (depuis le Dashboard)
+  useEffect(() => {
+    if (!convInitiale) return;
+    if (convInitiale.startsWith('user_')) {
+      const userId = convInitiale.replace('user_', '');
+      // On cherche l'utilisateur dans allUsers (ou on le construit)
+      const u = allUsers.find((x: any) => String(x.id) === String(userId));
+      if (u) selectUser(u);
+    } else if (convInitiale.startsWith('groupe_')) {
+      const groupeId = convInitiale.replace('groupe_', '');
+      const g = groupes.find((x: any) => String(x.id) === String(groupeId));
+      if (g) {
+        setGroupeActif(g);
+        setSelectedUser(null);
+        setConvActive(`groupe_${g.id}`);
+      }
+    }
+  }, [convInitiale, allUsers, groupes]);
+
   useEffect(() => {
     localStorage.setItem('vokyvo_tab', tabActif);
   }, [tabActif]);
