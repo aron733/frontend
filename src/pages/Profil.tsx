@@ -829,7 +829,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </div>
         </div>
       )}
-      <BottomNav pageActive={pageActive} setPageActive={setPageActive} />
+      {(pageActive === 'profil' || pageActive === 'news') && <BottomNav pageActive={pageActive} setPageActive={setPageActive} />}
     </div>
   );
 }
