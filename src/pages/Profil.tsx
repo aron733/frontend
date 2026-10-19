@@ -759,12 +759,12 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Prénom</label>
-              <input type="text" value={editPrenom} onChange={(e) => setEditPrenom(e.target.value)} placeholder="Aron" style={styles.input} />
+              <input type="text" value={editPrenom} onChange={(e) => setEditPrenom(e.target.value)} placeholder="Ton prénom" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Nom</label>
-              <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)} placeholder="VOKOUMA" style={styles.input} />
+              <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)} placeholder="Ton nom" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
@@ -805,7 +805,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Âge</label>
-              <input type="number" value={editAge} onChange={(e) => setEditAge(e.target.value)} placeholder="17" min="16" max="120" style={styles.input} />
+              <input type="number" value={editAge} onChange={(e) => setEditAge(e.target.value)} placeholder="Ton âge" min="16" max="120" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
