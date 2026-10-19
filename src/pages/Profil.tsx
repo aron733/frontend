@@ -451,31 +451,15 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
     }
   };
 
-  const ouvrirModalProfil = async () => {
-    // Recharge les vraies infos depuis l'API
-    try {
-      const token = localStorage.getItem('access_token');
-      const res = await axios.get(`${API_URL}/user/profil/statut/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const u = res.data;
-      setEditAge(u.age ? String(u.age) : '');
-      setEditSexe(u.sexe || '');
-      setEditNumero(u.numero || '');
-      setEditPays(u.pays || '');
-      setEditPrenom(u.prenom || u.first_name || '');
-      setEditNom(u.nom || u.last_name || '');
-    } catch (e) {
-      // Fallback sur le localStorage
-      setEditAge(userData.age ? String(userData.age) : '');
-      setEditSexe(userData.sexe || '');
-      setEditNumero(userData.numero || '');
-      setEditPays(userData.pays || '');
-      setEditPrenom(userData.prenom || userData.first_name || '');
-      setEditNom(userData.nom || userData.last_name || '');
-    }
-    // Ouvre le modal après un petit délai (laisse React appliquer les états)
-    setTimeout(() => setModalProfilOuvert(true), 50);
+  const ouvrirModalProfil = () => {
+    // Utilise userData (déjà chargé depuis l'API au montage)
+    setEditAge(userData.age ? String(userData.age) : '');
+    setEditSexe(userData.sexe || '');
+    setEditNumero(userData.numero || '');
+    setEditPays(userData.pays || '');
+    setEditPrenom(userData.prenom || userData.first_name || '');
+    setEditNom(userData.nom || userData.last_name || '');
+    setModalProfilOuvert(true);
   };
 
   const sauvegarderProfil = async () => {
