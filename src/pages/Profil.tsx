@@ -18,6 +18,49 @@ import { API_URL } from '../config';
 import BottomNav from '../BottomNav';
 import Dashboard from './Dashboard';
 
+const INDICATIFS = [
+  { code: '+226', pays: 'Burkina Faso', drapeau: '🇧🇫' },
+  { code: '+223', pays: 'Mali', drapeau: '🇲🇱' },
+  { code: '+227', pays: 'Niger', drapeau: '🇳🇪' },
+  { code: '+225', pays: "Côte d'Ivoire", drapeau: '🇨🇮' },
+  { code: '+221', pays: 'Sénégal', drapeau: '🇸🇳' },
+  { code: '+229', pays: 'Bénin', drapeau: '🇧🇯' },
+  { code: '+228', pays: 'Togo', drapeau: '🇹🇬' },
+  { code: '+224', pays: 'Guinée', drapeau: '🇬🇳' },
+  { code: '+245', pays: 'Guinée-Bissau', drapeau: '🇬🇼' },
+  { code: '+233', pays: 'Ghana', drapeau: '🇬🇭' },
+  { code: '+234', pays: 'Nigeria', drapeau: '🇳🇬' },
+  { code: '+33', pays: 'France', drapeau: '🇫🇷' },
+  { code: '+1', pays: 'USA/Canada', drapeau: '🇺🇸' },
+  { code: '+44', pays: 'Royaume-Uni', drapeau: '🇬🇧' },
+  { code: '+49', pays: 'Allemagne', drapeau: '🇩🇪' },
+  { code: '+39', pays: 'Italie', drapeau: '🇮🇹' },
+  { code: '+34', pays: 'Espagne', drapeau: '🇪🇸' },
+  { code: '+32', pays: 'Belgique', drapeau: '🇧🇪' },
+  { code: '+41', pays: 'Suisse', drapeau: '🇨🇭' },
+  { code: '+212', pays: 'Maroc', drapeau: '🇲🇦' },
+  { code: '+213', pays: 'Algérie', drapeau: '🇩🇿' },
+  { code: '+216', pays: 'Tunisie', drapeau: '🇹🇳' },
+  { code: '+20', pays: 'Égypte', drapeau: '🇪🇬' },
+  { code: '+27', pays: 'Afrique du Sud', drapeau: '🇿🇦' },
+  { code: '+254', pays: 'Kenya', drapeau: '🇰🇪' },
+  { code: '+255', pays: 'Tanzanie', drapeau: '🇹🇿' },
+  { code: '+256', pays: 'Ouganda', drapeau: '🇺🇬' },
+  { code: '+250', pays: 'Rwanda', drapeau: '🇷🇼' },
+  { code: '+243', pays: 'RD Congo', drapeau: '🇨🇩' },
+  { code: '+242', pays: 'Congo', drapeau: '🇨🇬' },
+  { code: '+237', pays: 'Cameroun', drapeau: '🇨🇲' },
+  { code: '+235', pays: 'Tchad', drapeau: '🇹🇩' },
+  { code: '+236', pays: 'Centrafrique', drapeau: '🇨🇫' },
+  { code: '+241', pays: 'Gabon', drapeau: '🇬🇦' },
+  { code: '+261', pays: 'Madagascar', drapeau: '🇲🇬' },
+  { code: '+230', pays: 'Maurice', drapeau: '🇲🇺' },
+  { code: '+222', pays: 'Mauritanie', drapeau: '🇲🇷' },
+  { code: '+220', pays: 'Gambie', drapeau: '🇬🇲' },
+  { code: '+232', pays: 'Sierra Leone', drapeau: '🇸🇱' },
+  { code: '+231', pays: 'Liberia', drapeau: '🇱🇷' },
+];
+
 function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [convInitiale, setConvInitiale] = useState<string | null>(null);
@@ -39,6 +82,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [editAge, setEditAge] = useState('');
   const [editSexe, setEditSexe] = useState('');
   const [editNumero, setEditNumero] = useState('');
+  const [editIndicatif, setEditIndicatif] = useState('+226');
   const [editPays, setEditPays] = useState('');
   const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
@@ -230,6 +274,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   };
 
   const ouvrirModalProfil = () => {
+    setEditIndicatif('+226');
     setEditAge(userData.age ? String(userData.age) : '');
     setEditSexe(userData.sexe || '');
     setEditNumero(userData.numero || '');
@@ -243,7 +288,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       await axios.patch(`${API_URL}/user/profil/`, {
         age: editAge,
         sexe: editSexe,
-        numero: editNumero,
+        numero: `${editIndicatif} ${editNumero}`.trim(),
         pays: editPays,
       }, {
         headers: { Authorization: `Bearer ${token}` },
@@ -512,12 +557,38 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Téléphone</label>
-              <input type="text" value={editNumero} onChange={(e) => setEditNumero(e.target.value)} placeholder="06 96 54 41" style={styles.input} />
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <select 
+                  value={editIndicatif} 
+                  onChange={(e) => {
+                    setEditIndicatif(e.target.value);
+                    // Le pays se met à jour automatiquement
+                    const pays = INDICATIFS.find(i => i.code === e.target.value);
+                    if (pays) setEditPays(pays.pays);
+                  }} 
+                  style={{ ...styles.input, width: '120px' }}
+                >
+                  {INDICATIFS.map((i) => (
+                    <option key={i.code} value={i.code}>{i.drapeau} {i.code}</option>
+                  ))}
+                </select>
+                <input 
+                  type="tel" 
+                  value={editNumero} 
+                  onChange={(e) => setEditNumero(e.target.value)} 
+                  placeholder="06 96 54 41" 
+                  style={styles.input} 
+                />
+              </div>
             </div>
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Pays</label>
-              <input type="text" value={editPays} onChange={(e) => setEditPays(e.target.value)} placeholder="Burkina Faso" style={styles.input} />
+              <select value={editPays} onChange={(e) => setEditPays(e.target.value)} style={styles.input}>
+                {INDICATIFS.map((i) => (
+                  <option key={i.pays} value={i.pays}>{i.drapeau} {i.pays}</option>
+                ))}
+              </select>
             </div>
 
             <div style={styles.fieldGroup}>
