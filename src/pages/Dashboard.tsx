@@ -5,9 +5,10 @@ import { API_URL } from '../config';
 interface DashboardProps {
   user: any;
   onNavigate: (page: 'vokyvo' | 'messages' | 'news' | 'profil') => void;
+  onPhotoClick: (url: string) => void;
 }
 
-export default function Dashboard({ user, onNavigate }: DashboardProps) {
+export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardProps) {
   const [conversations, setConversations] = useState<any[]>([]);
   const [groupes, setGroupes] = useState<any[]>([]);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -95,15 +96,7 @@ export default function Dashboard({ user, onNavigate }: DashboardProps) {
           <span style={styles.cardLabel}>News</span>
         </button>
 
-        <button onClick={() => onNavigate('profil')} style={styles.card}>
-          <div style={{ ...styles.iconWrap, background: 'rgba(220,53,69,0.15)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </div>
-          <span style={styles.cardLabel}>Profil</span>
-        </button>
+
       </div>
 
       {/* Dernières conversations */}
@@ -114,7 +107,10 @@ export default function Dashboard({ user, onNavigate }: DashboardProps) {
         <div style={styles.liste}>
           {conversations.map((c) => (
             <div key={`c-${c.id}`} style={styles.item} onClick={() => onNavigate('messages')}>
-              <div style={styles.itemAvatar}>
+              <div 
+                style={styles.itemAvatar}
+                onClick={(e) => { e.stopPropagation(); if (c.autre_user?.photo_profil) onPhotoClick(c.autre_user.photo_profil); }}
+              >
                 {c.autre_user?.photo_profil ? (
                   <img src={c.autre_user.photo_profil} style={styles.itemAvatarImg} alt="" />
                 ) : (
@@ -129,7 +125,10 @@ export default function Dashboard({ user, onNavigate }: DashboardProps) {
           ))}
           {groupes.map((g) => (
             <div key={`g-${g.id}`} style={styles.item} onClick={() => onNavigate('messages')}>
-              <div style={styles.itemAvatar}>
+              <div 
+                style={styles.itemAvatar}
+                onClick={(e) => { e.stopPropagation(); if (g.photo_profil) onPhotoClick(g.photo_profil); }}
+              >
                 {g.photo_profil ? (
                   <img src={g.photo_profil} style={styles.itemAvatarImg} alt="" />
                 ) : (

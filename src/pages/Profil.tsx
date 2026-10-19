@@ -41,6 +41,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [editPays, setEditPays] = useState('');
   const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
+  const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
 
   useEffect(() => {
     const chargerStats = async () => {
@@ -403,7 +404,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </button>
         </div>
 
-      {lightboxOuverte && photoUrl && (
+      {lightboxOuverte && (photoLightbox || photoUrl) && (
         <div 
           style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#000', zIndex: 3000, overflow: 'hidden' }}
         >
@@ -421,7 +422,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <img 
-                src={photoUrl} 
+                src={photoLightbox || photoUrl || ''} 
                 style={{ 
                   maxWidth: '100vw', 
                   maxHeight: '100vh', 
@@ -442,7 +443,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
 
       <main style={styles.main}>
         {pageActive === 'profil' && (
-          <Dashboard user={userData} onNavigate={setPageActive} />
+          <Dashboard user={userData} onNavigate={setPageActive} onPhotoClick={(url) => { setPhotoLightbox(url); setLightboxOuverte(true); }} />
         )}
         {false && (
           <div style={styles.profilCard}>
