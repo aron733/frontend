@@ -61,7 +61,7 @@ const INDICATIFS = [
   { code: '+231', pays: 'Liberia', drapeau: '🇱🇷' },
 ];
 
-function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
+function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () => void; champsManquants?: string[] }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [convInitiale, setConvInitiale] = useState<string | null>(null);
   const [pageActive, setPageActive] = useState<'profil' | 'vokyvo' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
@@ -97,6 +97,13 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
+
+  // Ouvre le modal si des champs manquent (après OAuth Google)
+  useEffect(() => {
+    if (champsManquants && champsManquants.length > 0) {
+      setModalProfilOuvert(true);
+    }
+  }, [champsManquants]);
 
   useEffect(() => {
     const chargerStats = async () => {
@@ -332,14 +339,29 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     }
   };
 
-  const ouvrirModalProfil = () => {
-    setEditIndicatif('+226');
-    setEditAge(userData.age ? String(userData.age) : '');
-    setEditSexe(userData.sexe || '');
-    setEditNumero(userData.numero || '');
-    setEditPays(userData.pays || '');
-    setEditPrenom(userData.prenom || userData.first_name || '');
-    setEditNom(userData.nom || userData.last_name || '');
+  const ouvrirModalProfil = async () => {
+    // Recharge les vraies infos depuis l'API
+    try {
+      const token = localStorage.getItem('access_token');
+      const res = await axios.get(`${API_URL}/user/profil/statut/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const u = res.data;
+      setEditAge(u.age ? String(u.age) : '');
+      setEditSexe(u.sexe || '');
+      setEditNumero(u.numero || '');
+      setEditPays(u.pays || '');
+      setEditPrenom(u.prenom || u.first_name || '');
+      setEditNom(u.nom || u.last_name || '');
+    } catch (e) {
+      // Fallback sur le localStorage
+      setEditAge(userData.age ? String(userData.age) : '');
+      setEditSexe(userData.sexe || '');
+      setEditNumero(userData.numero || '');
+      setEditPays(userData.pays || '');
+      setEditPrenom(userData.prenom || userData.first_name || '');
+      setEditNom(userData.nom || userData.last_name || '');
+    }
     setModalProfilOuvert(true);
   };
 

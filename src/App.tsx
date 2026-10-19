@@ -18,6 +18,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [champsManquants, setChampsManquants] = useState<string[]>([]);
 
   // Le bandeau offline est géré par <BandeauOffline />
 
@@ -164,6 +165,24 @@ function App() {
     if (!estValide) {
       setNotFound(true);
     }
+  }, []);
+
+  // Vérifie si le profil est complet (pour forcer la complétion après OAuth Google)
+  useEffect(() => {
+    const verifierProfil = async () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+      try {
+        const { default: axios } = await import('axios');
+        const res = await axios.get(`${API_URL}/user/profil/statut/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.data.champs_manquants && res.data.champs_manquants.length > 0) {
+          setChampsManquants(res.data.champs_manquants);
+        }
+      } catch (e) {}
+    };
+    verifierProfil();
   }, []);
 
   useEffect(() => {
@@ -322,7 +341,7 @@ function App() {
       />
       {user ? (
         <>
-          <Profil user={user} onLogout={handleLogout} />
+          <Profil user={user} onLogout={handleLogout} champsManquants={champsManquants} />
           {/* <ModalCompleterProfil /> */}
         </>
       ) : (
