@@ -80,6 +80,12 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [modalProfilOuvert, setModalProfilOuvert] = useState(false);
   const [modalSecuriteOuvert, setModalSecuriteOuvert] = useState(false);
+  const [modalMdpOuvert, setModalMdpOuvert] = useState(false);
+  const [modeMdp, setModeMdp] = useState<'email' | 'otp' | 'nouveau' | 'succes'>('email');
+  const [mdpEmail, setMdpEmail] = useState('');
+  const [mdpCode, setMdpCode] = useState('');
+  const [mdpNouveau, setMdpNouveau] = useState('');
+  const [mdpLoading, setMdpLoading] = useState(false);
   const [connexions, setConnexions] = useState<any[]>([]);
   const [editAge, setEditAge] = useState('');
   const [editSexe, setEditSexe] = useState('');
@@ -287,6 +293,42 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       setConnexions(res.data.connexions || []);
     } catch (e) {
       console.warn('Erreur chargement connexions', e);
+    }
+  };
+
+  const envoyerCodeMdp = async () => {
+    setMdpLoading(true);
+    try {
+      await axios.post(`${API_URL}/mot-de-passe-oublie/`, { email: mdpEmail });
+      setModeMdp('otp');
+    } catch (e) {
+      toast.error('Erreur envoi code');
+    } finally {
+      setMdpLoading(false);
+    }
+  };
+
+  const verifierCodeMdp = async () => {
+    setMdpLoading(true);
+    try {
+      await axios.post(`${API_URL}/verifier-code-reset/`, { email: mdpEmail, code: mdpCode });
+      setModeMdp('nouveau');
+    } catch (e) {
+      toast.error('Code incorrect');
+    } finally {
+      setMdpLoading(false);
+    }
+  };
+
+  const reinitialiserMdp = async () => {
+    setMdpLoading(true);
+    try {
+      await axios.post(`${API_URL}/reinitialiser-mdp/`, { email: mdpEmail, code: mdpCode, nouveau_mdp: mdpNouveau });
+      setModeMdp('succes');
+    } catch (e) {
+      toast.error('Erreur réinitialisation');
+    } finally {
+      setMdpLoading(false);
     }
   };
 
@@ -674,10 +716,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               ))
             )}
             <button
-              onClick={() => {
-                localStorage.setItem('forgot_email', userData.email);
-                window.location.href = '/?forgot=1';
-              }}
+              onClick={() => { setMdpEmail(userData.email || ''); setModeMdp('email'); setModalMdpOuvert(true); setModalSecuriteOuvert(false); }}
               style={{ ...styles.saveBtn, marginTop: '15px' }}
             >
               Changer mon mot de passe
@@ -685,6 +724,44 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <button onClick={() => setModalSecuriteOuvert(false)} style={{ ...styles.saveBtn, background: '#2a2a3e', color: '#aaa', marginTop: '10px' }}>
               Fermer
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Changer mot de passe */}
+      {modalMdpOuvert && (
+        <div style={styles.overlayConfirmation} onClick={() => setModalMdpOuvert(false)}>
+          <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
+            {modeMdp === 'email' && (
+              <>
+                <h3 style={styles.modalTitre}>Changer mon mot de passe</h3>
+                <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>Un code te sera envoyé par email.</p>
+                <input type="email" value={mdpEmail} onChange={(e) => setMdpEmail(e.target.value)} placeholder="Ton email" style={{ ...styles.input, marginBottom: '15px' }} />
+                <button onClick={envoyerCodeMdp} disabled={mdpLoading || !mdpEmail} style={styles.saveBtn}>{mdpLoading ? 'Envoi...' : 'Envoyer le code'}</button>
+              </>
+            )}
+            {modeMdp === 'otp' && (
+              <>
+                <h3 style={styles.modalTitre}>Code de vérification</h3>
+                <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>Saisis le code envoyé à {mdpEmail}</p>
+                <input type="text" value={mdpCode} onChange={(e) => setMdpCode(e.target.value)} placeholder="123456" maxLength={6} style={{ ...styles.input, marginBottom: '15px' }} />
+                <button onClick={verifierCodeMdp} disabled={mdpLoading || mdpCode.length !== 6} style={styles.saveBtn}>{mdpLoading ? 'Vérification...' : 'Vérifier'}</button>
+              </>
+            )}
+            {modeMdp === 'nouveau' && (
+              <>
+                <h3 style={styles.modalTitre}>Nouveau mot de passe</h3>
+                <input type="password" value={mdpNouveau} onChange={(e) => setMdpNouveau(e.target.value)} placeholder="Nouveau mot de passe" style={{ ...styles.input, marginBottom: '15px' }} />
+                <button onClick={reinitialiserMdp} disabled={mdpLoading || mdpNouveau.length < 6} style={styles.saveBtn}>{mdpLoading ? 'Enregistrement...' : 'Enregistrer'}</button>
+              </>
+            )}
+            {modeMdp === 'succes' && (
+              <>
+                <h3 style={styles.modalTitre}>Mot de passe changé ! ✅</h3>
+                <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>Tu peux maintenant te connecter avec ton nouveau mot de passe.</p>
+                <button onClick={() => setModalMdpOuvert(false)} style={styles.saveBtn}>Fermer</button>
+              </>
+            )}
           </div>
         </div>
       )}
