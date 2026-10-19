@@ -79,6 +79,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [modalProfilOuvert, setModalProfilOuvert] = useState(false);
+  const [modalSecuriteOuvert, setModalSecuriteOuvert] = useState(false);
+  const [connexions, setConnexions] = useState<any[]>([]);
   const [editAge, setEditAge] = useState('');
   const [editSexe, setEditSexe] = useState('');
   const [editNumero, setEditNumero] = useState('');
@@ -275,6 +277,19 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     }
   };
 
+  const ouvrirModalSecurite = async () => {
+    setModalSecuriteOuvert(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const res = await axios.get(`${API_URL}/user/connexions/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setConnexions(res.data.connexions || []);
+    } catch (e) {
+      console.warn('Erreur chargement connexions', e);
+    }
+  };
+
   const ouvrirModalProfil = () => {
     setEditIndicatif('+226');
     setEditAge(userData.age ? String(userData.age) : '');
@@ -442,6 +457,10 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
           </button>
 
           <div style={{ height: '1px', background: '#2a2a3e', margin: '15px 0' }} />
+          <button onClick={() => { ouvrirModalSecurite(); setMenuOuvert(false); }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Sécurité
+          </button>
           <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#dc3545' }}>
             <IconeDeconnexion /> Déconnexion
           </button>
@@ -633,6 +652,49 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         </div>
       )}
 
+
+      {/* Modal Sécurité */}
+      {modalSecuriteOuvert && (
+        <div style={styles.overlayConfirmation} onClick={() => setModalSecuriteOuvert(false)}>
+          <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
+            <h3 style={styles.modalTitre}>Sécurité</h3>
+            <p style={{ color: '#aaa', fontSize: '13px', marginBottom: '15px' }}>
+              Voici tes dernières connexions. Si tu ne reconnais pas une connexion, change ton mot de passe.
+            </p>
+            {connexions.length === 0 ? (
+              <p style={{ color: '#888', textAlign: 'center' }}>Aucune connexion récente.</p>
+            ) : (
+              connexions.map((c, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: '#1a1a2e', borderRadius: '8px', marginBottom: '8px' }}>
+                  <div>
+                    <p style={{ color: 'white', fontSize: '14px', margin: 0 }}>{c.device || 'Appareil inconnu'} · {c.navigateur || '?'}</p>
+                    <p style={{ color: '#888', fontSize: '12px', margin: '3px 0 0 0' }}>IP: {c.ip} · {new Date(c.date).toLocaleString('fr-FR')}</p>
+                  </div>
+                </div>
+              ))
+            )}
+            <button
+              onClick={async () => {
+                try {
+                  const token = localStorage.getItem('access_token');
+                  await axios.post(`${API_URL}/mot-de-passe-oublie/`, { email: userData.email }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  });
+                  alert('Un code a été envoyé à ton email pour changer ton mot de passe.');
+                } catch (e) {
+                  alert('Erreur lors de l\'envoi.');
+                }
+              }}
+              style={{ ...styles.saveBtn, marginTop: '15px' }}
+            >
+              Changer mon mot de passe
+            </button>
+            <button onClick={() => setModalSecuriteOuvert(false)} style={{ ...styles.saveBtn, background: '#2a2a3e', color: '#aaa', marginTop: '10px' }}>
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal de confirmation déconnexion */}
       {modalSuppression && (
