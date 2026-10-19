@@ -292,10 +292,10 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
       <header style={styles.header}>
         <h1 style={styles.logo}>VOKYVO</h1>
         <button onClick={() => setMenuOuvert(!menuOuvert)} style={{ ...styles.hamburger, transform: menuOuvert ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+            <circle cx="12" cy="5" r="1" fill="white" />
+            <circle cx="12" cy="12" r="1" fill="white" />
+            <circle cx="12" cy="19" r="1" fill="white" />
           </svg>
         </button>
       </header>
