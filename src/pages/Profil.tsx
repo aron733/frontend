@@ -694,6 +694,28 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
             <h3 style={styles.modalTitre}>Modifier le profil</h3>
 
+            {/* Photo de profil */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+              <div 
+                onClick={() => { if (photoUrl) { setPhotoLightbox(photoUrl); setLightboxOuverte(true); } }}
+                style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#1a1a2e', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: photoUrl ? 'pointer' : 'default', border: '2px solid #667eea' }}
+              >
+                {photoUrl ? (
+                  <img src={photoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+                ) : (
+                  <span style={{ color: '#667eea', fontSize: '30px', fontWeight: 'bold' }}>
+                    {(userData.prenom || userData.first_name || '?').charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={() => photoInputRef.current?.click()}
+                style={{ background: 'transparent', border: 'none', color: '#667eea', fontSize: '14px', fontWeight: 600, cursor: 'pointer', marginTop: '10px' }}
+              >
+                Changer la photo
+              </button>
+            </div>
+
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Email (non modifiable)</label>
               <input type="text" value={userData.email || ''} disabled style={styles.inputDisabled} />
