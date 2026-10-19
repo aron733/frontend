@@ -359,9 +359,6 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Modifier le profil
           </button>
-          <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#dc3545' }}>
-            <IconeDeconnexion /> Déconnexion
-          </button>
 
           {/* Support */}
           <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>Support</p>
@@ -391,6 +388,11 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               <path d="M12 12v4" />
               <path d="M10 14h4" />
             </svg> Découvrir VOKYVO+
+          </button>
+
+          <div style={{ height: '1px', background: '#2a2a3e', margin: '15px 0' }} />
+          <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ ...styles.menuItem, color: '#dc3545' }}>
+            <IconeDeconnexion /> Déconnexion
           </button>
         </div>
 

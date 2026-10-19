@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
+import BadgeVerifie from '../BadgeVerifie';
 
 interface DashboardProps {
   user: any;
@@ -48,7 +49,10 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
       {/* Header */}
       <div style={styles.header}>
         <div>
-          <h1 style={styles.bonjour}>Bonjour {prenom} 👋</h1>
+          <h1 style={styles.bonjour}>
+            Bonjour {prenom} 👋
+            {user?.badge_verifie && <BadgeVerifie size={20} />}
+          </h1>
           <p style={styles.sousTitre}>Que veux-tu faire aujourd'hui ?</p>
         </div>
         <div 
