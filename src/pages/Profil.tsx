@@ -737,8 +737,25 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
               </div>
               <button
                 onClick={() => photoInputModalRef.current?.click()}
-                style={{ background: 'transparent', border: 'none', color: '#667eea', fontSize: '14px', fontWeight: 600, cursor: 'pointer', marginTop: '10px' }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(102,126,234,0.1)',
+                  border: '1px solid #667eea',
+                  color: '#667eea',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  padding: '8px 16px',
+                  borderRadius: '10px',
+                  marginTop: '10px',
+                }}
               >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
                 Changer la photo
               </button>
               <input
