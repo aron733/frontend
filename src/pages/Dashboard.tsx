@@ -109,10 +109,10 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
             <div key={`c-${c.id}`} style={styles.item} onClick={() => onNavigate('messages')}>
               <div 
                 style={styles.itemAvatar}
-                onClick={(e) => { e.stopPropagation(); if (c.autre_user?.photo_profil) onPhotoClick(c.autre_user.photo_profil); }}
+                onClick={(e) => { e.stopPropagation(); if (c.autre_user?.photo) onPhotoClick(c.autre_user.photo); }}
               >
-                {c.autre_user?.photo_profil ? (
-                  <img src={c.autre_user.photo_profil} style={styles.itemAvatarImg} alt="" />
+                {c.autre_user?.photo ? (
+                  <img src={c.autre_user.photo} style={styles.itemAvatarImg} alt="" />
                 ) : (
                   <span style={styles.itemAvatarTexte}>{(c.autre_user?.first_name || '?').charAt(0).toUpperCase()}</span>
                 )}
