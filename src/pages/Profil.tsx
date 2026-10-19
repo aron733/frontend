@@ -84,6 +84,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
   const [editNumero, setEditNumero] = useState('');
   const [editIndicatif, setEditIndicatif] = useState('+226');
   const [editPays, setEditPays] = useState('');
+  const [editPrenom, setEditPrenom] = useState('');
+  const [editNom, setEditNom] = useState('');
   const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
@@ -279,6 +281,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
     setEditSexe(userData.sexe || '');
     setEditNumero(userData.numero || '');
     setEditPays(userData.pays || '');
+    setEditPrenom(userData.prenom || userData.first_name || '');
+    setEditNom(userData.nom || userData.last_name || '');
     setModalProfilOuvert(true);
   };
 
@@ -290,6 +294,8 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
         sexe: editSexe,
         numero: `${editIndicatif} ${editNumero}`.trim(),
         pays: editPays,
+        prenom: editPrenom,
+        nom: editNom,
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -553,6 +559,16 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Email (non modifiable)</label>
               <input type="text" value={userData.email || ''} disabled style={styles.inputDisabled} />
+            </div>
+
+            <div style={styles.fieldGroup}>
+              <label style={styles.fieldLabel}>Prénom</label>
+              <input type="text" value={editPrenom} onChange={(e) => setEditPrenom(e.target.value)} placeholder="Aron" style={styles.input} />
+            </div>
+
+            <div style={styles.fieldGroup}>
+              <label style={styles.fieldLabel}>Nom</label>
+              <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)} placeholder="VOKOUMA" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
