@@ -218,6 +218,7 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [showRenommer, setShowRenommer] = useState(false);
   const fichierInputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const scrollDoneRef = useRef<string | null>(null);
   const [enregistrement, setEnregistrement] = useState(false);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const [audioEnAttente, setAudioEnAttente] = useState<Blob | null>(null);
@@ -226,22 +227,30 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<any>(null);
   const [uploadEnCours, setUploadEnCours] = useState(false);
-
   // Auto-scroll vers le dernier message
   const convIdActuel = selectedUser ? `user_${selectedUser.id || selectedUser.user_id}` : groupeActif ? `groupe_${groupeActif.id}` : null;
-  const [derniereConv, setDerniereConv] = useState<string | null>(null);
 
+  // Scroll instantané UNIQUEMENT quand on change de conversation
   useEffect(() => {
     if (!convIdActuel) return;
-    
-    // Si on vient d'ouvrir une nouvelle conversation, on scrolle instantanément
-    const estNouvelleConv = convIdActuel !== derniereConv;
+    if (convIdActuel === scrollDoneRef.current) return;
     
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: estNouvelleConv ? 'auto' : 'smooth' });
-      if (estNouvelleConv) setDerniereConv(convIdActuel);
+      messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+      scrollDoneRef.current = convIdActuel;
+    }, 150);
+  }, [convIdActuel]);
+
+  // Scroll fluide quand un nouveau message arrive
+  useEffect(() => {
+    if (!convIdActuel) return;
+    if (convIdActuel !== scrollDoneRef.current) return;
+    
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
-  }, [messagesParConv, selectedUser, groupeActif, uploadEnCours]);
+  }, [messagesParConv]);
+
   const getToken = () => localStorage.getItem('access_token') || '';
 
   // Force le re-render quand un nouveau message arrive (temps réel)
