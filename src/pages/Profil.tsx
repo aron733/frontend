@@ -266,6 +266,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [erreurSuppression, setErreurSuppression] = useState('');
   const [chargementSuppression, setChargementSuppression] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const photoInputModalRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     localStorage.setItem('vokyvo_page', pageActive);
@@ -717,11 +718,18 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
                 )}
               </div>
               <button
-                onClick={() => photoInputRef.current?.click()}
+                onClick={() => photoInputModalRef.current?.click()}
                 style={{ background: 'transparent', border: 'none', color: '#667eea', fontSize: '14px', fontWeight: 600, cursor: 'pointer', marginTop: '10px' }}
               >
                 Changer la photo
               </button>
+              <input
+                type="file"
+                ref={photoInputModalRef}
+                onChange={uploadPhoto}
+                accept="image/*"
+                style={{ display: 'none' }}
+              />
             </div>
 
             <div style={styles.fieldGroup}>
