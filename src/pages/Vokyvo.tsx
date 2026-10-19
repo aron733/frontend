@@ -555,7 +555,7 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
                       </button>
                     </div>
                   )}
-                  {msg.content && (
+                  {msg.content && !msg.image && (
                     <div className={`message-bubble-select ${estUser ? '' : 'markdown-content'}`} style={{ ...styles.messageBubble, background: estUser ? '#667eea' : '#2a2a3e', color: estUser ? 'white' : '#eee' }}>
                       {estUser ? (
                         msg.estFichier ? (
