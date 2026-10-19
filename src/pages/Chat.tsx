@@ -3397,7 +3397,7 @@ const styles = {
   },
   messagesArea: {
     flex: 1,
-    padding: '20px 12px 100px 12px',
+    padding: '20px 12px 20px 12px',
     display: 'flex',
     flexDirection: 'column' as const,
     overflowY: 'auto' as const,
