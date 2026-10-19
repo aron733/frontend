@@ -97,7 +97,7 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
               <path d="M15 18h-5" />
             </svg>
           </div>
-          <span style={styles.cardLabel}>News</span>
+          <span style={styles.cardLabel}>Actus</span>
         </button>
 
 
