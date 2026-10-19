@@ -530,7 +530,7 @@ function Profil({ user, onLogout }: { user: any; onLogout: () => void }) {
               <select value={editSexe} onChange={(e) => setEditSexe(e.target.value)} style={styles.input}>
                 <option value="M">Masculin</option>
                 <option value="F">Féminin</option>
-                <option value="A">Autre</option>
+                
               </select>
             </div>
 
