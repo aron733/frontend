@@ -75,7 +75,7 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
           </div>
-          <span style={styles.cardLabel}>Chat</span>
+          <span style={styles.cardLabel}>Messages</span>
         </button>
 
         <button onClick={() => onNavigate('vokyvo')} style={styles.card}>
