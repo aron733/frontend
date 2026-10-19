@@ -228,11 +228,20 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
   const [uploadEnCours, setUploadEnCours] = useState(false);
 
   // Auto-scroll vers le dernier message
+  const convIdActuel = selectedUser ? `user_${selectedUser.id || selectedUser.user_id}` : groupeActif ? `groupe_${groupeActif.id}` : null;
+  const [derniereConv, setDerniereConv] = useState<string | null>(null);
+
   useEffect(() => {
+    if (!convIdActuel) return;
+    
+    // Si on vient d'ouvrir une nouvelle conversation, on scrolle instantanément
+    const estNouvelleConv = convIdActuel !== derniereConv;
+    
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: estNouvelleConv ? 'auto' : 'smooth' });
+      if (estNouvelleConv) setDerniereConv(convIdActuel);
     }, 100);
-  }, [messagesParConv, selectedUser, groupeActif]);
+  }, [messagesParConv, selectedUser, groupeActif, uploadEnCours]);
   const getToken = () => localStorage.getItem('access_token') || '';
 
   // Force le re-render quand un nouveau message arrive (temps réel)
