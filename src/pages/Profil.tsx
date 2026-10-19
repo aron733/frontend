@@ -163,6 +163,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [modalProfilOuvert, setModalProfilOuvert] = useState(false);
+  const [chargementProfil, setChargementProfil] = useState(false);
   const [modalSecuriteOuvert, setModalSecuriteOuvert] = useState(false);
   const [modalMdpOuvert, setModalMdpOuvert] = useState(false);
   const [modeMdp, setModeMdp] = useState<'email' | 'otp' | 'nouveau' | 'succes'>('email');
@@ -452,15 +453,26 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
     }
   };
 
-  const ouvrirModalProfil = () => {
-    // Utilise userData (déjà chargé depuis l'API au montage)
-    setEditAge(userData.age ? String(userData.age) : '');
-    setEditSexe(userData.sexe || '');
-    setEditNumero(userData.numero || '');
-    setEditPays(userData.pays || '');
-    setEditPrenom(userData.prenom || userData.first_name || '');
-    setEditNom(userData.nom || userData.last_name || '');
+  const ouvrirModalProfil = async () => {
     setModalProfilOuvert(true);
+    setChargementProfil(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const res = await axios.get(`${API_URL}/user/profil/statut/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const u = res.data;
+      setEditAge(u.age ? String(u.age) : '');
+      setEditSexe(u.sexe || '');
+      setEditNumero(u.numero || '');
+      setEditPays(u.pays || '');
+      setEditPrenom(u.prenom || u.first_name || '');
+      setEditNom(u.nom || u.last_name || '');
+    } catch (e) {
+      console.warn('Erreur chargement profil', e);
+    } finally {
+      setChargementProfil(false);
+    }
   };
 
   const sauvegarderProfil = async () => {
@@ -703,6 +715,12 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
             <h3 style={styles.modalTitre}>Modifier le profil</h3>
 
+            {chargementProfil ? (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+                <div style={{ width: '30px', height: '30px', border: '3px solid #2a2a3e', borderTopColor: '#667eea', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              </div>
+            ) : (
+            <>
             {/* Photo de profil */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
               <div 
@@ -805,6 +823,8 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
                 {saveEnCours ? 'Enregistrement...' : 'Enregistrer'}
               </button>
             </div>
+            </>
+            )}
           </div>
         </div>
       )}
