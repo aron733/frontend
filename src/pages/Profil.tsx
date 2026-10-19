@@ -190,6 +190,33 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
     }
   }, [champsManquants]);
 
+  // Recharge les vraies infos du profil depuis l'API (au montage)
+  useEffect(() => {
+    const chargerProfil = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await axios.get(`${API_URL}/user/profil/statut/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const u = res.data;
+        const updated = {
+          ...userData,
+          prenom: u.prenom || userData.prenom,
+          nom: u.nom || userData.nom,
+          numero: u.numero || userData.numero,
+          pays: u.pays || userData.pays,
+          age: u.age || userData.age,
+          sexe: u.sexe || userData.sexe,
+        };
+        setUserData(updated);
+        localStorage.setItem('user', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Erreur chargement profil', e);
+      }
+    };
+    chargerProfil();
+  }, []);
+
   useEffect(() => {
     const chargerStats = async () => {
       try {
