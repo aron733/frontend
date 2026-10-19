@@ -61,6 +61,41 @@ const INDICATIFS = [
   { code: '+231', pays: 'Liberia', drapeau: '🇱🇷' },
 ];
 
+const longueurParIndicatif = (code: string): number => {
+  const longueurs: Record<string, number> = {
+    '+226': 8, '+223': 8, '+227': 8, '+225': 10, '+221': 9,
+    '+229': 8, '+228': 8, '+224': 9, '+245': 9, '+220': 7,
+    '+222': 8, '+231': 8, '+232': 8, '+233': 9, '+234': 10,
+    '+235': 8, '+236': 8, '+237': 9, '+240': 9, '+241': 8,
+    '+242': 9, '+243': 9, '+244': 9,
+    '+212': 9, '+213': 9, '+216': 8, '+218': 9, '+20': 10,
+    '+249': 9, '+211': 9, '+251': 9, '+252': 8, '+253': 8,
+    '+254': 9, '+255': 9, '+256': 9, '+250': 9, '+257': 8,
+    '+258': 9, '+260': 9, '+261': 9, '+263': 9, '+264': 9,
+    '+265': 9, '+266': 8, '+267': 8, '+268': 8, '+269': 7,
+    '+27': 9, '+230': 8, '+33': 9, '+32': 9, '+41': 9,
+    '+49': 11, '+39': 10, '+34': 9, '+44': 10, '+1': 10,
+  };
+  return longueurs[code] || 9;
+};
+
+const formaterNumero = (valeur: string, code: string) => {
+  const max = longueurParIndicatif(code);
+  const chiffres = valeur.replace(/\D/g, '').slice(0, max);
+  return chiffres.replace(/(\d{2})(?=\d)/g, '$1 ');
+};
+
+const genererPlaceholder = (code: string): string => {
+  const max = longueurParIndicatif(code);
+  const blocs: string[] = [];
+  let reste = max;
+  while (reste > 0) {
+    blocs.push('XX');
+    reste -= 2;
+  }
+  return blocs.join(' ');
+};
+
 function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () => void; champsManquants?: string[] }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [convInitiale, setConvInitiale] = useState<string | null>(null);
@@ -671,11 +706,11 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
                     <option key={i.code} value={i.code}>{i.drapeau} {i.code}</option>
                   ))}
                 </select>
-                <input 
-                  type="tel" 
-                  value={editNumero} 
-                  onChange={(e) => setEditNumero(e.target.value)} 
-                  placeholder="06 96 54 41" 
+                <input
+                  type="tel"
+                  value={editNumero}
+                  onChange={(e) => setEditNumero(formaterNumero(e.target.value, editIndicatif))}
+                  placeholder={genererPlaceholder(editIndicatif)}
                   style={styles.input} 
                 />
               </div>
