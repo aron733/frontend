@@ -229,7 +229,9 @@ function Chat({ onRetour }: { onRetour?: () => void }) {
 
   // Auto-scroll vers le dernier message
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   }, [messagesParConv, selectedUser, groupeActif]);
   const getToken = () => localStorage.getItem('access_token') || '';
 

@@ -77,7 +77,9 @@ function Vokyvo({ onRetour }: { onRetour?: () => void }) {
   const prenom = userData.prenom || userData.first_name || userData.username || 'User';
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   useEffect(() => {
