@@ -23,6 +23,9 @@ importers:
       '@capacitor/core':
         specifier: ^7.0.0
         version: 7.6.9
+      '@capacitor/filesystem':
+        specifier: ^7.1.9
+        version: 7.1.9(@capacitor/core@7.6.9)
       '@capacitor/network':
         specifier: ^7.0.4
         version: 7.0.4(@capacitor/core@7.6.9)
@@ -30,8 +33,8 @@ importers:
         specifier: ^7.0.7
         version: 7.0.7(@capacitor/core@7.6.9)
       '@capacitor/share':
-        specifier: ^8.0.3
-        version: 8.0.3(@capacitor/core@7.6.9)
+        specifier: ^7.0.4
+        version: 7.0.4(@capacitor/core@7.6.9)
       '@capacitor/splash-screen':
         specifier: ^7.0.0
         version: 7.0.5(@capacitor/core@7.6.9)
@@ -690,6 +693,11 @@ packages:
   '@capacitor/core@7.6.9':
     resolution: {integrity: sha512-4DOh/xySC9S5ryhUIqpOppasIyi2WiTdF0JuZ/2DEs+vf5eunRzHDdNYBp1snA3faHciTw/3SVGXfR+WkYxsMA==}
 
+  '@capacitor/filesystem@7.1.9':
+    resolution: {integrity: sha512-HBr3NwENo/Fm7Cmm6Cvps255OIdgQ2VXtSNZK+2Nkw0Y7EMid9y5AS9XfEzGmsC7MXbC6Hx2yXV/hvnuifsSXA==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
   '@capacitor/network@7.0.4':
     resolution: {integrity: sha512-fNhN3968AQWMnzasPJ0B8e+nyk7+R6V9PWIBQWSQRHrKndDgWRHpxkjEzJPgnJr3EjnKLjbwO+UYy+EwBlGs3A==}
     peerDependencies:
@@ -700,10 +708,10 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
-  '@capacitor/share@8.0.3':
-    resolution: {integrity: sha512-gnvZBV1NPu2B8vd1UKncR56G15ueHd0aZLqgDov++t3SmTBG9Q0VrAZ1VnHn5stxlmglVaTb4RwopMgbpLzroA==}
+  '@capacitor/share@7.0.4':
+    resolution: {integrity: sha512-wNXxmXUcChrtbZ5jQv8scFIbIGKo3rk6B7qpWySxfUhYJP5NANgAqQ9Z69m0k/zYsucdh66SBU7XW1ykd9aUug==}
     peerDependencies:
-      '@capacitor/core': '>=8.0.0'
+      '@capacitor/core': '>=7.0.0'
 
   '@capacitor/splash-screen@7.0.5':
     resolution: {integrity: sha512-bPG2SamFL7VT5I3XsgsGgJhkiyxq3OXCOVKEDupSieVdtEiG7j2vLbSD0xL+91zteF/qLuxsjbugGy5LD8mS2A==}
@@ -714,6 +722,9 @@ packages:
     resolution: {integrity: sha512-7AVqj46b26QikImQzWfsJmzG8NUJZBGkrVSuoeTo+SX/YH3hXH0MqwwFgMqMGHfa/BICDgSvTjM9miVFlq0+RQ==}
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/synapse@1.0.4':
+    resolution: {integrity: sha512-/C1FUo8/OkKuAT4nCIu/34ny9siNHr9qtFezu4kxm6GY1wNFxrCFWjfYx5C1tUhVGz3fxBABegupkpjXvjCHrw==}
 
   '@eslint-community/eslint-utils@4.10.1':
     resolution: {integrity: sha512-cuadcxVFE8sDK6iWJbs8Sn0av2Nrh2QSGQhVlBW9AaAHqHwjWsZHT8LJ4hFGPh7ASBV2deFdM7H/DPjulmh8rg==}
@@ -4060,6 +4071,11 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@capacitor/filesystem@7.1.9(@capacitor/core@7.6.9)':
+    dependencies:
+      '@capacitor/core': 7.6.9
+      '@capacitor/synapse': 1.0.4
+
   '@capacitor/network@7.0.4(@capacitor/core@7.6.9)':
     dependencies:
       '@capacitor/core': 7.6.9
@@ -4068,7 +4084,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 7.6.9
 
-  '@capacitor/share@8.0.3(@capacitor/core@7.6.9)':
+  '@capacitor/share@7.0.4(@capacitor/core@7.6.9)':
     dependencies:
       '@capacitor/core': 7.6.9
 
@@ -4079,6 +4095,8 @@ snapshots:
   '@capacitor/status-bar@7.0.6(@capacitor/core@7.6.9)':
     dependencies:
       '@capacitor/core': 7.6.9
+
+  '@capacitor/synapse@1.0.4': {}
 
   '@eslint-community/eslint-utils@4.10.1(eslint@10.11.0)':
     dependencies:

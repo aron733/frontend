@@ -53,15 +53,32 @@ export default function ModalMesDonnees({ onFermer }: Props) {
       const res = await axios.get(`${API_URL}/user/export/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `vokyvo-donnees-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const json = JSON.stringify(res.data, null, 2);
+      const nomFichier = `vokyvo-donnees-${new Date().toISOString().slice(0, 10)}.json`;
+
+      const { Capacitor } = await import('@capacitor/core');
+      if (Capacitor.isNativePlatform()) {
+        const { Filesystem, Directory, Encoding } = await import('@capacitor/filesystem');
+        const { Share } = await import('@capacitor/share');
+        await Filesystem.writeFile({
+          path: nomFichier,
+          data: json,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8,
+        });
+        const uri = await Filesystem.getUri({ directory: Directory.Cache, path: nomFichier });
+        await Share.share({ title: 'Mes données VOKYVO', url: uri.uri, dialogTitle: 'Enregistrer ou partager' });
+      } else {
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nomFichier;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
       toast.success('Données téléchargées !');
     } catch {
       toast.error('Erreur export');
