@@ -130,17 +130,8 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
       if (etat.confirmDeconnexion) { setConfirmDeconnexion(false); return; }
       if (etat.lightboxOuverte) { setLightboxOuverte(false); return; }
       if (etat.menuOuvert) { setMenuOuvert(false); return; }
-      // Si on est dans un sous-écran ou modal, on ferme d'abord
-      if (etat.modalProfilOuvert || etat.modalQuitter || etat.modalSuppression || etat.lightboxOuverte || etat.menuOuvert) {
-        return; // géré par les autres listeners
-      }
-      // Dans BottomNav (Actus, Messages, IA), le retour quitte l'app
-      if (etat.pageActive === 'profil' || etat.pageActive === 'news' || etat.pageActive === 'messages' || etat.pageActive === 'vokyvo') {
-        CapacitorApp.exitApp();
-        return;
-      }
-      // Sinon (sous-page), on revient au profil
-      setPageActive('profil');
+      if (etat.pageActive !== 'profil') { setPageActive('profil'); return; }
+      CapacitorApp.exitApp();
     }).then((l: any) => { listener = l; });
     return () => { if (listener) listener.remove(); };
   }, []);
