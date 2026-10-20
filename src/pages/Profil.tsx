@@ -420,9 +420,9 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           <div style={{ height: '1px', background: '#2a2a3e', margin: '15px 0' }} />
           <button onClick={() => { setModalMesDonneesOuvert(true); setMenuOuvert(false); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', verticalAlign: 'middle' }}>
-              <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
-              <path d="M12 8v8" />
-              <path d="M8 12h8" />
+              <ellipse cx="12" cy="5" rx="9" ry="3" />
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
             </svg>
             Mes données
           </button>
