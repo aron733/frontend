@@ -81,9 +81,7 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
         <button onClick={() => onNavigate('vokyvo')} style={styles.card}>
           <div style={{ ...styles.iconWrap, background: 'rgba(118,75,162,0.15)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#764ba2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
-              <path d="M8 12h8" />
-              <path d="M12 8v8" />
+              <path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3z" />
             </svg>
           </div>
           <span style={styles.cardLabel}>Vokyvo AI</span>
@@ -92,9 +90,11 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
         <button onClick={() => onNavigate('news')} style={styles.card}>
           <div style={{ ...styles.iconWrap, background: 'rgba(40,167,69,0.15)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#28a745" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2z" />
-              <path d="M18 14h-8" />
-              <path d="M15 18h-5" />
+              <path d="M4 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+              <path d="M18 8h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2" />
+              <line x1="6" y1="8" x2="12" y2="8" />
+              <line x1="6" y1="12" x2="12" y2="12" />
+              <line x1="6" y1="16" x2="10" y2="16" />
             </svg>
           </div>
           <span style={styles.cardLabel}>Actus</span>
