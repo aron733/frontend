@@ -18,6 +18,7 @@ import { API_URL } from '../config';
 import BottomNav from '../BottomNav';
 import ModalModifierProfil from '../ModalModifierProfil';
 import Dashboard from './Dashboard';
+import ModalMesDonnees from '../ModalMesDonnees';
 
 
 
@@ -44,6 +45,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [modalProfilOuvert, setModalProfilOuvert] = useState(false);
   const [modalSecuriteOuvert, setModalSecuriteOuvert] = useState(false);
+  const [modalMesDonneesOuvert, setModalMesDonneesOuvert] = useState(false);
   const [modalMdpOuvert, setModalMdpOuvert] = useState(false);
   const [modeMdp, setModeMdp] = useState<'email' | 'otp' | 'nouveau' | 'succes'>('email');
   const [mdpEmail, setMdpEmail] = useState('');
@@ -416,6 +418,15 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           </button>
 
           <div style={{ height: '1px', background: '#2a2a3e', margin: '15px 0' }} />
+          <button onClick={() => { setModalMesDonneesOuvert(true); setMenuOuvert(false); }} style={styles.menuItem}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', verticalAlign: 'middle' }}>
+              <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
+              <path d="M12 8v8" />
+              <path d="M8 12h8" />
+            </svg>
+            Mes données
+          </button>
+
           <button onClick={() => { ouvrirModalSecurite(); setMenuOuvert(false); }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Sécurité
@@ -542,6 +553,10 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
       )}
 
       {/* Écran Sécurité (full screen) */}
+      {modalMesDonneesOuvert && (
+        <ModalMesDonnees onFermer={() => setModalMesDonneesOuvert(false)} />
+      )}
+
       {modalSecuriteOuvert && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: '#0a0a0f', zIndex: 2000, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px' }}>
