@@ -399,7 +399,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Confidentialité
           </button>
-          <button onClick={async () => { const { Capacitor } = await import("@capacitor/core"); const { Browser } = await import("@capacitor/browser"); const url = "mailto:support@vokyvo.com"; if (Capacitor.isNativePlatform()) await Browser.open({ url }); else window.location.href = url; }} style={styles.menuItem}>
+          <button onClick={async () => { const url = "mailto:support@vokyvo.com"; try { const { Capacitor } = await import("@capacitor/core"); if (Capacitor.isNativePlatform()) { const { AppLauncher } = await import("@capacitor/app-launcher"); await AppLauncher.openUrl({ url }); } else { window.location.href = url; } } catch { window.location.href = url; } }} style={styles.menuItem}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
             Contacter le support
           </button>
