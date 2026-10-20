@@ -152,7 +152,16 @@ export default function ModalModifierProfil({ user, onFermer, onSauvegarder, ouv
         const u = res.data;
         setPrenom(u.prenom || '');
         setNom(u.nom || '');
-        setNumero(u.numero || '');
+        // Sépare l'indicatif du numéro (ex: "+226 03 45 67 78")
+        if (u.numero) {
+          const parts = u.numero.trim().split(' ');
+          if (parts.length > 1 && parts[0].startsWith('+')) {
+            setIndicatif(parts[0]);
+            setNumero(parts.slice(1).join(' '));
+          } else {
+            setNumero(u.numero);
+          }
+        }
         setPays(u.pays || '');
         setAge(u.age ? String(u.age) : '');
         setSexe(u.sexe || '');
