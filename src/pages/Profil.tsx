@@ -163,7 +163,14 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [modalProfilOuvert, setModalProfilOuvert] = useState(false);
-  const [chargementProfil, setChargementProfil] = useState(false);
+  const [modalPrenom, setModalPrenom] = useState('');
+  const [modalNom, setModalNom] = useState('');
+  const [modalNumero, setModalNumero] = useState('');
+  const [modalPays, setModalPays] = useState('');
+  const [modalAge, setModalAge] = useState('');
+  const [modalSexe, setModalSexe] = useState('');
+  const [modalIndicatif, setModalIndicatif] = useState('+226');
+  const [modalChargement, setModalChargement] = useState(false);
   const [modalSecuriteOuvert, setModalSecuriteOuvert] = useState(false);
   const [modalMdpOuvert, setModalMdpOuvert] = useState(false);
   const [modeMdp, setModeMdp] = useState<'email' | 'otp' | 'nouveau' | 'succes'>('email');
@@ -172,13 +179,6 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [mdpNouveau, setMdpNouveau] = useState('');
   const [mdpLoading, setMdpLoading] = useState(false);
   const [connexions, setConnexions] = useState<any[]>([]);
-  const [editAge, setEditAge] = useState('');
-  const [editSexe, setEditSexe] = useState('');
-  const [editNumero, setEditNumero] = useState('');
-  const [editIndicatif, setEditIndicatif] = useState('+226');
-  const [editPays, setEditPays] = useState('');
-  const [editPrenom, setEditPrenom] = useState('');
-  const [editNom, setEditNom] = useState('');
   const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
@@ -455,23 +455,23 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
   const ouvrirModalProfil = async () => {
     setModalProfilOuvert(true);
-    setChargementProfil(true);
+    setModalChargement(true);
     try {
       const token = localStorage.getItem('access_token');
       const res = await axios.get(`${API_URL}/user/profil/statut/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const u = res.data;
-      setEditAge(u.age ? String(u.age) : '');
-      setEditSexe(u.sexe || '');
-      setEditNumero(u.numero || '');
-      setEditPays(u.pays || '');
-      setEditPrenom(u.prenom || u.first_name || '');
-      setEditNom(u.nom || u.last_name || '');
+      setModalAge(u.age ? String(u.age) : '');
+      setModalSexe(u.sexe || '');
+      setModalNumero(u.numero || '');
+      setModalPays(u.pays || '');
+      setModalPrenom(u.prenom || u.first_name || '');
+      setModalNom(u.nom || u.last_name || '');
     } catch (e) {
       console.warn('Erreur chargement profil', e);
     } finally {
-      setChargementProfil(false);
+      setModalChargement(false);
     }
   };
 
@@ -479,12 +479,12 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
     setSaveEnCours(true);
     try {
       await axios.patch(`${API_URL}/user/profil/`, {
-        age: editAge,
-        sexe: editSexe,
-        numero: `${editIndicatif} ${editNumero}`.trim(),
-        pays: editPays,
-        prenom: editPrenom,
-        nom: editNom,
+        age: modalAge,
+        sexe: modalSexe,
+        numero: `${modalIndicatif} ${modalNumero}`.trim(),
+        pays: modalPays,
+        prenom: modalPrenom,
+        nom: modalNom,
       }, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -492,12 +492,12 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
       // Met à jour userData avec TOUTES les nouvelles valeurs
       const updated = {
         ...userData,
-        age: editAge,
-        sexe: editSexe,
-        numero: `${editIndicatif} ${editNumero}`.trim(),
-        pays: editPays,
-        prenom: editPrenom,
-        nom: editNom,
+        age: modalAge,
+        sexe: modalSexe,
+        numero: `${modalIndicatif} ${modalNumero}`.trim(),
+        pays: modalPays,
+        prenom: modalPrenom,
+        nom: modalNom,
       };
       setUserData(updated);
       localStorage.setItem('user', JSON.stringify(updated));
@@ -715,7 +715,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
             <h3 style={styles.modalTitre}>Modifier le profil</h3>
 
-            {chargementProfil ? (
+            {modalChargement ? (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
                 <div style={{ width: '30px', height: '30px', border: '3px solid #2a2a3e', borderTopColor: '#667eea', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
               </div>
@@ -774,24 +774,24 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Prénom</label>
-              <input type="text" value={editPrenom} onChange={(e) => setEditPrenom(e.target.value)} placeholder="Ton prénom" style={styles.input} />
+              <input type="text" value={modalPrenom} onChange={(e) => setModalPrenom(e.target.value)} placeholder="Ton prénom" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Nom</label>
-              <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)} placeholder="Ton nom" style={styles.input} />
+              <input type="text" value={modalNom} onChange={(e) => setModalNom(e.target.value)} placeholder="Ton nom" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Téléphone</label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <select 
-                  value={editIndicatif} 
+                  value={modalIndicatif} 
                   onChange={(e) => {
-                    setEditIndicatif(e.target.value);
+                    setModalIndicatif(e.target.value);
                     // Le pays se met à jour automatiquement
                     const pays = INDICATIFS.find(i => i.code === e.target.value);
-                    if (pays) setEditPays(pays.pays);
+                    if (pays) setModalPays(pays.pays);
                   }} 
                   style={{ ...styles.input, width: '120px' }}
                 >
@@ -801,9 +801,9 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
                 </select>
                 <input
                   type="tel"
-                  value={editNumero}
-                  onChange={(e) => setEditNumero(formaterNumero(e.target.value, editIndicatif))}
-                  placeholder={genererPlaceholder(editIndicatif)}
+                  value={modalNumero}
+                  onChange={(e) => setModalNumero(formaterNumero(e.target.value, modalIndicatif))}
+                  placeholder={genererPlaceholder(modalIndicatif)}
                   style={styles.input} 
                 />
               </div>
@@ -811,7 +811,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Pays</label>
-              <select value={editPays} onChange={(e) => setEditPays(e.target.value)} style={styles.input}>
+              <select value={modalPays} onChange={(e) => setModalPays(e.target.value)} style={styles.input}>
                 {INDICATIFS.map((i) => (
                   <option key={i.pays} value={i.pays}>{i.drapeau} {i.pays}</option>
                 ))}
@@ -820,12 +820,12 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Âge</label>
-              <input type="number" value={editAge} onChange={(e) => setEditAge(e.target.value)} placeholder="Ton âge" min="16" max="120" style={styles.input} />
+              <input type="number" value={modalAge} onChange={(e) => setModalAge(e.target.value)} placeholder="Ton âge" min="16" max="120" style={styles.input} />
             </div>
 
             <div style={styles.fieldGroup}>
               <label style={styles.fieldLabel}>Sexe</label>
-              <select value={editSexe} onChange={(e) => setEditSexe(e.target.value)} style={styles.input}>
+              <select value={modalSexe} onChange={(e) => setModalSexe(e.target.value)} style={styles.input}>
                 <option value="M">Masculin</option>
                 <option value="F">Féminin</option>
                 
