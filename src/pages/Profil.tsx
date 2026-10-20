@@ -16,134 +16,14 @@ import { App as CapacitorApp } from '@capacitor/app';
 
 import { API_URL } from '../config';
 import BottomNav from '../BottomNav';
+import ModalModifierProfil from '../ModalModifierProfil';
 import Dashboard from './Dashboard';
 
 
 
-const longueurParIndicatif = (code: string): number => {
-  const longueurs: Record<string, number> = {
-    '+226': 8, '+223': 8, '+227': 8, '+225': 10, '+221': 9,
-    '+229': 8, '+228': 8, '+224': 9, '+245': 9, '+220': 7,
-    '+222': 8, '+231': 8, '+232': 8, '+233': 9, '+234': 10,
-    '+235': 8, '+236': 8, '+237': 9, '+240': 9, '+241': 8,
-    '+242': 9, '+243': 9, '+244': 9,
-    '+212': 9, '+213': 9, '+216': 8, '+218': 9, '+20': 10,
-    '+249': 9, '+211': 9, '+251': 9, '+252': 8, '+253': 8,
-    '+254': 9, '+255': 9, '+256': 9, '+250': 9, '+257': 8,
-    '+258': 9, '+260': 9, '+261': 9, '+263': 9, '+264': 9,
-    '+265': 9, '+266': 8, '+267': 8, '+268': 8, '+269': 7,
-    '+27': 9, '+230': 8, '+33': 9, '+32': 9, '+41': 9,
-    '+49': 11, '+39': 10, '+34': 9, '+44': 10, '+1': 10,
-  };
-  return longueurs[code] || 9;
-};
 
-const formaterNumero = (valeur: string, code: string) => {
-  const max = longueurParIndicatif(code);
-  const chiffres = valeur.replace(/\D/g, '').slice(0, max);
-  return chiffres.replace(/(\d{2})(?=\d)/g, '$1 ');
-};
 
-const genererPlaceholder = (code: string): string => {
-  const max = longueurParIndicatif(code);
-  const blocs: string[] = [];
-  let reste = max;
-  while (reste > 0) {
-    blocs.push('XX');
-    reste -= 2;
-  }
-  return blocs.join(' ');
-};
 
-const INDICATIFS = [
-  // Afrique de l'Ouest
-  { code: '+226', pays: 'Burkina Faso', drapeau: '🇧🇫' },
-  { code: '+223', pays: 'Mali', drapeau: '🇲🇱' },
-  { code: '+227', pays: 'Niger', drapeau: '🇳🇪' },
-  { code: '+225', pays: "Côte d'Ivoire", drapeau: '🇨🇮' },
-  { code: '+221', pays: 'Sénégal', drapeau: '🇸🇳' },
-  { code: '+229', pays: 'Bénin', drapeau: '🇧🇯' },
-  { code: '+228', pays: 'Togo', drapeau: '🇹🇬' },
-  { code: '+224', pays: 'Guinée', drapeau: '🇬🇳' },
-  { code: '+245', pays: 'Guinée-Bissau', drapeau: '🇬🇼' },
-  { code: '+220', pays: 'Gambie', drapeau: '🇬🇲' },
-  { code: '+222', pays: 'Mauritanie', drapeau: '🇲🇷' },
-  { code: '+231', pays: 'Liberia', drapeau: '🇱🇷' },
-  { code: '+232', pays: 'Sierra Leone', drapeau: '🇸🇱' },
-  { code: '+233', pays: 'Ghana', drapeau: '🇬🇭' },
-  { code: '+234', pays: 'Nigeria', drapeau: '🇳🇬' },
-  { code: '+235', pays: 'Tchad', drapeau: '🇹🇩' },
-  { code: '+236', pays: 'Centrafrique', drapeau: '🇨🇫' },
-  { code: '+237', pays: 'Cameroun', drapeau: '🇨🇲' },
-  { code: '+240', pays: 'Guinée équatoriale', drapeau: '🇬🇶' },
-  { code: '+241', pays: 'Gabon', drapeau: '🇬🇦' },
-  { code: '+242', pays: 'Congo', drapeau: '🇨🇬' },
-  { code: '+243', pays: 'RD Congo', drapeau: '🇨🇩' },
-  { code: '+244', pays: 'Angola', drapeau: '🇦🇴' },
-  // Afrique du Nord
-  { code: '+212', pays: 'Maroc', drapeau: '🇲🇦' },
-  { code: '+213', pays: 'Algérie', drapeau: '🇩🇿' },
-  { code: '+216', pays: 'Tunisie', drapeau: '🇹🇳' },
-  { code: '+218', pays: 'Libye', drapeau: '🇱🇾' },
-  { code: '+20', pays: 'Égypte', drapeau: '🇪🇬' },
-  { code: '+249', pays: 'Soudan', drapeau: '🇸🇩' },
-  { code: '+211', pays: 'Soudan du Sud', drapeau: '🇸🇸' },
-  { code: '+251', pays: 'Éthiopie', drapeau: '🇪🇹' },
-  { code: '+252', pays: 'Somalie', drapeau: '🇸🇴' },
-  { code: '+253', pays: 'Djibouti', drapeau: '🇩🇯' },
-  { code: '+254', pays: 'Kenya', drapeau: '🇰🇪' },
-  { code: '+255', pays: 'Tanzanie', drapeau: '🇹🇿' },
-  { code: '+256', pays: 'Ouganda', drapeau: '🇺🇬' },
-  { code: '+250', pays: 'Rwanda', drapeau: '🇷🇼' },
-  { code: '+257', pays: 'Burundi', drapeau: '🇧🇮' },
-  { code: '+258', pays: 'Mozambique', drapeau: '🇲🇿' },
-  { code: '+260', pays: 'Zambie', drapeau: '🇿🇲' },
-  { code: '+261', pays: 'Madagascar', drapeau: '🇲🇬' },
-  { code: '+263', pays: 'Zimbabwe', drapeau: '🇿🇼' },
-  { code: '+264', pays: 'Namibie', drapeau: '🇳🇦' },
-  { code: '+265', pays: 'Malawi', drapeau: '🇲🇼' },
-  { code: '+266', pays: 'Lesotho', drapeau: '🇱🇸' },
-  { code: '+267', pays: 'Botswana', drapeau: '🇧🇼' },
-  { code: '+268', pays: 'Eswatini', drapeau: '🇸🇿' },
-  { code: '+27', pays: 'Afrique du Sud', drapeau: '🇿🇦' },
-  // Europe
-  { code: '+33', pays: 'France', drapeau: '🇫🇷' },
-  { code: '+32', pays: 'Belgique', drapeau: '🇧🇪' },
-  { code: '+41', pays: 'Suisse', drapeau: '🇨🇭' },
-  { code: '+49', pays: 'Allemagne', drapeau: '🇩🇪' },
-  { code: '+39', pays: 'Italie', drapeau: '🇮🇹' },
-  { code: '+34', pays: 'Espagne', drapeau: '🇪🇸' },
-  { code: '+44', pays: 'Royaume-Uni', drapeau: '🇬🇧' },
-  { code: '+351', pays: 'Portugal', drapeau: '🇵🇹' },
-  { code: '+31', pays: 'Pays-Bas', drapeau: '🇳🇱' },
-  { code: '+43', pays: 'Autriche', drapeau: '🇦🇹' },
-  { code: '+30', pays: 'Grèce', drapeau: '🇬🇷' },
-  { code: '+48', pays: 'Pologne', drapeau: '🇵🇱' },
-  { code: '+40', pays: 'Roumanie', drapeau: '🇷🇴' },
-  { code: '+7', pays: 'Russie', drapeau: '🇷🇺' },
-  { code: '+380', pays: 'Ukraine', drapeau: '🇺🇦' },
-  // Amériques
-  { code: '+1', pays: 'USA/Canada', drapeau: '🇺🇸' },
-  { code: '+52', pays: 'Mexique', drapeau: '🇲🇽' },
-  { code: '+55', pays: 'Brésil', drapeau: '🇧🇷' },
-  { code: '+54', pays: 'Argentine', drapeau: '🇦🇷' },
-  // Asie
-  { code: '+86', pays: 'Chine', drapeau: '🇨🇳' },
-  { code: '+81', pays: 'Japon', drapeau: '🇯🇵' },
-  { code: '+82', pays: 'Corée du Sud', drapeau: '🇰🇷' },
-  { code: '+91', pays: 'Inde', drapeau: '🇮🇳' },
-  { code: '+92', pays: 'Pakistan', drapeau: '🇵🇰' },
-  { code: '+880', pays: 'Bangladesh', drapeau: '🇧🇩' },
-  { code: '+62', pays: 'Indonésie', drapeau: '🇮🇩' },
-  { code: '+60', pays: 'Malaisie', drapeau: '🇲🇾' },
-  { code: '+65', pays: 'Singapour', drapeau: '🇸🇬' },
-  { code: '+66', pays: 'Thaïlande', drapeau: '🇹🇭' },
-  { code: '+84', pays: 'Vietnam', drapeau: '🇻🇳' },
-  { code: '+63', pays: 'Philippines', drapeau: '🇵🇭' },
-  // Océanie
-  { code: '+61', pays: 'Australie', drapeau: '🇦🇺' },
-  { code: '+64', pays: 'Nouvelle-Zélande', drapeau: '🇳🇿' },
-];
 
 function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () => void; champsManquants?: string[] }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -163,14 +43,6 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [uploading, setUploading] = useState(false);
   const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
   const [modalProfilOuvert, setModalProfilOuvert] = useState(false);
-  const [modalPrenom, setModalPrenom] = useState('');
-  const [modalNom, setModalNom] = useState('');
-  const [modalNumero, setModalNumero] = useState('');
-  const [modalPays, setModalPays] = useState('');
-  const [modalAge, setModalAge] = useState('');
-  const [modalSexe, setModalSexe] = useState('');
-  const [modalIndicatif, setModalIndicatif] = useState('+226');
-  const [modalChargement, setModalChargement] = useState(false);
   const [modalSecuriteOuvert, setModalSecuriteOuvert] = useState(false);
   const [modalMdpOuvert, setModalMdpOuvert] = useState(false);
   const [modeMdp, setModeMdp] = useState<'email' | 'otp' | 'nouveau' | 'succes'>('email');
@@ -179,7 +51,6 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [mdpNouveau, setMdpNouveau] = useState('');
   const [mdpLoading, setMdpLoading] = useState(false);
   const [connexions, setConnexions] = useState<any[]>([]);
-  const [saveEnCours, setSaveEnCours] = useState(false);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
   const [photoLightbox, setPhotoLightbox] = useState<string | null>(null);
 
@@ -267,7 +138,6 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
   const [erreurSuppression, setErreurSuppression] = useState('');
   const [chargementSuppression, setChargementSuppression] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
-  const photoInputModalRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     localStorage.setItem('vokyvo_page', pageActive);
@@ -453,63 +323,10 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
     }
   };
 
-  const ouvrirModalProfil = async () => {
+  const ouvrirModalProfil = () => {
     setModalProfilOuvert(true);
-    setModalChargement(true);
-    try {
-      const token = localStorage.getItem('access_token');
-      const res = await axios.get(`${API_URL}/user/profil/statut/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const u = res.data;
-      setModalAge(u.age ? String(u.age) : '');
-      setModalSexe(u.sexe || '');
-      setModalNumero(u.numero || '');
-      setModalPays(u.pays || '');
-      setModalPrenom(u.prenom || u.first_name || '');
-      setModalNom(u.nom || u.last_name || '');
-    } catch (e) {
-      console.warn('Erreur chargement profil', e);
-    } finally {
-      setModalChargement(false);
-    }
   };
 
-  const sauvegarderProfil = async () => {
-    setSaveEnCours(true);
-    try {
-      await axios.patch(`${API_URL}/user/profil/`, {
-        age: modalAge,
-        sexe: modalSexe,
-        numero: `${modalIndicatif} ${modalNumero}`.trim(),
-        pays: modalPays,
-        prenom: modalPrenom,
-        nom: modalNom,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Met à jour userData avec TOUTES les nouvelles valeurs
-      const updated = {
-        ...userData,
-        age: modalAge,
-        sexe: modalSexe,
-        numero: `${modalIndicatif} ${modalNumero}`.trim(),
-        pays: modalPays,
-        prenom: modalPrenom,
-        nom: modalNom,
-      };
-      setUserData(updated);
-      localStorage.setItem('user', JSON.stringify(updated));
-
-      setModalProfilOuvert(false);
-      toast.success('Profil mis à jour !');
-    } catch (err: any) {
-      toast.error('Erreur : ' + (err.response?.data?.erreur || err.message));
-    } finally {
-      setSaveEnCours(false);
-    }
-  };
 
 
   // const IconeVideo = () => (
@@ -711,141 +528,16 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
       {/* Modal Modifier le profil */}
       {modalProfilOuvert && (
-        <div style={styles.overlayConfirmation} onClick={() => setModalProfilOuvert(false)}>
-          <div style={styles.modalProfil} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.modalTitre}>Modifier le profil</h3>
-
-            {modalChargement ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-                <div style={{ width: '30px', height: '30px', border: '3px solid #2a2a3e', borderTopColor: '#667eea', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-              </div>
-            ) : (
-            <>
-            {/* Photo de profil */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-              <div 
-                onClick={() => { if (photoUrl) { setPhotoLightbox(photoUrl); setLightboxOuverte(true); } }}
-                style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#1a1a2e', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: photoUrl ? 'pointer' : 'default', border: '2px solid #667eea' }}
-              >
-                {photoUrl ? (
-                  <img src={photoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
-                ) : (
-                  <span style={{ color: '#667eea', fontSize: '30px', fontWeight: 'bold' }}>
-                    {(userData.prenom || userData.first_name || '?').charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={() => photoInputModalRef.current?.click()}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'rgba(102,126,234,0.1)',
-                  border: '1px solid #667eea',
-                  color: '#667eea',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  marginTop: '10px',
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                  <circle cx="12" cy="13" r="4" />
-                </svg>
-                Changer la photo
-              </button>
-              <input
-                type="file"
-                ref={photoInputModalRef}
-                onChange={uploadPhoto}
-                accept="image/*"
-                style={{ display: 'none' }}
-              />
-            </div>
-
-            <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Email (non modifiable)</label>
-              <input type="text" value={userData.email || ''} disabled style={styles.inputDisabled} />
-            </div>
-
-            <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Prénom</label>
-              <input type="text" value={modalPrenom} onChange={(e) => setModalPrenom(e.target.value)} placeholder="Ton prénom" style={styles.input} />
-            </div>
-
-            <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Nom</label>
-              <input type="text" value={modalNom} onChange={(e) => setModalNom(e.target.value)} placeholder="Ton nom" style={styles.input} />
-            </div>
-
-            <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Téléphone</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <select 
-                  value={modalIndicatif} 
-                  onChange={(e) => {
-                    setModalIndicatif(e.target.value);
-                    // Le pays se met à jour automatiquement
-                    const pays = INDICATIFS.find(i => i.code === e.target.value);
-                    if (pays) setModalPays(pays.pays);
-                  }} 
-                  style={{ ...styles.input, width: '120px' }}
-                >
-                  {INDICATIFS.map((i) => (
-                    <option key={i.code} value={i.code}>{i.drapeau} {i.code}</option>
-                  ))}
-                </select>
-                <input
-                  type="tel"
-                  value={modalNumero}
-                  onChange={(e) => setModalNumero(formaterNumero(e.target.value, modalIndicatif))}
-                  placeholder={genererPlaceholder(modalIndicatif)}
-                  style={styles.input} 
-                />
-              </div>
-            </div>
-
-            <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Pays</label>
-              <select value={modalPays} onChange={(e) => setModalPays(e.target.value)} style={styles.input}>
-                {INDICATIFS.map((i) => (
-                  <option key={i.pays} value={i.pays}>{i.drapeau} {i.pays}</option>
-                ))}
-              </select>
-            </div>
-
-            <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Âge</label>
-              <input type="number" value={modalAge} onChange={(e) => setModalAge(e.target.value)} placeholder="Ton âge" min="16" max="120" style={styles.input} />
-            </div>
-
-            <div style={styles.fieldGroup}>
-              <label style={styles.fieldLabel}>Sexe</label>
-              <select value={modalSexe} onChange={(e) => setModalSexe(e.target.value)} style={styles.input}>
-                <option value="M">Masculin</option>
-                <option value="F">Féminin</option>
-                
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button onClick={() => setModalProfilOuvert(false)} style={{ ...styles.saveBtn, background: '#2a2a3e', color: '#aaa' }}>
-                Annuler
-              </button>
-              <button onClick={sauvegarderProfil} disabled={saveEnCours} style={styles.saveBtn}>
-                {saveEnCours ? 'Enregistrement...' : 'Enregistrer'}
-              </button>
-            </div>
-            </>
-            )}
-          </div>
-        </div>
+        <ModalModifierProfil
+          user={userData}
+          onFermer={() => setModalProfilOuvert(false)}
+          onSauvegarder={(data) => {
+            setUserData({ ...userData, ...data });
+            localStorage.setItem('user', JSON.stringify({ ...userData, ...data }));
+          }}
+          ouvrirLightbox={(url) => { setPhotoLightbox(url); setLightboxOuverte(true); }}
+        />
       )}
-
 
       {/* Écran Sécurité (full screen) */}
       {modalSecuriteOuvert && (
