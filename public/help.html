@@ -3,23 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centre d'aide — VOKYVO</title>
+<title>Centre d'aide VOKYVO — FAQ, support et guides</title>
 <link rel="canonical" href="https://vokyvo.com/help">
-<meta name="description" content="Centre d'aide VOKYVO : réponses aux questions fréquentes sur la messagerie, l'IA, les news, la sécurité et la confidentialité.">
+<meta name="description" content="Centre d'aide VOKYVO : réponses détaillées sur la messagerie, les groupes, Vokyvo AI, les news, la sécurité, la confidentialité et la suppression de compte.">
+<meta name="robots" content="index, follow">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#ccc;line-height:1.7;padding:70px 20px 40px;max-width:700px;margin:0 auto}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#ccc;line-height:1.7;padding:70px 20px 40px;max-width:760px;margin:0 auto}
 .back{position:fixed;top:15px;left:15px;display:inline-flex;align-items:center;gap:8px;background:rgba(17,17,32,0.95);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;text-decoration:none;z-index:10;backdrop-filter:blur(10px);box-shadow:0 4px 12px rgba(0,0,0,0.3);transition:all 0.2s}
 .back:hover{background:rgba(102,126,234,0.2);border-color:#667eea;color:#667eea}
 h1{color:#fff;font-size:28px;margin-bottom:8px;text-align:center}
 .sub{color:#888;font-size:14px;margin-bottom:30px;text-align:center}
-h2{color:#fff;font-size:18px;font-weight:600;margin-top:30px;margin-bottom:12px}
+h2{color:#fff;font-size:18px;font-weight:600;margin-top:36px;margin-bottom:12px;padding-top:18px;border-top:1px solid #1a1a2e}
+h3{color:#fff;font-size:14px;font-weight:600;margin-top:18px;margin-bottom:8px}
 .faq{background:#111120;border:1px solid #2a2a3e;border-radius:12px;padding:15px;margin-bottom:10px}
 .faq-q{color:#fff;font-weight:600;font-size:15px;margin-bottom:6px}
 .faq-a{color:#aaa;font-size:14px;line-height:1.6}
 a{color:#667eea;text-decoration:none}
+a:hover{text-decoration:underline}
 .footer{margin-top:40px;padding-top:20px;border-top:1px solid #2a2a3e;font-size:12px;color:#666;text-align:center}
 .search{width:100%;padding:12px 15px;border-radius:10px;border:1px solid #2a2a3e;background:#1a1a2e;color:white;font-size:14px;outline:none;margin-bottom:20px}
+.search:focus{border-color:#667eea}
+.intro{background:#111120;border:1px solid #2a2a3e;border-radius:12px;padding:16px;margin-bottom:24px;color:#aaa;font-size:14px}
 </style>
 </head>
 <body>
@@ -28,73 +33,279 @@ a{color:#667eea;text-decoration:none}
 Retour
 </a>
 
-<h1>Centre d'aide</h1>
+<h1>Centre d'aide VOKYVO</h1>
 <p class="sub">Trouve rapidement une réponse à ta question</p>
+
+<div class="intro">
+Bienvenue dans le centre d'aide officiel de VOKYVO. Cette page répond aux questions les plus fréquentes sur l'application : inscription, messagerie, groupes, assistant Vokyvo AI, actualités, sécurité, confidentialité et suppression de compte. Si tu ne trouves pas ta réponse, contacte le support à <a href="mailto:support@vokyvo.com">support@vokyvo.com</a> ou via le bot Telegram <a href="https://t.me/vokyvo_bot">@vokyvo_bot</a>.
+</div>
 
 <input type="text" id="search" class="search" placeholder="Rechercher une question..." onkeyup="filtrer()">
 
 <div id="faq-list">
-  <h2>Compte & Connexion</h2>
+
+  <h2>Démarrage & inscription</h2>
+  <div class="faq" data-q="Qu'est-ce que VOKYVO ?">
+    <div class="faq-q">Qu'est-ce que VOKYVO ?</div>
+    <div class="faq-a">VOKYVO est une plateforme de communication intelligente qui réunit messagerie, groupes, assistant IA, actualités et visioconférence dans un même espace. Elle est pensée pour l'Afrique de l'Ouest, avec un slogan simple : « Everything. Everyone. Everywhere. »</div>
+  </div>
   <div class="faq" data-q="Comment créer un compte ?">
     <div class="faq-q">Comment créer un compte ?</div>
-    <div class="faq-a">Ouvre l'app, clique sur "Inscription", remplis le formulaire (nom, email, âge) et valide avec le code OTP envoyé par email.</div>
+    <div class="faq-a">Ouvre l'application, clique sur « Inscription », remplis le formulaire (prénom, nom, email, âge) et valide avec le code OTP envoyé par email. Tu peux aussi t'inscrire avec Google OAuth en un clic.</div>
   </div>
-  <div class="faq" data-q="Comment supprimer mon compte ?">
-    <div class="faq-q">Comment supprimer mon compte ?</div>
-    <div class="faq-a">Menu → Quitter → Supprimer mon compte. La suppression est immédiate. Tu peux aussi le faire via <a href="/supprimer-compte">vokyvo.com/supprimer-compte</a>.</div>
+  <div class="faq" data-q="Quel âge minimum pour s'inscrire ?">
+    <div class="faq-q">Quel âge minimum pour s'inscrire ?</div>
+    <div class="faq-a">L'âge minimum est de 16 ans. Entre 16 et 18 ans, une autorisation parentale est obligatoire. À partir de 18 ans, l'inscription est libre.</div>
   </div>
-  <div class="faq" data-q="J'ai oublié mon mot de passe">
-    <div class="faq-q">J'ai oublié mon mot de passe</div>
-    <div class="faq-a">Sur l'écran de connexion, clique sur "Mot de passe oublié". Un code te sera envoyé par email pour réinitialiser.</div>
+  <div class="faq" data-q="Puis-je m'inscrire avec Google ?">
+    <div class="faq-q">Puis-je m'inscrire avec Google ?</div>
+    <div class="faq-a">Oui. Sur l'écran de connexion, clique sur « Continuer avec Google ». Si c'est ta première connexion, tu devras compléter ton profil (numéro, pays, âge, sexe).</div>
+  </div>
+  <div class="faq" data-q="Comment vérifier mon email ?">
+    <div class="faq-q">Comment vérifier mon email ?</div>
+    <div class="faq-a">Un code OTP à 6 chiffres est envoyé à ton adresse email lors de l'inscription. Saisis-le dans l'application pour activer ton compte. Si tu ne le reçois pas, vérifie tes spams ou demande un nouveau code.</div>
   </div>
 
-  <h2>Messagerie & Groupes</h2>
-  <div class="faq" data-q="Comment créer un groupe ?">
-    <div class="faq-q">Comment créer un groupe ?</div>
-    <div class="faq-a">Dans l'onglet "Chat", clique sur "Créer un groupe", donne-lui un nom, ajoute des membres et valide.</div>
+  <h2>Connexion & mot de passe</h2>
+  <div class="faq" data-q="J'ai oublié mon mot de passe">
+    <div class="faq-q">J'ai oublié mon mot de passe</div>
+    <div class="faq-a">Sur l'écran de connexion, clique sur « Mot de passe oublié ». Un code de réinitialisation te sera envoyé par email. Saisis-le, puis choisis un nouveau mot de passe.</div>
+  </div>
+  <div class="faq" data-q="Comment changer mon mot de passe ?">
+    <div class="faq-q">Comment changer mon mot de passe ?</div>
+    <div class="faq-a">Va dans Profil → Sécurité → « Changer mon mot de passe ». Tu devras confirmer via un code envoyé par email, puis saisir ton nouveau mot de passe.</div>
+  </div>
+  <div class="faq" data-q="Comment activer la double authentification (2FA) ?">
+    <div class="faq-q">Comment activer la double authentification (2FA) ?</div>
+    <div class="faq-a">Va dans Profil → Sécurité → 2FA. Scanne le QR code avec une application comme Google Authenticator, puis saisis le code généré pour activer la protection.</div>
+  </div>
+  <div class="faq" data-q="Pourquoi je suis déconnecté automatiquement ?">
+    <div class="faq-q">Pourquoi je suis déconnecté automatiquement ?</div>
+    <div class="faq-a">Pour des raisons de sécurité, ta session expire après une période d'inactivité. Reconnecte-toi simplement avec ton email et mot de passe. Si tu utilises l'application sur plusieurs appareils, chaque session est indépendante.</div>
+  </div>
+
+  <h2>Profil & paramètres</h2>
+  <div class="faq" data-q="Comment modifier ma photo de profil ?">
+    <div class="faq-q">Comment modifier ma photo de profil ?</div>
+    <div class="faq-a">Va dans Profil → Modifier le profil → clique sur « Changer la photo ». Sélectionne une image depuis ta galerie (max 5 Mo, formats JPEG, PNG, WebP ou GIF).</div>
+  </div>
+  <div class="faq" data-q="Comment changer mon numéro de téléphone ?">
+    <div class="faq-q">Comment changer mon numéro de téléphone ?</div>
+    <div class="faq-a">Va dans Profil → Modifier le profil. Sélectionne ton indicatif pays (82 pays disponibles) puis saisis ton nouveau numéro. Le formatage est automatique.</div>
+  </div>
+  <div class="faq" data-q="Comment obtenir le badge vérifié ?">
+    <div class="faq-q">Comment obtenir le badge vérifié ?</div>
+    <div class="faq-a">Le badge vérifié est réservé aux comptes publics, créateurs de contenu et partenaires. Tu peux en faire la demande via Profil → Demander le badge. Chaque demande est étudiée manuellement.</div>
+  </div>
+  <div class="faq" data-q="Puis-je changer mon nom d'utilisateur ?">
+    <div class="faq-q">Puis-je changer mon nom d'utilisateur ?</div>
+    <div class="faq-a">Oui, tu peux modifier ton prénom et ton nom à tout moment dans Profil → Modifier le profil. Ton adresse email, en revanche, n'est pas modifiable.</div>
+  </div>
+
+  <h2>Messagerie privée</h2>
+  <div class="faq" data-q="Comment envoyer un message privé ?">
+    <div class="faq-q">Comment envoyer un message privé ?</div>
+    <div class="faq-a">Ouvre l'onglet Messages, clique sur le bouton « + » puis recherche l'utilisateur par son nom ou son email. Une conversation privée s'ouvre instantanément.</div>
+  </div>
+  <div class="faq" data-q="Les messages sont-ils en temps réel ?">
+    <div class="faq-q">Les messages sont-ils en temps réel ?</div>
+    <div class="faq-a">Oui. VOKYVO utilise WebSocket pour la synchronisation instantanée. Si tu ne vois pas un message arriver, vérifie ta connexion internet et redémarre l'application si nécessaire.</div>
+  </div>
+  <div class="faq" data-q="Puis-je envoyer des photos, vidéos ou audios ?">
+    <div class="faq-q">Puis-je envoyer des photos, vidéos ou audios ?</div>
+    <div class="faq-a">Oui. Dans une conversation, clique sur l'icône trombone pour joindre un fichier (photos, vidéos, documents) ou sur l'icône micro pour enregistrer un message vocal.</div>
+  </div>
+  <div class="faq" data-q="Comment savoir si mon message a été lu ?">
+    <div class="faq-q">Comment savoir si mon message a été lu ?</div>
+    <div class="faq-a">Les indicateurs de lecture (ticks) sont en cours de déploiement sur la messagerie privée. Ils afficheront : envoyé, reçu, puis lu.</div>
+  </div>
+  <div class="faq" data-q="Comment supprimer un message ?">
+    <div class="faq-q">Comment supprimer un message ?</div>
+    <div class="faq-a">Appuie longuement sur le message concerné, puis sélectionne « Supprimer ». Le message sera retiré de ta conversation. La suppression est définitive.</div>
   </div>
   <div class="faq" data-q="Pourquoi mes messages ne s'affichent pas ?">
     <div class="faq-q">Pourquoi mes messages ne s'affichent pas ?</div>
-    <div class="faq-a">Vérifie ta connexion internet. Si le problème persiste, ferme et rouvre l'app. Les messages sont synchronisés via WebSocket en temps réel.</div>
+    <div class="faq-a">Vérifie ta connexion internet. Si le problème persiste, ferme et rouvre l'application. Les messages sont synchronisés via WebSocket en temps réel. Si tu utilises un VPN ou un réseau restrictif, le WebSocket peut être bloqué.</div>
   </div>
 
-  <h2>Vokyvo AI</h2>
-  <div class="faq" data-q="Comment générer une image ?">
-    <div class="faq-q">Comment générer une image ?</div>
-    <div class="faq-a">Dis simplement "Génère une image de [sujet]". L'IA te demandera des précisions si le sujet est flou, puis générera l'image.</div>
+  <h2>Groupes</h2>
+  <div class="faq" data-q="Comment créer un groupe ?">
+    <div class="faq-q">Comment créer un groupe ?</div>
+    <div class="faq-a">Dans l'onglet Messages, clique sur « Créer un groupe », donne-lui un nom, une description et une photo, puis ajoute des membres. Tu deviens automatiquement administrateur.</div>
+  </div>
+  <div class="faq" data-q="Combien de membres par groupe ?">
+    <div class="faq-q">Combien de membres par groupe ?</div>
+    <div class="faq-a">Les groupes VOKYVO n'ont pas de limite stricte de membres. Pour des raisons de performance, nous recommandons de rester sous 500 membres par groupe.</div>
+  </div>
+  <div class="faq" data-q="Comment nommer un modérateur ?">
+    <div class="faq-q">Comment nommer un modérateur ?</div>
+    <div class="faq-a">Ouvre le groupe, va dans les paramètres, puis sélectionne un membre et choisis « Nommer modérateur ». Les modérateurs peuvent supprimer des messages et bannir des membres.</div>
+  </div>
+  <div class="faq" data-q="Comment quitter un groupe ?">
+    <div class="faq-q">Comment quitter un groupe ?</div>
+    <div class="faq-a">Ouvre le groupe, va dans les paramètres et clique sur « Quitter le groupe ». Si tu es le créateur, tu dois d'abord nommer un autre administrateur ou supprimer le groupe.</div>
+  </div>
+  <div class="faq" data-q="Comment demander l'accès à un groupe privé ?">
+    <div class="faq-q">Comment demander l'accès à un groupe privé ?</div>
+    <div class="faq-a">Dans l'onglet Découvrir, trouve le groupe privé et clique sur « Demander l'accès ». Un modérateur examinera ta demande et pourra l'accepter ou la refuser.</div>
+  </div>
+
+  <h2>Vokyvo AI (assistant)</h2>
+  <div class="faq" data-q="Qu'est-ce que Vokyvo AI ?">
+    <div class="faq-q">Qu'est-ce que Vokyvo AI ?</div>
+    <div class="faq-a">Vokyvo AI est l'assistant intelligent intégré à VOKYVO. Il peut répondre à tes questions, t'aider dans tes devoirs, résumer des textes, traduire, et même générer des images.</div>
+  </div>
+  <div class="faq" data-q="Comment générer une image avec l'IA ?">
+    <div class="faq-q">Comment générer une image avec l'IA ?</div>
+    <div class="faq-a">Dans le chat Vokyvo AI, dis simplement « Génère une image de [sujet] ». L'IA te demandera des précisions si le sujet est flou, puis générera l'image via Cloudflare FLUX.</div>
   </div>
   <div class="faq" data-q="L'IA peut-elle se tromper ?">
     <div class="faq-q">L'IA peut-elle se tromper ?</div>
-    <div class="faq-a">Oui. L'IA est un outil d'aide et peut produire des informations inexactes. Vérifie toujours les réponses importantes auprès de sources fiables.</div>
+    <div class="faq-a">Oui. L'IA est un outil d'aide et peut produire des informations inexactes ou obsolètes. Vérifie toujours les réponses importantes (santé, droit, finance) auprès de sources fiables.</div>
+  </div>
+  <div class="faq" data-q="Quelles sont les limites d'utilisation de l'IA ?">
+    <div class="faq-q">Quelles sont les limites d'utilisation de l'IA ?</div>
+    <div class="faq-a">Pour garantir un service fluide à tous, Vokyvo AI applique des limites : 30 messages par minute, 10 OCR par minute et 5 générations d'images par heure. Ces limites peuvent évoluer.</div>
+  </div>
+  <div class="faq" data-q="L'IA garde-t-elle mes conversations ?">
+    <div class="faq-q">L'IA garde-t-elle mes conversations ?</div>
+    <div class="faq-a">Tes conversations avec Vokyvo AI sont stockées dans ton historique pour te permettre de les retrouver. Elles ne sont ni vendues ni utilisées à des fins publicitaires. Tu peux les supprimer à tout moment.</div>
   </div>
 
-  <h2>News</h2>
-  <div class="faq" data-q="Comment changer de catégorie ?">
-    <div class="faq-q">Comment changer de catégorie ?</div>
-    <div class="faq-a">Dans l'onglet "News", utilise les onglets horizontaux en haut (Flash, Finance, Dev, Burkina, etc.) pour changer de rubrique.</div>
+  <h2>Cours & OCR</h2>
+  <div class="faq" data-q="Comment fonctionne l'OCR ?">
+    <div class="faq-q">Comment fonctionne l'OCR ?</div>
+    <div class="faq-a">Prends une photo d'un texte (devoir, page de livre, note) et VOKYVO extrait le texte automatiquement. Tu peux ensuite demander à l'IA de l'expliquer ou de le corriger.</div>
+  </div>
+  <div class="faq" data-q="Puis-je utiliser VOKYVO pour mes devoirs ?">
+    <div class="faq-q">Puis-je utiliser VOKYVO pour mes devoirs ?</div>
+    <div class="faq-a">Oui, VOKYVO est un outil d'aide scolaire. L'IA peut expliquer des concepts, corriger des exercices et t'aider à réviser. Attention : elle ne remplace pas ton propre travail, et les réponses doivent toujours être vérifiées.</div>
+  </div>
+
+  <h2>Actualités (News)</h2>
+  <div class="faq" data-q="D'où viennent les actualités ?">
+    <div class="faq-q">D'où viennent les actualités ?</div>
+    <div class="faq-a">Les actualités proviennent de flux RSS de médias partenaires (Google News, LeFaso, Burkina24, etc.). VOKYVO agrège ces flux et les affiche dans l'onglet Actus.</div>
+  </div>
+  <div class="faq" data-q="Comment changer de catégorie d'actualités ?">
+    <div class="faq-q">Comment changer de catégorie d'actualités ?</div>
+    <div class="faq-a">Dans l'onglet Actus, utilise les onglets horizontaux en haut (Flash, Finance, Dev, Burkina, etc.) pour changer de rubrique. La section Burkina fusionne LeFaso et Burkina24.</div>
   </div>
   <div class="faq" data-q="Comment partager un article ?">
     <div class="faq-q">Comment partager un article ?</div>
-    <div class="faq-a">Clique sur l'icône de partage (le carré avec la flèche) sur n'importe quelle carte d'article. Tu peux partager sur WhatsApp, Telegram, X, Facebook ou copier le lien.</div>
+    <div class="faq-a">Clique sur l'icône de partage (le carré avec la flèche) sur n'importe quelle carte d'article. Tu peux partager sur WhatsApp, Telegram, X, Facebook, copier le lien ou partager via VOKYVO.</div>
+  </div>
+  <div class="faq" data-q="Puis-je sauvegarder un article ?">
+    <div class="faq-q">Puis-je sauvegarder un article ?</div>
+    <div class="faq-a">La sauvegarde d'articles est une fonctionnalité prévue dans une prochaine mise à jour. En attendant, tu peux copier le lien ou le partager vers toi-même.</div>
   </div>
 
-  <h2>Sécurité & Confidentialité</h2>
+  <h2>Newsletter</h2>
+  <div class="faq" data-q="Comment m'inscrire à la newsletter ?">
+    <div class="faq-q">Comment m'inscrire à la newsletter ?</div>
+    <div class="faq-a">Va sur <a href="https://vokyvo.com">vokyvo.com</a>, descends jusqu'au formulaire newsletter et saisis ton email. Tu recevras un email de confirmation.</div>
+  </div>
+  <div class="faq" data-q="Comment me désabonner de la newsletter ?">
+    <div class="faq-q">Comment me désabonner de la newsletter ?</div>
+    <div class="faq-a">Clique sur le lien de désabonnement en bas de chaque email, ou rends-toi sur <a href="/desabonnement">vokyvo.com/desabonnement</a>. Ton adresse sera immédiatement retirée de la liste.</div>
+  </div>
+
+  <h2>Visio & appels</h2>
+  <div class="faq" data-q="Comment lancer un appel vidéo ?">
+    <div class="faq-q">Comment lancer un appel vidéo ?</div>
+    <div class="faq-a">Dans une conversation, clique sur l'icône caméra en haut à droite. La visioconférence VOKYVO permet jusqu'à 5 participants simultanés.</div>
+  </div>
+  <div class="faq" data-q="Pourquoi l'appel vidéo ne fonctionne pas ?">
+    <div class="faq-q">Pourquoi l'appel vidéo ne fonctionne pas ?</div>
+    <div class="faq-a">Vérifie que tu as autorisé l'accès à la caméra et au micro dans les paramètres de ton téléphone. Vérifie aussi ta connexion internet : une bonne qualité vidéo nécessite au moins 1 Mbps.</div>
+  </div>
+
+  <h2>Sécurité & confidentialité</h2>
   <div class="faq" data-q="Mes données sont-elles en sécurité ?">
     <div class="faq-q">Mes données sont-elles en sécurité ?</div>
-    <div class="faq-a">Oui. Tes communications sont chiffrées en transit (TLS), tes mots de passe sont hachés (PBKDF2), et nous ne vendons jamais tes données. Consulte notre <a href="/confidentialite">politique de confidentialité</a>.</div>
+    <div class="faq-a">Oui. Tes communications sont chiffrées en transit (HTTPS/TLS), tes mots de passe sont hachés (PBKDF2), et nous ne vendons jamais tes données. Consulte notre <a href="/confidentialite">politique de confidentialité</a> pour les détails.</div>
   </div>
+  <div class="faq" data-q="VOKYVO utilise-t-il un chiffrement de bout en bout ?">
+    <div class="faq-q">VOKYVO utilise-t-il un chiffrement de bout en bout ?</div>
+    <div class="faq-a">Non, pas encore. Les messages sont chiffrés en transit, mais pas de bout en bout. Cette fonctionnalité est à l'étude pour une version future.</div>
+  </div>
+  <div class="faq" data-q="Où sont hébergées mes données ?">
+    <div class="faq-q">Où sont hébergées mes données ?</div>
+    <div class="faq-a">VOKYVO est hébergé chez InterServer (USA), avec Cloudinary (USA) pour les médias et Backblaze B2 pour les sauvegardes chiffrées. L'IA utilise Groq (USA).</div>
+  </div>
+  <div class="faq" data-q="Comment voir mes dernières connexions ?">
+    <div class="faq-q">Comment voir mes dernières connexions ?</div>
+    <div class="faq-a">Va dans Profil → Sécurité. Tu verras les 10 dernières connexions avec l'IP, l'appareil et la date. Si tu ne reconnais pas une connexion, change immédiatement ton mot de passe.</div>
+  </div>
+  <div class="faq" data-q="Comment télécharger mes données (RGPD) ?">
+    <div class="faq-q">Comment télécharger mes données (RGPD) ?</div>
+    <div class="faq-a">Va dans Profil → Mes données → « Télécharger mes données (JSON) ». Le fichier contient ton profil, tes conversations et tes groupes. C'est ton droit à la portabilité (RGPD art. 20).</div>
+  </div>
+  <div class="faq" data-q="Que faire si mon compte est piraté ?">
+    <div class="faq-q">Que faire si mon compte est piraté ?</div>
+    <div class="faq-a">Change immédiatement ton mot de passe via « Mot de passe oublié », active la 2FA dans Profil → Sécurité, puis vérifie tes dernières connexions. Si nécessaire, contacte le support à support@vokyvo.com.</div>
+  </div>
+
+  <h2>Suppression de compte</h2>
+  <div class="faq" data-q="Comment supprimer mon compte ?">
+    <div class="faq-q">Comment supprimer mon compte ?</div>
+    <div class="faq-a">Trois façons : (1) App : Menu → Quitter → Supprimer mon compte (immédiat). (2) Web : <a href="/supprimer-compte">vokyvo.com/supprimer-compte</a> (immédiat). (3) Email : support@vokyvo.com (sous 72h).</div>
+  </div>
+  <div class="faq" data-q="Que deviennent mes données après suppression ?">
+    <div class="faq-q">Que deviennent mes données après suppression ?</div>
+    <div class="faq-a">Ton compte est immédiatement désactivé. Les sauvegardes sont purgées sous 30 jours. Certaines données peuvent être conservées plus longtemps si la loi l'exige (obligations comptables, litiges).</div>
+  </div>
+  <div class="faq" data-q="Puis-je récupérer un compte supprimé ?">
+    <div class="faq-q">Puis-je récupérer un compte supprimé ?</div>
+    <div class="faq-a">Non. La suppression est définitive. Si tu souhaites revenir sur VOKYVO, tu devras créer un nouveau compte avec une nouvelle adresse email.</div>
+  </div>
+
+  <h2>Abonnement & VOKYVO+</h2>
   <div class="faq" data-q="VOKYVO est-il gratuit ?">
     <div class="faq-q">VOKYVO est-il gratuit ?</div>
-    <div class="faq-a">Oui. Toutes les fonctionnalités essentielles (messagerie, IA, news, groupes) sont gratuites.</div>
+    <div class="faq-a">Oui. Toutes les fonctionnalités essentielles (messagerie, groupes, IA, actualités, visio) sont gratuites. Une offre premium VOKYVO+ est en préparation.</div>
+  </div>
+  <div class="faq" data-q="Qu'est-ce que VOKYVO+ ?">
+    <div class="faq-q">Qu'est-ce que VOKYVO+ ?</div>
+    <div class="faq-a">VOKYVO+ est l'offre premium en préparation. Elle offrira des fonctionnalités avancées (badge, thèmes, limites IA augmentées). Aucune date de sortie n'est encore annoncée.</div>
+  </div>
+
+  <h2>Problèmes techniques</h2>
+  <div class="faq" data-q="L'application plante au démarrage">
+    <div class="faq-q">L'application plante au démarrage</div>
+    <div class="faq-a">Force l'arrêt de l'application puis relance-la. Si le problème persiste, désinstalle et réinstalle depuis <a href="https://github.com/aron733/frontend/releases">GitHub Releases</a>. Vérifie que tu utilises la dernière version.</div>
+  </div>
+  <div class="faq" data-q="Je ne reçois pas les notifications">
+    <div class="faq-q">Je ne reçois pas les notifications</div>
+    <div class="faq-a">Vérifie que les notifications sont autorisées dans les paramètres de ton téléphone (Paramètres → Applications → VOKYVO → Notifications). Vérifie aussi que le mode Ne pas déranger n'est pas activé.</div>
+  </div>
+  <div class="faq" data-q="L'application est lente">
+    <div class="faq-q">L'application est lente</div>
+    <div class="faq-a">Vérifie ta connexion internet. Ferme les applications en arrière-plan et redémarre VOKYVO. Si le problème persiste, contacte le support avec le modèle de ton téléphone et la version d'Android.</div>
+  </div>
+  <div class="faq" data-q="Comment signaler un bug ?">
+    <div class="faq-q">Comment signaler un bug ?</div>
+    <div class="faq-a">Tu peux signaler un bug via le bot Telegram <a href="https://t.me/vokyvo_bot">@vokyvo_bot</a>, ou par email à support@vokyvo.com. Décris précisément le problème, joins une capture d'écran si possible, et indique ton modèle de téléphone et ta version d'Android.</div>
+  </div>
+
+  <h2>Contact & support</h2>
+  <div class="faq" data-q="Comment contacter le support ?">
+    <div class="faq-q">Comment contacter le support ?</div>
+    <div class="faq-a">Par email : support@vokyvo.com. Par Telegram : <a href="https://t.me/vokyvo_bot">@vokyvo_bot</a>. Sur le site : <a href="https://vokyvo.com">vokyvo.com</a>. Nous répondons généralement sous 24 à 48 heures ouvrées.</div>
+  </div>
+  <div class="faq" data-q="Où voir le statut des services ?">
+    <div class="faq-q">Où voir le statut des services ?</div>
+    <div class="faq-a">Tous les services VOKYVO sont monitorés sur <a href="https://status.vokyvo.com/status/vokyvo">status.vokyvo.com</a>. En cas d'incident, une notification est publiée sur le canal Telegram <a href="https://t.me/vokyvo_app">@vokyvo_app</a>.</div>
   </div>
 </div>
 
 <div class="footer">
-  © 2026 VOKYVO LABS · 
-  <a href="/a-propos">À propos</a> · 
-  <a href="/blog">Blog</a> · 
-  <a href="/confidentialite">Confidentialité</a> · 
-  <a href="/cgu">CGU</a>
+  © 2026 VOKYVO LABS ·
+  <a href="/a-propos">À propos</a> ·
+  <a href="/blog">Blog</a> ·
+  <a href="/confidentialite">Confidentialité</a> ·
+  <a href="/cgu">CGU</a> ·
+  <a href="mailto:support@vokyvo.com">support@vokyvo.com</a>
 </div>
 
 <script>
