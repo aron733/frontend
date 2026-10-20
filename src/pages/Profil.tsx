@@ -79,8 +79,10 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           pays: u.pays || userData.pays,
           age: u.age || userData.age,
           sexe: u.sexe || userData.sexe,
+          photo_profil: u.photo_profil || userData.photo_profil,
         };
         setUserData(updated);
+        if (u.photo_profil) setPhotoUrl(u.photo_profil);
         localStorage.setItem('user', JSON.stringify(updated));
       } catch (e) {
         console.warn('Erreur chargement profil', e);
@@ -423,7 +425,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           </button>
 
           <p style={{ color: '#555', fontSize: '11px', textAlign: 'center', marginTop: '20px' }}>
-            VOKYVO v{(window as any).__APP_VERSION__ || '3.30.0'}
+            VOKYVO v{__APP_VERSION__}
           </p>
         </div>
 
