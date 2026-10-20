@@ -14,9 +14,6 @@ importers:
       '@capacitor/app':
         specifier: ^7.1.2
         version: 7.1.2(@capacitor/core@7.6.9)
-      '@capacitor/app-launcher':
-        specifier: ^8.0.1
-        version: 8.0.1(@capacitor/core@7.6.9)
       '@capacitor/browser':
         specifier: ^7.0.5
         version: 7.0.5(@capacitor/core@7.6.9)
@@ -96,6 +93,9 @@ importers:
         specifier: ^3.32.2
         version: 3.32.2(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
     devDependencies:
+      '@capacitor/app-launcher':
+        specifier: ^7.0.4
+        version: 7.0.4(@capacitor/core@7.6.9)
       '@capacitor/cli':
         specifier: ^7.6.9
         version: 7.6.9
@@ -662,10 +662,10 @@ packages:
     peerDependencies:
       '@capacitor/core': '>=7.0.0'
 
-  '@capacitor/app-launcher@8.0.1':
-    resolution: {integrity: sha512-23D8zi74sn7kxvISix8qYwgqdxGJN+4NImcNGvHen98LB1zb4eZfkJvFvp7pwntxGw4OjIE7yuf4wbzZxQHpog==}
+  '@capacitor/app-launcher@7.0.4':
+    resolution: {integrity: sha512-epTJ0g2K/wgfyqdQXtwTn12aVyAwnexzSCIh/Rh0VmUonTOT7SFMFoIOl5x5edv+4HDrYZstyTHPBVnXVTVtCA==}
     peerDependencies:
-      '@capacitor/core': '>=8.0.0'
+      '@capacitor/core': '>=7.0.0'
 
   '@capacitor/app@7.1.2':
     resolution: {integrity: sha512-d4I/oF/PRu4megL7/IGKYfe5j7yzSON1FRFgq6kH+m5kH6g7V+wyjHRLauCzGNjdRx4S+nWOumINds0qcRBtKg==}
@@ -4018,7 +4018,7 @@ snapshots:
     dependencies:
       '@capacitor/core': 7.6.9
 
-  '@capacitor/app-launcher@8.0.1(@capacitor/core@7.6.9)':
+  '@capacitor/app-launcher@7.0.4(@capacitor/core@7.6.9)':
     dependencies:
       '@capacitor/core': 7.6.9
 

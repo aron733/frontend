@@ -12,7 +12,6 @@
   "dependencies": {
     "@capacitor-community/media": "^8.0.1",
     "@capacitor/app": "^7.1.2",
-    "@capacitor/app-launcher": "^8.0.1",
     "@capacitor/browser": "^7.0.5",
     "@capacitor/clipboard": "^8.0.1",
     "@capacitor/core": "^7.0.0",
@@ -41,6 +40,7 @@
     "yet-another-react-lightbox": "^3.32.2"
   },
   "devDependencies": {
+    "@capacitor/app-launcher": "^7.0.4",
     "@capacitor/cli": "^7.6.9",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.13.3",
