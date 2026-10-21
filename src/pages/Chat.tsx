@@ -1180,7 +1180,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
               <input
                 type="text"
                 value={rechercheGlobale}
-                onChange={async (e) => {
+                onChange={(e) => {
                   const q = e.target.value;
                   setRechercheGlobale(q);
                   if (q.trim().length < 2) {
@@ -1189,16 +1189,21 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                     return;
                   }
                   setRechercheEnCours(true);
-                  try {
-                    const r = await axios.get(`${API_URL}/rechercher-users/?q=${encodeURIComponent(q)}`, {
-                      headers: { Authorization: `Bearer ${getToken()}` }
-                    });
-                    setResultatsGlobaux(r.data.users || []);
-                  } catch (err) {
-                    setResultatsGlobaux([]);
-                  } finally {
-                    setRechercheEnCours(false);
-                  }
+                  
+                  // Debounce de 400ms
+                  if ((window as any)._searchTimeout) clearTimeout((window as any)._searchTimeout);
+                  (window as any)._searchTimeout = setTimeout(async () => {
+                    try {
+                      const r = await axios.get(`${API_URL}/rechercher-users/?q=${encodeURIComponent(q)}`, {
+                        headers: { Authorization: `Bearer ${getToken()}` }
+                      });
+                      setResultatsGlobaux(r.data.users || []);
+                    } catch (err) {
+                      setResultatsGlobaux([]);
+                    } finally {
+                      setRechercheEnCours(false);
+                    }
+                  }, 400);
                 }}
                 placeholder="Nom, email ou numéro..."
                 style={styles.fsInput}
