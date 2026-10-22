@@ -10,6 +10,7 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
   const [resultats, setResultats] = useState<any[]>([]);
   const [membresSelectionnes, setMembresSelectionnes] = useState<any[]>([]);
   const [erreur, setErreur] = useState('');
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
 
   const getToken = () => localStorage.getItem('access_token') || '';
@@ -40,6 +41,8 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
   };
 
   const creerGroupe = async () => {
+    if (loading) return; // Anti double-clic
+    setLoading(true);
     setErreur('');
     setSuccess('');
 
@@ -73,6 +76,8 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
       }, 1000);
     } catch (err: any) {
       setErreur(err.response?.data?.erreur || 'Erreur création groupe');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -199,14 +204,14 @@ function CreerGroupe({ onFermer, onGroupeCree }: { onFermer: () => void; onGroup
         {erreur && <p style={styles.erreur}>{erreur}</p>}
         {success && <p style={styles.success}>{success}</p>}
 
-        <button onClick={creerGroupe} style={styles.creerBtn}>
+        <button onClick={creerGroupe} disabled={loading} style={{ ...styles.creerBtn, opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
             <circle cx="9" cy="7" r="4" />
             <line x1="19" y1="8" x2="19" y2="14" />
             <line x1="22" y1="11" x2="16" y2="11" />
           </svg>
-          Créer le groupe
+          {loading ? 'Création en cours...' : 'Créer le groupe'}
         </button>
       </div>
     </div>
