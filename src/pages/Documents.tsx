@@ -136,7 +136,7 @@ export default function Documents() {
           style={{ padding: '8px 12px', borderRadius: '8px', background: '#1a1a2e', color: 'white', border: '1px solid #2a2a3e', fontSize: '13px' }}
         >
           <option value="">Toutes années</option>
-          {[...new Set(epreuves.map(e => e.annee).filter(Boolean))].sort((a, b) => b - a).map(annee => (
+          {[...new Set(epreuves.map(e => e.annee).filter((a): a is number => a !== null))].sort((a, b) => b - a).map(annee => (
             <option key={annee} value={annee}>{annee}</option>
           ))}
         </select>
