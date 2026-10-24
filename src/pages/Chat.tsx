@@ -5,7 +5,7 @@ import { chargerMessages, sauvegarderMessages, chargerConversations as chargerCo
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
-import EditeurPhoto from '../EditeurPhoto';
+// import EditeurPhoto from '../EditeurPhoto'; // Temporaire (lightbox)
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
@@ -2539,15 +2539,11 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
       )}
 
       {photoAEditer && (
-        <EditeurPhoto
-          imageUrl={photoAEditer}
-          onSauvegarder={(blob) => {
-            const file = new File([blob], 'photo_editee.jpg', { type: 'image/jpeg' });
-            setFichiersSelectionnes([file]);
-            setPhotoAEditer(null);
-          }}
-          onAnnuler={() => setPhotoAEditer(null)}
-        />
+        <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 4000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => setPhotoAEditer(null)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer', zIndex: 10 }}>✕</button>
+          <img src={photoAEditer} alt="Photo" style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+          <p style={{ color: '#888', marginTop: '20px', fontSize: '13px' }}>Aperçu de la photo (lightbox temporaire)</p>
+        </div>
       )}
     </div>
   );
