@@ -86,7 +86,7 @@ export default function ViewerPDF({ url, titre, onFermer }: Props) {
       </button>
 
       {/* Barre d'actions en bas */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', background: 'rgba(0,0,0,0.9)', zIndex: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px 24px 20px', background: 'rgba(0,0,0,0.9)', zIndex: 10, paddingBottom: 'calc(12px + env(safe-area-inset-bottom))' }}>
         <button onClick={() => allerPage(page - 1)} disabled={page <= 1} style={{ background: 'transparent', border: 'none', color: page <= 1 ? '#444' : '#667eea', fontWeight: 600, cursor: page <= 1 ? 'not-allowed' : 'pointer' }}>
           ← Précédent
         </button>
