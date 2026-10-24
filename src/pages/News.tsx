@@ -43,7 +43,9 @@ function News({ onRetour }: { onRetour?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [recherche, setRecherche] = useState('');
   const [showSearch, setShowSearch] = useState(false);
-  const [vueActive, setVueActive] = useState<'actus' | 'annales'>('actus');
+  const [vueActive, setVueActive] = useState<'actus' | 'annales'>(() => {
+    return (localStorage.getItem('vokyvo_news_vue') as 'actus' | 'annales') || 'actus';
+  });
 
   const chargerSection = async (sectionId: string) => {
     setLoading(true);
@@ -105,7 +107,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
         border: '1px solid #2a2a3e'
       }}>
         <button
-          onClick={() => setVueActive('actus')}
+          onClick={() => { setVueActive('actus'); localStorage.setItem('vokyvo_news_vue', 'actus'); }}
           style={{
             flex: 1, 
             display: 'flex', 
@@ -133,7 +135,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
           Actualités
         </button>
         <button
-          onClick={() => setVueActive('annales')}
+          onClick={() => { setVueActive('annales'); localStorage.setItem('vokyvo_news_vue', 'annales'); }}
           style={{
             flex: 1, 
             display: 'flex', 
