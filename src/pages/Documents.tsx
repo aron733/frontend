@@ -123,11 +123,15 @@ export default function Documents() {
               }}
             >
               {/* Icône (remplace l'image) */}
-              <div style={{ height: '120px', background: 'linear-gradient(135deg, #1a1a2e, #111120)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #2a2a3e' }}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                </svg>
+              <div style={{ height: '120px', background: 'linear-gradient(135deg, #1a1a2e, #111120)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #2a2a3e', overflow: 'hidden' }}>
+                {e.couverture ? (
+                  <img src={e.couverture} alt={e.titre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                  </svg>
+                )}
               </div>
 
               <div style={{ padding: '16px' }}>
