@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import BoutonRetour from '../BoutonRetour';
-import Annales from './Annales';
+import Documents from './Documents';
 
 const SECTIONS = [
   { id: 'flash', nom: 'Flash', url: 'https://www.francetvinfo.fr/titres.rss' },
@@ -108,7 +108,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
         </button>
       </div>
 
-      {/* Sous-onglets Actus / Annales (style segmenté propre) */}
+      {/* Sous-onglets Actus / Documents (style segmenté propre) */}
       <div style={{ 
         display: 'flex', 
         background: '#111120', 
@@ -173,7 +173,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
       </div>
 
       {vueActive === 'annales' ? (
-        <Annales />
+        <Documents />
       ) : (
       <>
       {/* Barre de recherche (si ouverte) */}

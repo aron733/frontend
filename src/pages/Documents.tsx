@@ -18,7 +18,7 @@ interface Epreuve {
   contenu_texte: string | null;
 }
 
-export default function Annales() {
+export default function Documents() {
   const [epreuves, setEpreuves] = useState<Epreuve[]>([]);
   const [chargement, setChargement] = useState(true);
   const [filtreType, setFiltreType] = useState<'tous' | 'sujet' | 'annale' | 'resume'>('tous');
@@ -31,7 +31,7 @@ export default function Annales() {
         const res = await axios.get(`${API_URL}/epreuves/`);
         setEpreuves(res.data.epreuves || []);
       } catch {
-        toast.error('Erreur chargement annales');
+        toast.error('Erreur chargement documents');
       } finally {
         setChargement(false);
       }
