@@ -117,72 +117,50 @@ export default function Annales() {
               style={{
                 background: '#111120',
                 border: '1px solid #2a2a3e',
-                borderRadius: '12px',
-                padding: '16px',
+                borderRadius: '14px',
+                overflow: 'hidden',
                 cursor: e.fichier_pdf ? 'pointer' : 'default',
-                transition: 'border-color 0.2s',
               }}
             >
-              <p style={{ color: '#667eea', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
-                {e.type === 'sujet' ? 'Sujet' : e.type === 'annale' ? 'Annale' : 'Résumé'}
-                {e.examen ? ` · ${e.examen}` : ''}
-                {e.serie ? ` ${e.serie}` : ''}
-                {e.annee ? ` · ${e.annee}` : ''}
-              </p>
-              <p style={{ color: 'white', fontSize: '15px', fontWeight: 600, margin: '0 0 8px' }}>{e.titre}</p>
-              {e.matiere && (
-                <p style={{ color: '#888', fontSize: '13px', margin: '0 0 12px' }}>{e.matiere}</p>
-              )}
-              
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {e.fichier_pdf && (
+              {/* Icône (remplace l'image) */}
+              <div style={{ height: '120px', background: 'linear-gradient(135deg, #1a1a2e, #111120)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #2a2a3e' }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+              </div>
+
+              <div style={{ padding: '16px' }}>
+                <p style={{ color: '#667eea', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
+                  {e.type === 'sujet' ? 'Sujet' : e.type === 'annale' ? 'Annale' : 'Résumé'}
+                  {e.examen ? ` · ${e.examen}` : ''}
+                  {e.serie ? ` ${e.serie}` : ''}
+                </p>
+                <span style={{ color: 'white', fontSize: '16px', fontWeight: 600, lineHeight: 1.4, display: 'block', marginBottom: '6px' }}>{e.titre}</span>
+                {e.matiere && (
+                  <span style={{ color: '#888', fontSize: '13px', display: 'block', marginBottom: '10px' }}>{e.matiere}</span>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#555', fontSize: '12px' }}>{e.annee ? `Année ${e.annee}` : ''}</span>
                   <button
-                    onClick={(ev) => { ev.stopPropagation(); setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre }); }}
+                    onClick={(ev) => { ev.stopPropagation(); e.fichier_pdf && setPdfOuvert({ url: e.fichier_pdf, titre: e.titre }); }}
                     style={{
-                      width: '100%',
-                      textAlign: 'center',
-                      padding: '8px',
                       background: '#667eea',
+                      border: 'none',
                       color: 'white',
                       borderRadius: '8px',
-                      border: 'none',
-                      cursor: 'pointer',
+                      padding: '6px 14px',
                       fontSize: '12px',
                       fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
                     }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', verticalAlign: 'middle' }}>
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                    </svg>
-                    {e.type === 'sujet' ? 'Sujet' : e.type === 'annale' ? 'Annale' : 'Résumé'}
+                    Ouvrir
                   </button>
-                )}
-                {e.corrige_pdf && (
-                  <a
-                    href={e.corrige_pdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      flex: 1,
-                      textAlign: 'center',
-                      padding: '10px',
-                      background: '#28a745',
-                      color: 'white',
-                      borderRadius: '8px',
-                      textDecoration: 'none',
-                      fontSize: '13px',
-                      fontWeight: 600,
-                    }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', verticalAlign: 'middle' }}>
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    Corrigé
-                  </a>
-                )}
+                </div>
               </div>
             </div>
           ))}
