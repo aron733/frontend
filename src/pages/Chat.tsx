@@ -5,6 +5,7 @@ import { chargerMessages, sauvegarderMessages, chargerConversations as chargerCo
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
+import EditeurPhoto from '../EditeurPhoto';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
@@ -163,6 +164,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [fichiersSelectionnes, setFichiersSelectionnes] = useState<File[]>([]);
+  const [photoAEditer, setPhotoAEditer] = useState<string | null>(null);
   const [menuFichiersOuvert, setMenuFichiersOuvert] = useState(false);
 
   useEffect(() => {
@@ -2030,6 +2032,10 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                 style={{ display: 'none' }}
                 onChange={(e) => {
                   let files = Array.from(e.target.files || []);
+                  if (files.length === 1 && files[0].type.startsWith('image/')) {
+                    setPhotoAEditer(URL.createObjectURL(files[0]));
+                    return;
+                  }
                   if (files.length > 10) {
                     toast.error('Maximum 10 fichiers par envoi');
                     files = files.slice(0, 10);
@@ -2526,6 +2532,18 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
             ✕
           </button>
         </div>
+      )}
+
+      {photoAEditer && (
+        <EditeurPhoto
+          imageUrl={photoAEditer}
+          onSauvegarder={(blob) => {
+            const file = new File([blob], 'photo_editee.jpg', { type: 'image/jpeg' });
+            setFichiersSelectionnes([file]);
+            setPhotoAEditer(null);
+          }}
+          onAnnuler={() => setPhotoAEditer(null)}
+        />
       )}
     </div>
   );
