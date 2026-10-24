@@ -23,6 +23,7 @@ export default function Annales() {
   const [chargement, setChargement] = useState(true);
   const [filtreType, setFiltreType] = useState<'tous' | 'sujet' | 'annale' | 'resume'>('tous');
   const [pdfOuvert, setPdfOuvert] = useState<{ url: string; titre: string } | null>(null);
+  const [recherche, setRecherche] = useState('');
 
   useEffect(() => {
     const charger = async () => {
@@ -39,8 +40,13 @@ export default function Annales() {
   }, []);
 
   const filtrees = epreuves.filter((e) => {
-    if (filtreType === 'tous') return true;
-    return e.type === filtreType;
+    if (filtreType !== 'tous' && e.type !== filtreType) return false;
+    if (recherche.trim() !== '') {
+      const q = recherche.toLowerCase();
+      const texte = `${e.titre} ${e.matiere || ''} ${e.examen || ''} ${e.serie || ''} ${e.annee || ''}`.toLowerCase();
+      return texte.includes(q);
+    }
+    return true;
   });
 
   if (chargement) {
@@ -49,6 +55,26 @@ export default function Annales() {
 
   return (
     <div style={{ padding: '0 16px 40px' }}>
+      {/* Barre de recherche */}
+      <div style={{ marginBottom: '16px' }}>
+        <input
+          type="text"
+          value={recherche}
+          onChange={(e) => setRecherche(e.target.value)}
+          placeholder="Rechercher (ex: SVT 2020, Maths, BAC D...)"
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            borderRadius: '12px',
+            border: '1px solid #2a2a3e',
+            background: '#111120',
+            color: 'white',
+            fontSize: '14px',
+            outline: 'none',
+          }}
+        />
+      </div>
+
       {/* Filtres */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px' }}>
         {[
@@ -83,7 +109,7 @@ export default function Annales() {
           Aucun contenu disponible pour l'instant.
         </p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px' }}>
           {filtrees.map((e) => (
             <div
               key={e.id}
@@ -110,15 +136,15 @@ export default function Annales() {
                   <button
                     onClick={() => setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre })}
                     style={{
-                      flex: 1,
+                      width: '100%',
                       textAlign: 'center',
-                      padding: '10px',
+                      padding: '8px',
                       background: '#667eea',
                       color: 'white',
                       borderRadius: '8px',
                       border: 'none',
                       cursor: 'pointer',
-                      fontSize: '13px',
+                      fontSize: '12px',
                       fontWeight: 600,
                     }}
                   >
