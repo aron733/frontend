@@ -1912,7 +1912,11 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' as const, flex: 1, paddingBottom: '4px' }}>
                   {apercusMultiples.map((a, i) => (
-                    <div key={i} style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                    <div
+                      key={i}
+                      onClick={() => { if (a.type === 'image') setPhotoAEditer(a.url); }}
+                      style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0, cursor: a.type === 'image' ? 'pointer' : 'default' }}
+                    >
                       {a.type === 'video' ? (
                         <video src={a.url} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} muted playsInline preload="metadata" />
                       ) : (
