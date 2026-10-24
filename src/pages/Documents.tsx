@@ -26,6 +26,7 @@ export default function Documents() {
   const [chargement, setChargement] = useState(true);
   const [filtreType, setFiltreType] = useState<'tous' | 'sujet' | 'annale' | 'resume'>('tous');
   const [pdfOuvert, setPdfOuvert] = useState<{ url: string; titre: string } | null>(null);
+  const [chargementCarte, setChargementCarte] = useState<number | null>(null);
   const [imageLightbox, setImageLightbox] = useState<string | null>(null);
 
   const [recherche, setRecherche] = useState('');
@@ -124,7 +125,14 @@ export default function Documents() {
           {filtrees.map((e) => (
             <div
               key={e.id}
-              onClick={() => e.fichier_pdf && setPdfOuvert({ url: e.fichier_pdf, titre: e.titre })}
+              onClick={() => {
+                if (e.fichier_pdf) {
+                  setChargementCarte(e.id);
+                  setTimeout(() => {
+                    setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre });
+                  }, 50);
+                }
+              }}
               style={{
                 background: '#111120',
                 border: '1px solid #2a2a3e',
@@ -133,8 +141,22 @@ export default function Documents() {
                 cursor: e.fichier_pdf ? 'pointer' : 'default',
                 display: 'flex',
                 alignItems: 'stretch',
+                position: 'relative',
               }}
             >
+              {chargementCarte === e.id && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,10,15,0.85)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10, borderRadius: '14px' }}>
+                  <div style={{ width: '30px', height: '30px', border: '3px solid rgba(102,126,234,0.3)', borderTopColor: '#667eea', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                  <p style={{ color: '#888', fontSize: '12px', marginTop: '10px' }}>Chargement...</p>
+                  <style>{`
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+                  `}</style>
+                </div>
+              )}
+
               {/* Image de couverture (à gauche) */}
               <div
                 onClick={(ev) => { ev.stopPropagation(); if (e.couverture) setImageLightbox(e.couverture); }}
@@ -167,7 +189,15 @@ export default function Documents() {
                   )}
                 </div>
                 <button
-                  onClick={(ev) => { ev.stopPropagation(); if (e.fichier_pdf) setPdfOuvert({ url: e.fichier_pdf, titre: e.titre }); }}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    if (e.fichier_pdf) {
+                      setChargementCarte(e.id);
+                      setTimeout(() => {
+                        setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre });
+                      }, 50);
+                    }
+                  }}
                   style={{
                     alignSelf: 'flex-start',
                     background: '#667eea',
@@ -190,7 +220,7 @@ export default function Documents() {
       )}
 
       {pdfOuvert && (
-        <ViewerPDF url={pdfOuvert.url} titre={pdfOuvert.titre} onFermer={() => setPdfOuvert(null)} />
+        <ViewerPDF url={pdfOuvert.url} titre={pdfOuvert.titre} onFermer={() => { setPdfOuvert(null); setChargementCarte(null); }} />
       )}
 
       {imageLightbox && (
