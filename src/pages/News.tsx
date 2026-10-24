@@ -173,7 +173,9 @@ function News({ onRetour }: { onRetour?: () => void }) {
       </div>
 
       {vueActive === 'annales' ? (
-        <Documents />
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          <Documents />
+        </div>
       ) : (
       <>
       {/* Barre de recherche (si ouverte) */}
