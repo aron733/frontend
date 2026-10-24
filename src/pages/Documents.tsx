@@ -125,9 +125,9 @@ export default function Documents() {
               }}
             >
               {/* Icône (remplace l'image) */}
-              <div style={{ height: '160px', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #2a2a3e', overflow: 'hidden', position: 'relative' }}>
+              <div style={{ width: '100%', height: '180px', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #2a2a3e', overflow: 'hidden' }}>
                 {e.couverture ? (
-                  <img src={e.couverture} alt={e.titre} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={e.couverture} alt={e.titre} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block' }} />
                 ) : (
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
