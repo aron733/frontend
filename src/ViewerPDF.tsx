@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
@@ -16,6 +16,7 @@ interface Props {
 export default function ViewerPDF({ url, titre, onFermer }: Props) {
   const [nbPages, setNbPages] = useState<number | null>(null);
   const [page, setPage] = useState(1);
+  const touchStartX = useRef<number | null>(null);
 
   const allerPage = (p: number) => {
     if (nbPages && p >= 1 && p <= nbPages) setPage(p);
@@ -40,7 +41,19 @@ export default function ViewerPDF({ url, titre, onFermer }: Props) {
       </div>
 
       {/* PDF */}
-      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center', padding: '10px 0' }}>
+      <div
+        style={{ flex: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center', padding: '10px 0' }}
+        onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current === null) return;
+          const diff = touchStartX.current - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) allerPage(page + 1);
+            else allerPage(page - 1);
+          }
+          touchStartX.current = null;
+        }}
+      >
         <Document
           file={url}
           onLoadSuccess={({ numPages }) => setNbPages(numPages)}
@@ -58,8 +71,21 @@ export default function ViewerPDF({ url, titre, onFermer }: Props) {
 
       {/* Barre d'actions en bas (propre) */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', paddingBottom: 'calc(12px + env(safe-area-inset-bottom))', background: '#111120', borderTop: '1px solid #2a2a3e', zIndex: 10 }}>
-        <button onClick={() => allerPage(page - 1)} disabled={page <= 1} style={{ background: 'transparent', border: 'none', color: page <= 1 ? '#444' : '#667eea', fontWeight: 600, cursor: page <= 1 ? 'not-allowed' : 'pointer', padding: '8px' }}>
-          ← Précédent
+        <button
+          onClick={() => allerPage(page - 1)}
+          disabled={page <= 1}
+          style={{
+            width: '40px', height: '40px', borderRadius: '50%',
+            background: page <= 1 ? '#1a1a2e' : '#667eea',
+            border: 'none', color: 'white',
+            cursor: page <= 1 ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: page <= 1 ? 0.5 : 1,
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <input
@@ -72,8 +98,21 @@ export default function ViewerPDF({ url, titre, onFermer }: Props) {
           />
           <span style={{ color: '#666', fontSize: '13px' }}>/ {nbPages || '?'}</span>
         </div>
-        <button onClick={() => allerPage(page + 1)} disabled={page >= (nbPages || 1)} style={{ background: 'transparent', border: 'none', color: page >= (nbPages || 1) ? '#444' : '#667eea', fontWeight: 600, cursor: page >= (nbPages || 1) ? 'not-allowed' : 'pointer', padding: '8px' }}>
-          Suivant →
+        <button
+          onClick={() => allerPage(page + 1)}
+          disabled={page >= (nbPages || 1)}
+          style={{
+            width: '40px', height: '40px', borderRadius: '50%',
+            background: page >= (nbPages || 1) ? '#1a1a2e' : '#667eea',
+            border: 'none', color: 'white',
+            cursor: page >= (nbPages || 1) ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: page >= (nbPages || 1) ? 0.5 : 1,
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
         </button>
         <button onClick={telecharger} style={{ background: '#667eea', border: 'none', color: 'white', borderRadius: '8px', padding: '8px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600, fontSize: '13px' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
