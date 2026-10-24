@@ -61,13 +61,13 @@ export default function Annales() {
           type="text"
           value={recherche}
           onChange={(e) => setRecherche(e.target.value)}
-          placeholder="Rechercher (ex: SVT 2020, Maths, BAC D...)"
+          placeholder="Rechercher une annale..."
           style={{
             width: '100%',
-            padding: '12px 16px',
-            borderRadius: '12px',
+            padding: '12px 15px',
+            borderRadius: '10px',
             border: '1px solid #2a2a3e',
-            background: '#111120',
+            background: '#1a1a2e',
             color: 'white',
             fontSize: '14px',
             outline: 'none',
@@ -76,7 +76,7 @@ export default function Annales() {
       </div>
 
       {/* Filtres */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '15px', overflowX: 'auto', paddingBottom: '5px' }}>
         {[
           { id: 'tous', label: 'Tout' },
           { id: 'sujet', label: 'Sujets' },
