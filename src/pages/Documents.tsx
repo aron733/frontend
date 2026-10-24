@@ -16,6 +16,8 @@ interface Epreuve {
   fichier_pdf: string | null;
   corrige_pdf: string | null;
   contenu_texte: string | null;
+  page_debut: number;
+  couverture: string | null;
 }
 
 export default function Documents() {
