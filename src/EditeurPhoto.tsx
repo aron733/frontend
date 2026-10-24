@@ -9,7 +9,7 @@ interface Props {
 
 export default function EditeurPhoto({ imageUrl, onSauvegarder, onAnnuler }: Props) {
   return (
-    <div style={{ position: 'fixed', inset: 0, background: '#0a0a0f', zIndex: 4000, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 4000, display: 'flex', flexDirection: 'column' }}>
       <ImageEditorWrapper
         imageUrl={imageUrl}
         onSave={(blob) => onSauvegarder(blob)}
