@@ -933,7 +933,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           </div>
         </div>
       )}
-      {(pageActive === 'profil' || pageActive === 'news') && <BottomNav pageActive={pageActive} setPageActive={setPageActive} />}
+      {pageActive === 'profil' && <BottomNav pageActive={pageActive} setPageActive={setPageActive} />}
     </div>
   );
 }
