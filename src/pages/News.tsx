@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import BoutonRetour from '../BoutonRetour';
+import Annales from './Annales';
 
 const SECTIONS = [
   { id: 'flash', nom: 'Flash', url: 'https://www.francetvinfo.fr/titres.rss' },
@@ -42,6 +43,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [recherche, setRecherche] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [vueActive, setVueActive] = useState<'actus' | 'annales'>('actus');
 
   const chargerSection = async (sectionId: string) => {
     setLoading(true);
@@ -93,6 +95,36 @@ function News({ onRetour }: { onRetour?: () => void }) {
         </button>
       </div>
 
+      {/* Sous-onglets Actus / Annales */}
+      <div style={{ display: 'flex', gap: '8px', padding: '0 15px 10px' }}>
+        <button
+          onClick={() => setVueActive('actus')}
+          style={{
+            flex: 1, padding: '10px', borderRadius: '8px', border: 'none',
+            background: vueActive === 'actus' ? '#667eea' : '#1a1a2e',
+            color: vueActive === 'actus' ? 'white' : '#888',
+            fontSize: '13px', fontWeight: 600, cursor: 'pointer'
+          }}
+        >
+          📰 Actualités
+        </button>
+        <button
+          onClick={() => setVueActive('annales')}
+          style={{
+            flex: 1, padding: '10px', borderRadius: '8px', border: 'none',
+            background: vueActive === 'annales' ? '#667eea' : '#1a1a2e',
+            color: vueActive === 'annales' ? 'white' : '#888',
+            fontSize: '13px', fontWeight: 600, cursor: 'pointer'
+          }}
+        >
+          📚 Annales
+        </button>
+      </div>
+
+      {vueActive === 'annales' ? (
+        <Annales />
+      ) : (
+      <>
       {/* Barre de recherche (si ouverte) */}
       {showSearch && (
         <div style={{ padding: '10px 15px', background: '#0a0a0f' }}>
@@ -238,6 +270,8 @@ function News({ onRetour }: { onRetour?: () => void }) {
             <button onClick={() => setArticlePartage(null)} style={{ marginTop: '20px', width: '100%', padding: '12px', background: '#333', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 600 }}>Annuler</button>
           </div>
         </div>
+      )}
+      </>
       )}
     </div>
   );
