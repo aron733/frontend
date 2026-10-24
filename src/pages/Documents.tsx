@@ -30,6 +30,8 @@ export default function Documents() {
   const [imageLightbox, setImageLightbox] = useState<string | null>(null);
 
   const [recherche, setRecherche] = useState('');
+  const [filtreExamen, setFiltreExamen] = useState<string>('');
+  const [filtreAnnee, setFiltreAnnee] = useState<string>('');
 
   useEffect(() => {
     const charger = async () => {
@@ -47,6 +49,8 @@ export default function Documents() {
 
   const filtrees = epreuves.filter((e) => {
     if (filtreType !== 'tous' && e.type !== filtreType) return false;
+    if (filtreExamen && e.examen !== filtreExamen) return false;
+    if (filtreAnnee && e.annee !== parseInt(filtreAnnee)) return false;
     if (recherche.trim() !== '') {
       const q = recherche.toLowerCase();
       const texte = `${e.titre} ${e.matiere || ''} ${e.examen || ''} ${e.serie || ''} ${e.annee || ''}`.toLowerCase();
@@ -115,6 +119,29 @@ export default function Documents() {
         ))}
       </div>
 
+      {/* Filtres avancés (examen + année) */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '15px', flexWrap: 'wrap' }}>
+        <select
+          value={filtreExamen}
+          onChange={(e) => setFiltreExamen(e.target.value)}
+          style={{ padding: '8px 12px', borderRadius: '8px', background: '#1a1a2e', color: 'white', border: '1px solid #2a2a3e', fontSize: '13px' }}
+        >
+          <option value="">Tous examens</option>
+          <option value="BAC">BAC</option>
+          <option value="BEPC">BEPC</option>
+        </select>
+        <select
+          value={filtreAnnee}
+          onChange={(e) => setFiltreAnnee(e.target.value)}
+          style={{ padding: '8px 12px', borderRadius: '8px', background: '#1a1a2e', color: 'white', border: '1px solid #2a2a3e', fontSize: '13px' }}
+        >
+          <option value="">Toutes années</option>
+          {[...new Set(epreuves.map(e => e.annee).filter(Boolean))].sort((a, b) => b - a).map(annee => (
+            <option key={annee} value={annee}>{annee}</option>
+          ))}
+        </select>
+      </div>
+
       {/* Liste */}
       {filtrees.length === 0 ? (
         <p style={{ color: '#666', textAlign: 'center', marginTop: '40px' }}>
@@ -165,10 +192,7 @@ export default function Documents() {
                 {e.couverture ? (
                   <img src={e.couverture} alt={e.titre} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                  </svg>
+                  <img src="https://api.vokyvo.com/media/couvertures/icon_512_alpha.png" alt="VOKYVO" style={{ width: '60%', height: '60%', objectFit: 'contain', opacity: 0.5 }} />
                 )}
               </div>
 
