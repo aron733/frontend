@@ -109,15 +109,18 @@ export default function Annales() {
           Aucun contenu disponible pour l'instant.
         </p>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {filtrees.map((e) => (
             <div
               key={e.id}
+              onClick={() => e.fichier_pdf && setPdfOuvert({ url: e.fichier_pdf, titre: e.titre })}
               style={{
                 background: '#111120',
                 border: '1px solid #2a2a3e',
                 borderRadius: '12px',
                 padding: '16px',
+                cursor: e.fichier_pdf ? 'pointer' : 'default',
+                transition: 'border-color 0.2s',
               }}
             >
               <p style={{ color: '#667eea', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
@@ -134,7 +137,7 @@ export default function Annales() {
               <div style={{ display: 'flex', gap: '8px' }}>
                 {e.fichier_pdf && (
                   <button
-                    onClick={() => setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre })}
+                    onClick={(ev) => { ev.stopPropagation(); setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre }); }}
                     style={{
                       width: '100%',
                       textAlign: 'center',
@@ -154,7 +157,7 @@ export default function Annales() {
                       <line x1="16" y1="13" x2="8" y2="13" />
                       <line x1="16" y1="17" x2="8" y2="17" />
                     </svg>
-                    Sujet
+                    {e.type === 'sujet' ? 'Sujet' : e.type === 'annale' ? 'Annale' : 'Résumé'}
                   </button>
                 )}
                 {e.corrige_pdf && (
