@@ -85,7 +85,14 @@ function News({ onRetour }: { onRetour?: () => void }) {
     a.title?.toLowerCase().includes(recherche.toLowerCase())
   );
 
-  const shareUrl = articlePartage ? `https://vokyvo.com/share?url=${encodeURIComponent(articlePartage.link)}` : '';
+  const shareUrl = articlePartage ? (() => {
+    try {
+      const url = new URL(articlePartage.link);
+      return `https://vokyvo.com/share?url=${encodeURIComponent(url.origin + url.pathname)}`;
+    } catch {
+      return `https://vokyvo.com/share?url=${encodeURIComponent(articlePartage.link)}`;
+    }
+  })() : '';
 
   return (
     <div style={styles.container}>
