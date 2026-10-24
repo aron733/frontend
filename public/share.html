@@ -8,39 +8,51 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#ccc;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;text-align:center}
-.card{background:#111120;border:1px solid #2a2a3e;border-radius:16px;padding:30px;max-width:400px;width:100%}
-.logo{color:#667eea;font-size:24px;font-weight:800;margin-bottom:8px}
-.sub{color:#888;font-size:14px;margin-bottom:24px}
+.card{background:#111120;border:1px solid #2a2a3e;border-radius:16px;padding:24px;max-width:420px;width:100%}
+.logo{color:#667eea;font-size:22px;font-weight:800;margin-bottom:16px}
+.preview{background:#0a0a0f;border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;border:1px solid #2a2a3e}
+.preview-title{color:white;font-size:16px;font-weight:600;line-height:1.4;margin-bottom:8px}
+.preview-source{color:#667eea;font-size:12px;text-transform:uppercase;font-weight:600;letter-spacing:0.5px}
 .btn{display:inline-block;background:#667eea;color:white;text-decoration:none;padding:14px 24px;border-radius:12px;font-weight:600;font-size:15px;width:100%}
 .btn:hover{background:#5566d0}
-.info{color:#555;font-size:12px;margin-top:20px;word-break:break-all}
+.footer{color:#444;font-size:11px;margin-top:20px}
 </style>
 </head>
 <body>
 <div class="card">
   <div class="logo">VOKYVO</div>
-  <div class="sub">Quelqu'un t'a partagé un article</div>
+  <div class="preview">
+    <div class="preview-source" id="source">Chargement...</div>
+    <div class="preview-title" id="titre">Article partagé</div>
+  </div>
   <a id="lien" href="#" class="btn">Lire l'article complet</a>
-  <div id="source" class="info"></div>
+  <div class="footer">Partagé via VOKYVO</div>
 </div>
 <script>
   const params = new URLSearchParams(window.location.search);
   const url = params.get('url');
   const lien = document.getElementById('lien');
   const source = document.getElementById('source');
-  
+  const titre = document.getElementById('titre');
+
   if (url) {
     lien.href = url;
     try {
-      const domaine = new URL(url).hostname.replace('www.', '');
-      source.textContent = 'Source : ' + domaine;
+      const hostname = new URL(url).hostname.replace('www.', '');
+      source.textContent = hostname;
     } catch (e) {
       source.textContent = 'Lien externe';
     }
+    // Le titre sera affiché depuis les balises OG si possible, sinon on met un fallback
+    try {
+      // On ne peut pas faire de fetch cross-origin, donc on met un titre générique
+      titre.textContent = 'Article partagé depuis VOKYVO';
+    } catch (e) {}
   } else {
     lien.href = 'https://vokyvo.com';
     lien.textContent = 'Retour à VOKYVO';
-    source.textContent = 'Aucun lien fourni.';
+    source.textContent = 'VOKYVO';
+    titre.textContent = 'Aucun lien fourni.';
   }
 </script>
 </body>

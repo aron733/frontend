@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { API_URL } from '../config';
+import ViewerPDF from '../ViewerPDF';
 
 interface Epreuve {
   id: number;
@@ -21,6 +22,7 @@ export default function Annales() {
   const [epreuves, setEpreuves] = useState<Epreuve[]>([]);
   const [chargement, setChargement] = useState(true);
   const [filtreType, setFiltreType] = useState<'tous' | 'sujet' | 'annale' | 'resume'>('tous');
+  const [pdfOuvert, setPdfOuvert] = useState<{ url: string; titre: string } | null>(null);
 
   useEffect(() => {
     const charger = async () => {
@@ -105,10 +107,8 @@ export default function Annales() {
               
               <div style={{ display: 'flex', gap: '8px' }}>
                 {e.fichier_pdf && (
-                  <a
-                    href={e.fichier_pdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre })}
                     style={{
                       flex: 1,
                       textAlign: 'center',
@@ -116,7 +116,8 @@ export default function Annales() {
                       background: '#667eea',
                       color: 'white',
                       borderRadius: '8px',
-                      textDecoration: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
                       fontSize: '13px',
                       fontWeight: 600,
                     }}
@@ -128,7 +129,7 @@ export default function Annales() {
                       <line x1="16" y1="17" x2="8" y2="17" />
                     </svg>
                     Sujet
-                  </a>
+                  </button>
                 )}
                 {e.corrige_pdf && (
                   <a
@@ -157,6 +158,10 @@ export default function Annales() {
             </div>
           ))}
         </div>
+      )}
+
+      {pdfOuvert && (
+        <ViewerPDF url={pdfOuvert.url} titre={pdfOuvert.titre} onFermer={() => setPdfOuvert(null)} />
       )}
     </div>
   );
