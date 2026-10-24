@@ -2036,10 +2036,6 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                 style={{ display: 'none' }}
                 onChange={(e) => {
                   let files = Array.from(e.target.files || []);
-                  if (files.length === 1 && files[0].type.startsWith('image/')) {
-                    setPhotoAEditer(URL.createObjectURL(files[0]));
-                    return;
-                  }
                   if (files.length > 10) {
                     toast.error('Maximum 10 fichiers par envoi');
                     files = files.slice(0, 10);
@@ -2332,10 +2328,6 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                   style={{ display: 'none' }}
                   onChange={(e) => {
                   let files = Array.from(e.target.files || []);
-                  if (files.length === 1 && files[0].type.startsWith('image/')) {
-                    setPhotoAEditer(URL.createObjectURL(files[0]));
-                    return;
-                  }
                   if (files.length > 10) {
                     toast.error('Maximum 10 fichiers par envoi');
                     files = files.slice(0, 10);
