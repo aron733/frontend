@@ -27,6 +27,7 @@ export default function Documents() {
   const [filtreType, setFiltreType] = useState<'tous' | 'sujet' | 'annale' | 'resume'>('tous');
   const [pdfOuvert, setPdfOuvert] = useState<{ url: string; titre: string } | null>(null);
   const [imageLightbox, setImageLightbox] = useState<string | null>(null);
+  const [chargementPdf, setChargementPdf] = useState<number | null>(null);
   const [recherche, setRecherche] = useState('');
 
   useEffect(() => {
@@ -59,6 +60,12 @@ export default function Documents() {
 
   return (
     <div style={{ padding: '0 16px 40px' }}>
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
       {/* Barre de recherche */}
       <div style={{ marginBottom: '16px' }}>
         <input
@@ -160,21 +167,38 @@ export default function Documents() {
                   )}
                 </div>
                 <button
-                  onClick={(ev) => { ev.stopPropagation(); e.fichier_pdf && setPdfOuvert({ url: e.fichier_pdf, titre: e.titre }); }}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    if (e.fichier_pdf) {
+                      setChargementPdf(e.id);
+                      setPdfOuvert({ url: e.fichier_pdf, titre: e.titre });
+                    }
+                  }}
+                  disabled={chargementPdf === e.id}
                   style={{
                     alignSelf: 'flex-start',
-                    background: '#667eea',
+                    background: chargementPdf === e.id ? '#3a3a4e' : '#667eea',
                     border: 'none',
                     color: 'white',
                     borderRadius: '8px',
                     padding: '6px 12px',
                     fontSize: '11px',
                     fontWeight: 600,
-                    cursor: 'pointer',
+                    cursor: chargementPdf === e.id ? 'wait' : 'pointer',
                     marginTop: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
                   }}
                 >
-                  Ouvrir
+                  {chargementPdf === e.id ? (
+                    <>
+                      <div style={{ width: '12px', height: '12px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                      Chargement...
+                    </>
+                  ) : (
+                    'Ouvrir'
+                  )}
                 </button>
               </div>
             </div>
