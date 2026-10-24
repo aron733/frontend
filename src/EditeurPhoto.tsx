@@ -24,6 +24,7 @@ export default function EditeurPhoto({ imageUrl, onSauvegarder, onAnnuler }: Pro
             language: 'fr',
             exportFormat: 'jpeg',
             exportQuality: 0.92,
+            showToolbar: true,
           },
         });
 
