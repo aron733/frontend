@@ -95,29 +95,67 @@ function News({ onRetour }: { onRetour?: () => void }) {
         </button>
       </div>
 
-      {/* Sous-onglets Actus / Annales */}
-      <div style={{ display: 'flex', gap: '8px', padding: '0 15px 10px' }}>
+      {/* Sous-onglets Actus / Annales (style segmenté propre) */}
+      <div style={{ 
+        display: 'flex', 
+        background: '#111120', 
+        margin: '0 15px 15px', 
+        borderRadius: '12px', 
+        padding: '4px',
+        border: '1px solid #2a2a3e'
+      }}>
         <button
           onClick={() => setVueActive('actus')}
           style={{
-            flex: 1, padding: '10px', borderRadius: '8px', border: 'none',
-            background: vueActive === 'actus' ? '#667eea' : '#1a1a2e',
-            color: vueActive === 'actus' ? 'white' : '#888',
-            fontSize: '13px', fontWeight: 600, cursor: 'pointer'
+            flex: 1, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '8px',
+            padding: '8px', 
+            borderRadius: '8px', 
+            border: 'none',
+            background: vueActive === 'actus' ? '#667eea' : 'transparent',
+            color: vueActive === 'actus' ? 'white' : '#666',
+            fontSize: '13px', 
+            fontWeight: 600, 
+            cursor: 'pointer',
+            transition: 'all 0.2s'
           }}
         >
-          📰 Actualités
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+            <path d="M18 8h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2" />
+            <line x1="6" y1="8" x2="12" y2="8" />
+            <line x1="6" y1="12" x2="12" y2="12" />
+            <line x1="6" y1="16" x2="10" y2="16" />
+          </svg>
+          Actualités
         </button>
         <button
           onClick={() => setVueActive('annales')}
           style={{
-            flex: 1, padding: '10px', borderRadius: '8px', border: 'none',
-            background: vueActive === 'annales' ? '#667eea' : '#1a1a2e',
-            color: vueActive === 'annales' ? 'white' : '#888',
-            fontSize: '13px', fontWeight: 600, cursor: 'pointer'
+            flex: 1, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '8px',
+            padding: '8px', 
+            borderRadius: '8px', 
+            border: 'none',
+            background: vueActive === 'annales' ? '#667eea' : 'transparent',
+            color: vueActive === 'annales' ? 'white' : '#666',
+            fontSize: '13px', 
+            fontWeight: 600, 
+            cursor: 'pointer',
+            transition: 'all 0.2s'
           }}
         >
-          📚 Annales
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+          Annales
         </button>
       </div>
 
