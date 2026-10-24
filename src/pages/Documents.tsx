@@ -122,51 +122,55 @@ export default function Documents() {
                 borderRadius: '14px',
                 overflow: 'hidden',
                 cursor: e.fichier_pdf ? 'pointer' : 'default',
+                display: 'flex',
+                alignItems: 'stretch',
               }}
             >
-              {/* Icône (remplace l'image) */}
-              <div style={{ width: '100%', height: '180px', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #2a2a3e', overflow: 'hidden' }}>
+              {/* Image de couverture (à gauche) */}
+              <div style={{ width: '100px', minHeight: '140px', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, borderRight: '1px solid #2a2a3e' }}>
                 {e.couverture ? (
-                  <img src={e.couverture} alt={e.titre} style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block' }} />
+                  <img src={e.couverture} alt={e.titre} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : (
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                   </svg>
                 )}
               </div>
 
-              <div style={{ padding: '16px' }}>
-                <p style={{ color: '#667eea', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px' }}>
-                  {e.type === 'sujet' ? 'Sujet' : e.type === 'annale' ? 'Annale' : 'Résumé'}
-                  {e.examen ? ` · ${e.examen}` : ''}
-                  {e.serie ? ` ${e.serie}` : ''}
-                </p>
-                <span style={{ color: 'white', fontSize: '16px', fontWeight: 600, lineHeight: 1.4, display: 'block', marginBottom: '6px' }}>{e.titre}</span>
-                {e.matiere && (
-                  <span style={{ color: '#888', fontSize: '13px', display: 'block', marginBottom: '10px' }}>{e.matiere}</span>
-                )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#555', fontSize: '12px' }}>{e.annee ? `Année ${e.annee}` : ''}</span>
-                  <button
-                    onClick={(ev) => { ev.stopPropagation(); e.fichier_pdf && setPdfOuvert({ url: e.fichier_pdf, titre: e.titre }); }}
-                    style={{
-                      background: '#667eea',
-                      border: 'none',
-                      color: 'white',
-                      borderRadius: '8px',
-                      padding: '6px 14px',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    Ouvrir
-                  </button>
+              {/* Infos (à droite) */}
+              <div style={{ flex: 1, padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ color: '#667eea', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 4px' }}>
+                    {e.type === 'sujet' ? 'Sujet' : e.type === 'annale' ? 'Annale' : 'Résumé'}
+                    {e.examen ? ` · ${e.examen}` : ''}
+                    {e.serie ? ` ${e.serie}` : ''}
+                  </p>
+                  <p style={{ color: 'white', fontSize: '14px', fontWeight: 600, margin: '0 0 4px', lineHeight: 1.3 }}>{e.titre}</p>
+                  {e.matiere && (
+                    <p style={{ color: '#888', fontSize: '12px', margin: '0 0 4px' }}>{e.matiere}</p>
+                  )}
+                  {e.annee && (
+                    <p style={{ color: '#555', fontSize: '11px', margin: 0 }}>Année {e.annee}</p>
+                  )}
                 </div>
+                <button
+                  onClick={(ev) => { ev.stopPropagation(); e.fichier_pdf && setPdfOuvert({ url: e.fichier_pdf, titre: e.titre }); }}
+                  style={{
+                    alignSelf: 'flex-start',
+                    background: '#667eea',
+                    border: 'none',
+                    color: 'white',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    marginTop: '8px',
+                  }}
+                >
+                  Ouvrir
+                </button>
               </div>
             </div>
           ))}
