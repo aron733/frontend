@@ -1,5 +1,5 @@
-import { ImageEditorWrapper } from 'fabri-pix';
-import 'fabri-pix/dist/fabri-pix.css';
+import { useEffect } from 'react';
+import { openEditorModal } from '@rageshpikalmunde/rp-image-editor';
 
 interface Props {
   imageUrl: string;
@@ -8,13 +8,41 @@ interface Props {
 }
 
 export default function EditeurPhoto({ imageUrl, onSauvegarder, onAnnuler }: Props) {
-  return (
-    <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 4000, display: 'flex', flexDirection: 'column' }}>
-      <ImageEditorWrapper
-        imageUrl={imageUrl}
-        onSave={(blob) => onSauvegarder(blob)}
-        onCancel={onAnnuler}
-      />
-    </div>
-  );
+  useEffect(() => {
+    let annule = false;
+
+    const ouvrir = async () => {
+      try {
+        // Convertir l'URL blob en File
+        const res = await fetch(imageUrl);
+        const blob = await res.blob();
+        const file = new File([blob], 'photo.jpg', { type: blob.type || 'image/jpeg' });
+
+        const resultat = await openEditorModal({
+          image: file,
+          config: {
+            language: 'fr',
+            exportFormat: 'jpeg',
+            exportQuality: 0.92,
+          },
+        });
+
+        if (annule) return;
+
+        if (resultat && resultat.file) {
+          onSauvegarder(resultat.file);
+        } else {
+          onAnnuler();
+        }
+      } catch (e) {
+        console.error('Erreur editeur:', e);
+        onAnnuler();
+      }
+    };
+
+    ouvrir();
+    return () => { annule = true; };
+  }, [imageUrl]);
+
+  return null; // Le modal est géré par la lib
 }

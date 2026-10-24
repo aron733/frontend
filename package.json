@@ -23,6 +23,7 @@
     "@capacitor/status-bar": "^7.0.6",
     "@livekit/components-react": "^2.9.24",
     "@livekit/components-styles": "^1.2.0",
+    "@rageshpikalmunde/rp-image-editor": "^1.5.10",
     "axios": "^1.20.0",
     "core-js": "^3.51.0",
     "fabri-pix": "^2.1.1",
