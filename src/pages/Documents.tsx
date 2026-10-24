@@ -27,7 +27,7 @@ export default function Documents() {
   const [filtreType, setFiltreType] = useState<'tous' | 'sujet' | 'annale' | 'resume'>('tous');
   const [pdfOuvert, setPdfOuvert] = useState<{ url: string; titre: string } | null>(null);
   const [imageLightbox, setImageLightbox] = useState<string | null>(null);
-  const [chargementPdf, setChargementPdf] = useState<number | null>(null);
+
   const [recherche, setRecherche] = useState('');
 
   useEffect(() => {
@@ -167,38 +167,21 @@ export default function Documents() {
                   )}
                 </div>
                 <button
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    if (e.fichier_pdf) {
-                      setChargementPdf(e.id);
-                      setPdfOuvert({ url: e.fichier_pdf, titre: e.titre });
-                    }
-                  }}
-                  disabled={chargementPdf === e.id}
+                  onClick={(ev) => { ev.stopPropagation(); if (e.fichier_pdf) setPdfOuvert({ url: e.fichier_pdf, titre: e.titre }); }}
                   style={{
                     alignSelf: 'flex-start',
-                    background: chargementPdf === e.id ? '#3a3a4e' : '#667eea',
+                    background: '#667eea',
                     border: 'none',
                     color: 'white',
                     borderRadius: '8px',
                     padding: '6px 12px',
                     fontSize: '11px',
                     fontWeight: 600,
-                    cursor: chargementPdf === e.id ? 'wait' : 'pointer',
+                    cursor: 'pointer',
                     marginTop: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
                   }}
                 >
-                  {chargementPdf === e.id ? (
-                    <>
-                      <div style={{ width: '12px', height: '12px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-                      Chargement...
-                    </>
-                  ) : (
-                    'Ouvrir'
-                  )}
+                  Ouvrir
                 </button>
               </div>
             </div>
