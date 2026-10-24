@@ -3,6 +3,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { API_URL } from '../config';
 import ViewerPDF from '../ViewerPDF';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 interface Epreuve {
   id: number;
@@ -25,6 +26,7 @@ export default function Documents() {
   const [chargement, setChargement] = useState(true);
   const [filtreType, setFiltreType] = useState<'tous' | 'sujet' | 'annale' | 'resume'>('tous');
   const [pdfOuvert, setPdfOuvert] = useState<{ url: string; titre: string } | null>(null);
+  const [imageLightbox, setImageLightbox] = useState<string | null>(null);
   const [recherche, setRecherche] = useState('');
 
   useEffect(() => {
@@ -127,7 +129,10 @@ export default function Documents() {
               }}
             >
               {/* Image de couverture (à gauche) */}
-              <div style={{ width: '100px', minHeight: '140px', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, borderRight: '1px solid #2a2a3e' }}>
+              <div
+                onClick={(ev) => { ev.stopPropagation(); if (e.couverture) setImageLightbox(e.couverture); }}
+                style={{ width: '120px', minHeight: '160px', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, borderRight: '1px solid #2a2a3e', cursor: e.couverture ? 'zoom-in' : 'default' }}
+              >
                 {e.couverture ? (
                   <img src={e.couverture} alt={e.titre} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : (
@@ -139,7 +144,7 @@ export default function Documents() {
               </div>
 
               {/* Infos (à droite) */}
-              <div style={{ flex: 1, padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <p style={{ color: '#667eea', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 4px' }}>
                     {e.type === 'sujet' ? 'Sujet' : e.type === 'annale' ? 'Annale' : 'Résumé'}
@@ -179,6 +184,19 @@ export default function Documents() {
 
       {pdfOuvert && (
         <ViewerPDF url={pdfOuvert.url} titre={pdfOuvert.titre} onFermer={() => setPdfOuvert(null)} />
+      )}
+
+      {imageLightbox && (
+        <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => setImageLightbox(null)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', zIndex: 10 }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <TransformWrapper>
+            <TransformComponent>
+              <img src={imageLightbox} alt="Couverture" style={{ maxWidth: '100vw', maxHeight: '100vh' }} />
+            </TransformComponent>
+          </TransformWrapper>
+        </div>
       )}
     </div>
   );
