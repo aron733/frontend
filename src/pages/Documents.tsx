@@ -142,7 +142,8 @@ export default function Documents() {
         </select>
       </div>
 
-      {/* Liste */}
+      {/* Liste (scrollable) */}
+      <div style={{ flex: 1, overflowY: 'auto' }}>
       {filtrees.length === 0 ? (
         <p style={{ color: '#666', textAlign: 'center', marginTop: '40px' }}>
           Aucun contenu disponible pour l'instant.
@@ -259,6 +260,7 @@ export default function Documents() {
           </TransformWrapper>
         </div>
       )}
+      </div>
     </div>
   );
 }
