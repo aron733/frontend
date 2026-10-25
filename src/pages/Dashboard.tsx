@@ -12,6 +12,7 @@ interface DashboardProps {
 export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardProps) {
   const [conversations, setConversations] = useState<any[]>([]);
   const [chargement, setChargement] = useState(true);
+  const [nbPrecedentDashboard, setNbPrecedentDashboard] = useState(() => parseInt(localStorage.getItem('vokyvo_dashboard_count') || '3'));
   const [groupes, setGroupes] = useState<any[]>([]);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
@@ -30,6 +31,8 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
           headers: { Authorization: `Bearer ${token}` }
         });
         setConversations((res.data.conversations || []).slice(0, 3));
+        setNbPrecedentDashboard(Math.min(3, (res.data.conversations || []).length));
+        localStorage.setItem('vokyvo_dashboard_count', String(Math.min(3, (res.data.conversations || []).length)));
       } catch (e) {}
       
       try {
@@ -109,7 +112,7 @@ export default function Dashboard({ user, onNavigate, onPhotoClick }: DashboardP
       <h2 style={styles.sectionTitle}>Derniers messages</h2>
       {chargement && conversations.length === 0 && groupes.length === 0 && (
         <>
-          {[1, 2, 3].map((i) => (
+          {Array.from({ length: nbPrecedentDashboard }).map((_, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', marginBottom: '8px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>

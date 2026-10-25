@@ -165,6 +165,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [chargementContacts, setChargementContacts] = useState(true);
+  const [nbPrecedentGroupes, setNbPrecedentGroupes] = useState(() => parseInt(localStorage.getItem('vokyvo_groupes_count') || '3'));
   const [nbPrecedentContacts, setNbPrecedentContacts] = useState(() => parseInt(localStorage.getItem('vokyvo_contacts_count') || '5'));
   const [fichiersSelectionnes, setFichiersSelectionnes] = useState<File[]>([]);
   const [photoAEditer, setPhotoAEditer] = useState<string | null>(null);
@@ -438,6 +439,8 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
       });
       const groupesData = groupesResponse.data.groupes || [];
       setGroupes(groupesData);
+      setNbPrecedentGroupes(groupesData.length);
+      localStorage.setItem('vokyvo_groupes_count', String(groupesData.length));
 
       // 3. Sauvegarde dans le cache
       await sauvegarderConversationsCache({ users: mergedUsers, groupes: groupesData });
@@ -1029,6 +1032,19 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
             placeholder="Rechercher..."
             style={styles.searchInput}
           />
+          {tabActif === 'groupes' && chargementContacts && groupes.length === 0 && (
+            <>
+              {Array.from({ length: nbPrecedentGroupes }).map((_, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 15px', background: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ width: '60%', height: '14px', borderRadius: '4px', background: '#1a1a2e', marginBottom: '8px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div style={{ width: '40%', height: '12px', borderRadius: '4px', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
           {tabActif === 'groupes' && groupesFiltres.map((groupe) => (
             <div key={groupe.id} style={styles.groupeItem} onClick={async () => {
       setGroupeActif(groupe);
