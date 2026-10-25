@@ -358,6 +358,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 
   return (
     <div style={styles.container}>
+      {pageActive === 'profil' && (
       <header style={styles.header}>
         <h1 style={styles.logo}>VOKYVO</h1>
         <button onClick={() => setMenuOuvert(!menuOuvert)} style={{ ...styles.hamburger, transform: menuOuvert ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)' }}>
@@ -368,6 +369,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
           </svg>
         </button>
       </header>
+      )}
 
         {menuOuvert && (
           <div onClick={() => setMenuOuvert(false)} style={styles.overlayMenu} />

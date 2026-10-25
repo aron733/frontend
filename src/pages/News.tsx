@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PullToRefresh from 'react-simple-pull-to-refresh';
 import { Capacitor } from '@capacitor/core';
 import BoutonRetour from '../BoutonRetour';
 import Documents from './Documents';
@@ -81,6 +82,10 @@ function News({ onRetour }: { onRetour?: () => void }) {
     chargerSection(sectionActive);
   }, [sectionActive]);
 
+  const handleRefresh = async () => {
+    await chargerSection(sectionActive);
+  };
+
   const articlesFiltres = articles.filter(a => 
     a.title?.toLowerCase().includes(recherche.toLowerCase())
   );
@@ -96,6 +101,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
 
   return (
     <div style={styles.container}>
+      <PullToRefresh onRefresh={handleRefresh} pullingContent={<></>}>
       {/* Header fixe */}
       <div style={styles.header}>
         <BoutonRetour onClick={() => { if (onRetour) { onRetour(); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} />
@@ -326,23 +332,20 @@ function News({ onRetour }: { onRetour?: () => void }) {
       )}
       </>
       )}
+      </PullToRefresh>
     </div>
   );
 }
 
 const styles = {
   container: {
-    position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     height: '100vh',
     width: '100vw',
     background: '#0a0a0f',
     display: 'flex',
     flexDirection: 'column' as const,
     zIndex: 1000,
+    overflowY: 'auto' as const,
   },
   backButton: {
     background: 'rgba(255,255,255,0.06)',
