@@ -35,6 +35,8 @@ export default function Statuts() {
   const [uploadEnCours, setUploadEnCours] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [dureeVideo, setDureeVideo] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const timerRef = useRef<any>(null);
 
   const chargerStatuts = async () => {
@@ -160,7 +162,7 @@ export default function Statuts() {
     if (isPaused) return;
 
     const isVideo = s.media_url.match(/\.(mp4|mov|webm|avi)(\?|$)/i);
-    const duree = isVideo ? 10000 : 5000;
+    const duree = isVideo && dureeVideo > 0 ? dureeVideo * 1000 : 5000;
 
     timerRef.current = setInterval(() => {
       setProgress((prev) => {
@@ -270,13 +272,32 @@ export default function Statuts() {
 
           {/* Image + zones de clic (precedent/suivant) */}
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-            <div onClick={precedent} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '30%', cursor: indexStatut > 0 ? 'pointer' : 'default', zIndex: 5 }} />
+            <div onClick={precedent} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '20%', cursor: indexStatut > 0 ? 'pointer' : 'default', zIndex: 5 }} />
             {s.media_url.match(/\.(mp4|mov|webm|avi)(\?|$)/i) ? (
-              <video src={s.media_url} controls autoPlay playsInline style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+              <video 
+                ref={videoRef}
+                src={s.media_url} 
+                autoPlay 
+                playsInline 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (videoRef.current) {
+                    if (videoRef.current.paused) {
+                      videoRef.current.play();
+                      setIsPaused(false);
+                    } else {
+                      videoRef.current.pause();
+                      setIsPaused(true);
+                    }
+                  }
+                }}
+                onLoadedMetadata={(e) => setDureeVideo(e.currentTarget.duration)}
+                style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', cursor: 'pointer' }} 
+              />
             ) : (
               <img src={s.media_url} alt="" style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
             )}
-            <div onClick={suivant} style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '30%', cursor: 'pointer', zIndex: 5 }} />
+            <div onClick={suivant} style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '20%', cursor: 'pointer', zIndex: 5 }} />
           </div>
 
           {s.legende && (
