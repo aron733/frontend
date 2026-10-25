@@ -48,6 +48,7 @@ export default function Statuts() {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStatuts(prev => prev.map(x => x.id === s.id ? { ...x, vu: true } : x));
+        setStatutOuvert(prev => prev && prev.id === s.id ? { ...prev, vu: true } : prev);
       } catch {
         toast.error('Erreur lors du marquage comme vu');
       }
@@ -60,11 +61,22 @@ export default function Statuts() {
       const res = await axios.post(`${API_URL}/statuts/${s.id}/interagir/`, { action: 'like' }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      const nouveauLike = res.data.like;
+      const nouveauCount = nouveauLike ? s.likes + 1 : s.likes - 1;
+
+      // Met à jour la liste
       setStatuts(prev => prev.map(x => x.id === s.id ? {
         ...x,
-        like_par_moi: res.data.like,
-        likes: res.data.like ? x.likes + 1 : x.likes - 1
+        like_par_moi: nouveauLike,
+        likes: nouveauCount
       } : x));
+
+      // Met à jour la modale ouverte
+      setStatutOuvert(prev => prev && prev.id === s.id ? {
+        ...prev,
+        like_par_moi: nouveauLike,
+        likes: nouveauCount
+      } : prev);
     } catch {
       toast.error('Erreur lors du like');
     }
