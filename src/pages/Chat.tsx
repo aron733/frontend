@@ -1500,7 +1500,14 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                           }, { headers: { Authorization: `Bearer ${getToken()}` } });
                           setResultatsRecherche([]);
                           setRechercheMembre('');
-                          window.location.reload();
+                          // Met à jour le groupe actif (sans recharger)
+                          const resGroupes = await axios.get(`${API_URL}/groupes/`, {
+                            headers: { Authorization: `Bearer ${getToken()}` }
+                          });
+                          const nouveauxGroupes = resGroupes.data.groupes || [];
+                          setGroupes(nouveauxGroupes);
+                          const groupeMisAJour = nouveauxGroupes.find((g: any) => String(g.id) === String(groupeActif.id));
+                          if (groupeMisAJour) setGroupeActif(groupeMisAJour);
                         } catch (err) {}
                       }}>
                         <span>+ {user.first_name || ''} {user.last_name || ''}</span>
