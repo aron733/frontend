@@ -905,7 +905,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
         nom: renommer,
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
       setShowRenommer(false);
-      window.location.reload();
+      await chargerConversationsEtGroupes();
     } catch (err) {
       toast.error('Erreur renommage');
     }
@@ -935,7 +935,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
         groupe_id: groupeActif.id,
         user_id: userId,
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
-      window.location.reload();
+      await chargerConversationsEtGroupes();
     } catch (err) {
       toast.error('Erreur nomination');
     }
@@ -949,7 +949,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
         groupe_id: groupeActif.id,
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
       setGroupeActif(null);
-      window.location.reload();
+      await chargerConversationsEtGroupes();
     } catch (err) {
       toast.error('Erreur suppression');
     }
@@ -961,7 +961,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
         demande_id: demandeId,
         action: action,
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
-      window.location.reload();
+      await chargerConversationsEtGroupes();
     } catch (err) {
       console.error('Erreur validation demande');
     }
