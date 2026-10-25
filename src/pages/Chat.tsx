@@ -203,19 +203,27 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   const [tabActif, setTabActif] = useState<'discussions' | 'groupes'>(() => (localStorage.getItem('vokyvo_tab') as any) || 'discussions');
 
   // Sauvegarde l'onglet actif pour le restaurer au refresh
-  // Ouvre la conversation initiale (depuis le Dashboard)
+  // Ouvre la conversation initiale (depuis le Dashboard) - une seule fois
   useEffect(() => {
-    if (!convInitiale) return;
+    if (!convInitiale || initialOuverteRef.current) return;
+
+    // Garde : attendre que les donnees soient chargees
+    if (allUsers.length === 0 && groupes.length === 0) return;
+
     if (convInitiale.startsWith('user_')) {
       setTabActif('discussions');
       const userId = convInitiale.replace('user_', '');
       const u = allUsers.find((x: any) => String(x.id) === String(userId));
-      if (u) selectUser(u);
+      if (u) {
+        initialOuverteRef.current = true;
+        selectUser(u);
+      }
     } else if (convInitiale.startsWith('groupe_')) {
       setTabActif('groupes');
       const groupeId = convInitiale.replace('groupe_', '');
       const g = groupes.find((x: any) => String(x.id) === String(groupeId));
       if (g) {
+        initialOuverteRef.current = true;
         setGroupeActif(g);
         setSelectedUser(null);
         setConvActive(`groupe_${g.id}`);
@@ -243,6 +251,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesAreaRef = useRef<HTMLDivElement | null>(null);
   const scrollDoneRef = useRef<string | null>(null);
+  const initialOuverteRef = useRef(false);
   const [enregistrement, setEnregistrement] = useState(false);
   const [dureeEnregistrement, setDureeEnregistrement] = useState(0);
   const [audioEnAttente, setAudioEnAttente] = useState<Blob | null>(null);
