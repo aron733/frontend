@@ -15,12 +15,15 @@ interface Statut {
   likes: number;
   like_par_moi: boolean;
   est_moi: boolean;
+  nb_vues: number;
+  vues_par: { id: number; nom: string; photo: string | null }[];
 }
 
 export default function Statuts() {
   const [statuts, setStatuts] = useState<Statut[]>([]);
   const [chargement, setChargement] = useState(true);
   const [statutOuvert, setStatutOuvert] = useState<Statut | null>(null);
+  const [voirVues, setVoirVues] = useState(false);
 
   useEffect(() => {
     const charger = async () => {
@@ -176,11 +179,40 @@ export default function Statuts() {
           )}
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', padding: '15px 20px 30px' }}>
+            {statutOuvert.est_moi && (
+              <button onClick={() => setVoirVues(!voirVues)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: '#888', fontSize: '14px', fontWeight: 600 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                {statutOuvert.nb_vues} vue{statutOuvert.nb_vues > 1 ? 's' : ''}
+              </button>
+            )}
             <button onClick={() => likerStatut(statutOuvert)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: statutOuvert.like_par_moi ? '#dc3545' : '#888', fontSize: '14px', fontWeight: 600 }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill={statutOuvert.like_par_moi ? '#dc3545' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               {statutOuvert.likes}
             </button>
           </div>
+
+          {/* Liste des personnes qui ont vu (uniquement pour mes statuts) */}
+          {statutOuvert.est_moi && voirVues && (
+            <div style={{ maxHeight: '200px', overflowY: 'auto', padding: '0 20px 30px' }}>
+              <p style={{ color: '#888', fontSize: '12px', marginBottom: '10px', textAlign: 'center' }}>Vu par</p>
+              {statutOuvert.vues_par.length === 0 ? (
+                <p style={{ color: '#555', fontSize: '13px', textAlign: 'center' }}>Personne pour l'instant</p>
+              ) : (
+                statutOuvert.vues_par.map((v) => (
+                  <div key={v.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0' }}>
+                    {v.photo ? (
+                      <img src={v.photo} alt="" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#667eea', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '14px', fontWeight: 700 }}>
+                        {v.nom.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span style={{ color: 'white', fontSize: '13px' }}>{v.nom}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </div>
       )}
     </>
