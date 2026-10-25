@@ -28,6 +28,8 @@ interface GroupeStatuts {
 
 export default function Statuts() {
   const [groupes, setGroupes] = useState<GroupeStatuts[]>([]);
+  const [chargement, setChargement] = useState(true);
+  const [nbPrecedent, setNbPrecedent] = useState(() => parseInt(localStorage.getItem('vokyvo_statuts_count') || '3'));
   const [groupeOuvert, setGroupeOuvert] = useState<GroupeStatuts | null>(null);
   const [indexStatut, setIndexStatut] = useState(0);
   const [voirVues, setVoirVues] = useState(false);
@@ -41,12 +43,18 @@ export default function Statuts() {
   const chargerStatuts = async () => {
     try {
       const token = localStorage.getItem('access_token');
+      setChargement(true);
       const res = await axios.get(`${API_URL}/statuts/`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setGroupes(res.data.groupes || []);
+      const n = (res.data.groupes || []).length;
+      setNbPrecedent(n);
+      localStorage.setItem('vokyvo_statuts_count', String(n));
+        setChargement(false);
     } catch {
       toast.error('Erreur chargement des statuts');
+        setChargement(false);
     } finally {
     }
   };
@@ -196,6 +204,10 @@ export default function Statuts() {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
+        @keyframes pulse {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
       `}</style>
 
       {/* Barre horizontale des statuts */}
@@ -210,6 +222,17 @@ export default function Statuts() {
           <span style={{ color: '#aaa', fontSize: '11px' }}>Mon statut</span>
         </div>
 
+        {/* Faux cercles pendant le chargement */}
+        {chargement && groupes.length === 0 && (
+          <>
+            {Array.from({ length: nbPrecedent }).map((_, i) => (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ width: '40px', height: '10px', borderRadius: '4px', background: '#1a1a2e' }} />
+              </div>
+            ))}
+          </>
+        )}
         {/* Bulles par personne */}
         {groupes.map((g) => (
           <div
