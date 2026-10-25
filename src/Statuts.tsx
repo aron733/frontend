@@ -77,6 +77,38 @@ export default function Statuts() {
     <>
       {/* Barre horizontale de statuts */}
       <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '10px 15px', borderBottom: '1px solid #2a2a3e', scrollbarWidth: 'none' }}>
+        {/* Bouton "Mon statut" (le +) */}
+        <div
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0];
+              if (!file) return;
+              try {
+                const token = localStorage.getItem('access_token');
+                const formData = new FormData();
+                formData.append('image', file);
+                await axios.post(`${API_URL}/statuts/creer/`, formData, {
+                  headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+                });
+                toast.success('Statut publié !');
+                window.location.reload();
+              } catch {
+                toast.error('Erreur publication statut');
+              }
+            };
+            input.click();
+          }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', cursor: 'pointer', flexShrink: 0 }}
+        >
+          <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '2px dashed #667eea', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#667eea', fontSize: '24px' }}>
+            +
+          </div>
+          <span style={{ color: '#aaa', fontSize: '11px' }}>Mon statut</span>
+        </div>
+
         {statuts.map((s) => (
           <div
             key={s.id}
