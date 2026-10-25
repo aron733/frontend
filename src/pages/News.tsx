@@ -37,6 +37,11 @@ const SECTIONS = [
   { id: 'telecom', nom: 'Télécom', url: 'https://news.google.com/rss/search?q=t%C3%A9l%C3%A9com+internet+5G&hl=fr&gl=FR&ceid=FR:fr' },
 ];
 
+
+const ConditionalPullToRefresh = ({ children, ...props }: any) => {
+  return Capacitor.isNativePlatform() ? <PullToRefresh {...props}>{children}</PullToRefresh> : <>{children}</>;
+};
+
 function News({ onRetour }: { onRetour?: () => void }) {
   const [articles, setArticles] = useState<any[]>([]);
   const [sectionActive, setSectionActive] = useState(() => localStorage.getItem('vokyvo_news_section') || 'flash');
@@ -101,7 +106,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
 
   return (
     <div style={styles.container}>
-      <PullToRefresh onRefresh={handleRefresh} pullingContent={<></>}>
+      <ConditionalPullToRefresh onRefresh={handleRefresh} pullingContent={<></>}>
       {/* Header fixe */}
       <div style={styles.header}>
         <BoutonRetour onClick={() => { if (onRetour) { onRetour(); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} />
@@ -332,7 +337,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
       )}
       </>
       )}
-      </PullToRefresh>
+      </ConditionalPullToRefresh>
     </div>
   );
 }
