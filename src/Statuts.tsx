@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { API_URL } from './config';
@@ -33,6 +33,9 @@ export default function Statuts() {
   const [indexStatut, setIndexStatut] = useState(0);
   const [voirVues, setVoirVues] = useState(false);
   const [uploadEnCours, setUploadEnCours] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const timerRef = useRef<any>(null);
 
   const chargerStatuts = async () => {
     try {
@@ -150,6 +153,39 @@ export default function Statuts() {
     input.click();
   };
 
+  useEffect(() => {
+    if (!groupeOuvert) return;
+    const s = groupeOuvert.statuts[indexStatut];
+    if (!s) return;
+    if (isPaused) return;
+
+    const isVideo = s.media_url.match(/\.(mp4|mov|webm|avi)(\?|$)/i);
+    const duree = isVideo ? 10000 : 5000;
+
+    timerRef.current = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timerRef.current);
+          if (indexStatut < groupeOuvert.statuts.length - 1) {
+            setIndexStatut(indexStatut + 1);
+            setProgress(0);
+          } else {
+            setGroupeOuvert(null);
+            setProgress(0);
+          }
+          return 0;
+        }
+        return prev + (100 / (duree / 100));
+      });
+    }, 100);
+
+    return () => clearInterval(timerRef.current);
+  }, [groupeOuvert, indexStatut, isPaused]);
+
+  useEffect(() => {
+    setProgress(0);
+  }, [indexStatut]);
+
   if (chargement) return null;
 
   const s = groupeOuvert ? groupeOuvert.statuts[indexStatut] : null;
@@ -200,11 +236,19 @@ export default function Statuts() {
 
       {/* Modal plein écran */}
       {groupeOuvert && s && (
-        <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 4000, display: 'flex', flexDirection: 'column' }}>
+        <div 
+          style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 4000, display: 'flex', flexDirection: 'column' }}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+          onMouseDown={() => setIsPaused(true)}
+          onMouseUp={() => setIsPaused(false)}
+        >
           {/* Tirets de progression */}
           <div style={{ display: 'flex', gap: '4px', padding: '10px 15px 0' }}>
             {groupeOuvert.statuts.map((_, i) => (
-              <div key={i} style={{ flex: 1, height: '3px', borderRadius: '2px', background: i <= indexStatut ? '#667eea' : '#2a2a3e' }} />
+              <div key={i} style={{ flex: 1, height: '3px', borderRadius: '2px', background: '#2a2a3e', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: i < indexStatut ? '100%' : i === indexStatut ? `${progress}%` : '0%', background: '#667eea', transition: 'width 0.1s linear' }} />
+              </div>
             ))}
           </div>
 
@@ -227,7 +271,11 @@ export default function Statuts() {
           {/* Image + zones de clic (precedent/suivant) */}
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
             <div onClick={precedent} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '30%', cursor: indexStatut > 0 ? 'pointer' : 'default', zIndex: 5 }} />
-            <img src={s.media_url} alt="" style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+            {s.media_url.match(/\.(mp4|mov|webm|avi)(\?|$)/i) ? (
+              <video src={s.media_url} controls autoPlay playsInline style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+            ) : (
+              <img src={s.media_url} alt="" style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+            )}
             <div onClick={suivant} style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '30%', cursor: 'pointer', zIndex: 5 }} />
           </div>
 
