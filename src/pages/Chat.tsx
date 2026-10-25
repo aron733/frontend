@@ -5,6 +5,7 @@ import { chargerMessages, sauvegarderMessages, chargerConversations as chargerCo
 import { useChat } from '../ChatContext';
 import axios from 'axios';
 import { API_URL } from '../config';
+import Statuts from '../Statuts';
 // import EditeurPhoto from '../EditeurPhoto'; // Désactivé (fabri-pix cassé)
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -1069,6 +1070,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
               </div>
             </div>
           ))}
+          {tabActif === 'discussions' && <Statuts />}
           {tabActif === 'discussions' && <p style={styles.contactsTitle}>Contacts</p>}
           {tabActif === 'discussions' && usersFiltres.map((user) => (
               <button
