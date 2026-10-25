@@ -28,7 +28,6 @@ interface GroupeStatuts {
 
 export default function Statuts() {
   const [groupes, setGroupes] = useState<GroupeStatuts[]>([]);
-  const [chargement, setChargement] = useState(true);
   const [groupeOuvert, setGroupeOuvert] = useState<GroupeStatuts | null>(null);
   const [indexStatut, setIndexStatut] = useState(0);
   const [voirVues, setVoirVues] = useState(false);
@@ -49,7 +48,6 @@ export default function Statuts() {
     } catch {
       toast.error('Erreur chargement des statuts');
     } finally {
-      setChargement(false);
     }
   };
 
@@ -188,7 +186,6 @@ export default function Statuts() {
     setProgress(0);
   }, [indexStatut]);
 
-  if (chargement) return null;
 
   const s = groupeOuvert ? groupeOuvert.statuts[indexStatut] : null;
 
