@@ -164,6 +164,8 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   const [nouveauMessage, setNouveauMessage] = useState('');
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [chargementContacts, setChargementContacts] = useState(true);
+  const [nbPrecedentContacts, setNbPrecedentContacts] = useState(() => parseInt(localStorage.getItem('vokyvo_contacts_count') || '5'));
   const [fichiersSelectionnes, setFichiersSelectionnes] = useState<File[]>([]);
   const [photoAEditer, setPhotoAEditer] = useState<string | null>(null);
   const [menuFichiersOuvert, setMenuFichiersOuvert] = useState(false);
@@ -359,11 +361,14 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
 
   // Fonction reutilisable : charge conversations + groupes
   const chargerConversationsEtGroupes = async () => {
+    setChargementContacts(true);
     // 1. Affiche le cache IMMEDIATEMENT
     const cached = await chargerConversationsCache();
     if (cached && cached.users && cached.users.length > 0) {
       setUsers(cached.users);
       setAllUsers(cached.users);
+      setNbPrecedentContacts(cached.users.length);
+      setChargementContacts(false);
     }
     if (cached && cached.groupes) {
       setGroupes(cached.groupes);
@@ -424,6 +429,9 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
 
       setUsers(mergedUsers);
       setAllUsers(mergedUsers);
+      setNbPrecedentContacts(mergedUsers.length);
+      localStorage.setItem('vokyvo_contacts_count', String(mergedUsers.length));
+      setChargementContacts(false);
 
       const groupesResponse = await axios.get(`${API_URL}/groupes/`, {
         headers: { Authorization: `Bearer ${getToken()}` }
@@ -1081,6 +1089,19 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
           ))}
           {tabActif === 'discussions' && <div style={{ flexShrink: 0 }}><Statuts /></div>}
           {tabActif === 'discussions' && <p style={styles.contactsTitle}>Contacts</p>}
+          {tabActif === 'discussions' && chargementContacts && allUsers.length === 0 && (
+            <>
+              {Array.from({ length: nbPrecedentContacts }).map((_, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 15px', background: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ width: '60%', height: '14px', borderRadius: '4px', background: '#1a1a2e', marginBottom: '8px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div style={{ width: '40%', height: '12px', borderRadius: '4px', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
           {tabActif === 'discussions' && usersFiltres.map((user) => (
               <button
                 key={user.id || user.user_id}
