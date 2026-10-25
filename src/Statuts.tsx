@@ -25,21 +25,22 @@ export default function Statuts() {
   const [statutOuvert, setStatutOuvert] = useState<Statut | null>(null);
   const [voirVues, setVoirVues] = useState(false);
 
+  const chargerStatuts = async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const res = await axios.get(`${API_URL}/statuts/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStatuts(res.data.statuts || []);
+    } catch {
+      toast.error('Erreur chargement des statuts');
+    } finally {
+      setChargement(false);
+    }
+  };
+
   useEffect(() => {
-    const charger = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const res = await axios.get(`${API_URL}/statuts/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setStatuts(res.data.statuts || []);
-      } catch {
-        toast.error('Erreur chargement des statuts');
-      } finally {
-        setChargement(false);
-      }
-    };
-    charger();
+    chargerStatuts();
   }, []);
 
   const voirStatut = async (s: Statut) => {
@@ -109,7 +110,7 @@ export default function Statuts() {
                   headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
                 });
                 toast.success('Statut publié !');
-                window.location.reload();
+                await chargerStatuts();
               } catch {
                 toast.error('Erreur publication statut');
               }
