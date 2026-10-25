@@ -857,7 +857,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   if (showCreerGroupe) {
     return <CreerGroupe onFermer={() => setShowCreerGroupe(false)} onGroupeCree={() => {
       setShowCreerGroupe(false);
-      window.location.reload();
+      chargerConversationsEtGroupes();
     }} />;
   }
 

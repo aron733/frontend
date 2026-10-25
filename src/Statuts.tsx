@@ -24,6 +24,7 @@ export default function Statuts() {
   const [chargement, setChargement] = useState(true);
   const [statutOuvert, setStatutOuvert] = useState<Statut | null>(null);
   const [voirVues, setVoirVues] = useState(false);
+  const [uploadEnCours, setUploadEnCours] = useState(false);
 
   const chargerStatuts = async () => {
     try {
@@ -91,6 +92,12 @@ export default function Statuts() {
 
   return (
     <>
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
       {/* Barre horizontale de statuts */}
       <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '10px 15px', borderBottom: '1px solid #2a2a3e', scrollbarWidth: 'none' }}>
         {/* Bouton "Mon statut" (le +) */}
@@ -102,6 +109,7 @@ export default function Statuts() {
             input.onchange = async (e) => {
               const file = (e.target as HTMLInputElement).files?.[0];
               if (!file) return;
+              setUploadEnCours(true);
               try {
                 const token = localStorage.getItem('access_token');
                 const formData = new FormData();
@@ -113,6 +121,8 @@ export default function Statuts() {
                 await chargerStatuts();
               } catch {
                 toast.error('Erreur publication statut');
+              } finally {
+                setUploadEnCours(false);
               }
             };
             input.click();
@@ -120,7 +130,9 @@ export default function Statuts() {
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', cursor: 'pointer', flexShrink: 0 }}
         >
           <div style={{ width: '60px', height: '60px', borderRadius: '50%', border: '2px dashed #667eea', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#667eea', fontSize: '24px' }}>
-            +
+            {uploadEnCours ? (
+              <div style={{ width: '20px', height: '20px', border: '2px solid #667eea', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+            ) : '+'}
           </div>
           <span style={{ color: '#aaa', fontSize: '11px' }}>Mon statut</span>
         </div>
