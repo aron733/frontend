@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import PullToRefresh from 'react-simple-pull-to-refresh';
 import { Capacitor } from '@capacitor/core';
 import BoutonRetour from '../BoutonRetour';
 import Documents from './Documents';
@@ -82,10 +81,6 @@ function News({ onRetour }: { onRetour?: () => void }) {
     chargerSection(sectionActive);
   }, [sectionActive]);
 
-  const handleRefresh = async () => {
-    await chargerSection(sectionActive);
-  };
-
   const articlesFiltres = articles.filter(a => 
     a.title?.toLowerCase().includes(recherche.toLowerCase())
   );
@@ -100,7 +95,6 @@ function News({ onRetour }: { onRetour?: () => void }) {
   })() : '';
 
   return (
-    <PullToRefresh onRefresh={handleRefresh}>
     <div style={styles.container}>
       {/* Header fixe */}
       <div style={styles.header}>
@@ -333,8 +327,7 @@ function News({ onRetour }: { onRetour?: () => void }) {
       </>
       )}
     </div>
-    </PullToRefresh>
-  );;
+  );
 }
 
 const styles = {
