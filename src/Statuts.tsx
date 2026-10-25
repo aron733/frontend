@@ -72,7 +72,6 @@ export default function Statuts() {
 
   if (chargement) return null;
 
-  if (statuts.length === 0) return null;
 
   return (
     <>
