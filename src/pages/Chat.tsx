@@ -1079,7 +1079,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
               </div>
             </div>
           ))}
-          {tabActif === 'discussions' && <Statuts />}
+          {tabActif === 'discussions' && <div style={{ flexShrink: 0 }}><Statuts /></div>}
           {tabActif === 'discussions' && <p style={styles.contactsTitle}>Contacts</p>}
           {tabActif === 'discussions' && usersFiltres.map((user) => (
               <button
@@ -3325,11 +3325,13 @@ const styles = {
   },
   online: { color: '#28a745', fontSize: '12px' },
   offline: { color: '#dc3545', fontSize: '12px' },
-  body: { display: 'flex', flex: 1, overflow: 'hidden' },
+  body: { display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' },
   userList: {
     background: '#111120',
     width: '100%',
     flex: 1,
+    paddingBottom: '120px',
+    minHeight: 0,
     overflowY: 'auto' as const,
     padding: '10px',
     display: 'flex',
