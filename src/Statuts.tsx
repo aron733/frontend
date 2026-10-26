@@ -37,6 +37,7 @@ export default function Statuts() {
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [dureeVideo, setDureeVideo] = useState(0);
+  const [showHeart, setShowHeart] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const timerRef = useRef<any>(null);
 
@@ -91,6 +92,16 @@ export default function Statuts() {
     } catch {}
   };
 
+  const handleDoubleTap = async () => {
+    setShowHeart(true);
+    setTimeout(() => setShowHeart(false), 800);
+    // Si pas encore liké, on like
+    const s = groupeOuvert?.statuts[indexStatut];
+    if (s && !s.like_par_moi) {
+      await likerStatut();
+    }
+  };
+
   const likerStatut = async () => {
     if (!groupeOuvert) return;
     const s = groupeOuvert.statuts[indexStatut];
@@ -105,6 +116,8 @@ export default function Statuts() {
         ...prev,
         statuts: prev.statuts.map(y => y.id === s.id ? { ...y, like_par_moi: nouveauLike, likes: nouveauCount } : y)
       } : prev);
+      // Recharge les statuts pour avoir l'etat exact depuis l'API
+      chargerStatuts();
     } catch {
       toast.error('Erreur lors du like');
     }
@@ -204,6 +217,11 @@ export default function Statuts() {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
+        @keyframes popHeart {
+          0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+          50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
         @keyframes pulse {
           0%, 100% { opacity: 0.5; }
           50% { opacity: 1; }
@@ -291,7 +309,7 @@ export default function Statuts() {
           </div>
 
           {/* Image + zones de clic (precedent/suivant) */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }} onDoubleClick={handleDoubleTap}>
             <div onClick={precedent} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '20%', cursor: indexStatut > 0 ? 'pointer' : 'default', zIndex: 5 }} />
             {s.media_url.match(/\.(mp4|mov|webm|avi)(\?|$)/i) ? (
               <video 
@@ -316,6 +334,11 @@ export default function Statuts() {
               />
             ) : (
               <img src={s.media_url} alt="" style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+            )}
+            {showHeart && (
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10, animation: 'popHeart 0.8s ease-out forwards', pointerEvents: 'none' }}>
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="#dc3545" stroke="#dc3545" strokeWidth="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </div>
             )}
             <div onClick={suivant} style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '20%', cursor: 'pointer', zIndex: 5 }} />
           </div>
