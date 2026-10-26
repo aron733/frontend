@@ -3374,6 +3374,7 @@ const styles = {
     minHeight: 0,
     overflowY: 'auto' as const,
     padding: '0',
+    paddingTop: '2px',
     paddingBottom: '120px',
     display: 'flex',
     flexDirection: 'column' as const,
