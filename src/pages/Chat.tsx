@@ -1124,10 +1124,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                 onClick={() => { selectUser(user); setGroupeActif(null); }}
                 style={{
                   ...styles.userItem,
-                  background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? 'rgba(102,126,234,0.15)' : 'transparent',
-                  borderRadius: 0,
-                  borderBottom: '1px solid rgba(255,255,255,0.08)',
-                  padding: '10px 15px',
+                  background: 'transparent',
                 }}
               >
                 <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -1967,7 +1964,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
               <div ref={messagesEndRef} />
             </div>
             {fichiersSelectionnes.length > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: '#000000', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' as const, flex: 1, paddingBottom: '4px' }}>
                   {apercusMultiples.map((a, i) => (
                     <div
@@ -2264,7 +2261,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
               </div>
 
               {fichiersSelectionnes.length > 0 && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: '#111120', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: '#000000', borderRadius: '10px', border: '1px solid #2a2a3e', marginBottom: '8px' }}>
                   <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' as const, flex: 1, paddingBottom: '4px' }}>
                     {apercusMultiples.map((a, i) => (
                       <div
@@ -2637,7 +2634,7 @@ const styles = {
     flexDirection: 'column' as const,
     height: '100vh',
     width: '100vw',
-    background: '#0a0a0f',
+    background: '#000000',
     zIndex: 1000,
   },
   wsReconnect: {
@@ -2711,16 +2708,20 @@ const styles = {
     width: '100%',
   },
   groupeItem: {
+    padding: '12px 15px',
+    marginBottom: '0',
+    borderRadius: '0',
+    border: 'none',
+    borderBottom: '1px solid rgba(255,255,255,0.06)',
+    color: 'white',
+    fontSize: '14px',
+    cursor: 'pointer',
+    textAlign: 'left' as const,
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    padding: '8px 10px',
-    borderRadius: '12px',
-    cursor: 'pointer',
-    background: 'rgba(255,255,255,0.03)',
-    marginBottom: '6px',
     width: '100%',
-    transition: 'background 0.2s',
+    background: 'transparent',
   },
   groupeAvatarSmall: {
     width: '40px',
@@ -2773,7 +2774,7 @@ const styles = {
     letterSpacing: '1px',
   },
   gestionPanel: {
-    background: '#111120',
+    background: '#000000',
     borderBottom: '1px solid #2a2a3e',
     padding: '15px 20px',
   },
@@ -2868,7 +2869,7 @@ const styles = {
     padding: '5px',
   },
   membresPanel: {
-    background: '#111120',
+    background: '#000000',
     borderBottom: '1px solid #2a2a3e',
     padding: '15px',
     maxHeight: '300px',
@@ -2956,7 +2957,7 @@ const styles = {
     fontWeight: 600,
   },
   demandesPanel: {
-    background: '#111120',
+    background: '#000000',
     borderBottom: '1px solid #2a2a3e',
     padding: '15px',
     maxHeight: '250px',
@@ -3019,7 +3020,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-around',
     padding: '10px 15px',
-    background: '#111120',
+    background: '#000000',
     borderTop: '1px solid #1a1a2a',
     zIndex: 50,
   },
@@ -3138,7 +3139,7 @@ const styles = {
   fullscreenModal: {
     position: 'fixed' as const,
     top: 0, left: 0, right: 0, bottom: 0,
-    background: '#0a0a0f',
+    background: '#000000',
     zIndex: 5000,
     display: 'flex',
     flexDirection: 'column' as const,
@@ -3243,7 +3244,7 @@ const styles = {
     fontSize: '13px',
   },
   modalContent: {
-    background: '#111120',
+    background: '#000000',
     borderRadius: '15px',
     width: '100%',
     maxWidth: '450px',
@@ -3367,7 +3368,7 @@ const styles = {
   offline: { color: '#dc3545', fontSize: '12px' },
   body: { display: 'flex', flex: 1, minHeight: 0, overflow: 'hidden' },
   userList: {
-    background: '#111120',
+    background: '#000000',
     width: '100%',
     flex: 1,
     minHeight: 0,
@@ -3439,20 +3440,20 @@ const styles = {
     textAlign: 'center' as const,
   },
   userItem: {
-    padding: '8px 10px',
-    marginBottom: '6px',
-    borderRadius: '12px',
+    padding: '12px 15px',
+    marginBottom: '0',
+    borderRadius: '0',
     border: 'none',
+    borderBottom: '1px solid rgba(255,255,255,0.06)',
     color: 'white',
     fontSize: '14px',
     cursor: 'pointer',
     textAlign: 'left' as const,
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
+    gap: '12px',
     width: '100%',
-    background: '#151525', // Nouvelle couleur de fond (plus clair que le fond de la page)
-    transition: 'background 0.2s',
+    background: 'transparent',
   },
   userOnline: { color: '#28a745', fontSize: '10px' },
   chatPhoto: { width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' as const },
@@ -3554,7 +3555,7 @@ const styles = {
     gap: '10px',
     padding: '15px',
     borderTop: '1px solid #1a1a2a',
-    background: '#111120',
+    background: '#000000',
     flexShrink: 0,
     width: '100%',
   },
@@ -3628,7 +3629,7 @@ const styles = {
     alignItems: 'center',
     gap: '10px',
     padding: '8px 12px',
-    background: '#111120',
+    background: '#000000',
     borderRadius: '10px',
     color: 'white',
     fontSize: '12px',
@@ -3644,7 +3645,7 @@ const styles = {
     alignItems: 'center',
     gap: '10px',
     padding: '8px 12px',
-    background: '#111120',
+    background: '#000000',
     borderRadius: '10px',
     border: '1px solid #2a2a3e',
     marginBottom: '8px',
