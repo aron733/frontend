@@ -229,11 +229,20 @@ export default function Statuts() {
         if (prev >= 100) {
           clearInterval(timerRef.current);
           if (indexStatut < groupeOuvert.statuts.length - 1) {
+            // Statut suivant dans le meme groupe
             setIndexStatut(indexStatut + 1);
             setProgress(0);
           } else {
-            setGroupeOuvert(null);
-            setProgress(0);
+            // Fin du groupe : passer au groupe suivant
+            const idx = groupes.findIndex(g => g.user_id === groupeOuvert.user_id);
+            if (idx !== -1 && idx < groupes.length - 1) {
+              ouvrirGroupe(groupes[idx + 1]);
+              setProgress(0);
+            } else {
+              // Fin de tous les groupes : fermer
+              setGroupeOuvert(null);
+              setProgress(0);
+            }
           }
           return 0;
         }
