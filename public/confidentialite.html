@@ -72,7 +72,7 @@ Retour
   <li><strong>InterServer</strong> (hébergement serveur) : base de données, comptes, messages</li>
   <li><strong>Cloudinary</strong> (stockage média) : photos de profil, fichiers, images partagées</li>
   <li><strong>Backblaze</strong> (sauvegarde) : stockage chiffré de nos sauvegardes de base de données (Backblaze B2, États-Unis)</li>
-  <li><strong>Partenaires IA</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à un ou plusieurs partenaires d'IA pour générer les réponses : <strong>Groq</strong> (USA), <strong>OpenRouter</strong> (USA), <strong>Mistral AI</strong> (France), <strong>Google Gemini</strong> (USA), <strong>SambaNova</strong> (USA), <strong>Cloudflare Workers AI</strong> (USA), <strong>NVIDIA NIM</strong> (USA). Un seul partenaire traite votre message à la fois, selon disponibilité. <strong>Génération d'images</strong> : lorsque vous demandez à l'IA de générer une image, votre description (prompt) est transmise à <strong>Cloudflare Workers AI (FLUX)</strong> pour créer l'image. L'image générée est ensuite stockée sur <strong>Cloudinary</strong> (USA). <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Vos conversations IA sont stockées dans votre compte tant qu'il est actif, pour vous permettre de retrouver votre historique. VOKYVO ne les utilise pas pour entraîner de modèle d'IA. Dans le cadre de l'amélioration de ses services, VOKYVO peut analyser de manière <strong>agrégée et anonymisée</strong> les questions posées à l'assistant. Aucune analyse individuelle nominative n'est effectuée.</li>
+  <li><strong>Partenaires IA</strong> (intelligence artificielle) : vos messages adressés à l'assistant IA sont transmis à un ou plusieurs partenaires d'IA pour générer les réponses : <strong>Groq</strong> (USA), <strong>OpenRouter</strong> (USA), <strong>Mistral AI</strong> (France), <strong>Google Gemini</strong> (USA), <strong>SambaNova</strong> (USA), <strong>Cloudflare Workers AI</strong> (USA), <strong>NVIDIA NIM</strong> (USA). <strong>Un seul partenaire traite votre message à la fois, selon disponibilité. VOKYVO ne sait pas à l'avance lequel sera utilisé, ni ne contrôle la politique de conservation de chaque partenaire.</strong> <strong>Génération d'images</strong> : lorsque vous demandez à l'IA de générer une image, votre description (prompt) est transmise à <strong>Cloudflare Workers AI (FLUX)</strong> pour créer l'image. L'image générée est ensuite stockée sur <strong>Cloudinary</strong> (USA). <strong>Ce qui est transmis</strong> : uniquement le texte de votre message et le contexte de la conversation en cours. Vos autres données (photos, profil, contacts) ne sont PAS transmises. Vos conversations IA sont stockées dans votre compte tant qu'il est actif, pour vous permettre de retrouver votre historique. VOKYVO ne les utilise pas pour entraîner de modèle d'IA. Dans le cadre de l'amélioration de ses services, VOKYVO peut analyser de manière <strong>agrégée et anonymisée</strong> les questions posées à l'assistant. Aucune analyse individuelle nominative n'est effectuée.</li>
   <li><strong>Zoho</strong> (email) : envoi des emails transactionnels (bienvenue, OTP)</li>
   <li><strong>Brevo</strong> (email) : envoi des notifications par email</li>
   <li><strong>Google</strong> : authentification OAuth (si vous utilisez « Se connecter avec Google »)</li>
@@ -115,7 +115,7 @@ Retour
 
 <h3>7. Conservation</h3>
 <p>Vos données sont conservées tant que votre compte est actif. Vous pouvez demander la suppression de votre compte à tout moment, via l'app, le web ou par email (sous 72 h).</p>
-<p><strong>Comptes inactifs :</strong> les comptes inactifs depuis <strong>24 mois</strong> peuvent être supprimés après notification par email à l'adresse enregistrée. Vous pouvez vous opposer à cette suppression en vous connectant simplement à votre compte.</p>
+<p><strong>Comptes inactifs :</strong> les comptes inactifs depuis <strong>24 mois</strong> peuvent être supprimés après notification par email à l'adresse enregistrée <strong>et un préavis de 30 jours</strong>. Vous pouvez vous opposer à cette suppression en vous connectant simplement à votre compte.</p>
 
 <p>Vos données sont supprimées <strong>immédiatement</strong> de nos serveurs actifs, et <strong>définitivement</strong> après purge des sauvegardes sous <strong>30 jours</strong>.</p>
 
@@ -164,6 +164,7 @@ Retour
 <p>L'utilisation de VOKYVO est réservée aux personnes âgées de <strong>16 ans ou plus</strong>.</p>
 <ul>
   <li><strong>Moins de 16 ans</strong> : inscription interdite.</li>
+  <li><strong>16 à 18 ans</strong> : inscription autorisée avec autorisation parentale. En cas de doute, VOKYVO peut demander un <strong>justificatif d'autorisation parentale</strong> (document signé). À défaut, le compte peut être suspendu jusqu'à réception du justificatif.</li>
   <li><strong>Entre 16 et 18 ans</strong> : autorisation parentale obligatoire.</li>
   <li><strong>18 ans et plus</strong> : inscription libre.</li>
 </ul>
