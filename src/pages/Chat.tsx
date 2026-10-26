@@ -165,6 +165,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   const [, setUsers] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [chargementContacts, setChargementContacts] = useState(true);
+  const [convSelectionnee, setConvSelectionnee] = useState<any>(null);
   const [nbPrecedentGroupes, setNbPrecedentGroupes] = useState(() => parseInt(localStorage.getItem('vokyvo_groupes_count') || '3'));
   const [nbPrecedentContacts, setNbPrecedentContacts] = useState(() => parseInt(localStorage.getItem('vokyvo_contacts_count') || '5'));
   const [fichiersSelectionnes, setFichiersSelectionnes] = useState<File[]>([]);
@@ -466,6 +467,19 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
   useEffect(() => {
     return () => setConvActive(null);
   }, []);
+
+  const supprimerConversation = async (userId: number) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      await axios.post(`${API_URL}/conversations/${userId}/supprimer/`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Conversation supprimee');
+      chargerConversationsEtGroupes();
+    } catch {
+      toast.error('Erreur suppression');
+    }
+  };
 
   const selectUser = async (user: any) => {
     setSelectedUser(user);
@@ -989,6 +1003,20 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
 
   return (
     <div style={styles.container}>
+      {convSelectionnee ? (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: '#1a1a2e', borderBottom: '1px solid #2a2a3e' }}>
+          <button onClick={() => setConvSelectionnee(null)} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px' }}>
+            Annuler
+          </button>
+          <span style={{ color: 'white', fontWeight: 600 }}>{convSelectionnee.first_name || convSelectionnee.prenom || convSelectionnee.username}</span>
+          <button onClick={() => { supprimerConversation(convSelectionnee.id); setConvSelectionnee(null); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc3545" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      ) : (
       <div style={styles.header}>
         <BoutonRetour onClick={() => { if (selectedUser || groupeActif) { setSelectedUser(null); setGroupeActif(null); localStorage.removeItem('conv_active_user'); localStorage.removeItem('conv_active_groupe'); } else if (onRetour) { onRetour(); } else { localStorage.setItem('vokyvo_page', 'profil'); window.location.reload(); } }} />
         <h2 style={styles.title}>
@@ -1006,6 +1034,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
           </span>
         )}
       </div>
+      )}
 
       <div style={styles.body}>
         {/* Menu hamburger avec liste des utilisateurs */}
@@ -1122,9 +1151,10 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
               <button
                 key={user.id || user.user_id}
                 onClick={() => { selectUser(user); setGroupeActif(null); }}
+                onContextMenu={(e) => { e.preventDefault(); setConvSelectionnee(user); }}
                 style={{
                   ...styles.userItem,
-                  background: 'transparent',
+                  background: convSelectionnee?.id === user.id || convSelectionnee?.user_id === user.user_id ? 'rgba(102,126,234,0.2)' : 'transparent',
                 }}
               >
                 <div style={{ position: 'relative', flexShrink: 0 }}>
