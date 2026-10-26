@@ -172,8 +172,18 @@ export default function Statuts() {
   };
 
   const precedent = () => {
+    if (!groupeOuvert) return;
     if (indexStatut > 0) {
       setIndexStatut(indexStatut - 1);
+    } else {
+      // Debut du groupe : passe au groupe precedent (dernier statut)
+      const idx = groupes.findIndex(g => g.user_id === groupeOuvert.user_id);
+      if (idx > 0) {
+        const prevGroupe = groupes[idx - 1];
+        ouvrirGroupe(prevGroupe);
+        // Se placer sur le dernier statut du groupe precedent
+        setIndexStatut(prevGroupe.statuts.length - 1);
+      }
     }
   };
 
