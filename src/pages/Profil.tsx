@@ -2,10 +2,8 @@ import { viderCache } from '../db';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Vokyvo from './Vokyvo';
-// import Visio from './Visio'; // Caché temporairement
 import Chat from './Chat';
 import News from './News';
-// import Cours from './Cours';  // Désactivé - fusionné dans Vokyvo AI
 import VokyvoPlus from './VokyvoPlus';
 // import { demanderPermissionNotifications, envoyerNotificationTest } from '../notifications';
 import BadgeVerifie from '../BadgeVerifie';
