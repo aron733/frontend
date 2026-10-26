@@ -36,8 +36,11 @@ export default function Statuts() {
   const [uploadEnCours, setUploadEnCours] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const isPausedRef = useRef(false);
   const [dureeVideo, setDureeVideo] = useState(0);
   const [showHeart, setShowHeart] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const timerRef = useRef<any>(null);
 
@@ -90,6 +93,33 @@ export default function Statuts() {
         statuts: prev.statuts.map(y => y.id === s.id ? { ...y, vu: true } : y)
       } : prev);
     } catch {}
+  };
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    setIsPaused(true); // Met en pause la barre des que le doigt touche
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    const diff = touchStartX.current - touchEndX.current;
+    
+    // Si c'est un swipe (mouvement > 50px)
+    if (Math.abs(diff) > 50) {
+      setIsPaused(false); // Reprend la barre
+      if (diff > 0) {
+        suivant(); // Swipe vers la gauche
+      } else {
+        precedent(); // Swipe vers la droite
+      }
+    } else {
+      // C'est un simple tap : on reprend juste la barre
+      setIsPaused(false);
+    }
   };
 
   const handleDoubleTap = async () => {
@@ -184,6 +214,7 @@ export default function Statuts() {
     const duree = isVideo && dureeVideo > 0 ? dureeVideo * 1000 : 5000;
 
     timerRef.current = setInterval(() => {
+      if (isPausedRef.current) return; // Si le doigt est pose, on ne fait rien
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(timerRef.current);
@@ -201,7 +232,7 @@ export default function Statuts() {
     }, 100);
 
     return () => clearInterval(timerRef.current);
-  }, [groupeOuvert, indexStatut, isPaused]);
+  }, [groupeOuvert, indexStatut]);
 
   useEffect(() => {
     setProgress(0);
@@ -309,8 +340,13 @@ export default function Statuts() {
           </div>
 
           {/* Image + zones de clic (precedent/suivant) */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }} onDoubleClick={handleDoubleTap}>
-            <div onClick={precedent} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '20%', cursor: indexStatut > 0 ? 'pointer' : 'default', zIndex: 5 }} />
+          <div 
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', touchAction: 'pan-y' }} 
+            onDoubleClick={handleDoubleTap}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            
             {s.media_url.match(/\.(mp4|mov|webm|avi)(\?|$)/i) ? (
               <video 
                 ref={videoRef}
@@ -340,7 +376,7 @@ export default function Statuts() {
                 <svg width="120" height="120" viewBox="0 0 24 24" fill="#dc3545" stroke="#dc3545" strokeWidth="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               </div>
             )}
-            <div onClick={suivant} style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '20%', cursor: 'pointer', zIndex: 5 }} />
+            
           </div>
 
           {s.legende && (
