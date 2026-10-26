@@ -100,7 +100,7 @@ export default function Statuts() {
         headers: { Authorization: `Bearer ${token}` }
       });
       const nouveauLike = res.data.like;
-      const nouveauCount = nouveauLike ? s.likes + 1 : s.likes - 1;
+      const nouveauCount = res.data.likes;
       setGroupeOuvert(prev => prev ? {
         ...prev,
         statuts: prev.statuts.map(y => y.id === s.id ? { ...y, like_par_moi: nouveauLike, likes: nouveauCount } : y)
