@@ -1125,6 +1125,9 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                 style={{
                   ...styles.userItem,
                   background: selectedUser?.id === user.id || selectedUser?.user_id === user.user_id ? 'rgba(102,126,234,0.15)' : 'transparent',
+                  borderRadius: 0,
+                  borderBottom: '1px solid rgba(255,255,255,0.08)',
+                  padding: '10px 15px',
                 }}
               >
                 <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -3369,7 +3372,7 @@ const styles = {
     flex: 1,
     minHeight: 0,
     overflowY: 'auto' as const,
-    padding: '10px',
+    padding: '0',
     paddingBottom: '120px',
     display: 'flex',
     flexDirection: 'column' as const,
@@ -3448,6 +3451,7 @@ const styles = {
     alignItems: 'center',
     gap: '10px',
     width: '100%',
+    background: '#151525', // Nouvelle couleur de fond (plus clair que le fond de la page)
     transition: 'background 0.2s',
   },
   userOnline: { color: '#28a745', fontSize: '10px' },
