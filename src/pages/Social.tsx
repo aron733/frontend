@@ -8,8 +8,18 @@ import SocialComments from './SocialComments';
 export default function Social({ onRetour }: { onRetour?: () => void }) {
   const [posts, setPosts] = useState<any[]>([]);
   const [chargement, setChargement] = useState(true);
+  const [postCible, setPostCible] = useState<string | null>(null);
   const [modalCreer, setModalCreer] = useState(false);
   const [modalComments, setModalComments] = useState<any>(null);
+
+  useEffect(() => {
+    if (postCible && posts.length > 0) {
+      setTimeout(() => {
+        const el = document.getElementById(`post-${postCible}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 500);
+    }
+  }, [postCible, posts]);
 
   const charger = async () => {
     try {
@@ -22,7 +32,17 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
     setChargement(false);
   };
 
-  useEffect(() => { charger(); }, []);
+  useEffect(() => { 
+    charger(); 
+    const match = window.location.pathname.match(/^\/p\/([a-zA-Z0-9_-]+)$/);
+    if (match) {
+      setPostCible(match[1]); // code_court (string)
+    } else {
+      const params = new URLSearchParams(window.location.search);
+      const postId = params.get('post');
+      if (postId) setPostCible(postId);
+    }
+  }, []);
 
   const likerPost = async (id: number, typeReaction?: string | null) => {
     try {
@@ -72,7 +92,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           <p style={{ color: '#555', fontStyle: 'italic', textAlign: 'center', marginTop: '50px' }}>Aucun post pour le moment.</p>
         ) : (
           posts.map((p) => (
-            <SocialPost key={p.id} post={p} onLike={likerPost} onComment={(post) => setModalComments(post)} />
+            <div key={p.id} id={`post-${p.id}`}><SocialPost post={p} onLike={likerPost} onComment={(post) => setModalComments(post)} /></div>
           ))
         )}
       </div>

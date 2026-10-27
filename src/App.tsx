@@ -160,8 +160,8 @@ function App() {
       '/aron-vokouma', '/desabonnement', '/supprimer-compte',
       '/oauth-callback', '/oauth/google/callback'
     ];
-    // Le path est valide s'il est dans la liste OU s'il commence par /blog/
-    const estValide = routesValides.includes(path) || path.startsWith('/blog/');
+    // Le path est valide s'il est dans la liste, ou s'il commence par /blog/ ou /p/
+    const estValide = routesValides.includes(path) || path.startsWith('/blog/') || path.startsWith('/p/');
     if (!estValide) {
       setNotFound(true);
     }

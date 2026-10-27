@@ -146,7 +146,7 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
 
         {/* Partage */}
         <button onClick={async () => {
-          const url = `https://vokyvo.com/share?url=${encodeURIComponent(window.location.origin + '/social')}`;
+          const url = `https://vokyvo.com/p/${p.code_court}`;
           if (navigator.share) {
             try { await navigator.share({ title: 'Post VOKYVO', url }); } catch {}
           } else {

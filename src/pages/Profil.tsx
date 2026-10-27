@@ -28,7 +28,13 @@ import ModalMesDonnees from '../ModalMesDonnees';
 function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () => void; champsManquants?: string[] }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [convInitiale, setConvInitiale] = useState<string | null>(null);
-  const [pageActive, setPageActive] = useState<'profil' | 'vokyvo' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus' | 'social'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'vokyvo' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus' | 'social'>(() => {
+    const match = window.location.pathname.match(/^\/p\/([a-zA-Z0-9_-]+)$/);
+    if (match) return 'social';
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('post')) return 'social';
+    return (localStorage.getItem('vokyvo_page') as any) || 'profil';
+  });
   const [userData, setUserData] = useState(user);
   const [stats, setStats] = useState({ nb_messages: 0, nb_conversations: 0, anciennete: 0, unite: 'jours', date_inscription: '' });
 
