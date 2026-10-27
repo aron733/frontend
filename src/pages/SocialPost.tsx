@@ -65,37 +65,43 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
       )}
 
       {/* Actions */}
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'center', paddingTop: '5px', padding: '5px 15px 0' }}>
-        <div style={{ position: 'relative' }}>
+      <div style={{ display: 'flex', gap: '8px', padding: '10px 15px 0', borderTop: '1px solid #1a1a2e', marginTop: '10px' }}>
+        {/* Like */}
+        <div style={{ position: 'relative', flex: 1 }}>
           <button
             onClick={() => onLike(p.id)}
             onMouseEnter={() => setReactionMenu(true)}
             onMouseLeave={() => setReactionMenu(false)}
             onTouchStart={() => { (window as any)._longPress = setTimeout(() => setReactionMenu(true), 500); }}
             onTouchEnd={() => { clearTimeout((window as any)._longPress); }}
-            style={{ background: 'transparent', border: 'none', color: p.like_par_moi ? '#dc3545' : '#888', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '15px', fontWeight: 600 }}
+            style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', color: p.like_par_moi ? '#dc3545' : '#aaa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, padding: '10px', borderRadius: '10px' }}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill={p.like_par_moi ? '#dc3545' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            {p.likes}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill={p.like_par_moi ? '#dc3545' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            J'aime
           </button>
           {reactionMenu && (
-            <div style={{ position: 'absolute', bottom: '100%', left: 0, background: '#111120', border: '1px solid #2a2a3e', borderRadius: '20px', padding: '5px 10px', display: 'flex', gap: '8px', marginBottom: '5px', zIndex: 20 }}>
+            <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: '#111120', border: '1px solid #2a2a3e', borderRadius: '20px', padding: '5px 10px', display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '5px', zIndex: 20 }}>
               {REACTIONS.map((r) => (
                 <button key={r} onClick={() => onLike(p.id)} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', padding: 0 }}>{r}</button>
               ))}
             </div>
           )}
         </div>
-        <button onClick={() => onComment(p)} style={{ background: 'transparent', border: 'none', color: '#888', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '15px', fontWeight: 600 }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          {p.nb_commentaires || 0}
+
+        {/* Commentaire */}
+        <button onClick={() => onComment(p)} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#aaa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, padding: '10px', borderRadius: '10px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Commenter
         </button>
+
+        {/* Partage */}
         <button onClick={() => {
           const url = `https://vokyvo.com/share?url=${encodeURIComponent(window.location.origin + '/social')}`;
           if (navigator.share) navigator.share({ title: 'Post VOKYVO', url });
           else { navigator.clipboard.writeText(url); alert('Lien copié !'); }
-        }} style={{ background: 'transparent', border: 'none', color: '#888', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '15px', fontWeight: 600 }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        }} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#aaa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, padding: '10px', borderRadius: '10px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Partager
         </button>
       </div>
     </div>
