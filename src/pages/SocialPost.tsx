@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import SocialFond from './SocialFond';
 
 
 interface PostProps {
@@ -40,9 +41,13 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
         </div>
       </div>
 
-      {/* Texte */}
+      {/* Texte (avec fond si couleur_fond) */}
       {p.texte && (
-        <p style={{ color: '#eee', fontSize: '16px', lineHeight: 1.5, marginBottom: '15px', whiteSpace: 'pre-wrap', padding: '0 15px' }}>{p.texte}</p>
+        p.couleur_fond && !p.media_url ? (
+          <SocialFond texte={p.texte} couleur={p.couleur_fond} />
+        ) : (
+          <p style={{ color: '#eee', fontSize: '16px', lineHeight: 1.5, marginBottom: '15px', whiteSpace: 'pre-wrap', padding: '0 15px' }}>{p.texte}</p>
+        )
       )}
 
       {/* Media (avec double-tap) */}
