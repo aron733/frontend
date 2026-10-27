@@ -271,7 +271,7 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
       {/* Footer */}
       <div style={{ padding: '30px 20px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>© 2026 VOKYVO LABS — Ouagadougou, Burkina Faso</p>
-        <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap' }}>
+        <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', padding: '0 20px' }}>
           <a href="https://vokyvo.com/cgu" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>CGU</a>
           <a href="https://vokyvo.com/confidentialite" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Confidentialité</a>
           <a href="https://vokyvo.com/a-propos" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>À propos</a>

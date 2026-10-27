@@ -72,8 +72,8 @@ export default function ConsoleLogin({ onLogin }: { onLogin: (token: string) => 
 
           {/* Formulaire de droite */}
           <div style={{ flex: 1, minWidth: '300px', maxWidth: '400px' }}>
-            <h3 style={{ color: '#fff', fontSize: '22px', marginBottom: '10px' }}>Se connecter</h3>
-            <p style={{ color: '#888', fontSize: '14px', marginBottom: '25px' }}>Accédez à votre console développeur.</p>
+            <h3 style={{ color: '#fff', fontSize: '22px', marginBottom: '10px' }}>Se connecter avec VOKYVO</h3>
+            <p style={{ color: '#888', fontSize: '14px', marginBottom: '25px' }}>Utilisez votre compte VOKYVO pour accéder à la console.</p>
             
             <form onSubmit={handleSubmit}>
               <input
@@ -100,7 +100,7 @@ export default function ConsoleLogin({ onLogin }: { onLogin: (token: string) => 
                     <div style={{ width: '16px', height: '16px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
                     Connexion...
                   </div>
-                ) : 'Se connecter'}
+                ) : 'Se connecter avec VOKYVO'}
               </button>
               {erreur && <p style={{ color: '#dc3545', textAlign: 'center', marginTop: '15px', fontSize: '14px', background: 'rgba(220,53,69,0.1)', padding: '10px', borderRadius: '8px' }}>{erreur}</p>}
             </form>
@@ -152,7 +152,7 @@ export default function ConsoleLogin({ onLogin }: { onLogin: (token: string) => 
       {/* Footer */}
       <div style={{ padding: '40px 20px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>© 2026 VOKYVO LABS — Ouagadougou, Burkina Faso</p>
-        <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '15px' }}>
+        <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', padding: '0 20px' }}>
           <a href="https://vokyvo.com/cgu" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>CGU</a>
           <a href="https://vokyvo.com/confidentialite" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Confidentialité</a>
           <a href="https://vokyvo.com/a-propos" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>À propos</a>
