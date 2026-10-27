@@ -80,42 +80,52 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
         </button>
       </div>
 
-      {/* Menu lateral */}
+      {/* Overlay */}
       {menuOuvert && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 2000, display: 'flex', justifyContent: 'flex-end' }} onClick={() => setMenuOuvert(false)}>
-          <div style={{ width: '280px', background: '#0a0a0f', height: '100%', padding: '20px', borderLeft: '1px solid #2a2a3e' }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-              <h2 style={{ color: '#fff', fontSize: '18px', margin: 0 }}>Menu</h2>
-              <button onClick={() => setMenuOuvert(false)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-
-            <p style={{ color: '#555', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '10px' }}>API</p>
-            <button onClick={() => { setSection('cles'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'cles' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              Mes clés
-            </button>
-            <button onClick={() => { setSection('social'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'social' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              API Social
-            </button>
-
-            <p style={{ color: '#555', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', marginTop: '30px', marginBottom: '10px' }}>Ressources</p>
-            <button onClick={() => { setSection('docs'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'docs' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              Documentation
-            </button>
-
-            <div style={{ marginTop: '40px', borderTop: '1px solid #2a2a3e', paddingTop: '20px' }}>
-              <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: '#dc3545', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                Déconnexion
-              </button>
-            </div>
-          </div>
-        </div>
+        <div onClick={() => setMenuOuvert(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1999 }} />
       )}
+
+      {/* Menu lateral (style Profil) */}
+      <div style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0, width: '280px', background: '#0a0a0f', zIndex: 2000,
+        transform: menuOuvert ? 'translateX(0)' : 'translateX(120%)',
+        opacity: menuOuvert ? 1 : 0,
+        pointerEvents: menuOuvert ? 'auto' : 'none',
+        transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+        padding: '20px', borderLeft: '1px solid #2a2a3e', display: 'flex', flexDirection: 'column'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ color: '#fff', fontSize: '18px', margin: 0 }}>Menu</h2>
+          <button onClick={() => setMenuOuvert(false)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>API</p>
+        <button onClick={() => { setSection('cles'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'cles' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Mes clés
+        </button>
+        <button onClick={() => { setSection('social'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'social' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          API Social
+        </button>
+
+        <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>Ressources</p>
+        <button onClick={() => { setSection('docs'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'docs' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Documentation
+        </button>
+
+        <div style={{ flex: 1 }} />
+        
+        <div style={{ borderTop: '1px solid #2a2a3e', paddingTop: '20px' }}>
+          <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: '#dc3545', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Déconnexion
+          </button>
+        </div>
+      </div>
 
       {/* Contenu */}
       <div style={{ flex: 1, maxWidth: '900px', width: '100%', margin: '0 auto', padding: '40px 20px' }}>
