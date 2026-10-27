@@ -53,7 +53,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       </div>
 
       {/* Fil */}
-      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '15px' }}>
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '0 0 15px 0' }}>
         {chargement ? (
           <p style={{ color: '#888', textAlign: 'center', marginTop: '50px' }}>Chargement...</p>
         ) : posts.length === 0 ? (
