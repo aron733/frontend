@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
-const REACTIONS = ['❤️', '🔥', '😂', '👏'];
 
 interface PostProps {
   post: any;
-  onLike: (id: number) => void;
+  onLike: (id: number, typeReaction?: string | null) => void;
   onComment: (post: any) => void;
 }
 
 export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
   const [showHeart, setShowHeart] = useState(false);
   const [reactionMenu, setReactionMenu] = useState(false);
+  const longPressTimer = useRef<any>(null);
 
   const handleDoubleTap = () => {
     setShowHeart(true);
@@ -69,20 +69,66 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
         {/* Like */}
         <div style={{ position: 'relative', flex: 1 }}>
           <button
-            onClick={() => onLike(p.id)}
-            onMouseEnter={() => setReactionMenu(true)}
-            onMouseLeave={() => setReactionMenu(false)}
-            onTouchStart={() => { (window as any)._longPress = setTimeout(() => setReactionMenu(true), 500); }}
-            onTouchEnd={() => { clearTimeout((window as any)._longPress); }}
-            style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', color: p.like_par_moi ? '#dc3545' : '#aaa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, padding: '10px', borderRadius: '10px' }}
+            onClick={(e) => {
+              e.preventDefault();
+              // Si le menu est ouvert, on le ferme
+              if (reactionMenu) { setReactionMenu(false); return; }
+              // Si on a deja une reaction, on la supprime (null). Sinon, on met un like.
+              if (p.ma_reaction) {
+                onLike(p.id, null);
+              } else {
+                onLike(p.id, 'like');
+              }
+            }}
+            onMouseDown={() => { longPressTimer.current = setTimeout(() => setReactionMenu(true), 500); }}
+            onMouseUp={() => { clearTimeout(longPressTimer.current); }}
+            onMouseLeave={() => { clearTimeout(longPressTimer.current); setReactionMenu(false); }}
+            onTouchStart={() => { longPressTimer.current = setTimeout(() => setReactionMenu(true), 500); }}
+            onTouchEnd={() => { clearTimeout(longPressTimer.current); }}
+            style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: 'none', color: p.ma_reaction ? '#dc3545' : '#aaa', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, padding: '10px', borderRadius: '10px' }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill={p.like_par_moi ? '#dc3545' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-            J'aime
+            {p.ma_reaction ? (
+              <>
+                <span style={{ fontSize: '18px' }}>
+                  {p.ma_reaction === 'love' && '❤️'}
+                  {p.ma_reaction === 'haha' && '😂'}
+                  {p.ma_reaction === 'wow' && '😮'}
+                  {p.ma_reaction === 'sad' && '😢'}
+                  {p.ma_reaction === 'angry' && '😡'}
+                  {p.ma_reaction === 'like' && '👍'}
+                </span>
+                <span style={{ color: '#888', fontSize: '13px', fontWeight: 600 }}>{p.likes}</span>
+              </>
+            ) : (
+              <>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                J'aime
+              </>
+            )}
           </button>
           {reactionMenu && (
-            <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: '#111120', border: '1px solid #2a2a3e', borderRadius: '20px', padding: '5px 10px', display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '5px', zIndex: 20 }}>
-              {REACTIONS.map((r) => (
-                <button key={r} onClick={() => onLike(p.id)} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', padding: 0 }}>{r}</button>
+            <div style={{ position: 'absolute', bottom: 'calc(100% + 10px)', left: 0, background: '#111120', border: '1px solid #2a2a3e', borderRadius: '16px', padding: '12px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', zIndex: 20, boxShadow: '0 10px 30px rgba(0,0,0,0.6)', animation: 'popReaction 0.2s ease-out', width: '220px' }}>
+              <style>{`
+                @keyframes popReaction {
+                  0% { transform: scale(0.9) translateY(10px); opacity: 0; }
+                  100% { transform: scale(1) translateY(0); opacity: 1; }
+                }
+              `}</style>
+              {[
+                { emoji: '👍', label: 'J\'aime', type: 'like' },
+                { emoji: '❤️', label: 'J\'adore', type: 'love' },
+                { emoji: '😂', label: 'Haha', type: 'haha' },
+                { emoji: '😮', label: 'Wouah', type: 'wow' },
+                { emoji: '😢', label: 'Triste', type: 'sad' },
+                { emoji: '😡', label: 'Colère', type: 'angry' },
+              ].map((r) => (
+                <button key={r.type} onClick={() => {
+                  onLike(p.id, r.type);
+                  setReactionMenu(false);
+                }} style={{ background: 'transparent', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', cursor: 'pointer', padding: '4px', borderRadius: '8px', transition: 'background 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                  <span style={{ fontSize: '28px' }}>{r.emoji}</span>
+                  <span style={{ color: '#aaa', fontSize: '11px', fontWeight: 600 }}>{r.label}</span>
+                </button>
               ))}
             </div>
           )}

@@ -24,10 +24,12 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
 
   useEffect(() => { charger(); }, []);
 
-  const likerPost = async (id: number) => {
+  const likerPost = async (id: number, typeReaction?: string | null) => {
     try {
       const token = localStorage.getItem('access_token');
-      await axios.post(`${API_URL}/social/posts/${id}/liker/`, {}, {
+      // Si pas de typeReaction (clic principal), on envoie null pour supprimer
+      const reaction = typeReaction || null;
+      await axios.post(`${API_URL}/social/posts/${id}/liker/`, { reaction }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       charger();
