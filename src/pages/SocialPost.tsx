@@ -148,10 +148,18 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
         <button onClick={async () => {
           const url = `https://vokyvo.com/p/${p.code_court}`;
           if (navigator.share) {
-            try { await navigator.share({ title: 'Post VOKYVO', url }); } catch {}
+            try {
+              await navigator.share({
+                title: 'Post VOKYVO',
+                text: p.texte || 'Regarde ce post sur VOKYVO',
+                url: url
+              });
+            } catch (err) {
+              console.log('Partage annulé');
+            }
           } else {
             navigator.clipboard.writeText(url);
-            alert('Lien copié !');
+            alert('Lien copié dans le presse-papiers !');
           }
           try {
             const token = localStorage.getItem('access_token');
