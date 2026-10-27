@@ -1,27 +1,34 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { API_URL } from '../config';
 
 export default function ConsoleDashboard({ token, onLogout }: { token: string, onLogout: () => void }) {
-  const [keys, setKeys] = useState<any[]>([]);
+    const [clesSocial, setClesSocial] = useState<any[]>([]);
+  const [clesIa, setClesIa] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalQuitter, setModalQuitter] = useState(false);
   const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [section, setSection] = useState<'social' | 'cles' | 'docs'>('cles');
+  const [section, setSection] = useState<'social-cles' | 'ia-cles' | 'docs' | 'social-api' | 'ia-api'>('social-cles');
   
   // Modales
   const [modalCreer, setModalCreer] = useState(false);
   const [nomCle, setNomCle] = useState('');
+  const [typeCle, setTypeCle] = useState<'social' | 'ia'>('social');
   const [modalCleAffichee, setModalCleAffichee] = useState<string | null>(null);
   const [copie, setCopie] = useState(false);
 
   const chargerCles = async () => {
     try {
-      const res = await axios.get(`${API_URL}/console/keys/`, { headers: { Authorization: `Bearer ${token}` } });
-      setKeys(res.data.keys || []);
+      const [resSocial, resIa] = await Promise.all([
+        axios.get(`${API_URL}/console/keys/?type=social`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${API_URL}/console/keys/?type=ia`, { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+      setClesSocial(resSocial.data.keys || []);
+      setClesIa(resIa.data.keys || []);
     } catch {
-      alert('Erreur de chargement des cles');
+      toast.error('Erreur de chargement des clés');
     } finally {
       setLoading(false);
     }
@@ -32,7 +39,7 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
   const creerCle = async () => {
     if (!nomCle.trim()) return;
     try {
-      const res = await axios.post(`${API_URL}/console/keys/creer/`, { nom: nomCle }, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.post(`${API_URL}/console/keys/creer/`, { nom: nomCle, type: typeCle }, { headers: { Authorization: `Bearer ${token}` } });
       if (res.data.success) {
         setModalCreer(false);
         setNomCle('');
@@ -40,7 +47,7 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
         chargerCles();
       }
     } catch {
-      alert('Erreur de creation');
+      toast.error('Erreur de création de la clé');
     }
   };
 
@@ -50,7 +57,7 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
       await axios.delete(`${API_URL}/console/keys/${id}/supprimer/`, { headers: { Authorization: `Bearer ${token}` } });
       chargerCles();
     } catch {
-      alert('Erreur de suppression');
+      toast.error('Erreur de suppression de la clé');
     }
   };
 
@@ -73,7 +80,7 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 30px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: 900, letterSpacing: '2px', margin: 0 }}>
-          VOKYVO <span style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>DEV</span>
+          VOKYVO <span style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>API</span>
         </h1>
         <button onClick={() => setMenuOuvert(true)} style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'white', cursor: 'pointer', padding: '10px', borderRadius: '10px' }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -101,18 +108,28 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
           </button>
         </div>
 
-        <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>API</p>
-        <button onClick={() => { setSection('cles'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'cles' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+        <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>API Social</p>
+        <button onClick={() => { setSection('social-cles'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: section === 'social-cles' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          Mes clés
+          Clés Social
         </button>
-        <button onClick={() => { setSection('social'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'social' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+        <button onClick={() => { setSection('social-api'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: section === 'social-api' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          API Social
+          Doc Social
+        </button>
+
+        <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>API IA</p>
+        <button onClick={() => { setSection('ia-cles'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: section === 'ia-cles' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Clés IA
+        </button>
+        <button onClick={() => { setSection('ia-api'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: section === 'ia-api' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Doc IA
         </button>
 
         <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>Ressources</p>
-        <button onClick={() => { setSection('docs'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: section === 'docs' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+        <button onClick={() => { setSection('docs'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: section === 'docs' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
           Documentation
         </button>
@@ -120,7 +137,7 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
         <div style={{ flex: 1 }} />
         
         <div style={{ borderTop: '1px solid #2a2a3e', paddingTop: '20px' }}>
-          <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '12px', background: 'transparent', border: 'none', color: '#dc3545', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+          <button onClick={() => { setModalQuitter(true); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: '#dc3545', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Déconnexion
           </button>
@@ -130,15 +147,15 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
       {/* Contenu */}
       <div style={{ flex: 1, maxWidth: '900px', width: '100%', margin: '0 auto', padding: '40px 20px' }}>
         
-        {section === 'cles' && (
+        {(section === 'social-cles' || section === 'ia-cles') && (
           <>
-            <h2 style={{ color: '#fff', fontSize: '28px', marginBottom: '10px' }}>Mes clés API</h2>
-            <p style={{ color: '#888', fontSize: '15px', marginBottom: '30px' }}>Gérez vos accès pour publier automatiquement.</p>
-            {loading ? <p style={{ color: '#888' }}>Chargement...</p> : keys.length === 0 ? (
+            <h2 style={{ color: '#fff', fontSize: '28px', marginBottom: '10px' }}>{section === 'social-cles' ? 'Clés API Social' : 'Clés API IA'}</h2>
+            <p style={{ color: '#888', fontSize: '15px', marginBottom: '30px' }}>{section === 'social-cles' ? 'Gérez vos accès pour publier automatiquement.' : 'Gérez vos accès pour utiliser VOKYVO AI.'}</p>
+            {loading ? <p style={{ color: '#888' }}>Chargement...</p> : (section === 'social-cles' ? clesSocial : clesIa).length === 0 ? (
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px dashed #2a2a3e', borderRadius: '12px', padding: '40px', textAlign: 'center' }}>
                 <p style={{ color: '#555', fontStyle: 'italic', margin: 0 }}>Aucune clé pour le moment.</p>
               </div>
-            ) : keys.map((k) => (
+            ) : (section === 'social-cles' ? clesSocial : clesIa).map((k) => (
               <div key={k.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '20px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <div style={{ color: '#fff', fontWeight: 600, fontSize: '16px', marginBottom: '4px' }}>{k.nom}</div>
@@ -151,7 +168,7 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
           </>
         )}
 
-        {section === 'social' && (
+        {section === 'social-api' && (
           <>
             <h2 style={{ color: '#fff', fontSize: '28px', marginBottom: '10px' }}>API Social</h2>
             <p style={{ color: '#888', fontSize: '15px', marginBottom: '30px' }}>Publiez des posts automatiquement sur le fil VOKYVO.</p>
@@ -160,6 +177,19 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer VOTRE_CLE" \\
   -d '{"texte": "Mon post automatique !"}'`}
+            </pre>
+          </>
+        )}
+
+        {section === 'ia-api' && (
+          <>
+            <h2 style={{ color: '#fff', fontSize: '28px', marginBottom: '10px' }}>Documentation API IA</h2>
+            <p style={{ color: '#888', fontSize: '15px', marginBottom: '30px' }}>Utilisez VOKYVO AI depuis vos propres applications.</p>
+            <pre style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '20px', fontSize: '14px', overflowX: 'auto', color: '#ccc', fontFamily: 'monospace' }}>
+{`curl -X POST https://api.vokyvo.com/api/ia/chat/ \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer VOTRE_CLE_IA" \\
+  -d '{"message": "Qui a decouvert l Amerique ?"}'`}
             </pre>
           </>
         )}
@@ -184,8 +214,12 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
               placeholder="Ex: Bot Telegram"
               value={nomCle}
               onChange={(e) => setNomCle(e.target.value)}
-              style={{ width: '100%', padding: '14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '20px', outline: 'none' }}
+              style={{ width: '100%', padding: '14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '15px', outline: 'none' }}
             />
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+              <button onClick={() => setTypeCle('social')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: typeCle === 'social' ? '2px solid #667eea' : '1px solid #2a2a3e', background: typeCle === 'social' ? 'rgba(102,126,234,0.1)' : 'transparent', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Social</button>
+              <button onClick={() => setTypeCle('ia')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: typeCle === 'ia' ? '2px solid #667eea' : '1px solid #2a2a3e', background: typeCle === 'ia' ? 'rgba(102,126,234,0.1)' : 'transparent', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>IA</button>
+            </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
               <button onClick={() => setModalCreer(false)} style={{ padding: '12px 24px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: 'pointer', fontWeight: 600 }}>Annuler</button>
               <button onClick={creerCle} style={{ padding: '12px 24px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Créer</button>
@@ -237,6 +271,16 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
       {/* Footer */}
       <div style={{ padding: '30px 20px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
         <p style={{ color: '#666', fontSize: '13px', margin: 0 }}>© 2026 VOKYVO LABS — Ouagadougou, Burkina Faso</p>
+        <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap' }}>
+          <a href="https://vokyvo.com/cgu" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>CGU</a>
+          <a href="https://vokyvo.com/confidentialite" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Confidentialité</a>
+          <a href="https://vokyvo.com/a-propos" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>À propos</a>
+          <a href="https://vokyvo.com/blog" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Blog</a>
+          <a href="https://vokyvo.com/help" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Aide</a>
+          <a href="https://vokyvo.com/aron-vokouma" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Fondateur</a>
+          <a href="https://status.vokyvo.com/status/vokyvo" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Status</a>
+          <a href="mailto:support@vokyvo.com" style={{ color: '#667eea', fontSize: '13px', textDecoration: 'none' }}>Support</a>
+        </div>
       </div>
     </div>
   );
