@@ -5,7 +5,7 @@ import { Browser } from '@capacitor/browser';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc = 'https://vokyvo.com/pdf.worker.min.mjs';
 
 interface Props {
   url: string;
