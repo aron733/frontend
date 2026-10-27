@@ -15,6 +15,10 @@ export default function ConsoleLogin({ onLogin }: { onLogin: (token: string) => 
     try {
       const res = await axios.post(`${API_URL}/connexion/`, { email, password });
       if (res.data.access_token) {
+        // On stocke le refresh token dans le localStorage de la console
+        if (res.data.refresh_token) {
+          localStorage.setItem('console_refresh', res.data.refresh_token);
+        }
         onLogin(res.data.access_token);
       } else {
         setErreur('Email ou mot de passe incorrect.');
