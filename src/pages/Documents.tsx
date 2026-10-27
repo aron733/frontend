@@ -157,7 +157,7 @@ export default function Documents() {
                 if (e.fichier_pdf) {
                   setChargementCarte(e.id);
                   setTimeout(() => {
-                    setPdfOuvert({ url: e.fichier_pdf!.startsWith('http') ? e.fichier_pdf! : `https://api.vokyvo.com${e.fichier_pdf}`, titre: e.titre });
+                    setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre });
                   }, 50);
                 }
               }}
@@ -219,7 +219,7 @@ export default function Documents() {
                     if (e.fichier_pdf) {
                       setChargementCarte(e.id);
                       setTimeout(() => {
-                        setPdfOuvert({ url: e.fichier_pdf!.startsWith('http') ? e.fichier_pdf! : `https://api.vokyvo.com${e.fichier_pdf}`, titre: e.titre });
+                        setPdfOuvert({ url: e.fichier_pdf!, titre: e.titre });
                       }, 50);
                     }
                   }}
