@@ -6,18 +6,25 @@ import { API_URL } from '../config';
 export default function ConsoleDashboard({ token, onLogout }: { token: string, onLogout: () => void }) {
     const [clesSocial, setClesSocial] = useState<any[]>([]);
   const [clesIa, setClesIa] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [modalQuitter, setModalQuitter] = useState(false);
   const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
   const [menuOuvert, setMenuOuvert] = useState(false);
-  const [section, setSection] = useState<'social-cles' | 'ia-cles' | 'docs' | 'social-api' | 'ia-api'>('social-cles');
+  const [section, setSection] = useState<'dashboard' | 'social-cles' | 'ia-cles' | 'docs' | 'social-api' | 'ia-api'>('dashboard');
   
   // Modales
   const [modalCreer, setModalCreer] = useState(false);
   const [nomCle, setNomCle] = useState('');
-  const [typeCle, setTypeCle] = useState<'social' | 'ia'>('social');
-  const [modalCleAffichee, setModalCleAffichee] = useState<string | null>(null);
+    const [modalCleAffichee, setModalCleAffichee] = useState<string | null>(null);
   const [copie, setCopie] = useState(false);
+
+  const chargerStats = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/console/stats/`, { headers: { Authorization: `Bearer ${token}` } });
+      setStats(res.data);
+    } catch {}
+  };
 
   const chargerCles = async () => {
     try {
@@ -34,11 +41,12 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
     }
   };
 
-  useEffect(() => { chargerCles(); }, []);
+  useEffect(() => { chargerCles(); chargerStats(); }, []);
 
   const creerCle = async () => {
     if (!nomCle.trim()) return;
     try {
+      const typeCle = section === 'social-cles' ? 'social' : 'ia';
       const res = await axios.post(`${API_URL}/console/keys/creer/`, { nom: nomCle, type: typeCle }, { headers: { Authorization: `Bearer ${token}` } });
       if (res.data.success) {
         setModalCreer(false);
@@ -108,6 +116,11 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
           </button>
         </div>
 
+        <button onClick={() => { setSection('dashboard'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: section === 'dashboard' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+
         <p style={{ color: '#888', fontSize: '12px', margin: '15px 0 5px', textTransform: 'uppercase', fontWeight: 'bold' }}>API Social</p>
         <button onClick={() => { setSection('social-cles'); setMenuOuvert(false); }} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '14px', marginBottom: '8px', background: 'transparent', border: 'none', color: section === 'social-cles' ? '#667eea' : '#ccc', cursor: 'pointer', textAlign: 'left', fontSize: '15px' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -147,6 +160,83 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
       {/* Contenu */}
       <div style={{ flex: 1, maxWidth: '900px', width: '100%', margin: '0 auto', padding: '40px 20px' }}>
         
+        {section === 'dashboard' && (
+          <>
+            <h2 style={{ color: '#fff', fontSize: '28px', marginBottom: '10px' }}>Dashboard</h2>
+            <p style={{ color: '#888', fontSize: '15px', marginBottom: '30px' }}>Vue d'ensemble de vos quotas et statistiques.</p>
+            
+            {stats && (
+              <>
+                {/* Resume */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '30px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '20px' }}>
+                    <p style={{ color: '#888', fontSize: '13px', marginBottom: '5px' }}>Cles Social</p>
+                    <p style={{ color: '#fff', fontSize: '24px', fontWeight: 700, margin: 0 }}>{clesSocial.length} <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>/ 5</span></p>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '20px' }}>
+                    <p style={{ color: '#888', fontSize: '13px', marginBottom: '5px' }}>Cles IA</p>
+                    <p style={{ color: '#fff', fontSize: '24px', fontWeight: 700, margin: 0 }}>{clesIa.length} <span style={{ color: '#666', fontSize: '14px', fontWeight: 400 }}>/ 5</span></p>
+                  </div>
+                </div>
+
+                {/* Carte API Social */}
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2a3e', borderRadius: '16px', padding: '25px', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(102,126,234,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h3 style={{ color: '#fff', fontSize: '18px', margin: 0 }}>API Social</h3>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>Posts (heure)</span>
+                    <span style={{ color: '#667eea', fontSize: '14px', fontWeight: 700 }}>{Math.round((stats.social.requetes_heure / stats.social.limite_heure) * 100)}%</span>
+                  </div>
+                  <div style={{ height: '10px', background: '#1a1a2e', borderRadius: '5px', overflow: 'hidden', marginBottom: '20px' }}>
+                    <div style={{ height: '100%', width: `${(stats.social.requetes_heure / stats.social.limite_heure) * 100}%`, background: 'linear-gradient(90deg, #667eea, #764ba2)', borderRadius: '5px' }} />
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>Posts (jour)</span>
+                    <span style={{ color: '#667eea', fontSize: '14px', fontWeight: 700 }}>{Math.round((stats.social.requetes_jour / stats.social.limite_jour) * 100)}%</span>
+                  </div>
+                  <div style={{ height: '10px', background: '#1a1a2e', borderRadius: '5px', overflow: 'hidden', marginBottom: '20px' }}>
+                    <div style={{ height: '100%', width: `${(stats.social.requetes_jour / stats.social.limite_jour) * 100}%`, background: 'linear-gradient(90deg, #667eea, #764ba2)', borderRadius: '5px' }} />
+                  </div>
+                  
+                  <p style={{ color: '#888', fontSize: '14px', margin: 0 }}>Total posts publies : <strong style={{ color: '#fff' }}>{stats.social.nb_posts}</strong></p>
+                </div>
+
+                {/* Carte API IA */}
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2a3e', borderRadius: '16px', padding: '25px', marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(118,75,162,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#764ba2" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>
+                    </div>
+                    <h3 style={{ color: '#fff', fontSize: '18px', margin: 0 }}>API IA</h3>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>Messages (heure)</span>
+                    <span style={{ color: '#764ba2', fontSize: '14px', fontWeight: 700 }}>{Math.round((stats.ia.requetes_heure / stats.ia.limite_heure) * 100)}%</span>
+                  </div>
+                  <div style={{ height: '10px', background: '#1a1a2e', borderRadius: '5px', overflow: 'hidden', marginBottom: '20px' }}>
+                    <div style={{ height: '100%', width: `${(stats.ia.requetes_heure / stats.ia.limite_heure) * 100}%`, background: 'linear-gradient(90deg, #764ba2, #667eea)', borderRadius: '5px' }} />
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ color: '#aaa', fontSize: '14px' }}>Messages (jour)</span>
+                    <span style={{ color: '#764ba2', fontSize: '14px', fontWeight: 700 }}>{Math.round((stats.ia.requetes_jour / stats.ia.limite_jour) * 100)}%</span>
+                  </div>
+                  <div style={{ height: '10px', background: '#1a1a2e', borderRadius: '5px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${(stats.ia.requetes_jour / stats.ia.limite_jour) * 100}%`, background: 'linear-gradient(90deg, #764ba2, #667eea)', borderRadius: '5px' }} />
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
         {(section === 'social-cles' || section === 'ia-cles') && (
           <>
             <h2 style={{ color: '#fff', fontSize: '28px', marginBottom: '10px' }}>{section === 'social-cles' ? 'Clés API Social' : 'Clés API IA'}</h2>
@@ -211,15 +301,12 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
             <p style={{ color: '#888', fontSize: '14px', marginBottom: '20px' }}>Donnez un nom à cette clé pour la reconnaître plus tard.</p>
             <input
               type="text"
-              placeholder="Ex: Bot Telegram"
+              placeholder="Ex: Mon site VOKYVO"
               value={nomCle}
               onChange={(e) => setNomCle(e.target.value)}
               style={{ width: '100%', padding: '14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '15px', outline: 'none' }}
             />
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-              <button onClick={() => setTypeCle('social')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: typeCle === 'social' ? '2px solid #667eea' : '1px solid #2a2a3e', background: typeCle === 'social' ? 'rgba(102,126,234,0.1)' : 'transparent', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Social</button>
-              <button onClick={() => setTypeCle('ia')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: typeCle === 'ia' ? '2px solid #667eea' : '1px solid #2a2a3e', background: typeCle === 'ia' ? 'rgba(102,126,234,0.1)' : 'transparent', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>IA</button>
-            </div>
+            
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
               <button onClick={() => setModalCreer(false)} style={{ padding: '12px 24px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: 'pointer', fontWeight: 600 }}>Annuler</button>
               <button onClick={creerCle} style={{ padding: '12px 24px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Créer</button>
