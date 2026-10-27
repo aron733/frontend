@@ -273,6 +273,7 @@ function Landing({ onLogin }: { onLogin: (data: any) => void }) {
         code: otpCode,
       });
       localStorage.setItem('access_token', response.data.access_token);
+        document.cookie = `vokyvo_token=${response.data.access_token}; path=/; domain=.vokyvo.com; secure; samesite=lax`;
       localStorage.setItem('refresh_token', response.data.refresh_token);
       localStorage.setItem('user', JSON.stringify(response.data));
       setOtpRequis(false);
