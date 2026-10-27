@@ -16,6 +16,7 @@ import { API_URL } from '../config';
 import BottomNav from '../BottomNav';
 import ModalModifierProfil from '../ModalModifierProfil';
 import Dashboard from './Dashboard';
+import Social from './Social';
 import ModalMesDonnees from '../ModalMesDonnees';
 
 
@@ -27,7 +28,7 @@ import ModalMesDonnees from '../ModalMesDonnees';
 function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () => void; champsManquants?: string[] }) {
   const [menuOuvert, setMenuOuvert] = useState(false);
   const [convInitiale, setConvInitiale] = useState<string | null>(null);
-  const [pageActive, setPageActive] = useState<'profil' | 'vokyvo' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
+  const [pageActive, setPageActive] = useState<'profil' | 'vokyvo' | 'visio' | 'news' | 'messages' | 'confidentialite' | 'cours' | 'vokyvo-plus' | 'social'>(() => (localStorage.getItem('vokyvo_page') as any) || 'profil');
   const [userData, setUserData] = useState(user);
   const [stats, setStats] = useState({ nb_messages: 0, nb_conversations: 0, anciennete: 0, unite: 'jours', date_inscription: '' });
 
@@ -537,6 +538,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
         {/* {pageActive === 'cours' && <Cours onRetour={() => setPageActive('profil')} />} Désactivé */}
         {pageActive === 'vokyvo-plus' && <VokyvoPlus onRetour={() => setPageActive('profil')} />}
         {pageActive === 'news' && <News onRetour={() => setPageActive('profil')} />}
+        {pageActive === 'social' && <Social onRetour={() => setPageActive('profil')} />}
       </main>
 
       {/* Modal Modifier le profil */}
@@ -939,7 +941,7 @@ function Profil({ user, onLogout, champsManquants }: { user: any; onLogout: () =
 }
 
 const styles = {
-  container: { minHeight: '100vh', background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)' },
+  container: { minHeight: '100vh', background: '#000000' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', position: 'sticky' as const, top: 0, zIndex: 1000 },
   logo: { color: 'white', fontSize: '22px', margin: 0, fontWeight: 'bold', letterSpacing: '2px' },
   hamburger: { background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', width: '45px', height: '45px', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
