@@ -50,16 +50,16 @@ export default function SocialMedia({ medias }: Props) {
 
   if (n === 1) {
     gridStyle.gridTemplateColumns = '1fr';
-    gridStyle.gridTemplateRows = 'auto';
+    gridStyle.gridTemplateRows = '400px';
   } else if (n === 2) {
     gridStyle.gridTemplateColumns = '1fr 1fr';
-    gridStyle.gridTemplateRows = '200px';
+    gridStyle.gridTemplateRows = '400px';
   } else if (n === 3) {
     gridStyle.gridTemplateColumns = '2fr 1fr';
-    gridStyle.gridTemplateRows = '100px 100px';
+    gridStyle.gridTemplateRows = '198px 198px'; // 198 + 4 (gap) + 198 = 400
   } else {
     gridStyle.gridTemplateColumns = '1fr 1fr';
-    gridStyle.gridTemplateRows = '100px 100px';
+    gridStyle.gridTemplateRows = '198px 198px';
   }
 
   return (
