@@ -956,6 +956,13 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
         user_id: userId,
       }, { headers: { Authorization: `Bearer ${getToken()}` } });
       await chargerConversationsEtGroupes();
+      // Mettre a jour groupeActif pour rafraichir les moderateurs
+      const resGroupes = await axios.get(`${API_URL}/groupes/`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      const nouveauxGroupes = resGroupes.data.groupes || [];
+      const groupeMisAJour = nouveauxGroupes.find((g: any) => String(g.id) === String(groupeActif.id));
+      if (groupeMisAJour) setGroupeActif(groupeMisAJour);
     } catch (err) {
       toast.error('Erreur nomination');
     }
@@ -1484,7 +1491,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                   <line x1="12" y1="8" x2="12.01" y2="8" />
                 </svg>
               </button>
-              {(String(groupeActif.createur_id) === String(getMyId())) && (
+              {(String(groupeActif.createur_id) === String(getMyId()) || groupeActif.moderateurs?.some((m: any) => String(m.id) === String(getMyId()))) && (
                 <button onClick={() => setShowAdminGroupe(true)} style={styles.gestionBtn}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="3" />
@@ -1700,7 +1707,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                           {estMoi && <span style={{ color: '#888', fontSize: '11px', marginLeft: '5px' }}>(Vous)</span>}
                         </span>
                         {estAdmin && <span style={styles.badgeAdmin}>ADMIN</span>}
-                        {estModo && <span style={styles.badgeModo}>MODO</span>}
+                          {estModo && <span style={styles.badgeModo}>MODO</span>}
                       </div>
                     );
                   })}
@@ -1718,7 +1725,7 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
                       <polyline points="12 19 5 12 12 5" />
                     </svg>
                   </button>
-                  <h2 style={styles.fsTitle}>Administration</h2>
+                  <h2 style={styles.fsTitle}>Gestion du groupe</h2>
                 </div>
 
                 <div style={{ padding: '20px' }}>
