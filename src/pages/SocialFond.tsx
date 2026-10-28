@@ -7,9 +7,9 @@ export default function SocialFond({ texte, couleur }: Props) {
   return (
     <div style={{ 
       background: couleur, 
-      borderRadius: '12px', 
-      padding: '40px 20px', 
-      minHeight: '200px', 
+      borderRadius: '0', 
+      padding: '20px', 
+      height: '400px', 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center',
