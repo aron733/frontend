@@ -241,7 +241,19 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
           <>
             <h2 style={{ color: '#fff', fontSize: '28px', marginBottom: '10px' }}>{section === 'social-cles' ? 'Clés API Social' : 'Clés API IA'}</h2>
             <p style={{ color: '#888', fontSize: '15px', marginBottom: '30px' }}>{section === 'social-cles' ? 'Gérez vos accès pour publier automatiquement.' : 'Gérez vos accès pour utiliser VOKYVO AI.'}</p>
-            {loading ? <p style={{ color: '#888' }}>Chargement...</p> : (section === 'social-cles' ? clesSocial : clesIa).length === 0 ? (
+            {loading ? (
+              <>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '20px', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ width: '40%', height: '16px', borderRadius: '4px', background: '#1a1a2e', marginBottom: '8px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                      <div style={{ width: '60%', height: '14px', borderRadius: '4px', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    </div>
+                    <div style={{ width: '80px', height: '32px', borderRadius: '8px', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </div>
+                ))}
+              </>
+            ) : (section === 'social-cles' ? clesSocial : clesIa).length === 0 ? (
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px dashed #2a2a3e', borderRadius: '12px', padding: '40px', textAlign: 'center' }}>
                 <p style={{ color: '#555', fontStyle: 'italic', margin: 0 }}>Aucune clé pour le moment.</p>
               </div>
