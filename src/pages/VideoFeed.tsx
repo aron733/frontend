@@ -1,15 +1,38 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
+import SocialComments from './SocialComments';
 
 export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
   const [videos, setVideos] = useState<any[]>([]);
   const [chargement, setChargement] = useState(true);
+  const [modalComments, setModalComments] = useState<any>(null);
   const [showHeart, setShowHeart] = useState<number | null>(null);
   const videoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
 
   useEffect(() => {
-    const charger = async () => {
+    charger();
+  }, []);
+
+
+    const likerPost = async (id: number) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      await axios.post(`${API_URL}/social/posts/${id}/liker/`, { reaction: 'like' }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Recharger les videos pour mettre a jour le compteur
+      const res = await axios.get(`${API_URL}/social/posts/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const avecVideo = (res.data.posts || []).filter((p: any) =>
+        p.medias && p.medias.some((m: any) => m.type === 'video')
+      );
+      setVideos(avecVideo);
+    } catch {}
+  };
+
+  const charger = async () => {
       try {
         const token = localStorage.getItem('access_token');
         const res = await axios.get(`${API_URL}/social/posts/`, {
@@ -22,8 +45,6 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
       } catch {}
       setChargement(false);
     };
-    charger();
-  }, []);
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 5000, overflowY: 'auto', scrollSnapType: 'y mandatory' }}>
@@ -104,8 +125,8 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
 
               {/* Boutons a droite */}
               <div style={{ position: 'absolute', right: '15px', bottom: '150px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', background: 'rgba(0,0,0,0.3)', padding: '15px 10px', borderRadius: '30px', backdropFilter: 'blur(10px)' }}>
-                <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                <button onClick={() => likerPost(p.id)} style={{ background: 'transparent', border: 'none', color: p.like_par_moi ? '#dc3545' : '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill={p.like_par_moi ? '#dc3545' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.likes}</span>
                 </button>
 
@@ -113,7 +134,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.nb_vues || 0}</span>
                 </div>
-                <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                <button onClick={() => setModalComments(p)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.nb_commentaires}</span>
                 </button>
@@ -141,6 +162,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
           );
         })
       )}
+      {modalComments && <SocialComments post={modalComments} onFermer={() => setModalComments(null)} onNouveauCommentaire={() => {}} />}
     </div>
   );
 }
