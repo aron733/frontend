@@ -7,6 +7,8 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
   const [videos, setVideos] = useState<any[]>([]);
   const [chargement, setChargement] = useState(true);
   const [modalComments, setModalComments] = useState<any>(null);
+  const [reactionMenu, setReactionMenu] = useState<number | null>(null);
+  const [longPressTimer, setLongPressTimer] = useState<any>(null);
   const [showHeart, setShowHeart] = useState<number | null>(null);
   const videoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
 
@@ -15,10 +17,10 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
   }, []);
 
 
-    const likerPost = async (id: number) => {
+    const likerPost = async (id: number, typeReaction: string = 'like') => {
     try {
       const token = localStorage.getItem('access_token');
-      await axios.post(`${API_URL}/social/posts/${id}/liker/`, { reaction: 'like' }, {
+      await axios.post(`${API_URL}/social/posts/${id}/liker/`, { reaction: typeReaction }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Recharger les videos pour mettre a jour le compteur
@@ -112,6 +114,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                 onDoubleClick={() => {
                   setShowHeart(p.id);
                   setTimeout(() => setShowHeart(null), 800);
+                  likerPost(p.id, 'love');
                 }}
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
@@ -125,10 +128,41 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
 
               {/* Boutons a droite */}
               <div style={{ position: 'absolute', right: '15px', bottom: '150px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', background: 'rgba(0,0,0,0.3)', padding: '15px 10px', borderRadius: '30px', backdropFilter: 'blur(10px)' }}>
-                <button onClick={() => likerPost(p.id)} style={{ background: 'transparent', border: 'none', color: p.like_par_moi ? '#dc3545' : '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill={p.like_par_moi ? '#dc3545' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-                  <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.likes}</span>
-                </button>
+                <div style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => likerPost(p.id)}
+                    onMouseDown={() => { const t = setTimeout(() => setReactionMenu(p.id), 500); setLongPressTimer(t); }}
+                    onMouseUp={() => { if (longPressTimer) clearTimeout(longPressTimer); }}
+                    onMouseLeave={() => { if (longPressTimer) clearTimeout(longPressTimer); setReactionMenu(null); }}
+                    onTouchStart={() => { const t = setTimeout(() => setReactionMenu(p.id), 500); setLongPressTimer(t); }}
+                    onTouchEnd={() => { if (longPressTimer) clearTimeout(longPressTimer); }}
+                    style={{ background: 'transparent', border: 'none', color: p.ma_reaction ? '#dc3545' : '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                  >
+                    {p.ma_reaction ? (
+                      <span style={{ fontSize: '30px' }}>
+                        {p.ma_reaction === 'love' && '❤️'}
+                        {p.ma_reaction === 'haha' && '😂'}
+                        {p.ma_reaction === 'wow' && '😮'}
+                        {p.ma_reaction === 'sad' && '😢'}
+                        {p.ma_reaction === 'angry' && '😡'}
+                        {p.ma_reaction === 'like' && '👍'}
+                      </span>
+                    ) : (
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                    )}
+                    <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.likes}</span>
+                  </button>
+                  {reactionMenu === p.id && (
+                    <div style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', background: '#111120', border: '1px solid #2a2a3e', borderRadius: '16px', padding: '8px 12px', display: 'flex', gap: '10px', marginBottom: '10px', zIndex: 20, boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
+                      {['👍', '❤️', '😂', '😮', '😢', '😡'].map((emoji) => {
+                        const typeMap: any = { '👍': 'like', '❤️': 'love', '😂': 'haha', '😮': 'wow', '😢': 'sad', '😡': 'angry' };
+                        return (
+                          <button key={emoji} onClick={() => { likerPost(p.id, typeMap[emoji]); setReactionMenu(null); }} style={{ background: 'transparent', border: 'none', fontSize: '26px', cursor: 'pointer', padding: '4px' }}>{emoji}</button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
