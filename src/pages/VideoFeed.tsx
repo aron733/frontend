@@ -73,6 +73,17 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                 autoPlay
                 loop
                 playsInline
+                onTimeUpdate={(e) => {
+                  const v = e.currentTarget;
+                  // Compter la vue apres 3 secondes de lecture
+                  if (v.currentTime >= 3 && !(v as any)._vueComptee) {
+                    (v as any)._vueComptee = true;
+                    const token = localStorage.getItem('access_token');
+                    axios.post(`https://api.vokyvo.com/api/social/posts/${p.id}/vu/`, {}, {
+                      headers: { Authorization: `Bearer ${token}` }
+                    }).catch(() => {});
+                  }
+                }}
                 onClick={() => {
                   const v = videoRefs.current[p.id];
                   if (v) v.paused ? v.play() : v.pause();

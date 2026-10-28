@@ -31,6 +31,8 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
     marquerVu();
   }, [p.id]);
 
+
+
   const handleDoubleTap = () => {
     setShowHeart(true);
     setTimeout(() => setShowHeart(false), 800);
@@ -92,11 +94,6 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
 
       {/* Actions */}
       <div style={{ display: 'flex', gap: '8px', padding: '10px 15px 0', borderTop: '1px solid #1a1a2e', marginTop: '10px' }}>
-        {p.nb_vues > 0 && (
-          <span style={{ color: '#666', fontSize: '13px', alignSelf: 'center', marginRight: '5px' }}>
-            {p.nb_vues} vue{p.nb_vues > 1 ? 's' : ''}
-          </span>
-        )}
         {/* Like */}
         <div style={{ position: 'relative', flex: 1 }}>
           <button
