@@ -27,7 +27,6 @@ export default function SocialMedia({ medias }: Props) {
     );
   }
 
-  // Sinon, on affiche une grille (images)
   const images = medias.filter(m => m.type !== 'video');
   const n = images.length;
   const max = 4;
@@ -38,10 +37,12 @@ export default function SocialMedia({ medias }: Props) {
     setLightboxOpen(true);
   };
 
+  // Layout selon N (exactement le code du Chat)
   let gridStyle: any = {
     display: 'grid',
     gap: '4px',
     marginBottom: '15px',
+    maxWidth: '100%',
     width: '100%',
     borderRadius: '0',
     overflow: 'hidden',
@@ -72,8 +73,11 @@ export default function SocialMedia({ medias }: Props) {
             background: '#000',
           };
 
+          // Layout spécial pour N=3 : 1 grande à gauche, 2 empilées à droite
           if (n === 3) {
-            if (i === 0) cellStyle.gridRow = 'span 2';
+            if (i === 0) {
+              cellStyle.gridRow = 'span 2';
+            }
           }
 
           return (
