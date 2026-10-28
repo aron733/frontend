@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import axios from 'axios';
 import SocialFond from './SocialFond';
 import SocialMedia from './SocialMedia';
+import VideoFeed from './VideoFeed';
 
 
 interface PostProps {
@@ -12,6 +13,7 @@ interface PostProps {
 
 export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
   const [showHeart, setShowHeart] = useState(false);
+  const [feedVideoOuvert, setFeedVideoOuvert] = useState(false);
   const [reactionMenu, setReactionMenu] = useState(false);
   const [texteDeplie, setTexteDeplie] = useState(false);
   const [nbPartages, setNbPartages] = useState(p.nb_partages || 0);
@@ -67,7 +69,7 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
           style={{ marginBottom: '15px', position: 'relative', cursor: 'pointer' }}
           onDoubleClick={handleDoubleTap}
         >
-          <SocialMedia medias={p.medias} />
+          <SocialMedia medias={p.medias} onOuvrirFeed={() => setFeedVideoOuvert(true)} />
           {showHeart && (
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10, animation: 'popHeart 0.8s ease-out forwards', pointerEvents: 'none' }}>
               <svg width="100" height="100" viewBox="0 0 24 24" fill="#dc3545" stroke="#dc3545" strokeWidth="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
@@ -181,6 +183,7 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
           {nbPartages > 0 ? nbPartages : 'Partager'}
         </button>
       </div>
+      {feedVideoOuvert && <VideoFeed onFermer={() => setFeedVideoOuvert(false)} />}
     </div>
   );
 }

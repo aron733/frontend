@@ -11,12 +11,12 @@ interface Media {
 
 interface Props {
   medias: Media[];
+  onOuvrirFeed?: () => void;
 }
 
-export default function SocialMedia({ medias }: Props) {
+export default function SocialMedia({ medias, onOuvrirFeed }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [lectureVideo, setLectureVideo] = useState(false);
 
   if (!medias || medias.length === 0) return null;
 
@@ -25,16 +25,12 @@ export default function SocialMedia({ medias }: Props) {
     const video = medias[0];
     return (
       <div style={{ marginBottom: '15px', borderRadius: '0', overflow: 'hidden', background: '#000', position: 'relative' }}>
-        {!lectureVideo ? (
-          <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setLectureVideo(true)}>
-            <img src={video.miniature || ''} alt="" style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', display: 'block' }} />
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </div>
+        <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => onOuvrirFeed && onOuvrirFeed()}>
+          <img src={video.miniature || ''} alt="" style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', display: 'block' }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           </div>
-        ) : (
-          <video src={video.url} controls autoPlay style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', display: 'block' }} />
-        )}
+        </div>
       </div>
     );
   }
