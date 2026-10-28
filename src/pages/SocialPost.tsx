@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import SocialFond from './SocialFond';
 import SocialMedia from './SocialMedia';
@@ -18,6 +18,18 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
   const [texteDeplie, setTexteDeplie] = useState(false);
   const [nbPartages, setNbPartages] = useState(p.nb_partages || 0);
   const longPressTimer = useRef<any>(null);
+
+  useEffect(() => {
+    const marquerVu = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        await axios.post(`https://api.vokyvo.com/api/social/posts/${p.id}/vu/`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch {}
+    };
+    marquerVu();
+  }, [p.id]);
 
   const handleDoubleTap = () => {
     setShowHeart(true);
@@ -80,6 +92,11 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
 
       {/* Actions */}
       <div style={{ display: 'flex', gap: '8px', padding: '10px 15px 0', borderTop: '1px solid #1a1a2e', marginTop: '10px' }}>
+        {p.nb_vues > 0 && (
+          <span style={{ color: '#666', fontSize: '13px', alignSelf: 'center', marginRight: '5px' }}>
+            {p.nb_vues} vue{p.nb_vues > 1 ? 's' : ''}
+          </span>
+        )}
         {/* Like */}
         <div style={{ position: 'relative', flex: 1 }}>
           <button
