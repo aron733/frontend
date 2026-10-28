@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import PullToRefresh from 'react-simple-pull-to-refresh';
+import { Capacitor } from '@capacitor/core';
 import { API_URL } from '../config';
 import SocialSkeleton from './SocialSkeleton';
 import SocialPost from './SocialPost';
 import SocialCreerPost from './SocialCreerPost';
 import SocialComments from './SocialComments';
+
+const ConditionalPullToRefresh = ({ children, ...props }: any) => {
+  return Capacitor.isNativePlatform() ? <PullToRefresh {...props}>{children}</PullToRefresh> : <>{children}</>;
+};
 
 export default function Social({ onRetour }: { onRetour?: () => void }) {
   const [posts, setPosts] = useState<any[]>([]);
@@ -21,6 +27,10 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       }, 500);
     }
   }, [postCible, posts]);
+
+  const handleRefresh = async () => {
+    await charger();
+  };
 
   const charger = async () => {
     try {
@@ -86,6 +96,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       </div>
 
       {/* Fil */}
+      <ConditionalPullToRefresh onRefresh={handleRefresh} pullingContent={<></>}>
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '0 0 15px 0' }}>
         {chargement ? (
           <>
@@ -99,6 +110,8 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           ))
         )}
       </div>
+
+      </ConditionalPullToRefresh>
 
       {/* Bouton flottant creer post */}
       <button onClick={() => setModalCreer(true)} style={{ position: 'fixed', bottom: '90px', right: '20px', width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(102,126,234,0.4)', zIndex: 100 }}>
