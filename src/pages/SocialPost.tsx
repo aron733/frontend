@@ -13,6 +13,7 @@ interface PostProps {
 export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
   const [showHeart, setShowHeart] = useState(false);
   const [reactionMenu, setReactionMenu] = useState(false);
+  const [texteDeplie, setTexteDeplie] = useState(false);
   const [nbPartages, setNbPartages] = useState(p.nb_partages || 0);
   const longPressTimer = useRef<any>(null);
 
@@ -44,12 +45,19 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
         </div>
       </div>
 
-      {/* Texte (avec fond si couleur_fond) */}
+      {/* Texte (avec fond si couleur_fond et texte court) */}
       {p.texte && (
-        p.couleur_fond && !p.media_url ? (
+        p.couleur_fond && !p.media_url && p.texte.length <= 150 ? (
           <SocialFond texte={p.texte} couleur={p.couleur_fond} />
         ) : (
-          <p style={{ color: '#eee', fontSize: '16px', lineHeight: 1.5, marginBottom: '15px', whiteSpace: 'pre-wrap', padding: '0 15px' }}>{p.texte}</p>
+          <div style={{ padding: '0 15px', marginBottom: '15px' }}>
+            <p style={{ color: '#eee', fontSize: '16px', lineHeight: 1.5, margin: 0, whiteSpace: 'pre-wrap', display: texteDeplie ? 'block' : '-webkit-box', WebkitLineClamp: texteDeplie ? 'unset' : 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.texte}</p>
+            {p.texte.length > 150 && (
+              <button onClick={() => setTexteDeplie(!texteDeplie)} style={{ background: 'transparent', border: 'none', color: '#888', cursor: 'pointer', padding: 0, marginTop: '5px', fontSize: '14px', fontWeight: 600 }}>
+                {texteDeplie ? 'Voir moins' : 'Voir plus'}
+              </button>
+            )}
+          </div>
         )
       )}
 
