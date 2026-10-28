@@ -59,7 +59,19 @@ export default function SocialComments({ post, onFermer, onNouveauCommentaire }:
 
         {/* Liste */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-          {chargement ? <p style={{ color: '#888', textAlign: 'center' }}>Chargement...</p> : comments.length === 0 ? (
+          {chargement ? (
+            <>
+              {[1, 2, 3].map((i) => (
+                <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ width: '30%', height: '12px', borderRadius: '4px', background: '#1a1a2e', marginBottom: '6px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div style={{ width: '80%', height: '12px', borderRadius: '4px', background: '#1a1a2e', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : comments.length === 0 ? (
             <div style={{ textAlign: 'center', marginTop: '40px' }}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2a2a3e" strokeWidth="2" style={{ marginBottom: '10px' }}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
               <p style={{ color: '#555', fontStyle: 'italic' }}>Aucun commentaire pour le moment.</p>

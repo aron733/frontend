@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
+import SocialSkeleton from './SocialSkeleton';
 import SocialPost from './SocialPost';
 import SocialCreerPost from './SocialCreerPost';
 import SocialComments from './SocialComments';
@@ -87,7 +88,9 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       {/* Fil */}
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '0 0 15px 0' }}>
         {chargement ? (
-          <p style={{ color: '#888', textAlign: 'center', marginTop: '50px' }}>Chargement...</p>
+          <>
+            {[1, 2, 3].map((i) => <SocialSkeleton key={i} />)}
+          </>
         ) : posts.length === 0 ? (
           <p style={{ color: '#555', fontStyle: 'italic', textAlign: 'center', marginTop: '50px' }}>Aucun post pour le moment.</p>
         ) : (
