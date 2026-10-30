@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
 import toast from 'react-hot-toast';
@@ -16,6 +16,24 @@ export default function SocialCreerPost({ onFermer, onPublie }: Props) {
   const [envoi, setEnvoi] = useState(false);
   const [visibilite, setVisibilite] = useState<'public' | 'contacts'>('public');
   const [couleurFond, setCouleurFond] = useState('');
+  const [pages, setPages] = useState<any[]>([]);
+  const [pageSelectionnee, setPageSelectionnee] = useState<number | null>(null);
+
+  useEffect(() => {
+    const chargerPages = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await axios.get(`${API_URL}/social/pages/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const mesPages = (res.data.pages || []).filter((p: any) => p.est_proprietaire);
+        setPages(mesPages);
+      } catch {
+        // silencieux : pas de pages = pas de sélecteur
+      }
+    };
+    chargerPages();
+  }, []);
 
   const publier = async () => {
     if (!texte.trim() && fichiers.length === 0) return;
@@ -27,6 +45,7 @@ export default function SocialCreerPost({ onFermer, onPublie }: Props) {
       fichiers.forEach(f => formData.append('medias', f));
       formData.append('visibilite', visibilite);
       if (fichiers.length === 0 && couleurFond) formData.append('couleur_fond', couleurFond);
+      if (pageSelectionnee !== null) formData.append('page_id', String(pageSelectionnee));
       await axios.post(`${API_URL}/social/posts/creer/`, formData, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
       });
@@ -51,6 +70,23 @@ export default function SocialCreerPost({ onFermer, onPublie }: Props) {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
+
+        {/* Sélecteur Publier en tant que */}
+        {pages.length > 0 && (
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', color: '#888', fontSize: '12px', marginBottom: '6px', fontWeight: 600 }}>Publier en tant que</label>
+            <select
+              value={pageSelectionnee === null ? '' : String(pageSelectionnee)}
+              onChange={(e) => setPageSelectionnee(e.target.value === '' ? null : Number(e.target.value))}
+              style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', outline: 'none', fontSize: '14px' }}
+            >
+              <option value="">Moi-même</option>
+              {pages.map((p: any) => (
+                <option key={p.id} value={p.id}>{p.nom}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Textarea */}
         {fichiers.length === 0 && couleurFond && texte && (

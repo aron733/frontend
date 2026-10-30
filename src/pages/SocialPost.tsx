@@ -44,12 +44,16 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
       {/* Header du post */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px', padding: '0 15px' }}>
         <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff', fontSize: '20px', overflow: 'hidden', flexShrink: 0 }}>
-          {p.page?.photo ? (
-            <img src={p.page.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          {p.page ? (
+            p.page.photo ? (
+              <img src={p.page.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              (p.page.nom || '?')[0].toUpperCase()
+            )
           ) : p.user?.photo ? (
             <img src={p.user.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            (p.page?.nom || p.user?.username || '?')[0].toUpperCase()
+            (p.user?.username || '?')[0].toUpperCase()
           )}
         </div>
         <div>
