@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import axios from 'axios'
+import { Toaster } from 'react-hot-toast'
 import './index.css'
 import ConsoleApp from './ConsoleApp'
 
@@ -84,5 +85,6 @@ axios.interceptors.response.use(
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ConsoleApp />
+    <Toaster position="top-center" toastOptions={{ style: { background: '#111120', color: '#fff', border: '1px solid #2a2a3e' } }} />
   </React.StrictMode>,
 )

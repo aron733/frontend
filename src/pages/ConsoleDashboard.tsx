@@ -18,6 +18,9 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
   const [nomCle, setNomCle] = useState('');
     const [modalCleAffichee, setModalCleAffichee] = useState<string | null>(null);
   const [copie, setCopie] = useState(false);
+  const [creationEnCours, setCreationEnCours] = useState(false);
+  const [modalRevoquer, setModalRevoquer] = useState<number | null>(null);
+  const [revocationEnCours, setRevocationEnCours] = useState(false);
 
   const chargerStats = async () => {
     try {
@@ -44,28 +47,45 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
   useEffect(() => { chargerCles(); chargerStats(); }, []);
 
   const creerCle = async () => {
-    if (!nomCle.trim()) return;
+    if (!nomCle.trim() || creationEnCours) return;
+    setCreationEnCours(true);
     try {
       const typeCle = section === 'social-cles' ? 'social' : 'ia';
       const res = await axios.post(`${API_URL}/console/keys/creer/`, { nom: nomCle, type: typeCle }, { headers: { Authorization: `Bearer ${token}` } });
-      if (res.data.success) {
+      const nouvelleCle = res.data?.cle || res.data?.key || null;
+      if (nouvelleCle) {
         setModalCreer(false);
         setNomCle('');
-        setModalCleAffichee(res.data.cle);
+        setModalCleAffichee(nouvelleCle);
         chargerCles();
+      } else {
+        toast.error('Réponse inattendue du serveur');
       }
-    } catch {
-      toast.error('Erreur de création de la clé');
+    } catch (err: any) {
+      const msg = err?.response?.data?.erreur || 'Erreur de création de la clé';
+      toast.error(msg);
+      setModalCreer(false);
+    } finally {
+      setCreationEnCours(false);
     }
   };
 
-  const revoquerCle = async (id: number) => {
-    if (!confirm('Revoquer cette cle ?')) return;
+  const revoquerCle = (id: number) => {
+    setModalRevoquer(id);
+  };
+
+  const confirmerRevocation = async () => {
+    if (modalRevoquer === null || revocationEnCours) return;
+    setRevocationEnCours(true);
     try {
-      await axios.delete(`${API_URL}/console/keys/${id}/supprimer/`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`${API_URL}/console/keys/${modalRevoquer}/supprimer/`, { headers: { Authorization: `Bearer ${token}` } });
+      toast.success('Clé révoquée');
+      setModalRevoquer(null);
       chargerCles();
     } catch {
       toast.error('Erreur de suppression de la clé');
+    } finally {
+      setRevocationEnCours(false);
     }
   };
 
@@ -74,11 +94,25 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
     setTimeout(() => { onLogout(); }, 3000);
   };
 
-  const copierCle = () => {
-    if (modalCleAffichee) {
-      navigator.clipboard.writeText(modalCleAffichee);
+  const copierCle = async () => {
+    if (!modalCleAffichee) return;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(modalCleAffichee);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = modalCleAffichee;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
       setCopie(true);
       setTimeout(() => setCopie(false), 2000);
+    } catch {
+      toast.error('Impossible de copier. Sélectionnez la clé manuellement.');
     }
   };
 
@@ -321,7 +355,15 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
             
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
               <button onClick={() => setModalCreer(false)} style={{ padding: '12px 24px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: 'pointer', fontWeight: 600 }}>Annuler</button>
-              <button onClick={creerCle} style={{ padding: '12px 24px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>Créer</button>
+              <button onClick={creerCle} disabled={creationEnCours} style={{ padding: '12px 24px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: creationEnCours ? 'not-allowed' : 'pointer', fontWeight: 600, opacity: creationEnCours ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                {creationEnCours && (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ animation: 'spin 0.8s linear infinite' }}>
+                    <circle cx="12" cy="12" r="10" strokeOpacity="0.3" />
+                    <path d="M12 2 a10 10 0 0 1 10 10" />
+                  </svg>
+                )}
+                Créer
+              </button>
             </div>
           </div>
         </div>
@@ -341,6 +383,20 @@ export default function ConsoleDashboard({ token, onLogout }: { token: string, o
                 {copie ? 'Copié !' : 'Copier'}
               </button>
               <button onClick={() => { setModalCleAffichee(null); setCopie(false); }} style={{ padding: '12px 24px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: 'pointer', fontWeight: 600 }}>Fermer</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modale de confirmation de révocation */}
+      {modalRevoquer !== null && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => { if (!revocationEnCours) setModalRevoquer(null); }}>
+          <div style={{ background: '#111120', border: '1px solid #2a2a3e', borderRadius: '16px', padding: '30px', maxWidth: '400px', width: '100%' }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '10px' }}>Révoquer cette clé ?</h3>
+            <p style={{ color: '#aaa', fontSize: '14px', marginBottom: '20px' }}>Cette action est définitive. Toute application utilisant cette clé perdra immédiatement l'accès à l'API.</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setModalRevoquer(null)} disabled={revocationEnCours} style={{ padding: '12px 24px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: revocationEnCours ? 'not-allowed' : 'pointer', fontWeight: 600 }}>Annuler</button>
+              <button onClick={confirmerRevocation} disabled={revocationEnCours} style={{ padding: '12px 24px', borderRadius: '10px', background: '#dc3545', border: 'none', color: '#fff', cursor: revocationEnCours ? 'not-allowed' : 'pointer', fontWeight: 600, opacity: revocationEnCours ? 0.7 : 1 }}>{revocationEnCours ? 'Révocation...' : 'Révoquer'}</button>
             </div>
           </div>
         </div>
