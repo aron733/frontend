@@ -1,5 +1,4 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 import { chargerMessages, sauvegarderMessages, chargerConversations as chargerConversationsCache, sauvegarderConversations as sauvegarderConversationsCache } from '../db';
 import { useChat } from '../ChatContext';
@@ -7,8 +6,6 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import Statuts from '../Statuts';
 // import EditeurPhoto from '../EditeurPhoto'; // Désactivé (fabri-pix cassé)
-import Lightbox from 'yet-another-react-lightbox';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import 'yet-another-react-lightbox/styles.css';
 import toast from 'react-hot-toast';
 import BoutonRetour from '../BoutonRetour';
@@ -17,6 +14,8 @@ import BadgeVerifie from '../BadgeVerifie';
 import { Capacitor } from '@capacitor/core';
 import { Media } from '@capacitor-community/media';
 
+
+import ChatLightbox from './ChatLightbox';
 
 function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?: string | null }) {
   const { connecte, convActive: _convActive, setConvActive, messagesParConv, setMessagesConv, ajouterMessage, envoyer, rejoindreGroupe, presence, presenceTime, setPresenceFromRest, lastMessageAt } = useChat();
@@ -2549,56 +2548,18 @@ function Chat({ onRetour, convInitiale }: { onRetour?: () => void; convInitiale?
           </div>
         </div>
       )}
-      <Lightbox
-        open={lightboxOpen}
-        close={() => setLightboxOpen(false)}
-        index={lightboxIndex}
-        slides={(
+      <ChatLightbox
+        lightboxOpen={lightboxOpen}
+        lightboxIndex={lightboxIndex}
+        onCloseGalerie={() => setLightboxOpen(false)}
+        messages={
           groupeActif && !selectedUser
             ? (messagesParConv[`groupe_${groupeActif.id}`] || [])
             : (messagesParConv[`user_${selectedUser?.id || selectedUser?.user_id}`] || [])
-        )
-          .flatMap((m: any) => (m.pieces_jointes && m.pieces_jointes.length > 0) ? m.pieces_jointes : (m.fichier_url ? [{ url: m.fichier_url, type: 'image' }] : []))
-          .filter((p: any) => p.type !== 'video')
-          .map((p: any) => ({ src: p.url }))}
-        plugins={[Zoom]}
-        zoom={{ maxZoomPixelRatio: 4, scrollToZoom: true }}
-        styles={{ container: { backgroundColor: '#000' }, button: {} }}
-        carousel={{ finite: true }}
-        animation={{ fade: 250 }}
+        }
+        photoLightbox={photoLightbox}
+        onClosePhoto={() => setPhotoLightbox(null)}
       />
-
-      {photoLightbox && (
-        <div
-          style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#000', zIndex: 3000, overflow: 'hidden' }}
-        >
-          <TransformWrapper
-            initialScale={1}
-            minScale={1}
-            maxScale={4}
-            centerOnInit={true}
-            doubleClick={{ mode: 'toggle' }}
-            wheel={{ step: 0.1 }}
-          >
-            <TransformComponent
-              wrapperStyle={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              <img
-                src={photoLightbox}
-                style={{ maxWidth: '100vw', maxHeight: '100vh', objectFit: 'contain' as const }}
-                alt="photo plein écran"
-              />
-            </TransformComponent>
-          </TransformWrapper>
-          <button
-            onClick={() => setPhotoLightbox(null)}
-            style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '40px', height: '40px', borderRadius: '50%', fontSize: '20px', cursor: 'pointer', zIndex: 3001 }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
 
       {photoAEditer && (
         <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 4000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
