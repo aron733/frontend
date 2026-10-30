@@ -158,7 +158,8 @@ function App() {
     const routesValides = [
       '/', '/a-propos', '/blog', '/cgu', '/confidentialite',
       '/aron-vokouma', '/desabonnement', '/supprimer-compte',
-      '/oauth-callback', '/oauth/google/callback'
+      '/oauth-callback', '/oauth/google/callback',
+      '/console-doc', '/help', '/share'
     ];
     // Le path est valide s'il est dans la liste, ou s'il commence par /blog/ ou /p/
     const estValide = routesValides.includes(path) || path.startsWith('/blog/') || path.startsWith('/p/');

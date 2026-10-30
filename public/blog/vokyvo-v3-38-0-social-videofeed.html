@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOKYVO v3.38.0 : Social, VideoFeed et API publique — VOKYVO</title>
+<meta name="description" content="VOKYVO v3.38.0 : lancement du fil Social, réactions multiples, VideoFeed (Reels), deep links, algorithme de recommandation et ouverture de l'API publique aux développeurs. Retour sur une session de 48h par un développeur solo burkinabè.">
+<meta name="keywords" content="VOKYVO, v3.38.0, Social, VideoFeed, Reels, API publique, Django, React, Burkina Faso, Ouagadougou, développeur africain, super-app africaine">
+<meta name="author" content="Aron VOKOUMA">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://vokyvo.com/blog/vokyvo-v3-38-0-social-videofeed">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="VOKYVO v3.38.0 : Social, VideoFeed et API publique">
+<meta property="og:description" content="Lancement du Social, VideoFeed et ouverture de l'API publique VOKYVO.">
+<meta property="og:url" content="https://vokyvo.com/blog/vokyvo-v3-38-0-social-videofeed">
+<meta property="og:site_name" content="VOKYVO">
+<meta property="og:locale" content="fr_FR">
+<meta property="article:published_time" content="2026-10-28T20:00:00+00:00">
+<meta property="article:author" content="Aron VOKOUMA">
+<meta property="article:section" content="Produit">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VOKYVO v3.38.0 : Social, VideoFeed et API publique">
+<meta name="twitter:description" content="Lancement du Social, VideoFeed et ouverture de l'API publique VOKYVO.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "VOKYVO v3.38.0 : Social, VideoFeed et API publique",
+  "description": "Lancement du fil Social, des réactions multiples, du VideoFeed (Reels), des deep links, de l'algorithme de recommandation et de l'API publique VOKYVO.",
+  "datePublished": "2026-10-28T20:00:00+00:00",
+  "dateModified": "2026-10-28T20:00:00+00:00",
+  "author": {
+    "@type": "Person",
+    "name": "Aron VOKOUMA",
+    "url": "https://vokyvo.com/aron-vokouma"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "VOKYVO LABS",
+    "url": "https://vokyvo.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://vokyvo.com/icon-512.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://vokyvo.com/blog/vokyvo-v3-38-0-social-videofeed"
+  },
+  "inLanguage": "fr"
+}
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #0a0a0f;
+    color: #e8e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.7;
+  }
+  a { color: #8b9eff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .header { padding: 20px; background: #111120; }
+  .header a { color: #fff; font-weight: 700; font-size: 18px; letter-spacing: 1px; }
+
+  .container { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .meta {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2a2a3e;
+  }
+  .meta .tag {
+    display: inline-block;
+    background: #1a1a3e;
+    color: #8b9eff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-right: 10px;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 32px;
+    line-height: 1.3;
+    margin: 0 0 20px;
+  }
+  h2 {
+    color: #fff;
+    font-size: 22px;
+    margin-top: 40px;
+    margin-bottom: 15px;
+  }
+  h3 {
+    color: #fff;
+    font-size: 17px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+  }
+  p { color: #c8c8d8; font-size: 16px; margin-bottom: 18px; }
+  ul, ol { color: #c8c8d8; font-size: 16px; margin: 10px 0 20px 24px; }
+  li { margin-bottom: 8px; }
+
+  strong { color: #fff; }
+  code {
+    font-family: 'SF Mono', Consolas, monospace;
+    background: #1a1a2e;
+    color: #8b9eff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  pre {
+    background: #111120;
+    border: 1px solid #2a2a3e;
+    border-radius: 10px;
+    padding: 14px;
+    overflow-x: auto;
+    margin: 15px 0 20px;
+  }
+  pre code { background: none; padding: 0; color: #c8d0ff; font-size: 14px; }
+
+  blockquote {
+    border-left: 3px solid #667eea;
+    padding-left: 18px;
+    margin: 20px 0;
+    color: #a0a0b8;
+    font-style: italic;
+  }
+
+  .cta {
+    background: #111120;
+    border: 1px solid #2a2a3e;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px 0;
+    text-align: center;
+  }
+  .cta p { margin-bottom: 12px; }
+  .cta a {
+    display: inline-block;
+    background: #667eea;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s;
+  }
+  .cta a:hover { background: #5568d3; text-decoration: none; }
+
+  .footer {
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid #2a2a3e;
+    font-size: 13px;
+    color: #666;
+  }
+  .footer a { color: #8b9eff; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="/">VOKYVO</a>
+</div>
+
+<div class="container">
+
+<h1>VOKYVO v3.38.0 : Social, VideoFeed et API publique</h1>
+
+<div class="meta">
+  <span class="tag">Produit</span>
+  28 octobre 2026 · Par <strong style="color:#c8c8d8;">Aron VOKOUMA</strong>
+</div>
+
+<p>La version <strong>3.38.0</strong> de VOKYVO est en ligne. C'est la plus grosse mise à jour depuis le lancement de l'application. En 48 heures, j'ai construit un fil Social complet, un lecteur vidéo plein écran (VideoFeed), un algorithme de recommandation, des deep links, et ouvert une API publique aux développeurs.</p>
+
+<p>Voici ce qui a changé.</p>
+
+<h2>1. Le fil Social arrive sur VOKYVO</h2>
+
+<p>Jusqu'ici, VOKYVO était une messagerie avec une IA et des documents scolaires. Maintenant, c'est aussi un réseau social.</p>
+
+<p>Le fil Social permet de :</p>
+<ul>
+  <li>Publier des posts texte avec un fond dégradé (6 couleurs disponibles).</li>
+  <li>Joindre plusieurs photos ou vidéos à un même post (multi-médias).</li>
+  <li>Réagir avec 6 émotions différentes : 👍 J'aime, ❤️ J'adore, 😂 Haha, 😮 Wow, 😢 Triste, 😡 En colère.</li>
+  <li>Commenter chaque post (modale "bottom sheet" façon Instagram).</li>
+  <li>Partager un post via l'API native du téléphone (navigator.share).</li>
+  <li>Suivre des Pages (comptes thématiques).</li>
+</ul>
+
+<p>Chaque post obtient un <strong>code court</strong> unique, ce qui génère un lien partageable : <code>vokyvo.com/p/aBcD12</code>. Le même lien fonctionne sur le web et dans l'APK Android.</p>
+
+<h2>2. VideoFeed : les Reels de VOKYVO</h2>
+
+<p>Le VideoFeed est un lecteur vidéo plein écran, inspiré de TikTok et Instagram Reels :</p>
+<ul>
+  <li>Scroll vertical avec <code>scroll-snap</code> (une vidéo à la fois).</li>
+  <li>Vidéos muettes par défaut (l'utilisateur active le son d'un clic).</li>
+  <li>Boutons d'action à droite (like, commentaire, partage).</li>
+  <li>Skeleton loader pendant le chargement.</li>
+</ul>
+
+<p>Chaque vidéo du fil Social peut basculer en mode VideoFeed. C'est le même contenu, présenté différemment selon l'intention de l'utilisateur.</p>
+
+<h2>3. Algorithme de recommandation</h2>
+
+<p>J'ai écrit un algorithme de tri dans un fichier dédié (<code>algorithme.py</code>). Le score d'un post est calculé comme ceci :</p>
+
+<pre><code>score = (likes × 2) + (commentaires × 3) + (partages × 5)</code></pre>
+
+<p>Le score est appliqué sur une fenêtre de 7 jours. Résultat : les posts récents et engageants remontent, les anciens posts sans interaction descendent. C'est simple, mais c'est un vrai départ pour un fil intelligent.</p>
+
+<h2>4. L'API publique VOKYVO</h2>
+
+<p>La grande nouveauté de cette version : <strong>l'API est ouverte aux développeurs</strong>.</p>
+
+<p>Deux types de clés sont disponibles depuis la <a href="https://console.vokyvo.com">Console développeur</a> :</p>
+<ul>
+  <li><code>vky_...</code> pour publier automatiquement sur le Social.</li>
+  <li><code>vok_...</code> pour interroger Vokyvo AI.</li>
+</ul>
+
+<p>Exemple : publier un post depuis n'importe quel script :</p>
+
+<pre><code>curl -X POST https://api.vokyvo.com/api/social/publier/ \
+  -H "Authorization: Bearer vky_votre_cle" \
+  -H "Content-Type: application/json" \
+  -d '{"texte": "Mon premier post automatique !"}'</code></pre>
+
+<p>Et poser une question à l'IA :</p>
+
+<pre><code>curl -X POST https://api.vokyvo.com/api/ia/chat/ \
+  -H "Authorization: Bearer vok_votre_cle" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Explique-moi la Charte de Kurukan Fuga."}'</code></pre>
+
+<p>Les rate limits sont clairs : 50 requêtes par heure et 200 par jour, par compte, toutes clés confondues.</p>
+
+<p>La documentation complète est ici : <a href="https://vokyvo.com/console-doc">vokyvo.com/console-doc</a>.</p>
+
+<h2>5. Les corrections de la session</h2>
+
+<p>Cette version n'est pas seulement une pile de nouveautés. J'ai aussi corrigé un certain nombre de bugs accumulés :</p>
+
+<ul>
+  <li><strong>Décorateurs manquants</strong> sur plusieurs vues Django (commentaires, likes) → erreurs 500 silencieuses, corrigées.</li>
+  <li><strong>Badge MODO</strong> invisible dans les groupes : le backend ne renvoyait pas la liste des modérateurs, corrigé.</li>
+  <li><strong>Barre d'action de groupe</strong> réservée à l'admin : maintenant accessible aux modérateurs aussi.</li>
+  <li><strong>Deep links</strong> <code>/p/&lt;code&gt;</code> qui renvoyaient une 404 React à cause du routeur maison, corrigés.</li>
+  <li><strong>Miniatures vidéo</strong> qui ne remontaient pas du backend, corrigées (génération Cloudinary <code>.jpg</code>).</li>
+  <li><strong>Pull-to-refresh</strong> ajouté au fil Social pour l'APK Android.</li>
+</ul>
+
+<h2>6. Ce qui reste à faire</h2>
+
+<p>Je ne vais pas prétendre que tout est terminé. Voici les priorités de la prochaine session :</p>
+
+<ul>
+  <li><strong>Rotation des secrets</strong> (clés API IA, Cloudinary, Telegram...) — critique et en retard.</li>
+  <li><strong>Build APK 3.38.0</strong> pour valider tous les fixes côté Android.</li>
+  <li><strong>Filtrage RSS</strong> pour exclure certains médias du fil News.</li>
+  <li><strong>Ticks de lecture</strong> dans le chat privé (✓/✓✓ comme WhatsApp).</li>
+  <li><strong>Notifications Social</strong> (Web Push).</li>
+  <li><strong>Scroll infini</strong> sur le fil Social (actuellement limité à 20 posts).</li>
+</ul>
+
+<h2>7. Ce que ça représente</h2>
+
+<p>VOKYVO, c'est aujourd'hui <strong>plus de 30 000 lignes de code</strong>, réparties entre :</p>
+<ul>
+  <li>Un backend Django complet (95+ endpoints REST).</li>
+  <li>Un frontend React 19 packagé en APK Android via Capacitor.</li>
+  <li>Un serveur WebSocket dédié (Daphne) pour le temps réel.</li>
+  <li>Un bot Telegram interactif.</li>
+  <li>Une infrastructure VPS sécurisée (SSH par clé, UFW, Fail2ban, Cloudflare Full Strict).</li>
+  <li>Une IA multi-providers (7 en cascade) avec RAG local sur l'histoire africaine.</li>
+</ul>
+
+<p>Tout ça, construit par une seule personne. Un lycéen de 17 ans, à Ouagadougou.</p>
+
+<blockquote>VOKYVO n'a pas besoin d'être parfait pour exister. Il a besoin d'être vrai, utile, et de grandir un peu chaque semaine.</blockquote>
+
+<div class="cta">
+  <p><strong>Découvrir VOKYVO v3.38.0</strong></p>
+  <a href="https://vokyvo.com">Ouvrir l'application</a>
+</div>
+
+<div class="footer">
+  Publié le 28 octobre 2026 par <a href="/aron-vokouma">Aron VOKOUMA</a>.<br>
+  <a href="/blog">← Retour au blog</a> · <a href="/console-doc">Documentation API</a> · <a href="/help">Centre d'aide</a>
+</div>
+
+</div>
+</body>
+</html>

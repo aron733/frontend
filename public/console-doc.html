@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation API VOKYVO — Console développeur</title>
+<link rel="canonical" href="https://vokyvo.com/console-doc">
+<meta name="description" content="Documentation officielle de l'API VOKYVO : authentification par clé, API Social (publication automatique), API IA (Vokyvo AI), rate limits, exemples curl et gestion des erreurs.">
+<meta name="robots" content="index, follow">
+<meta name="keywords" content="API VOKYVO, documentation VOKYVO, console développeur VOKYVO, API Social, API IA, clé API, vky_, vok_, rate limit, Burkina Faso">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Documentation API VOKYVO",
+  "description": "Guide complet de l'API VOKYVO : authentification, API Social, API IA, rate limits et exemples.",
+  "author": {
+    "@type": "Person",
+    "name": "Aron VOKOUMA",
+    "url": "https://vokyvo.com/aron-vokouma"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "VOKYVO LABS",
+    "url": "https://vokyvo.com"
+  },
+  "datePublished": "2026-10-30",
+  "dateModified": "2026-10-30",
+  "inLanguage": "fr"
+}
+</script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#ccc;line-height:1.7;padding:70px 20px 40px;max-width:820px;margin:0 auto}
+.back{position:fixed;top:15px;left:15px;display:inline-flex;align-items:center;gap:8px;background:rgba(17,17,32,0.95);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;text-decoration:none;z-index:10;backdrop-filter:blur(10px);box-shadow:0 4px 12px rgba(0,0,0,0.3);transition:all 0.2s}
+.back:hover{background:rgba(102,126,234,0.2);border-color:#667eea;color:#667eea}
+h1{color:#fff;font-size:28px;margin-bottom:8px;text-align:center}
+.sub{color:#888;font-size:14px;margin-bottom:30px;text-align:center}
+h2{color:#fff;font-size:18px;font-weight:600;margin-top:36px;margin-bottom:12px;padding-top:18px;border-top:1px solid #1a1a2e}
+h3{color:#fff;font-size:15px;font-weight:600;margin-top:22px;margin-bottom:8px}
+p{color:#aaa;font-size:14px;margin-bottom:12px}
+ul,ol{color:#aaa;font-size:14px;margin:8px 0 14px 22px}
+li{margin-bottom:6px}
+a{color:#667eea;text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:'SF Mono',Consolas,monospace;background:#1a1a2e;color:#8b9eff;padding:2px 6px;border-radius:4px;font-size:13px}
+pre{background:#111120;border:1px solid #2a2a3e;border-radius:10px;padding:14px;overflow-x:auto;margin:10px 0 16px}
+pre code{background:none;padding:0;color:#c8d0ff;font-size:13px;line-height:1.6}
+.block{background:#111120;border:1px solid #2a2a3e;border-radius:12px;padding:16px;margin-bottom:16px}
+.warn{background:#1a1510;border:1px solid #5a4a2a;border-radius:10px;padding:12px 14px;margin:12px 0;color:#d4b483;font-size:13px}
+.footer{margin-top:40px;padding-top:20px;border-top:1px solid #2a2a3e;font-size:12px;color:#666;text-align:center}
+table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #2a2a3e}
+th{color:#fff;font-weight:600;background:#111120}
+td{color:#aaa}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;margin-right:6px}
+.get{background:#0d2818;color:#4ade80}
+.post{background:#1a1a3e;color:#8b9eff}
+.del{background:#2a0f0f;color:#f87171}
+</style>
+</head>
+<body>
+
+<a href="/" class="back">← Retour</a>
+
+<h1>Documentation API VOKYVO</h1>
+<p class="sub">Console développeur — 30 octobre 2026</p>
+
+<div class="block">
+<p><strong style="color:#fff;">L'API VOKYVO</strong> vous permet d'intégrer Social et Vokyvo AI dans vos propres applications, bots ou scripts. Toutes les requêtes passent par <code>https://api.vokyvo.com/api/</code> et sont authentifiées par une clé API personnelle.</p>
+</div>
+
+<h2>1. Créer une clé API</h2>
+<ol>
+<li>Connectez-vous à la <a href="https://console.vokyvo.com">Console développeur</a>.</li>
+<li>Cliquez sur <strong style="color:#fff;">+ Nouvelle clé</strong>.</li>
+<li>Choisissez le type : <code>Social</code> (clé <code>vky_...</code>) ou <code>IA</code> (clé <code>vok_...</code>).</li>
+<li>Copiez la clé immédiatement (elle ne sera plus affichée en entier).</li>
+</ol>
+<div class="warn">⚠️ Maximum 5 clés par type. Une clé compromise doit être révoquée immédiatement.</div>
+
+<h2>2. Authentification</h2>
+<p>Toutes les requêtes doivent inclure l'en-tête :</p>
+<pre><code>Authorization: Bearer vky_votre_cle_ici</code></pre>
+<p>Exemple avec curl :</p>
+<pre><code>curl -X POST https://api.vokyvo.com/api/social/publier/ \
+  -H "Authorization: Bearer vky_votre_cle_ici" \
+  -H "Content-Type: application/json" \
+  -d '{"texte": "Bonjour depuis l'API !"}'</code></pre>
+
+<h2>3. API Social</h2>
+<p>Publiez automatiquement sur le fil Social VOKYVO (comme un compte, ou depuis une Page).</p>
+
+<h3><span class="tag post">POST</span> /api/social/publier/</h3>
+<p><strong style="color:#fff;">Champs :</strong></p>
+<ul>
+<li><code>texte</code> (string, requis) — contenu du post.</li>
+<li><code>page_id</code> (int, optionnel) — publier sous une Page dont vous êtes propriétaire.</li>
+</ul>
+<p><strong style="color:#fff;">Réponse :</strong></p>
+<pre><code>{
+  "success": true,
+  "post": {
+    "id": 123,
+    "code_court": "aBcD12",
+    "url": "https://vokyvo.com/p/aBcD12"
+  }
+}</code></pre>
+
+<h2>4. API IA</h2>
+<p>Envoyez un message à Vokyvo AI et recevez une réponse textuelle.</p>
+
+<h3><span class="tag post">POST</span> /api/ia/chat/</h3>
+<p><strong style="color:#fff;">Champs :</strong></p>
+<ul>
+<li><code>message</code> (string, requis) — la question ou le message.</li>
+</ul>
+<p><strong style="color:#fff;">Réponse :</strong></p>
+<pre><code>{
+  "success": true,
+  "reponse": "Bonjour ! Je suis Vokyvo AI..."
+}</code></pre>
+
+<h2>5. Rate limits</h2>
+<table>
+<tr><th>API</th><th>Limite / heure</th><th>Limite / jour</th></tr>
+<tr><td>Social (publication)</td><td>50</td><td>200</td></tr>
+<tr><td>IA (chat)</td><td>50</td><td>200</td></tr>
+</table>
+<p>Ces limites sont <strong style="color:#fff;">par compte</strong>, toutes clés confondues. Un dépassement renvoie un code <code>429</code>.</p>
+
+<h2>6. Codes d'erreur</h2>
+<table>
+<tr><th>Code</th><th>Signification</th></tr>
+<tr><td>200</td><td>Succès</td></tr>
+<tr><td>400</td><td>Requête invalide (champ manquant ou mal formé)</td></tr>
+<tr><td>401</td><td>Clé API manquante ou invalide</td></tr>
+<tr><td>403</td><td>Clé révoquée ou compte banni</td></tr>
+<tr><td>429</td><td>Rate limit dépassé</td></tr>
+<tr><td>500</td><td>Erreur serveur (réessayez plus tard)</td></tr>
+</table>
+
+<h2>7. Bonnes pratiques</h2>
+<ul>
+<li>Ne jamais exposer votre clé dans du code frontend public.</li>
+<li>Révoquer immédiatement une clé qui a fuité.</li>
+<li>Utiliser une clé par projet/integration (traçabilité).</li>
+<li>Respecter les rate limits (backoff exponentiel si 429).</li>
+</ul>
+
+<h2>8. Support</h2>
+<p>Un problème ? <a href="https://vokyvo.com/help">Consultez le centre d'aide</a> ou contactez-nous depuis la console.</p>
+
+<div class="footer">
+VOKYVO LABS — Ouagadougou, Burkina Faso<br>
+© 2026 VOKYVO. Tous droits réservés.
+</div>
+
+</body>
+</html>
