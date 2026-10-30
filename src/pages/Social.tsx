@@ -7,6 +7,8 @@ import SocialSkeleton from './SocialSkeleton';
 import SocialPost from './SocialPost';
 import SocialCreerPost from './SocialCreerPost';
 import SocialComments from './SocialComments';
+import SocialCreerPage from './SocialCreerPage';
+import SocialPageProfil from './SocialPageProfil';
 
 const ConditionalPullToRefresh = ({ children, ...props }: any) => {
   return Capacitor.isNativePlatform() ? <PullToRefresh {...props}>{children}</PullToRefresh> : <>{children}</>;
@@ -18,6 +20,8 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
   const [postCible, setPostCible] = useState<string | null>(null);
   const [modalCreer, setModalCreer] = useState(false);
   const [modalComments, setModalComments] = useState<any>(null);
+  const [showCreerPage, setShowCreerPage] = useState(false);
+  const [pageActive, setPageActive] = useState<number | null>(null);
 
   useEffect(() => {
     if (postCible && posts.length > 0) {
@@ -67,6 +71,10 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
     } catch {}
   };
 
+  if (pageActive !== null) {
+    return <SocialPageProfil pageId={pageActive} onRetour={() => setPageActive(null)} />;
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#000000', paddingBottom: '80px' }}>
       <style>{`
@@ -85,7 +93,13 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           </button>
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '1px' }}>VOKYVO</h1>
         </div>
-        <div style={{ display: 'flex', gap: '15px' }}>
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          <button onClick={() => setPageActive(2)} title="Ma Page (test)" style={{ background: 'rgba(102,126,234,0.15)', border: '1px solid rgba(102,126,234,0.3)', color: '#667eea', cursor: 'pointer', padding: '8px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600 }}>
+            Ma Page
+          </button>
+          <button onClick={() => setShowCreerPage(true)} title="Créer une Page" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
           <button style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
@@ -121,6 +135,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       {/* Modales */}
       {modalCreer && <SocialCreerPost onFermer={() => setModalCreer(false)} onPublie={charger} />}
       {modalComments && <SocialComments post={modalComments} onFermer={() => setModalComments(null)} onNouveauCommentaire={charger} />}
+      {showCreerPage && <SocialCreerPage onClose={() => setShowCreerPage(false)} onCreated={charger} />}
     </div>
   );
 }
