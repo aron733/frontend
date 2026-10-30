@@ -14,6 +14,12 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
   const [posts, setPosts] = useState<any[]>([]);
   const [chargement, setChargement] = useState(true);
   const [suiviEnCours, setSuiviEnCours] = useState(false);
+  const [modalModifier, setModalModifier] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [editNom, setEditNom] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editPhoto, setEditPhoto] = useState<File | null>(null);
+  const [editEnCours, setEditEnCours] = useState(false);
 
   const charger = async () => {
     try {
@@ -54,6 +60,46 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
     }
   };
 
+  const ouvrirModifier = () => {
+    if (!page) return;
+    setEditNom(page.nom || '');
+    setEditDescription(page.description || '');
+    setEditPhoto(null);
+    setModalModifier(true);
+  };
+
+  const sauvegarder = async () => {
+    if (!page || editEnCours) return;
+    if (!editNom.trim()) {
+      toast.error('Le nom est requis');
+      return;
+    }
+    setEditEnCours(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const formData = new FormData();
+      formData.append('nom', editNom.trim());
+      formData.append('description', editDescription.trim());
+      if (editPhoto) formData.append('photo', editPhoto);
+
+      const res = await axios.post(
+        `${API_URL}/social/pages/${pageId}/modifier/`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
+      );
+      if (res.data.success) {
+        setPage({ ...page, ...res.data.page });
+        setModalModifier(false);
+        toast.success('Page mise a jour');
+      }
+    } catch (err: any) {
+      const msg = err?.response?.data?.erreur || 'Erreur lors de la mise a jour';
+      toast.error(msg);
+    } finally {
+      setEditEnCours(false);
+    }
+  };
+
   if (chargement) {
     return (
       <div style={{ minHeight: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888' }}>
@@ -84,7 +130,10 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
       {/* Bannière / avatar */}
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 20px 0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#1a1a2e', border: '2px solid #2a2a3e', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+          <div
+            onClick={() => { if (page.photo) setPhotoUrl(page.photo); }}
+            style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#1a1a2e', border: '2px solid #2a2a3e', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, cursor: page.photo ? 'pointer' : 'default' }}
+          >
             {page.photo ? (
               <img src={page.photo} alt={page.nom} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
@@ -108,9 +157,14 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
 
         <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
           {page.est_proprietaire ? (
-            <button disabled style={{ flex: 1, padding: '12px', borderRadius: '10px', background: 'rgba(102,126,234,0.15)', border: '1px solid rgba(102,126,234,0.3)', color: '#667eea', fontWeight: 600, fontSize: '14px', cursor: 'default' }}>
-              Votre Page
-            </button>
+            <>
+              <button disabled style={{ flex: 1, padding: '12px', borderRadius: '10px', background: 'rgba(102,126,234,0.15)', border: '1px solid rgba(102,126,234,0.3)', color: '#667eea', fontWeight: 600, fontSize: '14px', cursor: 'default' }}>
+                Votre Page
+              </button>
+              <button onClick={ouvrirModifier} style={{ padding: '12px 18px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid #2a2a3e', color: '#fff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}>
+                Modifier
+              </button>
+            </>
           ) : (
             <button
               onClick={toggleSuivre}
@@ -122,6 +176,39 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
           )}
         </div>
       </div>
+
+      {/* Lightbox photo */}
+      {photoUrl && (
+        <div onClick={() => setPhotoUrl(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', cursor: 'zoom-out' }}>
+          <img src={photoUrl} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '12px' }} />
+        </div>
+      )}
+
+      {/* Modale modification Page */}
+      {modalModifier && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => { if (!editEnCours) setModalModifier(false); }}>
+          <div style={{ background: '#111120', border: '1px solid #2a2a3e', borderRadius: '16px', padding: '24px', maxWidth: '440px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '20px' }}>Modifier la Page</h3>
+
+            <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Nom *</label>
+            <input type="text" value={editNom} onChange={(e) => setEditNom(e.target.value)} maxLength={80} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '16px', outline: 'none' }} />
+
+            <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Description</label>
+            <textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} maxLength={280} rows={3} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '16px', outline: 'none', resize: 'none', fontFamily: 'inherit' }} />
+
+            <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Photo</label>
+            <input type="file" accept="image/*" onChange={(e) => setEditPhoto(e.target.files?.[0] || null)} style={{ width: '100%', color: '#aaa', fontSize: '13px', marginBottom: '20px' }} />
+            {editPhoto && <p style={{ color: '#667eea', fontSize: '12px', marginBottom: '16px' }}>Nouvelle photo : {editPhoto.name}</p>}
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setModalModifier(false)} disabled={editEnCours} style={{ padding: '12px 22px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: editEnCours ? 'not-allowed' : 'pointer', fontWeight: 600 }}>Annuler</button>
+              <button onClick={sauvegarder} disabled={editEnCours || !editNom.trim()} style={{ padding: '12px 22px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: editEnCours || !editNom.trim() ? 'not-allowed' : 'pointer', fontWeight: 600, opacity: editEnCours || !editNom.trim() ? 0.7 : 1 }}>
+                {editEnCours ? 'Enregistrement...' : 'Enregistrer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Posts de la Page */}
       <div style={{ maxWidth: '600px', margin: '0 auto' }}>
