@@ -9,9 +9,13 @@ interface PostProps {
   post: any;
   onLike: (id: number, typeReaction?: string | null) => void;
   onComment: (post: any) => void;
+  onClickPage?: (pageId: number) => void;
+  onClickUser?: (userId: number) => void;
 }
 
-export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
+export default function SocialPost({ post: p, onLike, onComment, onClickPage, onClickUser }: PostProps) {
+  const [pageSuivie, setPageSuivie] = useState<boolean | null>(null);
+  const [followEnCours, setFollowEnCours] = useState(false);
   const [showHeart, setShowHeart] = useState(false);
   const [feedVideoOuvert, setFeedVideoOuvert] = useState(false);
   const [reactionMenu, setReactionMenu] = useState(false);
@@ -43,6 +47,13 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
     <div style={{ background: '#0f0f14', borderRadius: '0', padding: '15px 0', marginBottom: '10px', borderBottom: '1px solid #1a1a2e' }}>
       {/* Header du post */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px', padding: '0 15px' }}>
+        <div
+          onClick={() => {
+            if (p.page && onClickPage) onClickPage(p.page.id);
+            else if (p.user && onClickUser) onClickUser(p.user.id);
+          }}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, cursor: 'pointer' }}
+        >
         <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#fff', fontSize: '20px', overflow: 'hidden', flexShrink: 0 }}>
           {p.page ? (
             p.page.photo ? (
@@ -63,6 +74,30 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
           </div>
           <div style={{ color: '#666', fontSize: '13px' }}>{new Date(p.date_creation).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
         </div>
+        </div>
+        {p.page && (
+          <button
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (followEnCours) return;
+              setFollowEnCours(true);
+              try {
+                const token = localStorage.getItem('access_token');
+                const res = await axios.post(`https://api.vokyvo.com/api/social/pages/${p.page.id}/suivre/`, {}, { headers: { Authorization: `Bearer ${token}` } });
+                setPageSuivie(res.data.suivi);
+              } catch {}
+              setFollowEnCours(false);
+            }}
+            style={{
+              background: pageSuivie ? 'rgba(255,255,255,0.06)' : 'transparent',
+              border: pageSuivie ? '1px solid #2a2a3e' : '1px solid #667eea',
+              color: pageSuivie ? '#aaa' : '#667eea',
+              padding: '6px 14px', borderRadius: '8px', cursor: followEnCours ? 'not-allowed' : 'pointer', fontSize: '13px', fontWeight: 600,
+            }}
+          >
+            {pageSuivie ? 'Suivi' : 'Suivre'}
+          </button>
+        )}
       </div>
 
       {/* Texte (avec fond si couleur_fond et texte court) */}

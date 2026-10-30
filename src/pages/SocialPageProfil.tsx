@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { API_URL } from '../config';
-import SocialPost from './SocialPost';
 
 interface SocialPageProfilProps {
   pageId: number;
@@ -20,6 +19,7 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
   const [editDescription, setEditDescription] = useState('');
   const [editPhoto, setEditPhoto] = useState<File | null>(null);
   const [editEnCours, setEditEnCours] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const charger = async () => {
     try {
@@ -177,10 +177,11 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
         </div>
       </div>
 
-      {/* Lightbox photo */}
+      {/* Lightbox photo PP */}
       {photoUrl && (
-        <div onClick={() => setPhotoUrl(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', cursor: 'zoom-out' }}>
-          <img src={photoUrl} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '12px' }} />
+        <div onClick={() => setPhotoUrl(null)} style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <img src={photoUrl} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+          <button onClick={(e) => { e.stopPropagation(); setPhotoUrl(null); }} style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', width: '40px', height: '40px', borderRadius: '50%', fontSize: '20px', cursor: 'pointer' }}>✕</button>
         </div>
       )}
 
@@ -210,14 +211,62 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
         </div>
       )}
 
-      {/* Posts de la Page */}
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+      {/* Lightbox plein écran */}
+      {lightboxIndex !== null && posts[lightboxIndex] && (
+        <div
+          onClick={() => setLightboxIndex(null)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+        >
+          {posts[lightboxIndex].medias?.[0]?.type === 'video' ? (
+            <video src={posts[lightboxIndex].medias[0].url} controls autoPlay style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '12px' }} onClick={(e) => e.stopPropagation()} />
+          ) : posts[lightboxIndex].medias?.[0]?.url ? (
+            <img src={posts[lightboxIndex].medias[0].url} alt="" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '12px' }} onClick={(e) => e.stopPropagation()} />
+          ) : (
+            <div style={{ background: posts[lightboxIndex].couleur_fond || '#1a1a2e', padding: '40px', borderRadius: '12px', maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
+              <p style={{ color: '#fff', fontSize: '18px', textAlign: 'center', margin: 0, whiteSpace: 'pre-wrap' }}>{posts[lightboxIndex].texte}</p>
+            </div>
+          )}
+          {/* Fleches navigation */}
+          {lightboxIndex > 0 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', width: '44px', height: '44px', borderRadius: '50%', cursor: 'pointer', fontSize: '20px' }}>‹</button>
+          )}
+          {lightboxIndex < posts.length - 1 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }} style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', width: '44px', height: '44px', borderRadius: '50%', cursor: 'pointer', fontSize: '20px' }}>›</button>
+          )}
+          <button onClick={() => setLightboxIndex(null)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', width: '40px', height: '40px', borderRadius: '50%', cursor: 'pointer', fontSize: '18px' }}>✕</button>
+        </div>
+      )}
+
+      {/* Posts de la Page - Grille 3 colonnes */}
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '0 2px' }}>
         {posts.length === 0 ? (
           <p style={{ color: '#555', fontStyle: 'italic', textAlign: 'center', marginTop: '40px' }}>Aucun post pour le moment.</p>
         ) : (
-          posts.map((p) => (
-            <div key={p.id}><SocialPost post={p} onLike={() => {}} onComment={() => {}} /></div>
-          ))
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+            {posts.map((p, index) => {
+              const premierMedia = p.medias?.[0];
+              return (
+                <div key={p.id} onClick={() => setLightboxIndex(index)} style={{ aspectRatio: '1', background: '#111120', position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
+                  {premierMedia ? (
+                    premierMedia.type === 'video' ? (
+                      <>
+                        <img src={premierMedia.miniature || premierMedia.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </div>
+                      </>
+                    ) : (
+                      <img src={premierMedia.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    )
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', background: p.couleur_fond || '#1a1a2e' }}>
+                      <p style={{ color: '#fff', fontSize: '12px', textAlign: 'center', margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>{p.texte}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-
-const API_URL = 'https://api.vokyvo.com/api';
+import { API_URL } from '../config';
 
 interface SocialCreerPageProps {
   onClose: () => void;
@@ -12,7 +11,20 @@ interface SocialCreerPageProps {
 export default function SocialCreerPage({ onClose, onCreated }: SocialCreerPageProps) {
   const [nom, setNom] = useState('');
   const [description, setDescription] = useState('');
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [apercuPhoto, setApercuPhoto] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
+
+  const choisirPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    if (f.size > 5 * 1024 * 1024) {
+      toast.error('Photo trop lourde (max 5 Mo)');
+      return;
+    }
+    setPhoto(f);
+    setApercuPhoto(URL.createObjectURL(f));
+  };
 
   const creer = async () => {
     if (!nom.trim()) {
@@ -23,10 +35,15 @@ export default function SocialCreerPage({ onClose, onCreated }: SocialCreerPageP
     setEnCours(true);
     try {
       const token = localStorage.getItem('access_token');
+      const formData = new FormData();
+      formData.append('nom', nom.trim());
+      formData.append('description', description.trim());
+      if (photo) formData.append('photo', photo);
+
       const res = await axios.post(
         `${API_URL}/social/pages/creer/`,
-        { nom: nom.trim(), description: description.trim() },
-        { headers: { Authorization: `Bearer ${token}` } }
+        formData,
+        { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
       );
       if (res.data.success) {
         toast.success('Page créée');
@@ -44,19 +61,43 @@ export default function SocialCreerPage({ onClose, onCreated }: SocialCreerPageP
   };
 
   return (
-    <div
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
-      onClick={() => { if (!enCours) onClose(); }}
-    >
-      <div
-        style={{ background: '#111120', border: '1px solid #2a2a3e', borderRadius: '16px', padding: '24px', maxWidth: '440px', width: '100%' }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h3 style={{ color: '#fff', fontSize: '20px', marginBottom: '6px' }}>Créer une Page</h3>
-        <p style={{ color: '#888', fontSize: '13px', marginBottom: '20px' }}>
-          Une Page représente une entreprise, un journal, un artiste ou une communauté. Tu peux en créer jusqu'à 3.
-        </p>
+    <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 3000, overflowY: 'auto' }}>
+      {/* Header */}
+      <div style={{ position: 'sticky', top: 0, background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #1a1a2e', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '12px', zIndex: 10 }}>
+        <button onClick={onClose} disabled={enCours} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: enCours ? 'not-allowed' : 'pointer', padding: 0 }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <h1 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: 0, flex: 1 }}>Créer une Page</h1>
+        <button
+          onClick={creer}
+          disabled={enCours || !nom.trim()}
+          style={{ padding: '10px 20px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', fontWeight: 600, fontSize: '14px', cursor: enCours || !nom.trim() ? 'not-allowed' : 'pointer', opacity: enCours || !nom.trim() ? 0.7 : 1 }}
+        >
+          {enCours ? 'Création...' : 'Créer'}
+        </button>
+      </div>
 
+      {/* Contenu */}
+      <div style={{ maxWidth: '500px', margin: '0 auto', padding: '30px 20px' }}>
+        {/* Photo de profil */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '30px' }}>
+          <label style={{ cursor: 'pointer', position: 'relative' }}>
+            <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: '#1a1a2e', border: '2px solid #2a2a3e', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              {apercuPhoto ? (
+                <img src={apercuPhoto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#667eea" strokeWidth="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              )}
+            </div>
+            <div style={{ position: 'absolute', bottom: 0, right: 0, width: '32px', height: '32px', borderRadius: '50%', background: '#667eea', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '3px solid #000' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <input type="file" accept="image/*" onChange={choisirPhoto} style={{ display: 'none' }} />
+          </label>
+          <p style={{ color: '#888', fontSize: '13px', marginTop: '12px' }}>Ajouter une photo de profil</p>
+        </div>
+
+        {/* Nom */}
         <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Nom de la Page *</label>
         <input
           type="text"
@@ -64,41 +105,24 @@ export default function SocialCreerPage({ onClose, onCreated }: SocialCreerPageP
           onChange={(e) => setNom(e.target.value)}
           placeholder="Ex: VOKYVO LABS"
           maxLength={80}
-          style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '16px', outline: 'none' }}
+          style={{ width: '100%', padding: '14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '20px', outline: 'none', fontSize: '15px' }}
         />
 
-        <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Description (optionnelle)</label>
+        {/* Description */}
+        <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Quelques mots sur cette Page…"
           maxLength={280}
-          rows={3}
-          style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '20px', outline: 'none', resize: 'none', fontFamily: 'inherit' }}
+          rows={4}
+          style={{ width: '100%', padding: '14px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', outline: 'none', resize: 'none', fontFamily: 'inherit', fontSize: '15px' }}
         />
+        <p style={{ color: '#555', fontSize: '12px', marginTop: '6px', textAlign: 'right' }}>{description.length}/280</p>
 
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-          <button
-            onClick={onClose}
-            disabled={enCours}
-            style={{ padding: '12px 22px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: enCours ? 'not-allowed' : 'pointer', fontWeight: 600 }}
-          >
-            Annuler
-          </button>
-          <button
-            onClick={creer}
-            disabled={enCours || !nom.trim()}
-            style={{ padding: '12px 22px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: enCours || !nom.trim() ? 'not-allowed' : 'pointer', fontWeight: 600, opacity: enCours || !nom.trim() ? 0.7 : 1, display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-          >
-            {enCours && (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ animation: 'spin 0.8s linear infinite' }}>
-                <circle cx="12" cy="12" r="10" strokeOpacity="0.3" />
-                <path d="M12 2 a10 10 0 0 1 10 10" />
-              </svg>
-            )}
-            Créer
-          </button>
-        </div>
+        <p style={{ color: '#666', fontSize: '12px', marginTop: '20px', textAlign: 'center' }}>
+          Tu peux créer jusqu'à 3 Pages.
+        </p>
       </div>
     </div>
   );
