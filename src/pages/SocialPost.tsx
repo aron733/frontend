@@ -145,8 +145,8 @@ export default function SocialPost({ post: p, onLike, onComment }: PostProps) {
               {[
                 { emoji: '👍', label: 'J\'aime', type: 'like' },
                 { emoji: '❤️', label: 'J\'adore', type: 'love' },
-                { emoji: '😂', label: 'Haha', type: 'haha' },
-                { emoji: '😮', label: 'Wouah', type: 'wow' },
+                { emoji: '😂', label: 'Mdr', type: 'haha' },
+                { emoji: '😮', label: 'Wow', type: 'wow' },
                 { emoji: '😢', label: 'Triste', type: 'sad' },
                 { emoji: '😡', label: 'Colère', type: 'angry' },
               ].map((r) => (
