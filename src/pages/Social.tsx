@@ -155,11 +155,6 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
 
       </ConditionalPullToRefresh>
 
-      {/* Bouton flottant creer post */}
-      <button onClick={() => setModalCreer(true)} style={{ position: 'fixed', bottom: '90px', right: '20px', width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(102,126,234,0.4)', zIndex: 100 }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </button>
-
       {/* Modales */}
       {modalCreer && <SocialCreerPost onFermer={() => setModalCreer(false)} onPublie={charger} />}
       {modalComments && <SocialComments post={modalComments} onFermer={() => setModalComments(null)} onNouveauCommentaire={charger} />}
