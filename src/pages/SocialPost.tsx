@@ -3,6 +3,7 @@ import axios from 'axios';
 import SocialFond from './SocialFond';
 import SocialMedia from './SocialMedia';
 import VideoFeed from './VideoFeed';
+import { formatTimeAgo } from '../utils/timeAgo';
 
 
 interface PostProps {
@@ -72,7 +73,7 @@ export default function SocialPost({ post: p, onLike, onComment, onClickPage, on
             {p.page?.nom || p.user?.username || 'Anonyme'}
             {p.page?.verifiee && <svg width="14" height="14" viewBox="0 0 24 24" fill="#667eea"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01" stroke="#fff" strokeWidth="2" fill="none"/></svg>}
           </div>
-          <div style={{ color: '#666', fontSize: '13px' }}>{new Date(p.date_creation).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+          <div style={{ color: '#666', fontSize: '13px' }}>{formatTimeAgo(p.date_creation)}</div>
         </div>
         </div>
         {p.page && !p.page.est_proprietaire && (
