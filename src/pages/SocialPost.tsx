@@ -14,7 +14,7 @@ interface PostProps {
 }
 
 export default function SocialPost({ post: p, onLike, onComment, onClickPage, onClickUser }: PostProps) {
-  const [pageSuivie, setPageSuivie] = useState<boolean | null>(null);
+  const [pageSuivie, setPageSuivie] = useState<boolean>(p.page?.je_suis ?? false);
   const [followEnCours, setFollowEnCours] = useState(false);
   const [showHeart, setShowHeart] = useState(false);
   const [feedVideoOuvert, setFeedVideoOuvert] = useState(false);
@@ -75,7 +75,7 @@ export default function SocialPost({ post: p, onLike, onComment, onClickPage, on
           <div style={{ color: '#666', fontSize: '13px' }}>{new Date(p.date_creation).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
         </div>
         </div>
-        {p.page && (
+        {p.page && !p.page.est_proprietaire && (
           <button
             onClick={async (e) => {
               e.stopPropagation();

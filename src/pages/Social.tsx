@@ -22,6 +22,21 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
   const [modalComments, setModalComments] = useState<any>(null);
   const [showCreerPage, setShowCreerPage] = useState(false);
   const [pageActive, setPageActive] = useState<number | null>(null);
+  const [mesPages, setMesPages] = useState<any[]>([]);
+
+  useEffect(() => {
+    const chargerMesPages = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await axios.get(`${API_URL}/social/pages/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const mesPagesFiltrees = (res.data.pages || []).filter((p: any) => p.est_proprietaire);
+        setMesPages(mesPagesFiltrees);
+      } catch {}
+    };
+    chargerMesPages();
+  }, []);
 
   useEffect(() => {
     if (postCible && posts.length > 0) {
@@ -94,8 +109,15 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '1px' }}>VOKYVO</h1>
         </div>
         <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-          <button onClick={() => setPageActive(2)} title="Ma Page (test)" style={{ background: 'rgba(102,126,234,0.15)', border: '1px solid rgba(102,126,234,0.3)', color: '#667eea', cursor: 'pointer', padding: '8px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600 }}>
-            Ma Page
+          <button
+            onClick={() => {
+              if (mesPages.length === 1) setPageActive(mesPages[0].id);
+              else if (mesPages.length === 0) setShowCreerPage(true);
+            }}
+            title="Mes Pages"
+            style={{ background: 'rgba(102,126,234,0.15)', border: '1px solid rgba(102,126,234,0.3)', color: '#667eea', cursor: 'pointer', padding: '8px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600 }}
+          >
+            {mesPages.length === 0 ? 'Créer une Page' : mesPages.length === 1 ? mesPages[0].nom : `${mesPages.length} Pages`}
           </button>
           <button onClick={() => setShowCreerPage(true)} title="Créer une Page" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -120,7 +142,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           <p style={{ color: '#555', fontStyle: 'italic', textAlign: 'center', marginTop: '50px' }}>Aucun post pour le moment.</p>
         ) : (
           posts.map((p) => (
-            <div key={p.id} id={`post-${p.id}`}><SocialPost post={p} onLike={likerPost} onComment={(post) => setModalComments(post)} /></div>
+            <div key={p.id} id={`post-${p.id}`}><SocialPost post={p} onLike={likerPost} onComment={(post) => setModalComments(post)} onClickPage={(id) => setPageActive(id)} /></div>
           ))
         )}
       </div>
