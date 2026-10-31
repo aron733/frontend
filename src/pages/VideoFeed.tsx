@@ -13,6 +13,36 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
   const videoRefs = useRef<{ [key: number]: HTMLVideoElement | null }>({});
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            // La video est visible a 50% -> on la joue
+            video.play().catch(() => {});
+          } else {
+            // La video n'est plus visible -> on la met en pause
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.5 } // Se declenche quand 50% de la video est visible
+    );
+
+    // Observer toutes les videos apres qu'elles soient rendues
+    const timer = setTimeout(() => {
+      Object.values(videoRefs.current).forEach((video) => {
+        if (video) observer.observe(video);
+      });
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [videos]); // Se relance si la liste des videos change
+
+  useEffect(() => {
     charger();
   }, []);
 
@@ -49,7 +79,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
     };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 5000, overflowY: 'auto', scrollSnapType: 'y mandatory' }}>
+    <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 5000, overflowY: 'auto', scrollSnapType: 'y mandatory', display: 'flex', flexDirection: 'column' }}>
       <style>{`
         @keyframes pulse {
             0%, 100% { opacity: 0.5; }
@@ -66,7 +96,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
         <button onClick={onFermer} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         </button>
-        <h1 style={{ color: '#fff', fontSize: '20px', fontWeight: 700, margin: 0 }}>Reels</h1>
+        <h1 style={{ color: '#fff', fontSize: '20px', fontWeight: 700, margin: 0 }}>Vidéos</h1>
         <div style={{ display: 'flex', gap: '15px' }}>
           <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -89,7 +119,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
         videos.map((p) => {
           const video = p.medias.find((m: any) => m.type === 'video');
           return (
-            <div key={p.id} style={{ height: '100vh', scrollSnapAlign: 'start', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div key={p.id} style={{ height: '100vh', width: '100vw', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always', position: 'relative', background: '#000' }}>
               <video
                 ref={(el) => { videoRefs.current[p.id] = el; }}
                 src={video.url}
@@ -116,7 +146,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                   setTimeout(() => setShowHeart(null), 800);
                   likerPost(p.id, 'love');
                 }}
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
 
               {/* Coeur geant (double-tap) */}
@@ -126,8 +156,21 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                 </div>
               )}
 
+              {/* Infos de la video (nom, texte) en bas */}
+              <div style={{ position: 'absolute', bottom: '20px', left: '15px', right: '80px', zIndex: 10, color: '#fff' }}>
+                <p style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {p.user?.username || 'Anonyme'}
+                  {p.user?.verifiee && <span style={{ color: '#667eea', fontSize: '12px' }}>✓</span>}
+                </p>
+                {p.texte && (
+                  <p style={{ fontSize: '14px', margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {p.texte}
+                  </p>
+                )}
+              </div>
+
               {/* Boutons a droite */}
-              <div style={{ position: 'absolute', right: '15px', bottom: '150px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', background: 'rgba(0,0,0,0.3)', padding: '15px 10px', borderRadius: '30px', backdropFilter: 'blur(10px)' }}>
+              <div style={{ position: 'absolute', right: '12px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', background: 'rgba(0,0,0,0.4)', padding: '12px 8px', borderRadius: '24px', backdropFilter: 'blur(8px)' }}>
                 <div style={{ position: 'relative' }}>
                   <button
                     onClick={() => likerPost(p.id)}
