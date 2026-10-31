@@ -25,7 +25,22 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
   const [showCreerPage, setShowCreerPage] = useState(false);
   const [pageActive, setPageActive] = useState<number | null>(null);
   const [showParametres, setShowParametres] = useState(false);
+  const [mesPages, setMesPages] = useState<any[]>([]);
   const [showVideoFeed, setShowVideoFeed] = useState(false);
+
+  useEffect(() => {
+    const chargerMesPages = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        const res = await axios.get(`${API_URL}/social/pages/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const mesPagesFiltrees = (res.data.pages || []).filter((p: any) => p.est_proprietaire);
+        setMesPages(mesPagesFiltrees);
+      } catch {}
+    };
+    chargerMesPages();
+  }, []);
 
   useEffect(() => {
     if (postCible && posts.length > 0) {
@@ -139,7 +154,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       {modalComments && <SocialComments post={modalComments} onFermer={() => setModalComments(null)} onNouveauCommentaire={charger} />}
       {showCreerPage && <SocialCreerPage onClose={() => setShowCreerPage(false)} onCreated={charger} />}
 
-      {showVideoFeed && <VideoFeed onFermer={() => setShowVideoFeed(false)} onOuvrirPage={(id) => { setShowVideoFeed(false); setPageActive(id); }} />}
+      {showVideoFeed && <VideoFeed onFermer={() => setShowVideoFeed(false)} onOuvrirPage={(id) => { setShowVideoFeed(false); setTimeout(() => setPageActive(id), 100); }} />}
 
       {/* Ecran Parametres (plein ecran) */}
       {showParametres && (
@@ -152,14 +167,33 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           </div>
           <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
             <div style={{ background: '#111120', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
-              <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Mes Pages</h3>
-              <p style={{ color: '#888', fontSize: '13px', marginBottom: '12px' }}>Gérez vos pages ou créez-en une nouvelle.</p>
-              <button
-                onClick={() => { setShowParametres(false); setShowCreerPage(true); }}
-                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
-              >
-                + Créer une nouvelle Page
-              </button>
+              <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>Mes Pages ({mesPages.length}/3)</h3>
+              {mesPages.length === 0 ? (
+                <p style={{ color: '#888', fontSize: '13px', marginBottom: '12px' }}>Vous n'avez pas encore de Page.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                  {mesPages.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => { setShowParametres(false); setPageActive(p.id); }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', padding: '10px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid #2a2a3e', color: '#fff', cursor: 'pointer', textAlign: 'left' }}
+                    >
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden', background: '#1a1a2e', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#667eea', fontWeight: 700 }}>
+                        {p.photo ? <img src={p.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : p.nom.charAt(0).toUpperCase()}
+                      </div>
+                      <span style={{ fontSize: '14px', fontWeight: 600 }}>{p.nom}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {mesPages.length < 3 && (
+                <button
+                  onClick={() => { setShowParametres(false); setShowCreerPage(true); }}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+                >
+                  + Créer une nouvelle Page
+                </button>
+              )}
             </div>
 
             <p style={{ color: '#888', fontSize: '14px', textAlign: 'center', marginTop: '40px' }}>
