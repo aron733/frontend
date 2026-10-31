@@ -6,6 +6,7 @@ import SocialComments from './SocialComments';
 export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
   const [videos, setVideos] = useState<any[]>([]);
   const [chargement, setChargement] = useState(true);
+  const [suivis, setSuivis] = useState<{[key: number]: boolean}>({});
   const [modalComments, setModalComments] = useState<any>(null);
   const [reactionMenu, setReactionMenu] = useState<number | null>(null);
   const [longPressTimer, setLongPressTimer] = useState<any>(null);
@@ -47,7 +48,15 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
   }, []);
 
 
-    const likerPost = async (id: number, typeReaction: string = 'like') => {
+    const toggleSuivre = async (pageId: number) => {
+    try {
+      const token = localStorage.getItem('access_token');
+      const res = await axios.post(`https://api.vokyvo.com/api/social/pages/${pageId}/suivre/`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      setSuivis(prev => ({ ...prev, [pageId]: res.data.suivi }));
+    } catch {}
+  };
+
+  const likerPost = async (id: number, typeReaction: string = 'like') => {
     try {
       const token = localStorage.getItem('access_token');
       await axios.post(`${API_URL}/social/posts/${id}/liker/`, { reaction: typeReaction }, {
@@ -156,12 +165,44 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                 </div>
               )}
 
-              {/* Infos de la video (nom, texte) en bas */}
-              <div style={{ position: 'absolute', bottom: '20px', left: '15px', right: '80px', zIndex: 10, color: '#fff' }}>
-                <p style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {p.user?.username || 'Anonyme'}
-                  {p.user?.verifiee && <span style={{ color: '#667eea', fontSize: '12px' }}>✓</span>}
-                </p>
+              {/* Infos de la video (nom, texte, follow) en bas */}
+              <div style={{ position: 'absolute', bottom: '30px', left: '20px', right: '80px', zIndex: 10, color: '#fff' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  {/* Photo de profil (Page OU User, pas les deux) */}
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: '#333', flexShrink: 0 }}>
+                    {p.page ? (
+                      p.page.photo ? (
+                        <img src={p.page.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '16px', background: '#1a1a2e', color: '#667eea' }}>
+                          {(p.page.nom || '?').charAt(0).toUpperCase()}
+                        </div>
+                      )
+                    ) : p.user?.photo ? (
+                      <img src={p.user.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '16px' }}>
+                        {(p.user?.username || '?').charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <p style={{ fontWeight: 700, fontSize: '16px', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      {p.page ? p.page.nom : (p.user?.username || 'Anonyme')}
+                      {(p.page?.verifiee || p.user?.verifiee) && <span style={{ color: '#667eea', fontSize: '12px' }}>✓</span>}
+                    </p>
+
+                  </div>
+                  {p.page && !p.page.est_proprietaire && (
+                    <button
+                      onClick={() => toggleSuivre(p.page.id)}
+                      style={{ background: suivis[p.page.id] ? 'rgba(255,255,255,0.2)' : '#fff', border: '1px solid ' + (suivis[p.page.id] ? '#fff' : 'transparent'), color: suivis[p.page.id] ? '#fff' : '#000', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      {suivis[p.page.id] ? 'Suivi' : 'Suivre'}
+                    </button>
+                  )}
+                </div>
                 {p.texte && (
                   <p style={{ fontSize: '14px', margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {p.texte}
@@ -221,20 +262,7 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                 </button>
               </div>
 
-              {/* Infos en bas */}
-              <div style={{ position: 'absolute', bottom: '20px', left: '15px', right: '80px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, #667eea, #764ba2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, overflow: 'hidden', flexShrink: 0 }}>
-                    {p.user?.photo || p.page?.photo ? (
-                      <img src={p.user?.photo || p.page?.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      (p.user?.username || p.page?.nom || '?')[0].toUpperCase()
-                    )}
-                  </div>
-                  <span style={{ color: '#fff', fontWeight: 700, fontSize: '15px' }}>{p.user?.username || p.page?.nom}</span>
-                </div>
-                {p.texte && <p style={{ color: '#fff', fontSize: '14px', margin: 0 }}>{p.texte}</p>}
-              </div>
+
             </div>
           );
         })
