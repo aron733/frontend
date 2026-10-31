@@ -139,7 +139,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       {modalComments && <SocialComments post={modalComments} onFermer={() => setModalComments(null)} onNouveauCommentaire={charger} />}
       {showCreerPage && <SocialCreerPage onClose={() => setShowCreerPage(false)} onCreated={charger} />}
 
-      {showVideoFeed && <VideoFeed onFermer={() => setShowVideoFeed(false)} />}
+      {showVideoFeed && <VideoFeed onFermer={() => setShowVideoFeed(false)} onOuvrirPage={(id) => { setShowVideoFeed(false); setPageActive(id); }} />}
 
       {/* Ecran Parametres (plein ecran) */}
       {showParametres && (

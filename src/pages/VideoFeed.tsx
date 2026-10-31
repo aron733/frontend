@@ -3,7 +3,7 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import SocialComments from './SocialComments';
 
-export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
+export default function VideoFeed({ onFermer, onOuvrirPage }: { onFermer: () => void; onOuvrirPage?: (pageId: number) => void }) {
   const [videos, setVideos] = useState<any[]>([]);
   const [chargement, setChargement] = useState(true);
   const [suivis, setSuivis] = useState<{[key: number]: boolean}>({});
@@ -194,7 +194,10 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                   </div>
 
                   <div>
-                    <p style={{ fontWeight: 700, fontSize: '16px', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <p
+                      onClick={() => { if (p.page && onOuvrirPage) onOuvrirPage(p.page.id); }}
+                      style={{ fontWeight: 700, fontSize: '16px', margin: 0, display: 'flex', alignItems: 'center', gap: '4px', cursor: p.page ? 'pointer' : 'default' }}
+                    >
                       {p.page ? p.page.nom : (p.user?.username || 'Anonyme')}
                       {(p.page?.verifiee || p.user?.verifiee) && <span style={{ color: '#667eea', fontSize: '12px' }}>✓</span>}
                     </p>
