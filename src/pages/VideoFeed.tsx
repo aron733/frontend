@@ -172,7 +172,7 @@ export default function VideoFeed({ onFermer, onOuvrirPage }: { onFermer: () => 
               )}
 
               {/* Infos de la video (nom, texte, follow) en bas */}
-              <div style={{ position: 'absolute', bottom: '30px', left: '20px', right: '80px', zIndex: 10, color: '#fff' }}>
+              <div style={{ position: 'absolute', bottom: '30px', left: '20px', right: '80px', zIndex: 10, color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                   {/* Photo de profil (Page OU User, pas les deux) */}
                   <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: '#333', flexShrink: 0 }}>
@@ -194,11 +194,16 @@ export default function VideoFeed({ onFermer, onOuvrirPage }: { onFermer: () => 
                   </div>
 
                   <div>
-                    <p
-                      onClick={() => { if (p.page && onOuvrirPage) onOuvrirPage(p.page.id); }}
-                      style={{ fontWeight: 700, fontSize: '16px', margin: 0, display: 'flex', alignItems: 'center', gap: '4px', cursor: p.page ? 'pointer' : 'default' }}
-                    >
-                      {p.page ? p.page.nom : (p.user?.username || 'Anonyme')}
+                    <p style={{ fontWeight: 700, fontSize: '16px', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (p.page && onOuvrirPage) onOuvrirPage(p.page.id);
+                        }}
+                        style={{ cursor: p.page ? 'pointer' : 'default' }}
+                      >
+                        {p.page ? p.page.nom : (p.user?.username || 'Anonyme')}
+                      </span>
                       {(p.page?.verifiee || p.user?.verifiee) && <span style={{ color: '#667eea', fontSize: '12px' }}>✓</span>}
                     </p>
 
@@ -206,9 +211,9 @@ export default function VideoFeed({ onFermer, onOuvrirPage }: { onFermer: () => 
                   {p.page && !p.page.est_proprietaire && (
                     <button
                       onClick={() => toggleSuivre(p.page.id)}
-                      style={{ background: suivis[p.page.id] ? 'rgba(255,255,255,0.2)' : '#fff', border: '1px solid ' + (suivis[p.page.id] ? '#fff' : 'transparent'), color: suivis[p.page.id] ? '#fff' : '#000', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
+                      style={{ background: (suivis[p.page.id] ?? p.page.je_suis) ? 'rgba(255,255,255,0.2)' : '#fff', border: '1px solid ' + ((suivis[p.page.id] ?? p.page.je_suis) ? '#fff' : 'transparent'), color: (suivis[p.page.id] ?? p.page.je_suis) ? '#fff' : '#000', padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
                     >
-                      {suivis[p.page.id] ? 'Suivi' : 'Suivre'}
+                      {(suivis[p.page.id] ?? p.page.je_suis) ? 'Suivi' : 'Suivre'}
                     </button>
                   )}
                 </div>
@@ -258,10 +263,7 @@ export default function VideoFeed({ onFermer, onOuvrirPage }: { onFermer: () => 
                   )}
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.nb_vues || 0}</span>
-                </div>
+
                 <button className="video-action-btn" onClick={() => setModalComments(p)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.nb_commentaires}</span>

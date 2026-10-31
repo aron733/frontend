@@ -263,9 +263,19 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
                   {premierMedia ? (
                     premierMedia.type === 'video' ? (
                       <>
-                        <img src={premierMedia.miniature || premierMedia.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        {premierMedia.miniature ? (
+                          <img src={premierMedia.miniature} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '100%', height: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#fff" opacity="0.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                          </div>
+                        )}
                         <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </div>
+                        <div style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'rgba(0,0,0,0.6)', borderRadius: '4px', padding: '2px 6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                          <span style={{ color: '#fff', fontSize: '11px', fontWeight: 600 }}>{p.nb_vues || 0}</span>
                         </div>
                       </>
                     ) : (
