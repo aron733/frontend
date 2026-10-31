@@ -197,9 +197,22 @@ export default function SocialPageProfil({ pageId, onRetour }: SocialPageProfilP
             <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Description</label>
             <textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} maxLength={280} rows={3} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #2a2a3e', background: '#0a0a0f', color: '#fff', marginBottom: '16px', outline: 'none', resize: 'none', fontFamily: 'inherit' }} />
 
-            <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '6px' }}>Photo</label>
-            <input type="file" accept="image/*" onChange={(e) => setEditPhoto(e.target.files?.[0] || null)} style={{ width: '100%', color: '#aaa', fontSize: '13px', marginBottom: '20px' }} />
-            {editPhoto && <p style={{ color: '#667eea', fontSize: '12px', marginBottom: '16px' }}>Nouvelle photo : {editPhoto.name}</p>}
+            <label style={{ display: 'block', color: '#aaa', fontSize: '13px', marginBottom: '8px' }}>Photo de profil</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#1a1a2e', border: '2px solid #2a2a3e', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                {editPhoto ? (
+                  <img src={URL.createObjectURL(editPhoto)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : page.photo ? (
+                  <img src={page.photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span style={{ fontSize: '24px', color: '#667eea', fontWeight: 900 }}>{page.nom.charAt(0).toUpperCase()}</span>
+                )}
+              </div>
+              <label style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid #2a2a3e', color: '#fff', padding: '10px 16px', borderRadius: '10px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
+                Changer la photo
+                <input type="file" accept="image/*" onChange={(e) => setEditPhoto(e.target.files?.[0] || null)} style={{ display: 'none' }} />
+              </label>
+            </div>
 
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
               <button onClick={() => setModalModifier(false)} disabled={editEnCours} style={{ padding: '12px 22px', borderRadius: '10px', background: 'transparent', border: '1px solid #2a2a3e', color: '#aaa', cursor: editEnCours ? 'not-allowed' : 'pointer', fontWeight: 600 }}>Annuler</button>
