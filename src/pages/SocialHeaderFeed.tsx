@@ -66,12 +66,12 @@ export default function SocialHeaderFeed({ onOuvrirCreation, onOuvrirStatuts }: 
       {/* Ligne de Statuts (Cercles) */}
       <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '0 20px', scrollbarWidth: 'none' }}>
         {/* Bouton "Créer un statut" */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '68px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '80px' }}>
           <div
             onClick={onOuvrirStatuts || onOuvrirCreation}
-            style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#111120', border: '2px dashed #667eea', position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '75px', height: '75px', borderRadius: '50%', background: '#111120', border: '2px dashed #667eea', position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#667eea', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#667eea', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </div>
           </div>
@@ -80,8 +80,8 @@ export default function SocialHeaderFeed({ onOuvrirCreation, onOuvrirStatuts }: 
 
         {/* Liste des statuts existants */}
         {statuts.map((s, i) => (
-          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '68px' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', padding: '2px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', cursor: 'pointer' }}>
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: '80px' }}>
+            <div style={{ width: '75px', height: '75px', borderRadius: '50%', padding: '2px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', cursor: 'pointer' }}>
               <div style={{ width: '100%', height: '100%', borderRadius: '50%', border: '2px solid #000', overflow: 'hidden', background: '#1a1a2e' }}>
                 <img src={s.photo || s.media_url || s.user?.photo_profil} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
