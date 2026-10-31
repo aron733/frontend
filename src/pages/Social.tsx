@@ -23,21 +23,7 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
   const [modalComments, setModalComments] = useState<any>(null);
   const [showCreerPage, setShowCreerPage] = useState(false);
   const [pageActive, setPageActive] = useState<number | null>(null);
-  const [mesPages, setMesPages] = useState<any[]>([]);
-
-  useEffect(() => {
-    const chargerMesPages = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const res = await axios.get(`${API_URL}/social/pages/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const mesPagesFiltrees = (res.data.pages || []).filter((p: any) => p.est_proprietaire);
-        setMesPages(mesPagesFiltrees);
-      } catch {}
-    };
-    chargerMesPages();
-  }, []);
+  const [showParametres, setShowParametres] = useState(false);
 
   useEffect(() => {
     if (postCible && posts.length > 0) {
@@ -109,18 +95,9 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           </button>
           <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '1px' }}>VOKYVO</h1>
         </div>
-        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-          <button
-            onClick={() => {
-              if (mesPages.length === 1) setPageActive(mesPages[0].id);
-              else if (mesPages.length === 0) setShowCreerPage(true);
-            }}
-            title="Mes Pages"
-            style={{ background: 'rgba(102,126,234,0.15)', border: '1px solid rgba(102,126,234,0.3)', color: '#667eea', cursor: 'pointer', padding: '8px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600 }}
-          >
-            {mesPages.length === 0 ? 'Créer une Page' : mesPages.length === 1 ? mesPages[0].nom : `${mesPages.length} Pages`}
-          </button>
-          <button onClick={() => setShowCreerPage(true)} title="Créer une Page" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+
+          <button onClick={() => setModalCreer(true)} title="Créer un post" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </button>
           <button style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -128,6 +105,9 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
           </button>
           <button style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <button onClick={() => setShowParametres(true)} title="Paramètres" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </button>
         </div>
       </div>
@@ -159,6 +139,34 @@ export default function Social({ onRetour }: { onRetour?: () => void }) {
       {modalCreer && <SocialCreerPost onFermer={() => setModalCreer(false)} onPublie={charger} />}
       {modalComments && <SocialComments post={modalComments} onFermer={() => setModalComments(null)} onNouveauCommentaire={charger} />}
       {showCreerPage && <SocialCreerPage onClose={() => setShowCreerPage(false)} onCreated={charger} />}
+
+      {/* Ecran Parametres (plein ecran) */}
+      {showParametres && (
+        <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 3000, overflowY: 'auto' }}>
+          <div style={{ position: 'sticky', top: 0, background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #1a1a2e', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button onClick={() => setShowParametres(false)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', padding: 0 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <h1 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, margin: 0 }}>Paramètres</h1>
+          </div>
+          <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+            <div style={{ background: '#111120', border: '1px solid #2a2a3e', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+              <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>Mes Pages</h3>
+              <p style={{ color: '#888', fontSize: '13px', marginBottom: '12px' }}>Gérez vos pages ou créez-en une nouvelle.</p>
+              <button
+                onClick={() => { setShowParametres(false); setShowCreerPage(true); }}
+                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: 'none', color: '#fff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+              >
+                + Créer une nouvelle Page
+              </button>
+            </div>
+
+            <p style={{ color: '#888', fontSize: '14px', textAlign: 'center', marginTop: '40px' }}>
+              D'autres paramètres arrivent bientôt.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
