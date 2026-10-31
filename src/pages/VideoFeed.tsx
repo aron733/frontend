@@ -94,6 +94,12 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
           }
+          .video-action-btn svg {
+            filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.8));
+          }
+          .video-action-btn span {
+            text-shadow: 0px 1px 3px rgba(0,0,0,0.8);
+          }
           @keyframes popHeart {
           0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
           50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
@@ -211,9 +217,10 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
               </div>
 
               {/* Boutons a droite */}
-              <div style={{ position: 'absolute', right: '12px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', background: 'rgba(0,0,0,0.4)', padding: '12px 8px', borderRadius: '24px', backdropFilter: 'blur(8px)' }}>
+              <div style={{ position: 'absolute', right: '15px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', zIndex: 20 }}>
                 <div style={{ position: 'relative' }}>
                   <button
+                    className="video-action-btn"
                     onClick={() => likerPost(p.id)}
                     onMouseDown={() => { const t = setTimeout(() => setReactionMenu(p.id), 500); setLongPressTimer(t); }}
                     onMouseUp={() => { if (longPressTimer) clearTimeout(longPressTimer); }}
@@ -252,11 +259,11 @@ export default function VideoFeed({ onFermer }: { onFermer: () => void }) {
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.nb_vues || 0}</span>
                 </div>
-                <button onClick={() => setModalComments(p)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                <button className="video-action-btn" onClick={() => setModalComments(p)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.nb_commentaires}</span>
                 </button>
-                <button style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                <button className="video-action-btn" style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
                   <span style={{ fontSize: '14px', fontWeight: 700 }}>{p.nb_partages}</span>
                 </button>
